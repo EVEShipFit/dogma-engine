@@ -34,7 +34,8 @@ jobs:
         VERSION=$(echo ${{ github.ref_name }} | cut -b2-)
         echo "Version: ${VERSION}"
 
-        cargo set-version ${VERSION}
+        sed -i 's/version = "0.0.0-git"/version = "'${VERSION}'"/' Cargo.toml
+        sed -i 's/version = "0.0.0-git"/version = "'${VERSION}'"/' Cargo.lock
 
     - name: Create NPM package
       run: |
