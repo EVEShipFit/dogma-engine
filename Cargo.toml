@@ -1,8 +1,11 @@
 [package]
-name = "dogma-engine"
+name = "esf-dogma-engine"
 version = "0.0.0-git"
 authors = ["Patric Stout <eveshipfit@truebrain.nl>"]
 edition = "2021"
+repository = "https://github.com/EVEShipFit/dogma-engine"
+description = "Library to calculate statistics for EVE Online ship fits"
+license = "MIT"
 
 [lib]
 crate-type = ["cdylib", "rlib"]

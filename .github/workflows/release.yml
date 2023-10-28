@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  release:
+    types:
+    - published
+
+jobs:
+  registries:
+    name: Publish to GitHub NPM
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Install Node toolchain
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+
+    - name: Install Rust toolchain
+      uses: actions-rust-lang/setup-rust-toolchain@v1
+      with:
+        toolchain: stable
+
+    - name: Install wasm-pack
+      run: |
+        cargo install wasm-pack
+
+    - name: Set version
+      run: |
+        # Remove the "v" from the version.
+        VERSION=$(echo ${{ github.ref_name }} | cut -b2-)
+        echo "Version: ${VERSION}"
+
+        cargo set-version ${VERSION}
+
+    - name: Create NPM package
+      run: |
+        wasm-pack build --release
+        sed -i s%esf-dogma-engine%@EVEShipFit/dogma-engine% pkg/package.json
+
+    - uses: JS-DevTools/npm-publish@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        registry: "https://npm.pkg.github.com"
+        package: pkg/package.json
