@@ -1,0 +1,20 @@
+[package]
+name = "dogma-engine"
+version = "0.0.0-git"
+authors = ["Patric Stout <eveshipfit@truebrain.nl>"]
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+console_error_panic_hook = "0.1"
+serde = { version = "1.0", features = ["derive"] }
+serde_repr = "0.1"
+serde-wasm-bindgen = "0.4"
+strum = "0.25"
+strum_macros = "0.25"
+wasm-bindgen = "0.2"
+
+[profile.release]
+opt-level = "s"

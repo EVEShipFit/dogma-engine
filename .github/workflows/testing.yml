@@ -1,0 +1,35 @@
+name: Testing
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  testing:
+    name: Testing
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Install Rust toolchain
+      uses: actions-rust-lang/setup-rust-toolchain@v1
+      with:
+        toolchain: stable
+
+    - name: Install wasm-pack
+      run: |
+        cargo install wasm-pack
+
+    - name: Build library
+      run: |
+        wasm-pack build --release --target web
+
+    - name: Check coding style
+      run: |
+        cargo fmt --check
