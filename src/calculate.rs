@@ -25,9 +25,9 @@ pub struct Ship {
 }
 
 impl Ship {
-    pub fn new(ship_id: i32) -> Ship {
+    pub fn new(hull_type_id: i32) -> Ship {
         Ship {
-            hull: Item::new(ship_id),
+            hull: Item::new(hull_type_id),
             items: Vec::new(),
             skills: Vec::new(),
             char: Item::new(0),
@@ -42,7 +42,7 @@ trait Pass {
 
 pub fn calculate(ship_layout: &super::data_types::ShipLayout, skills: &BTreeMap<i32, i32>) -> Ship {
     let info = Info::new(ship_layout, skills);
-    let mut ship = Ship::new(info.ship_layout.ship_id);
+    let mut ship = Ship::new(info.ship_layout.hull);
 
     pass_1::PassOne::pass(&info, &mut ship);
     pass_2::PassTwo::pass(&info, &mut ship);

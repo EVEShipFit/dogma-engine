@@ -4,10 +4,8 @@ use serde_repr::*;
 #[allow(non_snake_case)]
 #[derive(Deserialize, Debug)]
 pub struct TypeId {
-    pub name: String,
     pub groupID: i32,
     pub categoryID: i32,
-    pub marketGroupID: Option<i32>,
     pub capacity: Option<f32>,
     pub mass: Option<f32>,
     pub radius: Option<f32>,
@@ -103,6 +101,6 @@ pub struct DogmaEffect {
 #[allow(non_snake_case)]
 #[derive(Deserialize, Debug)]
 pub struct ShipLayout {
-    pub ship_id: i32,
+    pub hull: i32,
     pub items: Vec<i32>,
 }

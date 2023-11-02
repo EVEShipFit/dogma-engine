@@ -169,7 +169,7 @@ impl Pass for PassTwo {
         /* Depending on the modifier, move the effects to the correct attribute. */
         for effect in effects {
             let source_type_id = match effect.source {
-                Object::Ship => info.ship_layout.ship_id,
+                Object::Ship => info.ship_layout.hull,
                 Object::Item(index) => ship.items[index].type_id,
                 Object::Skill(index) => ship.skills[index].type_id,
                 _ => panic!("Unknown source object"),
