@@ -26,7 +26,7 @@ impl Pass for PassOne {
         ship.hull.set_attributes(info);
 
         /* Some attributes of ships come from the TypeID information. */
-        let type_id = info.get_type_id(info.ship_layout.ship_id);
+        let type_id = info.get_type_id(info.ship_layout.hull);
         ship.hull
             .set_attribute(ATTRIBUTE_MASS_ID, type_id.mass.unwrap());
         ship.hull
