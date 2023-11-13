@@ -122,6 +122,12 @@ impl Item {
     fn collect_effects(&mut self, info: &Info, origin: Object, effects: &mut Vec<Pass2Effect>) {
         for dogma_effect in info.get_dogma_effects(self.type_id) {
             let type_dogma_effect = info.get_dogma_effect(dogma_effect.effectID);
+            let category = get_effect_category(type_dogma_effect.effectCategory);
+
+            /* Find the highest state an item can be in. */
+            if category > self.max_state {
+                self.max_state = category;
+            }
 
             if !type_dogma_effect.modifierInfo.is_empty() {
                 for modifier in type_dogma_effect.modifierInfo {
@@ -133,7 +139,6 @@ impl Item {
                     let effect_modifier =
                         get_modifier_func(modifier.func, modifier.skillTypeID, modifier.groupID);
                     let target = get_target_object(modifier.domain, origin);
-                    let category = get_effect_category(type_dogma_effect.effectCategory);
                     let operator = get_effect_operator(modifier.operation.unwrap());
 
                     effects.push(Pass2Effect {
@@ -149,6 +154,10 @@ impl Item {
             } else {
                 self.effects.push(dogma_effect.effectID);
             }
+        }
+
+        if self.state > self.max_state {
+            self.state = self.max_state;
         }
     }
 }
@@ -169,7 +178,7 @@ impl Pass for PassTwo {
         /* Depending on the modifier, move the effects to the correct attribute. */
         for effect in effects {
             let source_type_id = match effect.source {
-                Object::Ship => info.ship_layout.hull,
+                Object::Ship => info.esi_fit.ship_type_id,
                 Object::Item(index) => ship.items[index].type_id,
                 Object::Skill(index) => ship.skills[index].type_id,
                 _ => panic!("Unknown source object"),

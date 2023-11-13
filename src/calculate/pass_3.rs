@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use strum::IntoEnumIterator;
 
-use super::item::{Attribute, EffectCategory, EffectOperator, Item, Object};
+use super::item::{Attribute, EffectOperator, Item, Object};
 use super::{Info, Pass, Ship};
 
 /* Penalty factor: 1 / math.exp((1 / 2.67) ** 2) */
@@ -28,7 +28,6 @@ impl Attribute {
         &self,
         info: &Info,
         ship: &Ship,
-        categories: &Vec<EffectCategory>,
         cache: &mut Cache,
         item: Object,
         attribute_id: i32,
@@ -56,9 +55,6 @@ impl Attribute {
                 if effect.operator != operator {
                     continue;
                 }
-                if !categories.contains(&effect.source_category) {
-                    continue;
-                }
 
                 let source = match effect.source {
                     Object::Ship => &ship.hull,
@@ -67,11 +63,14 @@ impl Attribute {
                     _ => panic!("Unknown source object"),
                 };
 
+                if effect.source_category > source.state {
+                    continue;
+                }
+
                 let source_value = match source.attributes.get(&effect.source_attribute_id) {
                     Some(attribute) => attribute.calculate_value(
                         info,
                         ship,
-                        categories,
                         cache,
                         effect.source,
                         effect.source_attribute_id,
@@ -205,23 +204,9 @@ impl Attribute {
 }
 
 impl Item {
-    fn calculate_values(
-        &self,
-        info: &Info,
-        ship: &Ship,
-        categories: &Vec<EffectCategory>,
-        cache: &mut Cache,
-        item: Object,
-    ) {
+    fn calculate_values(&self, info: &Info, ship: &Ship, cache: &mut Cache, item: Object) {
         for attribute_id in self.attributes.keys() {
-            self.attributes[&attribute_id].calculate_value(
-                info,
-                ship,
-                &categories,
-                cache,
-                item,
-                *attribute_id,
-            );
+            self.attributes[&attribute_id].calculate_value(info, ship, cache, item, *attribute_id);
         }
     }
 
@@ -243,12 +228,6 @@ impl Item {
 
 impl Pass for PassThree {
     fn pass(info: &Info, ship: &mut Ship) {
-        let categories = vec![
-            EffectCategory::Passive,
-            EffectCategory::Active,
-            EffectCategory::Online,
-        ];
-
         let mut cache = Cache {
             hull: BTreeMap::new(),
             items: BTreeMap::new(),
@@ -256,9 +235,9 @@ impl Pass for PassThree {
         };
 
         ship.hull
-            .calculate_values(info, ship, &categories, &mut cache, Object::Ship);
+            .calculate_values(info, ship, &mut cache, Object::Ship);
         for (index, item) in ship.items.iter().enumerate() {
-            item.calculate_values(info, ship, &categories, &mut cache, Object::Item(index));
+            item.calculate_values(info, ship, &mut cache, Object::Item(index));
         }
         /* No need to calculate skills; recursively they will resolve what is needed. */
 

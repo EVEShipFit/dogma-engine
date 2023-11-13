@@ -2,14 +2,14 @@ use serde::Serialize;
 use std::collections::BTreeMap;
 use strum_macros::EnumIter;
 
-#[derive(Serialize, Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Serialize, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum EffectCategory {
     Passive,
+    Online,
     Active,
+    Overload,
     Target,
     Area,
-    Online,
-    Overload,
     Dungeon,
     System,
 }
@@ -55,6 +55,10 @@ pub struct Attribute {
 #[derive(Serialize, Debug)]
 pub struct Item {
     pub type_id: i32,
+    pub quantity: i32,
+    pub flag: i32,
+    pub state: EffectCategory,
+    pub max_state: EffectCategory,
     pub attributes: BTreeMap<i32, Attribute>,
     pub effects: Vec<i32>,
 }
@@ -70,11 +74,19 @@ impl Attribute {
 }
 
 impl Item {
-    pub fn new(type_id: i32) -> Item {
+    pub fn new_esi(type_id: i32, quantity: i32, flag: i32, state: EffectCategory) -> Item {
         Item {
             type_id,
+            quantity,
+            flag,
+            state,
+            max_state: EffectCategory::Passive,
             attributes: BTreeMap::new(),
             effects: Vec::new(),
         }
+    }
+
+    pub fn new_fake(type_id: i32) -> Item {
+        return Self::new_esi(type_id, 1, -1, EffectCategory::Active);
     }
 }

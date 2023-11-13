@@ -100,7 +100,25 @@ pub struct DogmaEffect {
 
 #[allow(non_snake_case)]
 #[derive(Deserialize, Debug)]
-pub struct ShipLayout {
-    pub hull: i32,
-    pub items: Vec<i32>,
+pub enum EsiState {
+    Passive,
+    Online,
+    Active,
+    Overload,
+}
+
+#[allow(non_snake_case)]
+#[derive(Deserialize, Debug)]
+pub struct EsiItem {
+    pub type_id: i32,
+    pub quantity: i32,
+    pub flag: i32,
+    pub state: Option<EsiState>,
+}
+
+#[allow(non_snake_case)]
+#[derive(Deserialize, Debug)]
+pub struct EsiFit {
+    pub ship_type_id: i32,
+    pub items: Vec<EsiItem>,
 }
