@@ -125,7 +125,7 @@ impl Item {
             let category = get_effect_category(type_dogma_effect.effectCategory);
 
             /* Find the highest state an item can be in. */
-            if category > self.max_state {
+            if category > self.max_state && category <= EffectCategory::Overload {
                 self.max_state = category;
             }
 
