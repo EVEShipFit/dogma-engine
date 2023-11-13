@@ -44,30 +44,50 @@ fn add_scan_strength(ship: &mut Ship) -> (f32, f32) {
     (base_scan_strength, scan_strength)
 }
 
-fn add_cpu_usage(ship: &mut Ship) -> (f32, f32) {
+fn add_cpu_used(ship: &mut Ship) -> (f32, f32) {
     /* How much CPU is being used, which is adding up cpuOuput (50) from all items. */
 
-    let mut cpu_usage = 0.0;
+    let mut cpu_used = 0.0;
     for item in &ship.items {
         if item.attributes.contains_key(&50) && item.state != EffectCategory::Passive {
-            cpu_usage += item.attributes.get(&50).unwrap().value.unwrap();
+            cpu_used += item.attributes.get(&50).unwrap().value.unwrap();
         }
     }
 
-    (0.0, cpu_usage)
+    (0.0, cpu_used)
 }
 
-fn add_pg_usage(ship: &mut Ship) -> (f32, f32) {
+fn add_pg_used(ship: &mut Ship) -> (f32, f32) {
     /* How much PG is being used, which is adding up powerOutput (30) from all items. */
 
-    let mut pg_usage = 0.0;
+    let mut pg_used = 0.0;
     for item in &ship.items {
         if item.attributes.contains_key(&30) && item.state != EffectCategory::Passive {
-            pg_usage += item.attributes.get(&30).unwrap().value.unwrap();
+            pg_used += item.attributes.get(&30).unwrap().value.unwrap();
         }
     }
 
-    (0.0, pg_usage)
+    (0.0, pg_used)
+}
+
+fn add_cpu_unused(ship: &mut Ship) -> (f32, f32) {
+    /* How much CPU is left, which is the total CPU minus the usage. */
+
+    let cpu_used = ship.hull.attributes.get(&-3).unwrap().value.unwrap();
+    let cpu_output = ship.hull.attributes.get(&48).unwrap().value.unwrap();
+    let cpu_unused = cpu_output - cpu_used;
+
+    (0.0, cpu_unused)
+}
+
+fn add_pg_unused(ship: &mut Ship) -> (f32, f32) {
+    /* How much PG is left, which is the total PG minus the usage. */
+
+    let pg_used = ship.hull.attributes.get(&-4).unwrap().value.unwrap();
+    let pg_output = ship.hull.attributes.get(&11).unwrap().value.unwrap();
+    let pg_unused = pg_output - pg_used;
+
+    (0.0, pg_unused)
 }
 
 /* Attributes don't contain all information displayed, so we calculate some fake attributes with those values. */
@@ -79,10 +99,16 @@ impl Pass for PassFour {
         let scan_strength = add_scan_strength(ship);
         add_attribute(ship, -2, scan_strength.0, scan_strength.1);
 
-        let cpu_usage = add_cpu_usage(ship);
-        add_attribute(ship, -3, cpu_usage.0, cpu_usage.1);
+        let cpu_used = add_cpu_used(ship);
+        add_attribute(ship, -3, cpu_used.0, cpu_used.1);
 
-        let pg_usage = add_pg_usage(ship);
-        add_attribute(ship, -4, pg_usage.0, pg_usage.1);
+        let pg_used = add_pg_used(ship);
+        add_attribute(ship, -4, pg_used.0, pg_used.1);
+
+        let cpu_unused = add_cpu_unused(ship);
+        add_attribute(ship, -5, cpu_unused.0, cpu_unused.1);
+
+        let pg_unused = add_pg_unused(ship);
+        add_attribute(ship, -6, pg_unused.0, pg_unused.1);
     }
 }
