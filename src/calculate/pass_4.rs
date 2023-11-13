@@ -1,4 +1,4 @@
-use super::item::Attribute;
+use super::item::{Attribute, EffectCategory};
 use super::{Info, Pass, Ship};
 
 pub struct PassFour {}
@@ -49,7 +49,7 @@ fn add_cpu_usage(ship: &mut Ship) -> (f32, f32) {
 
     let mut cpu_usage = 0.0;
     for item in &ship.items {
-        if item.attributes.contains_key(&50) {
+        if item.attributes.contains_key(&50) && item.state != EffectCategory::Passive {
             cpu_usage += item.attributes.get(&50).unwrap().value.unwrap();
         }
     }
@@ -62,7 +62,7 @@ fn add_pg_usage(ship: &mut Ship) -> (f32, f32) {
 
     let mut pg_usage = 0.0;
     for item in &ship.items {
-        if item.attributes.contains_key(&30) {
+        if item.attributes.contains_key(&30) && item.state != EffectCategory::Passive {
             pg_usage += item.attributes.get(&30).unwrap().value.unwrap();
         }
     }

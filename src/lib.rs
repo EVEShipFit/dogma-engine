@@ -13,14 +13,13 @@ pub fn init() {
 
 #[wasm_bindgen]
 pub fn calculate(js_ship_layout: JsValue, js_skills: JsValue) -> JsValue {
-    let ship_layout: data_types::ShipLayout =
-        serde_wasm_bindgen::from_value(js_ship_layout).unwrap();
+    let esi_fit: data_types::EsiFit = serde_wasm_bindgen::from_value(js_ship_layout).unwrap();
     let skills: BTreeMap<String, i32> = serde_wasm_bindgen::from_value(js_skills).unwrap();
     let skills = skills
         .into_iter()
         .map(|(k, v)| (k.parse::<i32>().unwrap(), v))
         .collect();
 
-    let statistics = calculate::calculate(&ship_layout, &skills);
+    let statistics = calculate::calculate(&esi_fit, &skills);
     serde_wasm_bindgen::to_value(&statistics).unwrap()
 }

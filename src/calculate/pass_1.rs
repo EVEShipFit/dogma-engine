@@ -1,5 +1,6 @@
-use super::item::{Attribute, Item};
+use super::item::{Attribute, EffectCategory, Item};
 use super::{Info, Pass, Ship};
+use crate::data_types::EsiState;
 
 const ATTRIBUTE_MASS_ID: i32 = 4;
 const ATTRIBUTE_CAPACITY_ID: i32 = 38;
@@ -26,7 +27,7 @@ impl Pass for PassOne {
         ship.hull.set_attributes(info);
 
         /* Some attributes of ships come from the TypeID information. */
-        let type_id = info.get_type_id(info.ship_layout.hull);
+        let type_id = info.get_type_id(info.esi_fit.ship_type_id);
         ship.hull
             .set_attribute(ATTRIBUTE_MASS_ID, type_id.mass.unwrap());
         ship.hull
@@ -37,7 +38,7 @@ impl Pass for PassOne {
             .set_attribute(ATTRIBUTE_RADIUS_ID, type_id.radius.unwrap());
 
         for (skill_id, skill_level) in info.skills {
-            let mut skill = Item::new(*skill_id);
+            let mut skill = Item::new_fake(*skill_id);
 
             skill.set_attributes(info);
             skill.set_attribute(ATTRIBUTE_SKILL_LEVEL_ID, *skill_level as f32);
@@ -45,8 +46,15 @@ impl Pass for PassOne {
             ship.skills.push(skill);
         }
 
-        for item_id in &info.ship_layout.items {
-            let mut item = Item::new(*item_id);
+        for esi_item in &info.esi_fit.items {
+            let state = match esi_item.state {
+                None => EffectCategory::Active,
+                Some(EsiState::Passive) => EffectCategory::Passive,
+                Some(EsiState::Online) => EffectCategory::Online,
+                Some(EsiState::Active) => EffectCategory::Active,
+                Some(EsiState::Overload) => EffectCategory::Overload,
+            };
+            let mut item = Item::new_esi(esi_item.type_id, esi_item.quantity, esi_item.flag, state);
 
             item.set_attributes(info);
 
