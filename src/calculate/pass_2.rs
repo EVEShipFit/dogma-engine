@@ -223,7 +223,7 @@ impl Pass for PassTwo {
                     for attribute_skill_id in &ATTRIBUTE_SKILLS {
                         if ship.hull.attributes.contains_key(attribute_skill_id)
                             && ship.hull.attributes[attribute_skill_id].base_value
-                                == skill_type_id as f32
+                                == skill_type_id as f64
                         {
                             ship.hull.add_effect(
                                 info,
@@ -236,7 +236,7 @@ impl Pass for PassTwo {
                         for item in &mut ship.items {
                             if item.attributes.contains_key(attribute_skill_id)
                                 && item.attributes[attribute_skill_id].base_value
-                                    == skill_type_id as f32
+                                    == skill_type_id as f64
                             {
                                 item.add_effect(
                                     info,

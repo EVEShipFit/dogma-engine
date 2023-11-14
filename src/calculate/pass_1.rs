@@ -11,7 +11,7 @@ const ATTRIBUTE_SKILL_LEVEL_ID: i32 = 280;
 pub struct PassOne {}
 
 impl Item {
-    pub fn set_attribute(&mut self, attribute_id: i32, value: f32) {
+    pub fn set_attribute(&mut self, attribute_id: i32, value: f64) {
         self.attributes.insert(attribute_id, Attribute::new(value));
     }
 
@@ -41,7 +41,7 @@ impl Pass for PassOne {
             let mut skill = Item::new_fake(*skill_id);
 
             skill.set_attributes(info);
-            skill.set_attribute(ATTRIBUTE_SKILL_LEVEL_ID, *skill_level as f32);
+            skill.set_attribute(ATTRIBUTE_SKILL_LEVEL_ID, *skill_level as f64);
 
             ship.skills.push(skill);
         }

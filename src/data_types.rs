@@ -6,17 +6,17 @@ use serde_repr::*;
 pub struct TypeId {
     pub groupID: i32,
     pub categoryID: i32,
-    pub capacity: Option<f32>,
-    pub mass: Option<f32>,
-    pub radius: Option<f32>,
-    pub volume: Option<f32>,
+    pub capacity: Option<f64>,
+    pub mass: Option<f64>,
+    pub radius: Option<f64>,
+    pub volume: Option<f64>,
 }
 
 #[allow(non_snake_case)]
 #[derive(Deserialize, Debug)]
 pub struct TypeDogmaAttribute {
     pub attributeID: i32,
-    pub value: f32,
+    pub value: f64,
 }
 
 #[allow(non_snake_case)]
@@ -36,7 +36,7 @@ pub struct TypeDogma {
 #[allow(non_snake_case)]
 #[derive(Deserialize, Debug)]
 pub struct DogmaAttribute {
-    pub defaultValue: f32,
+    pub defaultValue: f64,
     pub highIsGood: bool,
     pub stackable: bool,
 }

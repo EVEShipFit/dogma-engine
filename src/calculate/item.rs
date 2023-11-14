@@ -47,8 +47,8 @@ pub struct Effect {
 
 #[derive(Serialize, Debug)]
 pub struct Attribute {
-    pub base_value: f32,
-    pub value: Option<f32>,
+    pub base_value: f64,
+    pub value: Option<f64>,
     pub effects: Vec<Effect>,
 }
 
@@ -64,7 +64,7 @@ pub struct Item {
 }
 
 impl Attribute {
-    pub fn new(value: f32) -> Attribute {
+    pub fn new(value: f64) -> Attribute {
         Attribute {
             base_value: value,
             value: None,
