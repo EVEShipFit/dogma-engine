@@ -138,18 +138,24 @@ impl Attribute {
                 | EffectOperator::PostMul
                 | EffectOperator::PostDiv
                 | EffectOperator::PostPercent => {
+                    let dogma_attribute = info.get_dogma_attribute(attribute_id);
+
+                    /* values.0 are non-stacking. */
                     for value in values.0 {
                         current_value *= 1.0 + value;
                     }
 
-                    /* Sort values.1 (positive values) based on value; highest value gets lowest penalty. */
-                    values
-                        .1
-                        .sort_by(|x, y| x.abs().partial_cmp(&y.abs()).unwrap());
-                    /* Sort values.2 (negative values) based on value; lowest value gets lowest penalty. */
-                    values
-                        .2
-                        .sort_by(|x, y| y.abs().partial_cmp(&x.abs()).unwrap());
+                    let highest_sort = |x: &f64, y: &f64| x.abs().partial_cmp(&y.abs()).unwrap();
+                    let lowest_sort = |x: &f64, y: &f64| y.abs().partial_cmp(&x.abs()).unwrap();
+
+                    /* Sort values.1 (positive values) and values.2 (negative values) based on high-is-good. */
+                    if dogma_attribute.highIsGood {
+                        values.1.sort_by(highest_sort);
+                        values.2.sort_by(lowest_sort);
+                    } else {
+                        values.1.sort_by(lowest_sort);
+                        values.2.sort_by(highest_sort);
+                    }
 
                     /* Apply positive stacking penalty. */
                     for (index, value) in values.1.iter().enumerate() {
