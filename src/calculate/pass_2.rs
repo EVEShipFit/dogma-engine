@@ -198,7 +198,12 @@ impl Pass for PassTwo {
                     target.add_effect(info, effect.target_attribute_id, category_id, &effect);
                 }
                 Modifier::LocationModifier() => {
-                    // TODO
+                    ship.hull
+                        .add_effect(info, effect.target_attribute_id, category_id, &effect);
+
+                    for item in &mut ship.items {
+                        item.add_effect(info, effect.target_attribute_id, category_id, &effect);
+                    }
                 }
                 Modifier::LocationGroupModifier(group_id) => {
                     let type_id = info.get_type_id(ship.hull.type_id);
