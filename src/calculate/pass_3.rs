@@ -5,7 +5,7 @@ use super::item::{Attribute, EffectOperator, Item, Object};
 use super::{Info, Pass, Ship};
 
 /* Penalty factor: 1 / math.exp((1 / 2.67) ** 2) */
-const PENALTY_FACTOR: f32 = 0.8691199808003974;
+const PENALTY_FACTOR: f64 = 0.8691199808003974;
 
 const OPERATOR_HAS_PENALTY: [EffectOperator; 5] = [
     EffectOperator::PreMul,
@@ -18,9 +18,9 @@ const OPERATOR_HAS_PENALTY: [EffectOperator; 5] = [
 pub struct PassThree {}
 
 struct Cache {
-    hull: BTreeMap<i32, f32>,
-    items: BTreeMap<usize, BTreeMap<i32, f32>>,
-    skills: BTreeMap<usize, BTreeMap<i32, f32>>,
+    hull: BTreeMap<i32, f64>,
+    items: BTreeMap<usize, BTreeMap<i32, f64>>,
+    skills: BTreeMap<usize, BTreeMap<i32, f64>>,
 }
 
 impl Attribute {
@@ -31,7 +31,7 @@ impl Attribute {
         cache: &mut Cache,
         item: Object,
         attribute_id: i32,
-    ) -> f32 {
+    ) -> f64 {
         if self.value.is_some() {
             return self.value.unwrap();
         }
@@ -210,7 +210,7 @@ impl Item {
         }
     }
 
-    fn store_cached_values(&mut self, info: &Info, cache: &BTreeMap<i32, f32>) {
+    fn store_cached_values(&mut self, info: &Info, cache: &BTreeMap<i32, f64>) {
         for (attribute_id, value) in cache {
             if let Some(attribute) = self.attributes.get_mut(&attribute_id) {
                 attribute.value = Some(*value);
