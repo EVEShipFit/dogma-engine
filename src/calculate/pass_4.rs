@@ -42,6 +42,7 @@ impl Pass for PassFour {
     fn pass(_info: &Info, ship: &mut Ship) {
         align_time::attribute_align_time(ship);
         scan_strength::attribute_scan_strength(ship);
+
         cpu_power::attribute_cpu_used(ship);
         cpu_power::attribute_power_used(ship);
         cpu_power::attribute_cpu_unused(ship);

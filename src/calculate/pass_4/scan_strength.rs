@@ -1,7 +1,7 @@
 use super::super::Ship;
 use super::AttributeId;
 
-static SCAN_STRENGTH_ATTRIBUTES: [i32; 4] = [
+const SCAN_STRENGTH_ATTRIBUTES: [i32; 4] = [
     AttributeId::scanRadarStrength as i32,
     AttributeId::scanLadarStrength as i32,
     AttributeId::scanMagnetometricStrength as i32,
