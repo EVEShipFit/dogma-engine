@@ -6,6 +6,7 @@ pub struct PassFour {}
 mod align_time;
 mod cpu_power;
 mod ehp;
+mod recharge;
 mod scan_strength;
 
 #[allow(non_camel_case_types)]
@@ -25,6 +26,14 @@ pub enum AttributeId {
     armorEhp = -12,
     hullEhp = -13,
     ehp = -14,
+    passiveShieldRecharge = -15,
+    shieldRecharge = -16,
+    armorRecharge = -17,
+    hullRecharge = -18,
+    passiveShieldRechargeEhp = -19,
+    shieldRechargeEhp = -20,
+    armorRechargeEhp = -21,
+    hullRechargeEhp = -22,
 
     mass = 4,
     hp = 9,
@@ -32,7 +41,11 @@ pub enum AttributeId {
     power = 30,
     cpuOutput = 48,
     cpu = 50,
+    shieldBonus = 68,
     agility = 70,
+    duration = 73,
+    structureDamageAmount = 83,
+    armorDamageAmount = 84,
 
     kineticDamageResonance = 109,
     thermalDamageResonance = 110,
@@ -55,6 +68,8 @@ pub enum AttributeId {
     shieldExplosiveDamageResonance = 272,
     shieldKineticDamageResonance = 273,
     shieldThermalDamageResonance = 274,
+
+    shieldRechargeRate = 479,
 }
 
 impl Ship {
@@ -83,5 +98,10 @@ impl Pass for PassFour {
         ehp::attribute_armor_ehp(ship);
         ehp::attribute_hull_ehp(ship);
         ehp::attribute_ehp(ship);
+
+        recharge::attribute_passive_shield_recharge(ship);
+        recharge::attribute_shield_recharge(ship);
+        recharge::attribute_armor_recharge(ship);
+        recharge::attribute_hull_recharge(ship);
     }
 }
