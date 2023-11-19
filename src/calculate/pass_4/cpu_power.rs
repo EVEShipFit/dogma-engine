@@ -35,23 +35,19 @@ pub fn attribute_power_used(ship: &mut Ship) {
 pub fn attribute_cpu_unused(ship: &mut Ship) {
     /* How much CPU is left, which is the total CPU minus the usage. */
 
-    let attr_cpu_used = AttributeId::cpuUsed as i32;
-    let attr_cpu_output = AttributeId::cpuOutput as i32;
+    let attr_cpu_used = ship
+        .hull
+        .attributes
+        .get(&(AttributeId::cpuUsed as i32))
+        .unwrap();
+    let attr_cpu_output = ship
+        .hull
+        .attributes
+        .get(&(AttributeId::cpuOutput as i32))
+        .unwrap();
 
-    let cpu_used = ship
-        .hull
-        .attributes
-        .get(&attr_cpu_used)
-        .unwrap()
-        .value
-        .unwrap();
-    let cpu_output = ship
-        .hull
-        .attributes
-        .get(&attr_cpu_output)
-        .unwrap()
-        .value
-        .unwrap();
+    let cpu_used = attr_cpu_used.value.unwrap();
+    let cpu_output = attr_cpu_output.value.unwrap();
     let cpu_unused = cpu_output - cpu_used;
 
     ship.add_attribute(AttributeId::cpuUnused, 0.0, cpu_unused);
@@ -60,23 +56,19 @@ pub fn attribute_cpu_unused(ship: &mut Ship) {
 pub fn attribute_power_unused(ship: &mut Ship) {
     /* How much PG is left, which is the total PG minus the usage. */
 
-    let attr_power_used = AttributeId::powerUsed as i32;
-    let attr_power_output = AttributeId::powerOutput as i32;
+    let attr_power_used = ship
+        .hull
+        .attributes
+        .get(&(AttributeId::powerUsed as i32))
+        .unwrap();
+    let attr_power_output = ship
+        .hull
+        .attributes
+        .get(&(AttributeId::powerOutput as i32))
+        .unwrap();
 
-    let power_used = ship
-        .hull
-        .attributes
-        .get(&attr_power_used)
-        .unwrap()
-        .value
-        .unwrap();
-    let power_output = ship
-        .hull
-        .attributes
-        .get(&attr_power_output)
-        .unwrap()
-        .value
-        .unwrap();
+    let power_used = attr_power_used.value.unwrap();
+    let power_output = attr_power_output.value.unwrap();
     let power_unused = power_output - power_used;
 
     ship.add_attribute(AttributeId::powerUnused, 0.0, power_unused);
