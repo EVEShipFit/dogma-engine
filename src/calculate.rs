@@ -12,6 +12,14 @@ use info::Info;
 use item::Item;
 
 #[derive(Serialize, Debug)]
+pub struct DamageProfile {
+    pub em: f64,
+    pub explosive: f64,
+    pub kinetic: f64,
+    pub thermal: f64,
+}
+
+#[derive(Serialize, Debug)]
 pub struct Ship {
     pub hull: Item,
     pub items: Vec<Item>,
@@ -22,6 +30,8 @@ pub struct Ship {
     pub char: Item,
     #[serde(skip_serializing)]
     pub structure: Item,
+
+    pub damage_profile: DamageProfile,
 }
 
 impl Ship {
@@ -32,6 +42,12 @@ impl Ship {
             skills: Vec::new(),
             char: Item::new_fake(0),
             structure: Item::new_fake(0),
+            damage_profile: DamageProfile {
+                em: 0.25,
+                explosive: 0.25,
+                kinetic: 0.25,
+                thermal: 0.25,
+            },
         }
     }
 }
