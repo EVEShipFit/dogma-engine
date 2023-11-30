@@ -30,6 +30,8 @@ pub struct Ship {
     pub char: Item,
     #[serde(skip_serializing)]
     pub structure: Item,
+    #[serde(skip_serializing)]
+    pub target: Item,
 
     pub damage_profile: DamageProfile,
 }
@@ -42,6 +44,7 @@ impl Ship {
             skills: Vec::new(),
             char: Item::new_fake(0),
             structure: Item::new_fake(0),
+            target: Item::new_fake(0),
             damage_profile: DamageProfile {
                 em: 0.25,
                 explosive: 0.25,

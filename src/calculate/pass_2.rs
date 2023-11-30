@@ -18,6 +18,7 @@ enum Modifier {
     LocationModifier(),
     OwnerRequiredSkillModifier(i32),
     ItemModifier(),
+    EffectStopper(),
 }
 
 #[derive(Debug)]
@@ -48,7 +49,7 @@ fn get_modifier_func(
         DogmaEffectModifierInfoFunc::OwnerRequiredSkillModifier => {
             Modifier::OwnerRequiredSkillModifier(skill_type_id.unwrap())
         }
-        _ => panic!("Unknown modifier function: {:?}", func),
+        DogmaEffectModifierInfoFunc::EffectStopper => Modifier::EffectStopper(),
     }
 }
 
@@ -59,7 +60,8 @@ fn get_target_object(domain: DogmaEffectModifierInfoDomain, origin: Object) -> O
         DogmaEffectModifierInfoDomain::OtherID => Object::Char, // TODO -- This is incorrect
         DogmaEffectModifierInfoDomain::StructureID => Object::Structure,
         DogmaEffectModifierInfoDomain::ItemID => origin,
-        _ => panic!("Unknown domain: {:?}", domain),
+        DogmaEffectModifierInfoDomain::TargetID => Object::Target,
+        DogmaEffectModifierInfoDomain::Target => Object::Target,
     }
 }
 
@@ -193,6 +195,7 @@ impl Pass for PassTwo {
                         Object::Structure => &mut ship.structure,
                         Object::Item(index) => &mut ship.items[index],
                         Object::Skill(index) => &mut ship.skills[index],
+                        Object::Target => &mut ship.target,
                     };
 
                     target.add_effect(info, effect.target_attribute_id, category_id, &effect);
@@ -254,6 +257,9 @@ impl Pass for PassTwo {
                     }
                 }
                 Modifier::OwnerRequiredSkillModifier(_skill_type_id) => {
+                    // TODO
+                }
+                Modifier::EffectStopper() => {
                     // TODO
                 }
             }
