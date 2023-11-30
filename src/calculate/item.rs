@@ -34,6 +34,7 @@ pub enum Object {
     Skill(usize),
     Char,
     Structure,
+    Target,
 }
 
 #[derive(Serialize, Debug)]
