@@ -8,6 +8,14 @@ const ATTRIBUTE_VOLUME_ID: i32 = 161;
 const ATTRIBUTE_RADIUS_ID: i32 = 162;
 const ATTRIBUTE_SKILL_LEVEL_ID: i32 = 280;
 
+const ESI_FLAG_FILTER: [i32; 31] = [
+    11, 12, 13, 14, 15, 16, 17, 18, // lowslots
+    19, 20, 21, 22, 23, 24, 25, 26, // medslots
+    27, 28, 29, 30, 31, 32, 33, 34, // hislots
+    92, 93, 94, // rigs
+    125, 126, 127, 128, // subsystems
+];
+
 pub struct PassOne {}
 
 impl Item {
@@ -47,6 +55,11 @@ impl Pass for PassOne {
         }
 
         for esi_item in &info.esi_fit.items {
+            /* Only process items that are in slots, not in cargo etc. */
+            if !ESI_FLAG_FILTER.contains(&esi_item.flag) {
+                continue;
+            }
+
             let state = match esi_item.state {
                 None => EffectCategory::Active,
                 Some(EsiState::Passive) => EffectCategory::Passive,
