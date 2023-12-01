@@ -143,12 +143,10 @@ impl Attribute {
                         current_value *= 1.0 + value;
                     }
 
-                    let highest_sort = |x: &f64, y: &f64| x.abs().partial_cmp(&y.abs()).unwrap();
-                    let lowest_sort = |x: &f64, y: &f64| y.abs().partial_cmp(&x.abs()).unwrap();
-
                     /* For positive values, the highest number goes first. For negative values, the lowest number. */
-                    values.1.sort_by(highest_sort);
-                    values.2.sort_by(lowest_sort);
+                    let sort_func = |x: &f64, y: &f64| y.abs().partial_cmp(&x.abs()).unwrap();
+                    values.1.sort_by(sort_func);
+                    values.2.sort_by(sort_func);
 
                     /* Apply positive stacking penalty. */
                     for (index, value) in values.1.iter().enumerate() {
