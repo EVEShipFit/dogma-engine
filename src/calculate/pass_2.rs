@@ -18,7 +18,6 @@ enum Modifier {
     LocationModifier(),
     OwnerRequiredSkillModifier(i32),
     ItemModifier(),
-    EffectStopper(),
 }
 
 #[derive(Debug)]
@@ -36,20 +35,21 @@ fn get_modifier_func(
     func: DogmaEffectModifierInfoFunc,
     skill_type_id: Option<i32>,
     group_id: Option<i32>,
-) -> Modifier {
+) -> Option<Modifier> {
     match func {
-        DogmaEffectModifierInfoFunc::LocationRequiredSkillModifier => {
-            Modifier::LocationRequiredSkillModifier(skill_type_id.unwrap())
-        }
+        DogmaEffectModifierInfoFunc::LocationRequiredSkillModifier => Some(
+            Modifier::LocationRequiredSkillModifier(skill_type_id.unwrap()),
+        ),
         DogmaEffectModifierInfoFunc::LocationGroupModifier => {
-            Modifier::LocationGroupModifier(group_id.unwrap())
+            Some(Modifier::LocationGroupModifier(group_id.unwrap()))
         }
-        DogmaEffectModifierInfoFunc::LocationModifier => Modifier::LocationModifier(),
-        DogmaEffectModifierInfoFunc::ItemModifier => Modifier::ItemModifier(),
+        DogmaEffectModifierInfoFunc::LocationModifier => Some(Modifier::LocationModifier()),
+        DogmaEffectModifierInfoFunc::ItemModifier => Some(Modifier::ItemModifier()),
         DogmaEffectModifierInfoFunc::OwnerRequiredSkillModifier => {
-            Modifier::OwnerRequiredSkillModifier(skill_type_id.unwrap())
+            Some(Modifier::OwnerRequiredSkillModifier(skill_type_id.unwrap()))
         }
-        DogmaEffectModifierInfoFunc::EffectStopper => Modifier::EffectStopper(),
+        /* EffectStopper has no effect on the attributes; just on what you can bring online. */
+        DogmaEffectModifierInfoFunc::EffectStopper => None,
     }
 }
 
@@ -79,17 +79,19 @@ fn get_effect_category(category: i32) -> EffectCategory {
     }
 }
 
-fn get_effect_operator(operation: i32) -> EffectOperator {
+fn get_effect_operator(operation: i32) -> Option<EffectOperator> {
     match operation {
-        -1 => EffectOperator::PreAssign,
-        0 => EffectOperator::PreMul,
-        1 => EffectOperator::PreDiv,
-        2 => EffectOperator::ModAdd,
-        3 => EffectOperator::ModSub,
-        4 => EffectOperator::PostMul,
-        5 => EffectOperator::PostDiv,
-        6 => EffectOperator::PostPercent,
-        7 => EffectOperator::PostAssignment,
+        -1 => Some(EffectOperator::PreAssign),
+        0 => Some(EffectOperator::PreMul),
+        1 => Some(EffectOperator::PreDiv),
+        2 => Some(EffectOperator::ModAdd),
+        3 => Some(EffectOperator::ModSub),
+        4 => Some(EffectOperator::PostMul),
+        5 => Some(EffectOperator::PostDiv),
+        6 => Some(EffectOperator::PostPercent),
+        7 => Some(EffectOperator::PostAssignment),
+        /* We ignore operator 9 (calculates Skill Level based on Skill Points; irrelevant for fits). */
+        9 => None,
         _ => panic!("Unknown effect operation: {}", operation),
     }
 }
@@ -133,19 +135,21 @@ impl Item {
 
             if !type_dogma_effect.modifierInfo.is_empty() {
                 for modifier in type_dogma_effect.modifierInfo {
-                    /* We ignore operator 9 (calculates Skill Level based on Skill Points; irrelevant for fits). */
-                    if modifier.operation.unwrap() == 9 {
+                    let effect_modifier =
+                        get_modifier_func(modifier.func, modifier.skillTypeID, modifier.groupID);
+                    if effect_modifier.is_none() {
                         continue;
                     }
 
-                    let effect_modifier =
-                        get_modifier_func(modifier.func, modifier.skillTypeID, modifier.groupID);
-                    let target = get_target_object(modifier.domain, origin);
                     let operator = get_effect_operator(modifier.operation.unwrap());
+                    if operator.is_none() {
+                        continue;
+                    }
 
+                    let target = get_target_object(modifier.domain, origin);
                     effects.push(Pass2Effect {
-                        modifier: effect_modifier,
-                        operator,
+                        modifier: effect_modifier.unwrap(),
+                        operator: operator.unwrap(),
                         source: origin,
                         source_category: category,
                         source_attribute_id: modifier.modifyingAttributeID.unwrap(),
@@ -257,9 +261,6 @@ impl Pass for PassTwo {
                     }
                 }
                 Modifier::OwnerRequiredSkillModifier(_skill_type_id) => {
-                    // TODO
-                }
-                Modifier::EffectStopper() => {
                     // TODO
                 }
             }
