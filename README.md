@@ -20,11 +20,7 @@ This Dogma engine implements a multi-pass approach.
 To make rendering a fit easier, these are calculated by this library, and presented as new Dogma attributes.
 
 Their identifier is always a negative value, to visually separate them.
-
-- `-1`: align-time
-- `-2`: scan strength
-- `-3`: CPU usage
-- `-4`: PG usage
+What additional attributes exist are defined in [EVEShipFit/data](https://github.com/EVEShipFit/data) repository.
 
 ## Integration
 
