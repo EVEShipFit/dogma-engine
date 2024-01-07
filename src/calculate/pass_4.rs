@@ -4,6 +4,7 @@ use super::{Info, Pass, Ship};
 pub struct PassFour {}
 
 mod align_time;
+mod capacitor;
 mod cpu_power;
 mod ehp;
 mod recharge;
@@ -34,13 +35,19 @@ pub enum AttributeId {
     shieldRechargeEhp = -20,
     armorRechargeEhp = -21,
     hullRechargeEhp = -22,
+    capacitorPeakRecharge = -23,
+    capacitorPeakUsage = -24,
+    capacitorPeakDelta = -25,
+    capacitorPeakDeltaPercentage = -26,
 
     mass = 4,
+    capacitorNeed = 6,
     hp = 9,
     powerOutput = 11,
     power = 30,
     cpuOutput = 48,
     cpu = 50,
+    rechargeRate = 55,
     shieldBonus = 68,
     agility = 70,
     duration = 73,
@@ -70,6 +77,7 @@ pub enum AttributeId {
     shieldThermalDamageResonance = 274,
 
     shieldRechargeRate = 479,
+    capacitorCapacity = 482,
 }
 
 impl Ship {
@@ -103,5 +111,10 @@ impl Pass for PassFour {
         recharge::attribute_shield_recharge(ship);
         recharge::attribute_armor_recharge(ship);
         recharge::attribute_hull_recharge(ship);
+
+        capacitor::attribute_capacitor_peak_recharge(ship);
+        capacitor::attribute_capacitor_peak_usage(ship);
+        capacitor::attribute_capacitor_peak_delta(ship);
+        capacitor::attribute_capacitor_peak_delta_percentage(ship);
     }
 }
