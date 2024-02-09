@@ -39,6 +39,7 @@ pub enum AttributeId {
     capacitorPeakUsage = -24,
     capacitorPeakDelta = -25,
     capacitorPeakDeltaPercentage = -26,
+    capacitorDepletesIn = -27,
 
     mass = 4,
     capacitorNeed = 6,
@@ -116,5 +117,6 @@ impl Pass for PassFour {
         capacitor::attribute_capacitor_peak_usage(ship);
         capacitor::attribute_capacitor_peak_delta(ship);
         capacitor::attribute_capacitor_peak_delta_percentage(ship);
+        capacitor::attribute_capacitor_depletes_in(ship);
     }
 }
