@@ -252,12 +252,18 @@ impl Pass for PassThree {
             .calculate_values(info, ship, &mut cache, Object::Ship);
         for (index, item) in ship.items.iter().enumerate() {
             item.calculate_values(info, ship, &mut cache, Object::Item(index));
+            if let Some(charge) = &item.charge {
+                charge.calculate_values(info, ship, &mut cache, Object::Charge(index));
+            }
         }
         /* No need to calculate skills; recursively they will resolve what is needed. */
 
         ship.hull.store_cached_values(info, &cache.hull);
         for (index, item) in ship.items.iter_mut().enumerate() {
             item.store_cached_values(info, &cache.items[&index]);
+            if let Some(charge) = &mut item.charge {
+                charge.store_cached_values(info, &cache.charge[&index]);
+            }
         }
     }
 }
