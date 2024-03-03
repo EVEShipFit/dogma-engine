@@ -67,9 +67,18 @@ impl Pass for PassOne {
                 Some(EsiState::Active) => EffectCategory::Active,
                 Some(EsiState::Overload) => EffectCategory::Overload,
             };
-            let mut item = Item::new_esi(esi_item.type_id, esi_item.quantity, esi_item.flag, state);
+            let mut item = Item::new_esi(
+                esi_item.type_id,
+                esi_item.quantity,
+                esi_item.flag,
+                esi_item.charge.as_ref().map(|charge| charge.type_id),
+                state,
+            );
 
             item.set_attributes(info);
+            item.charge
+                .as_mut()
+                .map(|charge| charge.set_attributes(info));
 
             ship.items.push(item);
         }

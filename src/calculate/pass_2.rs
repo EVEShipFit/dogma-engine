@@ -57,7 +57,11 @@ fn get_target_object(domain: DogmaEffectModifierInfoDomain, origin: Object) -> O
     match domain {
         DogmaEffectModifierInfoDomain::ShipID => Object::Ship,
         DogmaEffectModifierInfoDomain::CharID => Object::Char,
-        DogmaEffectModifierInfoDomain::OtherID => Object::Char, // TODO -- This is incorrect
+        DogmaEffectModifierInfoDomain::OtherID => match origin {
+            Object::Item(index) => Object::Charge(index),
+            Object::Charge(index) => Object::Item(index),
+            _ => panic!("Invalid origin for OtherID domain"),
+        },
         DogmaEffectModifierInfoDomain::StructureID => Object::Structure,
         DogmaEffectModifierInfoDomain::ItemID => origin,
         DogmaEffectModifierInfoDomain::TargetID => Object::Target,
@@ -146,6 +150,16 @@ impl Item {
                         continue;
                     }
 
+                    /* If the origin is an Item(), the domain is OtherID, but there is no charge, skip the effect. */
+                    match (&origin, &modifier.domain) {
+                        (Object::Item(_), DogmaEffectModifierInfoDomain::OtherID) => {
+                            if self.charge.is_none() {
+                                continue;
+                            }
+                        }
+                        _ => {}
+                    }
+
                     let target = get_target_object(modifier.domain, origin);
                     effects.push(Pass2Effect {
                         modifier: effect_modifier.unwrap(),
@@ -176,6 +190,13 @@ impl Pass for PassTwo {
         ship.hull.collect_effects(info, Object::Ship, &mut effects);
         for (index, item) in ship.items.iter_mut().enumerate() {
             item.collect_effects(info, Object::Item(index), &mut effects);
+            if item.charge.is_some() {
+                item.charge.as_mut().unwrap().collect_effects(
+                    info,
+                    Object::Charge(index),
+                    &mut effects,
+                );
+            }
         }
         for (index, skill) in ship.skills.iter_mut().enumerate() {
             skill.collect_effects(info, Object::Skill(index), &mut effects);
@@ -186,6 +207,7 @@ impl Pass for PassTwo {
             let source_type_id = match effect.source {
                 Object::Ship => info.esi_fit.ship_type_id,
                 Object::Item(index) => ship.items[index].type_id,
+                Object::Charge(index) => ship.items[index].charge.as_ref().unwrap().type_id,
                 Object::Skill(index) => ship.skills[index].type_id,
                 _ => panic!("Unknown source object"),
             };
@@ -198,6 +220,7 @@ impl Pass for PassTwo {
                         Object::Char => &mut ship.char,
                         Object::Structure => &mut ship.structure,
                         Object::Item(index) => &mut ship.items[index],
+                        Object::Charge(index) => ship.items[index].charge.as_mut().unwrap(),
                         Object::Skill(index) => &mut ship.skills[index],
                         Object::Target => &mut ship.target,
                     };

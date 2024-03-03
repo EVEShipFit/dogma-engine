@@ -109,10 +109,17 @@ pub enum EsiState {
 
 #[allow(non_snake_case)]
 #[derive(Deserialize, Debug)]
+pub struct EsiCharge {
+    pub type_id: i32,
+}
+
+#[allow(non_snake_case)]
+#[derive(Deserialize, Debug)]
 pub struct EsiItem {
     pub type_id: i32,
     pub quantity: i32,
     pub flag: i32,
+    pub charge: Option<EsiCharge>,
     pub state: Option<EsiState>,
 }
 
