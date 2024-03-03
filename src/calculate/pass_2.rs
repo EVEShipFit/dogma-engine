@@ -190,12 +190,8 @@ impl Pass for PassTwo {
         ship.hull.collect_effects(info, Object::Ship, &mut effects);
         for (index, item) in ship.items.iter_mut().enumerate() {
             item.collect_effects(info, Object::Item(index), &mut effects);
-            if item.charge.is_some() {
-                item.charge.as_mut().unwrap().collect_effects(
-                    info,
-                    Object::Charge(index),
-                    &mut effects,
-                );
+            if let Some(charge) = &mut item.charge {
+                charge.collect_effects(info, Object::Charge(index), &mut effects);
             }
         }
         for (index, skill) in ship.skills.iter_mut().enumerate() {
