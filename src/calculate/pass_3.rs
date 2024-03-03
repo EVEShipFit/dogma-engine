@@ -20,6 +20,7 @@ pub struct PassThree {}
 struct Cache {
     hull: BTreeMap<i32, f64>,
     items: BTreeMap<usize, BTreeMap<i32, f64>>,
+    charge: BTreeMap<usize, BTreeMap<i32, f64>>,
     skills: BTreeMap<usize, BTreeMap<i32, f64>>,
 }
 
@@ -38,6 +39,7 @@ impl Attribute {
         let cache_value = match item {
             Object::Ship => cache.hull.get(&attribute_id),
             Object::Item(index) => cache.items.get(&index).and_then(|x| x.get(&attribute_id)),
+            Object::Charge(index) => cache.charge.get(&index).and_then(|x| x.get(&attribute_id)),
             Object::Skill(index) => cache.skills.get(&index).and_then(|x| x.get(&attribute_id)),
             _ => None,
         };
@@ -59,6 +61,10 @@ impl Attribute {
                 let source = match effect.source {
                     Object::Ship => &ship.hull,
                     Object::Item(index) => &ship.items[index],
+                    Object::Charge(index) => match &ship.items[index].charge {
+                        Some(charge) => &*charge,
+                        None => continue,
+                    },
                     Object::Skill(index) => &ship.skills[index],
                     _ => panic!("Unknown source object"),
                 };
@@ -183,6 +189,16 @@ impl Attribute {
                     .unwrap()
                     .insert(attribute_id, current_value);
             }
+            Object::Charge(index) => {
+                if !cache.charge.contains_key(&index) {
+                    cache.charge.insert(index, BTreeMap::new());
+                }
+                cache
+                    .charge
+                    .get_mut(&index)
+                    .unwrap()
+                    .insert(attribute_id, current_value);
+            }
             Object::Skill(index) => {
                 if !cache.skills.contains_key(&index) {
                     cache.skills.insert(index, BTreeMap::new());
@@ -228,6 +244,7 @@ impl Pass for PassThree {
         let mut cache = Cache {
             hull: BTreeMap::new(),
             items: BTreeMap::new(),
+            charge: BTreeMap::new(),
             skills: BTreeMap::new(),
         };
 

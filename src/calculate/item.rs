@@ -31,6 +31,7 @@ pub enum EffectOperator {
 pub enum Object {
     Ship,
     Item(usize),
+    Charge(usize),
     Skill(usize),
     Char,
     Structure,
@@ -58,6 +59,7 @@ pub struct Item {
     pub type_id: i32,
     pub quantity: i32,
     pub flag: i32,
+    pub charge: Option<Box<Item>>,
     pub state: EffectCategory,
     pub max_state: EffectCategory,
     pub attributes: BTreeMap<i32, Attribute>,
@@ -75,11 +77,26 @@ impl Attribute {
 }
 
 impl Item {
-    pub fn new_esi(type_id: i32, quantity: i32, flag: i32, state: EffectCategory) -> Item {
+    pub fn new_esi(
+        type_id: i32,
+        quantity: i32,
+        flag: i32,
+        charge_type_id: Option<i32>,
+        state: EffectCategory,
+    ) -> Item {
         Item {
             type_id,
             quantity,
             flag,
+            charge: charge_type_id.map(|charge_type_id| {
+                Box::new(Item::new_esi(
+                    charge_type_id,
+                    1,
+                    -1,
+                    None,
+                    EffectCategory::Passive,
+                ))
+            }),
             state,
             max_state: EffectCategory::Passive,
             attributes: BTreeMap::new(),
@@ -88,6 +105,6 @@ impl Item {
     }
 
     pub fn new_fake(type_id: i32) -> Item {
-        return Self::new_esi(type_id, 1, -1, EffectCategory::Active);
+        return Self::new_esi(type_id, 1, -1, None, EffectCategory::Active);
     }
 }
