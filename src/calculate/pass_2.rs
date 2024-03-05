@@ -188,6 +188,7 @@ impl Pass for PassTwo {
 
         /* Collect all the effects in a single list. */
         ship.hull.collect_effects(info, Object::Ship, &mut effects);
+        ship.char.collect_effects(info, Object::Char, &mut effects);
         for (index, item) in ship.items.iter_mut().enumerate() {
             item.collect_effects(info, Object::Item(index), &mut effects);
             if let Some(charge) = &mut item.charge {
@@ -205,7 +206,9 @@ impl Pass for PassTwo {
                 Object::Item(index) => ship.items[index].type_id,
                 Object::Charge(index) => ship.items[index].charge.as_ref().unwrap().type_id,
                 Object::Skill(index) => ship.skills[index].type_id,
-                _ => panic!("Unknown source object"),
+                Object::Char => 1373,
+                Object::Structure => continue, // TODO
+                Object::Target => continue,    // TODO
             };
             let category_id = info.get_type_id(source_type_id).categoryID;
 
