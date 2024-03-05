@@ -23,14 +23,9 @@ pub struct DamageProfile {
 pub struct Ship {
     pub hull: Item,
     pub items: Vec<Item>,
-
-    #[serde(skip_serializing)]
     pub skills: Vec<Item>,
-    #[serde(skip_serializing)]
     pub char: Item,
-    #[serde(skip_serializing)]
     pub structure: Item,
-    #[serde(skip_serializing)]
     pub target: Item,
 
     pub damage_profile: DamageProfile,
@@ -42,7 +37,7 @@ impl Ship {
             hull: Item::new_fake(ship_type_id),
             items: Vec::new(),
             skills: Vec::new(),
-            char: Item::new_fake(0),
+            char: Item::new_fake(1373),
             structure: Item::new_fake(0),
             target: Item::new_fake(0),
             damage_profile: DamageProfile {

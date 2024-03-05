@@ -19,6 +19,9 @@ pub struct PassThree {}
 
 struct Cache {
     hull: BTreeMap<i32, f64>,
+    char: BTreeMap<i32, f64>,
+    structure: BTreeMap<i32, f64>,
+    target: BTreeMap<i32, f64>,
     items: BTreeMap<usize, BTreeMap<i32, f64>>,
     charge: BTreeMap<usize, BTreeMap<i32, f64>>,
     skills: BTreeMap<usize, BTreeMap<i32, f64>>,
@@ -38,10 +41,12 @@ impl Attribute {
         }
         let cache_value = match item {
             Object::Ship => cache.hull.get(&attribute_id),
+            Object::Char => cache.char.get(&attribute_id),
+            Object::Structure => cache.structure.get(&attribute_id),
+            Object::Target => cache.target.get(&attribute_id),
             Object::Item(index) => cache.items.get(&index).and_then(|x| x.get(&attribute_id)),
             Object::Charge(index) => cache.charge.get(&index).and_then(|x| x.get(&attribute_id)),
             Object::Skill(index) => cache.skills.get(&index).and_then(|x| x.get(&attribute_id)),
-            _ => None,
         };
         if cache_value.is_some() {
             return *cache_value.unwrap();
@@ -66,7 +71,9 @@ impl Attribute {
                         None => continue,
                     },
                     Object::Skill(index) => &ship.skills[index],
-                    _ => panic!("Unknown source object"),
+                    Object::Char => &ship.char,
+                    Object::Structure => &ship.structure,
+                    Object::Target => &ship.target,
                 };
 
                 if effect.source_category > source.state {
@@ -179,6 +186,15 @@ impl Attribute {
             Object::Ship => {
                 cache.hull.insert(attribute_id, current_value);
             }
+            Object::Char => {
+                cache.char.insert(attribute_id, current_value);
+            }
+            Object::Structure => {
+                cache.structure.insert(attribute_id, current_value);
+            }
+            Object::Target => {
+                cache.target.insert(attribute_id, current_value);
+            }
             Object::Item(index) => {
                 if !cache.items.contains_key(&index) {
                     cache.items.insert(index, BTreeMap::new());
@@ -209,7 +225,6 @@ impl Attribute {
                     .unwrap()
                     .insert(attribute_id, current_value);
             }
-            _ => {}
         }
 
         current_value
@@ -243,6 +258,9 @@ impl Pass for PassThree {
     fn pass(info: &Info, ship: &mut Ship) {
         let mut cache = Cache {
             hull: BTreeMap::new(),
+            char: BTreeMap::new(),
+            structure: BTreeMap::new(),
+            target: BTreeMap::new(),
             items: BTreeMap::new(),
             charge: BTreeMap::new(),
             skills: BTreeMap::new(),
@@ -250,20 +268,34 @@ impl Pass for PassThree {
 
         ship.hull
             .calculate_values(info, ship, &mut cache, Object::Ship);
+        ship.char
+            .calculate_values(info, ship, &mut cache, Object::Char);
+        ship.structure
+            .calculate_values(info, ship, &mut cache, Object::Structure);
+        ship.target
+            .calculate_values(info, ship, &mut cache, Object::Target);
         for (index, item) in ship.items.iter().enumerate() {
             item.calculate_values(info, ship, &mut cache, Object::Item(index));
             if let Some(charge) = &item.charge {
                 charge.calculate_values(info, ship, &mut cache, Object::Charge(index));
             }
         }
-        /* No need to calculate skills; recursively they will resolve what is needed. */
+        for (index, skill) in ship.skills.iter().enumerate() {
+            skill.calculate_values(info, ship, &mut cache, Object::Skill(index));
+        }
 
         ship.hull.store_cached_values(info, &cache.hull);
+        ship.char.store_cached_values(info, &cache.char);
+        ship.structure.store_cached_values(info, &cache.structure);
+        ship.target.store_cached_values(info, &cache.target);
         for (index, item) in ship.items.iter_mut().enumerate() {
             item.store_cached_values(info, &cache.items[&index]);
             if let Some(charge) = &mut item.charge {
                 charge.store_cached_values(info, &cache.charge[&index]);
             }
+        }
+        for (index, skill) in ship.skills.iter_mut().enumerate() {
+            skill.store_cached_values(info, &cache.skills[&index]);
         }
     }
 }
