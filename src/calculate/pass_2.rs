@@ -277,6 +277,13 @@ impl Pass for PassTwo {
                 }
                 Modifier::OwnerRequiredSkillModifier(skill_type_id)
                 | Modifier::LocationRequiredSkillModifier(skill_type_id) => {
+                    /* Some skills apply on -1, indicating they should apply on anything that uses that skill. */
+                    let skill_type_id = if skill_type_id == -1 {
+                        source_type_id
+                    } else {
+                        skill_type_id
+                    };
+
                     for attribute_skill_id in &ATTRIBUTE_SKILLS {
                         if ship.hull.attributes.contains_key(attribute_skill_id)
                             && ship.hull.attributes[attribute_skill_id].base_value
