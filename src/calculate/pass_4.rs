@@ -1,11 +1,12 @@
 use super::item::Attribute;
-use super::{Info, Pass, Ship};
+use super::{Info, Item, Pass, Ship};
 
 pub struct PassFour {}
 
 mod align_time;
 mod capacitor;
 mod cpu_power;
+mod damage;
 mod ehp;
 mod recharge;
 mod scan_strength;
@@ -40,15 +41,22 @@ pub enum AttributeId {
     capacitorPeakDelta = -25,
     capacitorPeakDeltaPercentage = -26,
     capacitorDepletesIn = -27,
+    damageWithoutReloadDps = -28,
+    damageWithReloadDps = -29,
+    damageAlphaHp = -30,
 
     mass = 4,
     capacitorNeed = 6,
     hp = 9,
     powerOutput = 11,
     power = 30,
+    capacity = 38,
+
     cpuOutput = 48,
     cpu = 50,
+    speed = 51,
     rechargeRate = 55,
+    damageMultiplier = 64,
     shieldBonus = 68,
     agility = 70,
     duration = 73,
@@ -59,6 +67,13 @@ pub enum AttributeId {
     thermalDamageResonance = 110,
     explosiveDamageResonance = 111,
     emDamageResonance = 113,
+
+    emDamage = 114,
+    explosiveDamage = 116,
+    kineticDamage = 117,
+    thermalDamage = 118,
+
+    volume = 161,
 
     scanRadarStrength = 208,
     scanLadarStrength = 209,
@@ -79,13 +94,15 @@ pub enum AttributeId {
 
     shieldRechargeRate = 479,
     capacitorCapacity = 482,
+
+    reloadTime = 1795,
 }
 
-impl Ship {
+impl Item {
     pub fn add_attribute(&mut self, attribute_id: AttributeId, base_value: f64, value: f64) {
         let mut attribute = Attribute::new(base_value);
         attribute.value = Some(value);
-        self.hull.attributes.insert(attribute_id as i32, attribute);
+        self.attributes.insert(attribute_id as i32, attribute);
     }
 }
 
@@ -118,5 +135,9 @@ impl Pass for PassFour {
         capacitor::attribute_capacitor_peak_delta(ship);
         capacitor::attribute_capacitor_peak_delta_percentage(ship);
         capacitor::attribute_capacitor_depletes_in(ship);
+
+        damage::attribute_damage_alpha_hp(ship);
+        damage::attribute_damage_without_reload(ship);
+        damage::attribute_damage_with_reload(ship);
     }
 }

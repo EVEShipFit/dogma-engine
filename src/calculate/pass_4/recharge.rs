@@ -31,12 +31,12 @@ pub fn attribute_passive_shield_recharge(ship: &mut Ship) {
     let passive_shield_recharge = 2.5 / shield_recharge_rate * shield_capacity;
     let shield_ehp_multiplier = attr_shield_ehp_multiplier.value.unwrap();
 
-    ship.add_attribute(
+    ship.hull.add_attribute(
         AttributeId::passiveShieldRecharge,
         base_passive_shield_recharge,
         passive_shield_recharge,
     );
-    ship.add_attribute(
+    ship.hull.add_attribute(
         AttributeId::passiveShieldRechargeEhp,
         base_passive_shield_recharge * base_shield_ehp_multiplier,
         passive_shield_recharge * shield_ehp_multiplier,
@@ -81,12 +81,12 @@ pub fn attribute_shield_recharge(ship: &mut Ship) {
     }
     let shield_ehp_multiplier = attr_shield_ehp_multiplier.value.unwrap();
 
-    ship.add_attribute(
+    ship.hull.add_attribute(
         AttributeId::shieldRecharge,
         base_shield_recharge,
         shield_recharge,
     );
-    ship.add_attribute(
+    ship.hull.add_attribute(
         AttributeId::shieldRechargeEhp,
         base_shield_recharge * base_shield_ehp_multiplier,
         shield_recharge * shield_ehp_multiplier,
@@ -129,12 +129,12 @@ pub fn attribute_armor_recharge(ship: &mut Ship) {
     }
     let armor_ehp_multiplier = attr_armor_ehp_multiplier.value.unwrap();
 
-    ship.add_attribute(
+    ship.hull.add_attribute(
         AttributeId::armorRecharge,
         base_armor_recharge,
         armor_recharge,
     );
-    ship.add_attribute(
+    ship.hull.add_attribute(
         AttributeId::armorRechargeEhp,
         base_armor_recharge * base_armor_ehp_multiplier,
         armor_recharge * armor_ehp_multiplier,
@@ -177,8 +177,9 @@ pub fn attribute_hull_recharge(ship: &mut Ship) {
     }
     let hull_ehp_multiplier = attr_hull_ehp_multiplier.value.unwrap();
 
-    ship.add_attribute(AttributeId::hullRecharge, base_hull_recharge, hull_recharge);
-    ship.add_attribute(
+    ship.hull
+        .add_attribute(AttributeId::hullRecharge, base_hull_recharge, hull_recharge);
+    ship.hull.add_attribute(
         AttributeId::hullRechargeEhp,
         base_hull_recharge * base_hull_ehp_multiplier,
         hull_recharge * hull_ehp_multiplier,

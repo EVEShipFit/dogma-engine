@@ -23,5 +23,6 @@ pub fn attribute_align_time(ship: &mut Ship) {
     let mass = attr_mass.value.unwrap();
     let align_time = -(0.25 as f64).ln() * agility * mass / 1000000.0;
 
-    ship.add_attribute(AttributeId::alignTime, base_align_time, align_time);
+    ship.hull
+        .add_attribute(AttributeId::alignTime, base_align_time, align_time);
 }
