@@ -14,7 +14,7 @@ pub fn attribute_cpu_used(ship: &mut Ship) {
         }
     }
 
-    ship.add_attribute(AttributeId::cpuUsed, 0.0, cpu_used);
+    ship.hull.add_attribute(AttributeId::cpuUsed, 0.0, cpu_used);
 }
 
 pub fn attribute_power_used(ship: &mut Ship) {
@@ -29,7 +29,8 @@ pub fn attribute_power_used(ship: &mut Ship) {
         }
     }
 
-    ship.add_attribute(AttributeId::powerUsed, 0.0, power_used);
+    ship.hull
+        .add_attribute(AttributeId::powerUsed, 0.0, power_used);
 }
 
 pub fn attribute_cpu_unused(ship: &mut Ship) {
@@ -50,7 +51,8 @@ pub fn attribute_cpu_unused(ship: &mut Ship) {
     let cpu_output = attr_cpu_output.value.unwrap();
     let cpu_unused = cpu_output - cpu_used;
 
-    ship.add_attribute(AttributeId::cpuUnused, 0.0, cpu_unused);
+    ship.hull
+        .add_attribute(AttributeId::cpuUnused, 0.0, cpu_unused);
 }
 
 pub fn attribute_power_unused(ship: &mut Ship) {
@@ -71,5 +73,6 @@ pub fn attribute_power_unused(ship: &mut Ship) {
     let power_output = attr_power_output.value.unwrap();
     let power_unused = power_output - power_used;
 
-    ship.add_attribute(AttributeId::powerUnused, 0.0, power_unused);
+    ship.hull
+        .add_attribute(AttributeId::powerUnused, 0.0, power_unused);
 }

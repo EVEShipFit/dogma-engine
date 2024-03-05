@@ -53,7 +53,7 @@ pub fn attribute_shield_ehp_multiplier(ship: &mut Ship) {
             + shield_kinetic_multiplier
             + shield_thermal_multiplier);
 
-    ship.add_attribute(
+    ship.hull.add_attribute(
         AttributeId::shieldEhpMultiplier,
         base_shield_ehp_multiplier,
         shield_ehp_multiplier,
@@ -104,7 +104,7 @@ pub fn attribute_armor_ehp_multiplier(ship: &mut Ship) {
             + armor_kinetic_multiplier
             + armor_thermal_multiplier);
 
-    ship.add_attribute(
+    ship.hull.add_attribute(
         AttributeId::armorEhpMultiplier,
         base_armor_ehp_multiplier,
         armor_ehp_multiplier,
@@ -155,7 +155,7 @@ pub fn attribute_hull_ehp_multiplier(ship: &mut Ship) {
             + hull_kinetic_multiplier
             + hull_thermal_multiplier);
 
-    ship.add_attribute(
+    ship.hull.add_attribute(
         AttributeId::hullEhpMultiplier,
         base_hull_ehp_multiplier,
         hull_ehp_multiplier,
@@ -184,7 +184,8 @@ pub fn attribute_shield_ehp(ship: &mut Ship) {
     let shield_hp = attr_shield_hp.value.unwrap();
     let shield_ehp = shield_hp * shield_ehp_multiplier;
 
-    ship.add_attribute(AttributeId::shieldEhp, base_shield_ehp, shield_ehp);
+    ship.hull
+        .add_attribute(AttributeId::shieldEhp, base_shield_ehp, shield_ehp);
 }
 
 pub fn attribute_armor_ehp(ship: &mut Ship) {
@@ -209,7 +210,8 @@ pub fn attribute_armor_ehp(ship: &mut Ship) {
     let armor_hp = attr_armor_hp.value.unwrap();
     let armor_ehp = armor_hp * armor_ehp_multiplier;
 
-    ship.add_attribute(AttributeId::armorEhp, base_armor_ehp, armor_ehp);
+    ship.hull
+        .add_attribute(AttributeId::armorEhp, base_armor_ehp, armor_ehp);
 }
 
 pub fn attribute_hull_ehp(ship: &mut Ship) {
@@ -230,7 +232,8 @@ pub fn attribute_hull_ehp(ship: &mut Ship) {
     let hull_hp = attr_hull_hp.value.unwrap();
     let hull_ehp = hull_hp * hull_ehp_multiplier;
 
-    ship.add_attribute(AttributeId::hullEhp, base_hull_ehp, hull_ehp);
+    ship.hull
+        .add_attribute(AttributeId::hullEhp, base_hull_ehp, hull_ehp);
 }
 
 pub fn attribute_ehp(ship: &mut Ship) {
@@ -246,5 +249,5 @@ pub fn attribute_ehp(ship: &mut Ship) {
         ehp += attribute.value.unwrap();
     }
 
-    ship.add_attribute(AttributeId::ehp, base_ehp, ehp);
+    ship.hull.add_attribute(AttributeId::ehp, base_ehp, ehp);
 }

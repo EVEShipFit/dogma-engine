@@ -24,7 +24,7 @@ pub fn attribute_capacitor_peak_recharge(ship: &mut Ship) {
     let recharge_rate = attr_recharge_rate.value.unwrap() / 1000.0;
     let peak_recharge = 5.0 / 2.0 * capacitor_capacity / recharge_rate;
 
-    ship.add_attribute(
+    ship.hull.add_attribute(
         AttributeId::capacitorPeakRecharge,
         base_peak_recharge,
         peak_recharge,
@@ -62,7 +62,8 @@ pub fn attribute_capacitor_peak_usage(ship: &mut Ship) {
         }
     }
 
-    ship.add_attribute(AttributeId::capacitorPeakUsage, base_peak_usage, peak_usage);
+    ship.hull
+        .add_attribute(AttributeId::capacitorPeakUsage, base_peak_usage, peak_usage);
 }
 
 pub fn attribute_capacitor_peak_delta(ship: &mut Ship) {
@@ -87,7 +88,8 @@ pub fn attribute_capacitor_peak_delta(ship: &mut Ship) {
     let peak_usage = attr_capacitor_peak_usage.value.unwrap();
     let peak_delta = peak_recharge - peak_usage;
 
-    ship.add_attribute(AttributeId::capacitorPeakDelta, base_peak_delta, peak_delta);
+    ship.hull
+        .add_attribute(AttributeId::capacitorPeakDelta, base_peak_delta, peak_delta);
 }
 
 pub fn attribute_capacitor_peak_delta_percentage(ship: &mut Ship) {
@@ -114,7 +116,7 @@ pub fn attribute_capacitor_peak_delta_percentage(ship: &mut Ship) {
     let peak_delta = peak_recharge - peak_usage;
     let peak_delta_percentage = peak_delta / peak_recharge * 100.0;
 
-    ship.add_attribute(
+    ship.hull.add_attribute(
         AttributeId::capacitorPeakDeltaPercentage,
         base_peak_delta_percentage,
         peak_delta_percentage,
@@ -210,5 +212,6 @@ pub fn attribute_capacitor_depletes_in(ship: &mut Ship) {
         }
     }
 
-    ship.add_attribute(AttributeId::capacitorDepletesIn, 0.0, depletes_in / 1000.0);
+    ship.hull
+        .add_attribute(AttributeId::capacitorDepletesIn, 0.0, depletes_in / 1000.0);
 }

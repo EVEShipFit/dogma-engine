@@ -26,5 +26,6 @@ pub fn attribute_scan_strength(ship: &mut Ship) {
         }
     }
 
-    ship.add_attribute(AttributeId::scanStrength, base_scan_strength, scan_strength);
+    ship.hull
+        .add_attribute(AttributeId::scanStrength, base_scan_strength, scan_strength);
 }
