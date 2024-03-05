@@ -27,23 +27,27 @@ impl Item {
         for dogma_attribute in info.get_dogma_attributes(self.type_id) {
             self.set_attribute(dogma_attribute.attributeID, dogma_attribute.value);
         }
+
+        /* Some attributes of items come from the TypeID information. */
+        let type_id = info.get_type_id(self.type_id);
+        if let Some(mass) = type_id.mass {
+            self.set_attribute(ATTRIBUTE_MASS_ID, mass);
+        }
+        if let Some(capacity) = type_id.capacity {
+            self.set_attribute(ATTRIBUTE_CAPACITY_ID, capacity);
+        }
+        if let Some(volume) = type_id.volume {
+            self.set_attribute(ATTRIBUTE_VOLUME_ID, volume);
+        }
+        if let Some(radius) = type_id.radius {
+            self.set_attribute(ATTRIBUTE_RADIUS_ID, radius);
+        }
     }
 }
 
 impl Pass for PassOne {
     fn pass(info: &Info, ship: &mut Ship) {
         ship.hull.set_attributes(info);
-
-        /* Some attributes of ships come from the TypeID information. */
-        let type_id = info.get_type_id(info.esi_fit.ship_type_id);
-        ship.hull
-            .set_attribute(ATTRIBUTE_MASS_ID, type_id.mass.unwrap());
-        ship.hull
-            .set_attribute(ATTRIBUTE_CAPACITY_ID, type_id.capacity.unwrap());
-        ship.hull
-            .set_attribute(ATTRIBUTE_VOLUME_ID, type_id.volume.unwrap());
-        ship.hull
-            .set_attribute(ATTRIBUTE_RADIUS_ID, type_id.radius.unwrap());
 
         for (skill_id, skill_level) in info.skills {
             let mut skill = Item::new_fake(*skill_id);
