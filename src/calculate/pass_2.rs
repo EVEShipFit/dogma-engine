@@ -229,6 +229,15 @@ impl Pass for PassTwo {
 
                     for item in &mut ship.items {
                         item.add_effect(info, effect.target_attribute_id, category_id, &effect);
+
+                        if let Some(charge) = &mut item.charge {
+                            charge.add_effect(
+                                info,
+                                effect.target_attribute_id,
+                                category_id,
+                                &effect,
+                            );
+                        }
                     }
                 }
                 Modifier::LocationGroupModifier(group_id) => {
@@ -248,9 +257,23 @@ impl Pass for PassTwo {
                         if type_id.groupID == group_id {
                             item.add_effect(info, effect.target_attribute_id, category_id, &effect);
                         }
+
+                        if let Some(charge) = &mut item.charge {
+                            let type_id = info.get_type_id(charge.type_id);
+
+                            if type_id.groupID == group_id {
+                                charge.add_effect(
+                                    info,
+                                    effect.target_attribute_id,
+                                    category_id,
+                                    &effect,
+                                );
+                            }
+                        }
                     }
                 }
-                Modifier::LocationRequiredSkillModifier(skill_type_id) => {
+                Modifier::OwnerRequiredSkillModifier(skill_type_id)
+                | Modifier::LocationRequiredSkillModifier(skill_type_id) => {
                     for attribute_skill_id in &ATTRIBUTE_SKILLS {
                         if ship.hull.attributes.contains_key(attribute_skill_id)
                             && ship.hull.attributes[attribute_skill_id].base_value
@@ -276,11 +299,22 @@ impl Pass for PassTwo {
                                     &effect,
                                 );
                             }
+
+                            if let Some(charge) = &mut item.charge {
+                                if charge.attributes.contains_key(attribute_skill_id)
+                                    && charge.attributes[attribute_skill_id].base_value
+                                        == skill_type_id as f64
+                                {
+                                    charge.add_effect(
+                                        info,
+                                        effect.target_attribute_id,
+                                        category_id,
+                                        &effect,
+                                    );
+                                }
+                            }
                         }
                     }
-                }
-                Modifier::OwnerRequiredSkillModifier(_skill_type_id) => {
-                    // TODO
                 }
             }
         }
