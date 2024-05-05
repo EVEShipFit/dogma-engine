@@ -49,6 +49,7 @@ pub enum AttributeId {
     droneBandwidthUsedTotal = -32,
     droneDamageAlphaHp = -33,
     droneDamageDps = -34,
+    droneCapacityUsed = -35,
 
     mass = 4,
     capacitorNeed = 6,
@@ -147,6 +148,7 @@ impl Pass for PassFour {
         damage::attribute_damage_with_reload(ship);
 
         drone::attribute_drone_active(ship);
+        drone::attribute_drone_capacity_used(ship);
         drone::attribute_drone_bandwidth_used(ship);
         drone::attribute_drone_damage(ship);
     }

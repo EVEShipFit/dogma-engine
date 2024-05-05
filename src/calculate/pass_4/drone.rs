@@ -16,6 +16,27 @@ pub fn attribute_drone_active(ship: &mut Ship) {
         .add_attribute(AttributeId::droneActive, 0.0, active as f64);
 }
 
+pub fn attribute_drone_capacity_used(ship: &mut Ship) {
+    /* The capacity of the dronebay used by drones. */
+
+    let attr_drone_capacity = AttributeId::volume as i32;
+
+    let mut capacity_used = 0.0;
+    for item in &ship.items {
+        if item.flag == 87 {
+            capacity_used += item
+                .attributes
+                .get(&attr_drone_capacity)
+                .unwrap()
+                .value
+                .unwrap();
+        }
+    }
+
+    ship.hull
+        .add_attribute(AttributeId::droneCapacityUsed, 0.0, capacity_used);
+}
+
 pub fn attribute_drone_bandwidth_used(ship: &mut Ship) {
     /* The bandwidth used by drones. */
 
