@@ -73,7 +73,10 @@ pub fn attribute_drone_damage(ship: &mut Ship) {
     let attr_damage_without_reload_dps = AttributeId::damageWithoutReloadDps as i32;
 
     for item in &mut ship.items {
-        if item.flag == 87 && item.state == EffectCategory::Active {
+        if item.flag == 87
+            && item.state == EffectCategory::Active
+            && item.attributes.contains_key(&attr_damage_alpha_hp)
+        {
             let damage_alpha_hp = item.attributes.get(&attr_damage_alpha_hp).unwrap();
             total_base_alpha_hp += damage_alpha_hp.base_value;
             total_alpha_hp += damage_alpha_hp.value.unwrap();
