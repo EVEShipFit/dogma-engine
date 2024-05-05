@@ -20,6 +20,15 @@ pub fn attribute_damage_alpha_hp(ship: &mut Ship) {
         }
 
         if let Some(charge) = item.charge.as_ref() {
+            /* Only calculate for charges that do damage. */
+            if !charge.attributes.contains_key(&attr_damage_em)
+                || !charge.attributes.contains_key(&attr_damage_explosive)
+                || !charge.attributes.contains_key(&attr_damage_kinetic)
+                || !charge.attributes.contains_key(&attr_damage_thermal)
+            {
+                continue;
+            }
+
             let base_damage_em = charge.attributes.get(&attr_damage_em).unwrap().base_value;
             let base_damage_explosive = charge
                 .attributes
