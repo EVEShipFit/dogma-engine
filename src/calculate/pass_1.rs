@@ -8,10 +8,11 @@ const ATTRIBUTE_VOLUME_ID: i32 = 161;
 const ATTRIBUTE_RADIUS_ID: i32 = 162;
 const ATTRIBUTE_SKILL_LEVEL_ID: i32 = 280;
 
-const ESI_FLAG_FILTER: [i32; 31] = [
+const ESI_FLAG_FILTER: [i32; 32] = [
     11, 12, 13, 14, 15, 16, 17, 18, // lowslots
     19, 20, 21, 22, 23, 24, 25, 26, // medslots
     27, 28, 29, 30, 31, 32, 33, 34, // hislots
+    87, // dronebay
     92, 93, 94, // rigs
     125, 126, 127, 128, // subsystems
 ];
@@ -71,20 +72,22 @@ impl Pass for PassOne {
                 Some(EsiState::Active) => EffectCategory::Active,
                 Some(EsiState::Overload) => EffectCategory::Overload,
             };
-            let mut item = Item::new_esi(
-                esi_item.type_id,
-                esi_item.quantity,
-                esi_item.flag,
-                esi_item.charge.as_ref().map(|charge| charge.type_id),
-                state,
-            );
+            for _ in 0..esi_item.quantity {
+                let mut item = Item::new_esi(
+                    esi_item.type_id,
+                    1,
+                    esi_item.flag,
+                    esi_item.charge.as_ref().map(|charge| charge.type_id),
+                    state,
+                );
 
-            item.set_attributes(info);
-            item.charge
-                .as_mut()
-                .map(|charge| charge.set_attributes(info));
+                item.set_attributes(info);
+                item.charge
+                    .as_mut()
+                    .map(|charge| charge.set_attributes(info));
 
-            ship.items.push(item);
+                ship.items.push(item);
+            }
         }
     }
 }
