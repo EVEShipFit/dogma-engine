@@ -176,6 +176,11 @@ impl Item {
             }
         }
 
+        /* Drones can always be active, but there is no effect that indicates this. */
+        if self.flag == 87 {
+            self.max_state = EffectCategory::Active;
+        }
+
         if self.state > self.max_state {
             self.state = self.max_state;
         }

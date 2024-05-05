@@ -7,6 +7,7 @@ mod align_time;
 mod capacitor;
 mod cpu_power;
 mod damage;
+mod drone;
 mod ehp;
 mod recharge;
 mod scan_strength;
@@ -44,6 +45,10 @@ pub enum AttributeId {
     damageWithoutReloadDps = -28,
     damageWithReloadDps = -29,
     damageAlphaHp = -30,
+    droneActive = -31,
+    droneBandwidthUsedTotal = -32,
+    droneDamageAlphaHp = -33,
+    droneDamageDps = -34,
 
     mass = 4,
     capacitorNeed = 6,
@@ -95,6 +100,7 @@ pub enum AttributeId {
     shieldRechargeRate = 479,
     capacitorCapacity = 482,
 
+    droneBandwidthUsed = 1272,
     reloadTime = 1795,
 }
 
@@ -139,5 +145,9 @@ impl Pass for PassFour {
         damage::attribute_damage_alpha_hp(ship);
         damage::attribute_damage_without_reload(ship);
         damage::attribute_damage_with_reload(ship);
+
+        drone::attribute_drone_active(ship);
+        drone::attribute_drone_bandwidth_used(ship);
+        drone::attribute_drone_damage(ship);
     }
 }

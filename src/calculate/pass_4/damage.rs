@@ -1,92 +1,111 @@
-use super::super::item::EffectCategory;
+use super::super::item::{EffectCategory, Item};
 use super::super::Ship;
 use super::AttributeId;
 
-pub fn attribute_damage_alpha_hp(ship: &mut Ship) {
-    /* Damage when all guns fire at once, in hp. */
-
-    let mut total_base_alpha_hp = 0.0;
-    let mut total_alpha_hp = 0.0;
-
+fn calculate_alpha(
+    item: &Item,
+    charge: &Item,
+    base_alpha_hp: &mut f64,
+    alpha_hp: &mut f64,
+) -> bool {
     let attr_damage_em = AttributeId::emDamage as i32;
     let attr_damage_explosive = AttributeId::explosiveDamage as i32;
     let attr_damage_kinetic = AttributeId::kineticDamage as i32;
     let attr_damage_thermal = AttributeId::thermalDamage as i32;
     let attr_damage_multiplier = AttributeId::damageMultiplier as i32;
 
+    /* Only calculate for charges that do damage. */
+    if !charge.attributes.contains_key(&attr_damage_em)
+        || !charge.attributes.contains_key(&attr_damage_explosive)
+        || !charge.attributes.contains_key(&attr_damage_kinetic)
+        || !charge.attributes.contains_key(&attr_damage_thermal)
+    {
+        return false;
+    }
+
+    let base_damage_em = charge.attributes.get(&attr_damage_em).unwrap().base_value;
+    let base_damage_explosive = charge
+        .attributes
+        .get(&attr_damage_explosive)
+        .unwrap()
+        .base_value;
+    let base_damage_kinetic = charge
+        .attributes
+        .get(&attr_damage_kinetic)
+        .unwrap()
+        .base_value;
+    let base_damage_thermal = charge
+        .attributes
+        .get(&attr_damage_thermal)
+        .unwrap()
+        .base_value;
+
+    let damage_em = charge
+        .attributes
+        .get(&attr_damage_em)
+        .unwrap()
+        .value
+        .unwrap();
+    let damage_explosive = charge
+        .attributes
+        .get(&attr_damage_explosive)
+        .unwrap()
+        .value
+        .unwrap();
+    let damage_kinetic = charge
+        .attributes
+        .get(&attr_damage_kinetic)
+        .unwrap()
+        .value
+        .unwrap();
+    let damage_thermal = charge
+        .attributes
+        .get(&attr_damage_thermal)
+        .unwrap()
+        .value
+        .unwrap();
+
+    *base_alpha_hp +=
+        base_damage_em + base_damage_explosive + base_damage_kinetic + base_damage_thermal;
+    *alpha_hp += damage_em + damage_explosive + damage_kinetic + damage_thermal;
+
+    if item.attributes.contains_key(&attr_damage_multiplier) {
+        let damage_multiplier = item.attributes.get(&attr_damage_multiplier).unwrap();
+
+        *base_alpha_hp *= damage_multiplier.base_value;
+        *alpha_hp *= damage_multiplier.value.unwrap();
+    }
+
+    true
+}
+
+pub fn attribute_damage_alpha_hp(ship: &mut Ship) {
+    /* Damage when all guns / drones fire at once, in hp. */
+
+    let mut total_base_alpha_hp = 0.0;
+    let mut total_alpha_hp = 0.0;
+
     for item in &mut ship.items {
         if item.state == EffectCategory::Passive {
             continue;
         }
 
+        let mut base_alpha_hp = 0.0;
+        let mut alpha_hp = 0.0;
+
+        /* Check for drone damage. */
+        calculate_alpha(item, item, &mut base_alpha_hp, &mut alpha_hp);
+        /* Check for charge damage. */
         if let Some(charge) = item.charge.as_ref() {
-            /* Only calculate for charges that do damage. */
-            if !charge.attributes.contains_key(&attr_damage_em)
-                || !charge.attributes.contains_key(&attr_damage_explosive)
-                || !charge.attributes.contains_key(&attr_damage_kinetic)
-                || !charge.attributes.contains_key(&attr_damage_thermal)
-            {
-                continue;
-            }
-
-            let base_damage_em = charge.attributes.get(&attr_damage_em).unwrap().base_value;
-            let base_damage_explosive = charge
-                .attributes
-                .get(&attr_damage_explosive)
-                .unwrap()
-                .base_value;
-            let base_damage_kinetic = charge
-                .attributes
-                .get(&attr_damage_kinetic)
-                .unwrap()
-                .base_value;
-            let base_damage_thermal = charge
-                .attributes
-                .get(&attr_damage_thermal)
-                .unwrap()
-                .base_value;
-
-            let damage_em = charge
-                .attributes
-                .get(&attr_damage_em)
-                .unwrap()
-                .value
-                .unwrap();
-            let damage_explosive = charge
-                .attributes
-                .get(&attr_damage_explosive)
-                .unwrap()
-                .value
-                .unwrap();
-            let damage_kinetic = charge
-                .attributes
-                .get(&attr_damage_kinetic)
-                .unwrap()
-                .value
-                .unwrap();
-            let damage_thermal = charge
-                .attributes
-                .get(&attr_damage_thermal)
-                .unwrap()
-                .value
-                .unwrap();
-
-            let mut base_alpha_hp =
-                base_damage_em + base_damage_explosive + base_damage_kinetic + base_damage_thermal;
-            let mut alpha_hp = damage_em + damage_explosive + damage_kinetic + damage_thermal;
-
-            if item.attributes.contains_key(&attr_damage_multiplier) {
-                let damage_multiplier = item.attributes.get(&attr_damage_multiplier).unwrap();
-
-                base_alpha_hp *= damage_multiplier.base_value;
-                alpha_hp *= damage_multiplier.value.unwrap();
-            }
-
-            item.add_attribute(AttributeId::damageAlphaHp, base_alpha_hp, alpha_hp);
-
-            total_base_alpha_hp += base_alpha_hp;
-            total_alpha_hp += alpha_hp;
+            calculate_alpha(item, charge, &mut base_alpha_hp, &mut alpha_hp);
         }
+
+        if base_alpha_hp > 0.0 || alpha_hp > 0.0 {
+            item.add_attribute(AttributeId::damageAlphaHp, base_alpha_hp, alpha_hp);
+        }
+
+        total_base_alpha_hp += base_alpha_hp;
+        total_alpha_hp += alpha_hp;
     }
 
     ship.hull.add_attribute(
