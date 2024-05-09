@@ -4,6 +4,15 @@ use super::AttributeId;
 pub fn attribute_align_time(ship: &mut Ship) {
     /* Align-time is based on agility and mass. */
 
+    /* Structures do not have agility, and as such, no align-time. */
+    if !ship
+        .hull
+        .attributes
+        .contains_key(&(AttributeId::agility as i32))
+    {
+        return;
+    }
+
     let attr_agility = ship
         .hull
         .attributes
