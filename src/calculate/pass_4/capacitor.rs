@@ -40,9 +40,12 @@ pub fn attribute_capacitor_peak_usage(ship: &mut Ship) {
     let mut base_peak_usage = 0.0;
     let mut peak_usage = 0.0;
     for item in &ship.items {
+        if item.state == EffectCategory::Passive || item.state == EffectCategory::Online {
+            continue;
+        }
+
         if item.attributes.contains_key(&attr_capacitor_need)
             && item.attributes.contains_key(&attr_duration)
-            && item.state != EffectCategory::Passive
         {
             base_peak_usage += item
                 .attributes
@@ -158,9 +161,12 @@ pub fn attribute_capacitor_depletes_in(ship: &mut Ship) {
         /* Find all modules consuming capacitor. */
         let mut modules = Vec::new();
         for item in &ship.items {
+            if item.state == EffectCategory::Passive || item.state == EffectCategory::Online {
+                continue;
+            }
+
             if item.attributes.contains_key(&attr_capacitor_need)
                 && item.attributes.contains_key(&attr_duration)
-                && item.state != EffectCategory::Passive
             {
                 let capacitor_need = item
                     .attributes
