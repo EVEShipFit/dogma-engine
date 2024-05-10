@@ -130,9 +130,9 @@ struct Module {
 }
 
 pub fn attribute_capacitor_depletes_in(ship: &mut Ship) {
-    /* Amount of seconds it takes for the capacitor to deplete; or 0 if it is stable. */
+    /* Amount of seconds it takes for the capacitor to deplete; or negative if it is stable. */
 
-    let mut depletes_in = 0.0;
+    let mut depletes_in = -1.0;
 
     let attr_capacitor_peak_delta = ship
         .hull
