@@ -86,7 +86,7 @@ pub fn attribute_damage_alpha_hp(ship: &mut Ship) {
     let mut total_alpha_hp = 0.0;
 
     for item in &mut ship.items {
-        if item.state == EffectCategory::Passive {
+        if item.state == EffectCategory::Passive || item.state == EffectCategory::Online {
             continue;
         }
 
@@ -125,7 +125,7 @@ pub fn attribute_damage_without_reload(ship: &mut Ship) {
     let mut total_damage = 0.0;
 
     for item in &mut ship.items {
-        if item.state == EffectCategory::Passive {
+        if item.state == EffectCategory::Passive || item.state == EffectCategory::Online {
             continue;
         }
 
@@ -170,7 +170,7 @@ pub fn attribute_damage_with_reload(ship: &mut Ship) {
     let mut total_damage = 0.0;
 
     for item in &mut ship.items {
-        if item.state == EffectCategory::Passive {
+        if item.state == EffectCategory::Passive || item.state == EffectCategory::Online {
             continue;
         }
 
