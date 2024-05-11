@@ -36,6 +36,7 @@ pub fn attribute_capacitor_peak_usage(ship: &mut Ship) {
 
     let attr_capacitor_need = AttributeId::capacitorNeed as i32;
     let attr_duration = AttributeId::duration as i32;
+    let attr_rate_of_fire = AttributeId::speed as i32;
 
     let mut base_peak_usage = 0.0;
     let mut peak_usage = 0.0;
@@ -44,25 +45,45 @@ pub fn attribute_capacitor_peak_usage(ship: &mut Ship) {
             continue;
         }
 
-        if item.attributes.contains_key(&attr_capacitor_need)
-            && item.attributes.contains_key(&attr_duration)
-        {
-            base_peak_usage += item
-                .attributes
-                .get(&attr_capacitor_need)
-                .unwrap()
-                .base_value
-                / item.attributes.get(&attr_duration).unwrap().base_value
-                * 1000.0;
-            peak_usage += item
-                .attributes
-                .get(&attr_capacitor_need)
-                .unwrap()
-                .value
-                .unwrap()
-                / item.attributes.get(&attr_duration).unwrap().value.unwrap()
-                * 1000.0;
+        if !item.attributes.contains_key(&attr_capacitor_need) {
+            continue;
         }
+
+        /* Depending on the module, the duration is based either on "duration" or on "speed" (read: rate-of-fire). */
+        let (duration_base, duration) = if item.attributes.contains_key(&attr_duration) {
+            (
+                item.attributes.get(&attr_duration).unwrap().base_value,
+                item.attributes.get(&attr_duration).unwrap().value.unwrap(),
+            )
+        } else if item.attributes.contains_key(&attr_rate_of_fire) {
+            (
+                item.attributes.get(&attr_rate_of_fire).unwrap().base_value,
+                item.attributes
+                    .get(&attr_rate_of_fire)
+                    .unwrap()
+                    .value
+                    .unwrap(),
+            )
+        } else {
+            /* Neither speed nor duration; so no cap use. */
+            continue;
+        };
+
+        base_peak_usage += item
+            .attributes
+            .get(&attr_capacitor_need)
+            .unwrap()
+            .base_value
+            / duration_base
+            * 1000.0;
+        peak_usage += item
+            .attributes
+            .get(&attr_capacitor_need)
+            .unwrap()
+            .value
+            .unwrap()
+            / duration
+            * 1000.0;
     }
 
     ship.hull
@@ -157,6 +178,7 @@ pub fn attribute_capacitor_depletes_in(ship: &mut Ship) {
 
         let attr_capacitor_need = AttributeId::capacitorNeed as i32;
         let attr_duration = AttributeId::duration as i32;
+        let attr_rate_of_fire = AttributeId::speed as i32;
 
         /* Find all modules consuming capacitor. */
         let mut modules = Vec::new();
@@ -165,23 +187,36 @@ pub fn attribute_capacitor_depletes_in(ship: &mut Ship) {
                 continue;
             }
 
-            if item.attributes.contains_key(&attr_capacitor_need)
-                && item.attributes.contains_key(&attr_duration)
-            {
-                let capacitor_need = item
-                    .attributes
-                    .get(&attr_capacitor_need)
+            if !item.attributes.contains_key(&attr_capacitor_need) {
+                continue;
+            }
+
+            /* Depending on the module, the duration is based either on "duration" or on "speed" (read: rate-of-fire). */
+            let duration = if item.attributes.contains_key(&attr_duration) {
+                item.attributes.get(&attr_duration).unwrap().value.unwrap()
+            } else if item.attributes.contains_key(&attr_rate_of_fire) {
+                item.attributes
+                    .get(&attr_rate_of_fire)
                     .unwrap()
                     .value
-                    .unwrap();
-                let duration = item.attributes.get(&attr_duration).unwrap().value.unwrap();
+                    .unwrap()
+            } else {
+                /* Neither speed nor duration; so no cap use. */
+                continue;
+            };
 
-                modules.push(Module {
-                    capacitor_need,
-                    duration: duration,
-                    time_next: 0.0,
-                });
-            }
+            let capacitor_need = item
+                .attributes
+                .get(&attr_capacitor_need)
+                .unwrap()
+                .value
+                .unwrap();
+
+            modules.push(Module {
+                capacitor_need,
+                duration: duration,
+                time_next: 0.0,
+            });
         }
 
         if modules.len() > 0 {
