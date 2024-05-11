@@ -181,6 +181,11 @@ impl Item {
             self.max_state = EffectCategory::Active;
         }
 
+        /* Any module that has a capacitorNeed (6), can be activated. */
+        if self.attributes.contains_key(&6) && self.max_state < EffectCategory::Active {
+            self.max_state = EffectCategory::Active;
+        }
+
         if self.state > self.max_state {
             self.state = self.max_state;
         }
