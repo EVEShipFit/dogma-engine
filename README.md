@@ -22,6 +22,18 @@ To make rendering a fit easier, these are calculated by this library, and presen
 Their identifier is always a negative value, to visually separate them.
 What additional attributes exist are defined in [EVEShipFit/data](https://github.com/EVEShipFit/data) repository.
 
+## Development
+
+Make sure you have [Rust installed](https://www.rust-lang.org/tools/install).
+
+```bash
+cargo install wasm-pack
+wasm-pack build --release
+```
+
+In the `pkg` folder is now a NPM module to use.
+See below on how to integrate this in your own website.
+
 ## Integration
 
 ### Javascript (WebAssembly)
