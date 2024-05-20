@@ -23,13 +23,13 @@ extern "C" {
 }
 
 pub struct Info<'a> {
-    pub esi_fit: &'a data_types::EsiFit,
+    pub fit: &'a data_types::EsfFit,
     pub skills: &'a BTreeMap<i32, i32>,
 }
 
 impl Info<'_> {
-    pub fn new<'a>(esi_fit: &'a data_types::EsiFit, skills: &'a BTreeMap<i32, i32>) -> Info<'a> {
-        Info { esi_fit, skills }
+    pub fn new<'a>(fit: &'a data_types::EsfFit, skills: &'a BTreeMap<i32, i32>) -> Info<'a> {
+        Info { fit, skills }
     }
 
     pub fn get_dogma_attributes(&self, type_id: i32) -> Vec<data_types::TypeDogmaAttribute> {

@@ -1,4 +1,4 @@
-use super::super::item::EffectCategory;
+use super::super::item::{EffectCategory, SlotType};
 use super::super::Ship;
 use super::AttributeId;
 
@@ -7,9 +7,11 @@ pub fn attribute_drone_active(ship: &mut Ship) {
 
     let mut active = 0;
     for item in &ship.items {
-        if item.flag == 87 && item.state == EffectCategory::Active {
-            active += 1;
+        if item.slot.r#type != SlotType::DroneBay || item.state != EffectCategory::Active {
+            continue;
         }
+
+        active += 1;
     }
 
     ship.hull
@@ -23,14 +25,16 @@ pub fn attribute_drone_capacity_used(ship: &mut Ship) {
 
     let mut capacity_used = 0.0;
     for item in &ship.items {
-        if item.flag == 87 {
-            capacity_used += item
-                .attributes
-                .get(&attr_drone_capacity)
-                .unwrap()
-                .value
-                .unwrap();
+        if item.slot.r#type != SlotType::DroneBay {
+            continue;
         }
+
+        capacity_used += item
+            .attributes
+            .get(&attr_drone_capacity)
+            .unwrap()
+            .value
+            .unwrap();
     }
 
     ship.hull
@@ -44,14 +48,16 @@ pub fn attribute_drone_bandwidth_used(ship: &mut Ship) {
 
     let mut bandwidth_used_total = 0.0;
     for item in &ship.items {
-        if item.flag == 87 && item.state == EffectCategory::Active {
-            bandwidth_used_total += item
-                .attributes
-                .get(&attr_drone_bandwidth)
-                .unwrap()
-                .value
-                .unwrap();
+        if item.slot.r#type != SlotType::DroneBay || item.state != EffectCategory::Active {
+            continue;
         }
+
+        bandwidth_used_total += item
+            .attributes
+            .get(&attr_drone_bandwidth)
+            .unwrap()
+            .value
+            .unwrap();
     }
 
     ship.hull.add_attribute(
@@ -73,21 +79,23 @@ pub fn attribute_drone_damage(ship: &mut Ship) {
     let attr_damage_without_reload_dps = AttributeId::damageWithoutReloadDps as i32;
 
     for item in &mut ship.items {
-        if item.flag == 87
-            && item.state == EffectCategory::Active
-            && item.attributes.contains_key(&attr_damage_alpha_hp)
-        {
-            let damage_alpha_hp = item.attributes.get(&attr_damage_alpha_hp).unwrap();
-            total_base_alpha_hp += damage_alpha_hp.base_value;
-            total_alpha_hp += damage_alpha_hp.value.unwrap();
-
-            let damage_without_reload_dps = item
-                .attributes
-                .get(&attr_damage_without_reload_dps)
-                .unwrap();
-            total_base_alpha_hp_without_reload += damage_without_reload_dps.base_value;
-            total_alpha_hp_without_reload += damage_without_reload_dps.value.unwrap();
+        if item.slot.r#type != SlotType::DroneBay || item.state != EffectCategory::Active {
+            continue;
         }
+        if !item.attributes.contains_key(&attr_damage_alpha_hp) {
+            continue;
+        }
+
+        let damage_alpha_hp = item.attributes.get(&attr_damage_alpha_hp).unwrap();
+        total_base_alpha_hp += damage_alpha_hp.base_value;
+        total_alpha_hp += damage_alpha_hp.value.unwrap();
+
+        let damage_without_reload_dps = item
+            .attributes
+            .get(&attr_damage_without_reload_dps)
+            .unwrap();
+        total_base_alpha_hp_without_reload += damage_without_reload_dps.base_value;
+        total_alpha_hp_without_reload += damage_without_reload_dps.value.unwrap();
     }
 
     ship.hull.add_attribute(

@@ -176,11 +176,6 @@ impl Item {
             }
         }
 
-        /* Drones can always be active, but there is no effect that indicates this. */
-        if self.flag == 87 {
-            self.max_state = EffectCategory::Active;
-        }
-
         /* Any module that has a capacitorNeed (6), can be activated. */
         if self.attributes.contains_key(&6) && self.max_state < EffectCategory::Active {
             self.max_state = EffectCategory::Active;
@@ -212,7 +207,7 @@ impl Pass for PassTwo {
         /* Depending on the modifier, move the effects to the correct attribute. */
         for effect in effects {
             let source_type_id = match effect.source {
-                Object::Ship => info.esi_fit.ship_type_id,
+                Object::Ship => info.fit.ship_type_id,
                 Object::Item(index) => ship.items[index].type_id,
                 Object::Charge(index) => ship.items[index].charge.as_ref().unwrap().type_id,
                 Object::Skill(index) => ship.skills[index].type_id,

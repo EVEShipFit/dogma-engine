@@ -54,11 +54,28 @@ pub struct Attribute {
     pub effects: Vec<Effect>,
 }
 
+#[derive(Serialize, Debug, PartialEq)]
+pub enum SlotType {
+    High,
+    Medium,
+    Low,
+    Rig,
+    SubSystem,
+    DroneBay,
+    Charge,
+    None,
+}
+
+#[derive(Serialize, Debug)]
+pub struct Slot {
+    pub r#type: SlotType,
+    pub index: Option<i32>,
+}
+
 #[derive(Serialize, Debug)]
 pub struct Item {
     pub type_id: i32,
-    pub quantity: i32,
-    pub flag: i32,
+    pub slot: Slot,
     pub charge: Option<Box<Item>>,
     pub state: EffectCategory,
     pub max_state: EffectCategory,
@@ -76,27 +93,54 @@ impl Attribute {
     }
 }
 
+impl EffectCategory {
+    pub fn is_active(&self) -> bool {
+        match self {
+            EffectCategory::Active | EffectCategory::Overload => true,
+            _ => false,
+        }
+    }
+}
+
+impl Slot {
+    pub fn is_module(&self) -> bool {
+        match self.r#type {
+            SlotType::High
+            | SlotType::Medium
+            | SlotType::Low
+            | SlotType::Rig
+            | SlotType::SubSystem => true,
+            _ => false,
+        }
+    }
+}
+
 impl Item {
-    pub fn new_esi(
+    pub fn new_charge(type_id: i32) -> Item {
+        Item {
+            type_id,
+            slot: Slot {
+                r#type: SlotType::Charge,
+                index: None,
+            },
+            charge: None,
+            state: EffectCategory::Active,
+            max_state: EffectCategory::Active,
+            attributes: BTreeMap::new(),
+            effects: Vec::new(),
+        }
+    }
+
+    pub fn new_module(
         type_id: i32,
-        quantity: i32,
-        flag: i32,
+        slot: Slot,
         charge_type_id: Option<i32>,
         state: EffectCategory,
     ) -> Item {
         Item {
             type_id,
-            quantity,
-            flag,
-            charge: charge_type_id.map(|charge_type_id| {
-                Box::new(Item::new_esi(
-                    charge_type_id,
-                    1,
-                    -1,
-                    None,
-                    EffectCategory::Passive,
-                ))
-            }),
+            slot,
+            charge: charge_type_id.map(|charge_type_id| Box::new(Item::new_charge(charge_type_id))),
             state,
             max_state: EffectCategory::Passive,
             attributes: BTreeMap::new(),
@@ -104,7 +148,33 @@ impl Item {
         }
     }
 
+    pub fn new_drone(type_id: i32, state: EffectCategory) -> Item {
+        Item {
+            type_id,
+            slot: Slot {
+                r#type: SlotType::DroneBay,
+                index: None,
+            },
+            charge: None,
+            state,
+            max_state: EffectCategory::Active,
+            attributes: BTreeMap::new(),
+            effects: Vec::new(),
+        }
+    }
+
     pub fn new_fake(type_id: i32) -> Item {
-        return Self::new_esi(type_id, 1, -1, None, EffectCategory::Active);
+        Item {
+            type_id,
+            slot: Slot {
+                r#type: SlotType::None,
+                index: None,
+            },
+            charge: None,
+            state: EffectCategory::Active,
+            max_state: EffectCategory::Active,
+            attributes: BTreeMap::new(),
+            effects: Vec::new(),
+        }
     }
 }

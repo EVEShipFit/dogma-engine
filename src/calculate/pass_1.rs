@@ -1,21 +1,12 @@
-use super::item::{Attribute, EffectCategory, Item};
+use super::item::{Attribute, EffectCategory, Item, Slot, SlotType};
 use super::{Info, Pass, Ship};
-use crate::data_types::EsiState;
+use crate::data_types::{EsfSlotType, EsfState};
 
 const ATTRIBUTE_MASS_ID: i32 = 4;
 const ATTRIBUTE_CAPACITY_ID: i32 = 38;
 const ATTRIBUTE_VOLUME_ID: i32 = 161;
 const ATTRIBUTE_RADIUS_ID: i32 = 162;
 const ATTRIBUTE_SKILL_LEVEL_ID: i32 = 280;
-
-const ESI_FLAG_FILTER: [i32; 32] = [
-    11, 12, 13, 14, 15, 16, 17, 18, // lowslots
-    19, 20, 21, 22, 23, 24, 25, 26, // medslots
-    27, 28, 29, 30, 31, 32, 33, 34, // hislots
-    87, // dronebay
-    92, 93, 94, // rigs
-    125, 126, 127, 128, // subsystems
-];
 
 pub struct PassOne {}
 
@@ -59,35 +50,49 @@ impl Pass for PassOne {
             ship.skills.push(skill);
         }
 
-        for esi_item in &info.esi_fit.items {
-            /* Only process items that are in slots, not in cargo etc. */
-            if !ESI_FLAG_FILTER.contains(&esi_item.flag) {
-                continue;
-            }
-
-            let state = match esi_item.state {
-                None => EffectCategory::Active,
-                Some(EsiState::Passive) => EffectCategory::Passive,
-                Some(EsiState::Online) => EffectCategory::Online,
-                Some(EsiState::Active) => EffectCategory::Active,
-                Some(EsiState::Overload) => EffectCategory::Overload,
+        for module in &info.fit.modules {
+            let state = match module.state {
+                EsfState::Passive => EffectCategory::Passive,
+                EsfState::Online => EffectCategory::Online,
+                EsfState::Active => EffectCategory::Active,
+                EsfState::Overload => EffectCategory::Overload,
             };
-            for _ in 0..esi_item.quantity {
-                let mut item = Item::new_esi(
-                    esi_item.type_id,
-                    1,
-                    esi_item.flag,
-                    esi_item.charge.as_ref().map(|charge| charge.type_id),
-                    state,
-                );
 
-                item.set_attributes(info);
-                item.charge
-                    .as_mut()
-                    .map(|charge| charge.set_attributes(info));
+            let mut item = Item::new_module(
+                module.type_id,
+                Slot {
+                    r#type: match module.slot.r#type {
+                        EsfSlotType::High => SlotType::High,
+                        EsfSlotType::Medium => SlotType::Medium,
+                        EsfSlotType::Low => SlotType::Low,
+                        EsfSlotType::Rig => SlotType::Rig,
+                        EsfSlotType::SubSystem => SlotType::SubSystem,
+                    },
+                    index: Some(module.slot.index),
+                },
+                module.charge.as_ref().map(|charge| charge.type_id),
+                state,
+            );
 
-                ship.items.push(item);
-            }
+            item.set_attributes(info);
+            item.charge
+                .as_mut()
+                .map(|charge| charge.set_attributes(info));
+
+            ship.items.push(item);
+        }
+
+        for drone in &info.fit.drones {
+            let state = match drone.state {
+                EsfState::Passive => EffectCategory::Passive,
+                _ => EffectCategory::Active,
+            };
+
+            let mut item = Item::new_drone(drone.type_id, state);
+
+            item.set_attributes(info);
+
+            ship.items.push(item);
         }
     }
 }

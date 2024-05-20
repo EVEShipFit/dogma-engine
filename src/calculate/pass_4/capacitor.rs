@@ -1,4 +1,3 @@
-use super::super::item::EffectCategory;
 use super::super::Ship;
 use super::AttributeId;
 
@@ -41,7 +40,7 @@ pub fn attribute_capacitor_peak_usage(ship: &mut Ship) {
     let mut base_peak_usage = 0.0;
     let mut peak_usage = 0.0;
     for item in &ship.items {
-        if item.state == EffectCategory::Passive || item.state == EffectCategory::Online {
+        if !item.slot.is_module() || !item.state.is_active() {
             continue;
         }
 
@@ -183,7 +182,7 @@ pub fn attribute_capacitor_depletes_in(ship: &mut Ship) {
         /* Find all modules consuming capacitor. */
         let mut modules = Vec::new();
         for item in &ship.items {
-            if item.state == EffectCategory::Passive || item.state == EffectCategory::Online {
+            if !item.slot.is_module() || !item.state.is_active() {
                 continue;
             }
 

@@ -54,9 +54,9 @@ trait Pass {
     fn pass(info: &Info, ship: &mut Ship);
 }
 
-pub fn calculate(esi_fit: &super::data_types::EsiFit, skills: &BTreeMap<i32, i32>) -> Ship {
-    let info = Info::new(esi_fit, skills);
-    let mut ship = Ship::new(info.esi_fit.ship_type_id);
+pub fn calculate(fit: &super::data_types::EsfFit, skills: &BTreeMap<i32, i32>) -> Ship {
+    let info = Info::new(fit, skills);
+    let mut ship = Ship::new(info.fit.ship_type_id);
 
     pass_1::PassOne::pass(&info, &mut ship);
     pass_2::PassTwo::pass(&info, &mut ship);

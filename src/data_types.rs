@@ -98,34 +98,51 @@ pub struct DogmaEffect {
     pub modifierInfo: Vec<DogmaEffectModifierInfo>,
 }
 
-#[allow(non_snake_case)]
 #[derive(Deserialize, Debug)]
-pub enum EsiState {
+pub enum EsfState {
     Passive,
     Online,
     Active,
     Overload,
 }
 
-#[allow(non_snake_case)]
 #[derive(Deserialize, Debug)]
-pub struct EsiCharge {
+pub enum EsfSlotType {
+    High,
+    Medium,
+    Low,
+    Rig,
+    SubSystem,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct EsfCharge {
     pub type_id: i32,
 }
 
-#[allow(non_snake_case)]
 #[derive(Deserialize, Debug)]
-pub struct EsiItem {
-    pub type_id: i32,
-    pub quantity: i32,
-    pub flag: i32,
-    pub charge: Option<EsiCharge>,
-    pub state: Option<EsiState>,
+pub struct EsfSlot {
+    pub r#type: EsfSlotType,
+    pub index: i32,
 }
 
-#[allow(non_snake_case)]
 #[derive(Deserialize, Debug)]
-pub struct EsiFit {
+pub struct EsfModule {
+    pub type_id: i32,
+    pub slot: EsfSlot,
+    pub state: EsfState,
+    pub charge: Option<EsfCharge>,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct EsfDrone {
+    pub type_id: i32,
+    pub state: EsfState,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct EsfFit {
     pub ship_type_id: i32,
-    pub items: Vec<EsiItem>,
+    pub modules: Vec<EsfModule>,
+    pub drones: Vec<EsfDrone>,
 }
