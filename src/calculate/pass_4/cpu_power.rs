@@ -9,7 +9,7 @@ pub fn attribute_cpu_used(ship: &mut Ship) {
 
     let mut cpu_used = 0.0;
     for item in &ship.items {
-        if item.state == EffectCategory::Passive {
+        if !item.slot.is_module() || item.state == EffectCategory::Passive {
             continue;
         }
 
@@ -28,7 +28,7 @@ pub fn attribute_power_used(ship: &mut Ship) {
 
     let mut power_used = 0.0;
     for item in &ship.items {
-        if item.state == EffectCategory::Passive {
+        if !item.slot.is_module() || item.state == EffectCategory::Passive {
             continue;
         }
 

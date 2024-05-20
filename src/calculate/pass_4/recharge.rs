@@ -1,4 +1,3 @@
-use super::super::item::EffectCategory;
 use super::super::Ship;
 use super::AttributeId;
 
@@ -56,32 +55,42 @@ pub fn attribute_shield_recharge(ship: &mut Ship) {
 
     let mut base_shield_recharge = 0.0;
     for item in &ship.items {
-        if item.attributes.contains_key(&attr_duration)
-            && item.attributes.contains_key(&attr_shield_bonus)
-            && item.state >= EffectCategory::Active
-        {
-            let duration = item.attributes.get(&attr_duration).unwrap().base_value / 1000.0;
-            base_shield_recharge +=
-                item.attributes.get(&attr_shield_bonus).unwrap().base_value / duration;
+        if !item.slot.is_module() || !item.state.is_active() {
+            continue;
         }
+
+        if !item.attributes.contains_key(&attr_duration)
+            || !item.attributes.contains_key(&attr_shield_bonus)
+        {
+            continue;
+        }
+
+        let duration = item.attributes.get(&attr_duration).unwrap().base_value / 1000.0;
+        base_shield_recharge +=
+            item.attributes.get(&attr_shield_bonus).unwrap().base_value / duration;
     }
     let base_shield_ehp_multiplier = attr_shield_ehp_multiplier.base_value;
 
     let mut shield_recharge = 0.0;
     for item in &ship.items {
-        if item.attributes.contains_key(&attr_duration)
-            && item.attributes.contains_key(&attr_shield_bonus)
-            && item.state >= EffectCategory::Active
-        {
-            let duration = item.attributes.get(&attr_duration).unwrap().value.unwrap() / 1000.0;
-            shield_recharge += item
-                .attributes
-                .get(&attr_shield_bonus)
-                .unwrap()
-                .value
-                .unwrap()
-                / duration;
+        if !item.slot.is_module() || !item.state.is_active() {
+            continue;
         }
+
+        if !item.attributes.contains_key(&attr_duration)
+            || !item.attributes.contains_key(&attr_shield_bonus)
+        {
+            continue;
+        }
+
+        let duration = item.attributes.get(&attr_duration).unwrap().value.unwrap() / 1000.0;
+        shield_recharge += item
+            .attributes
+            .get(&attr_shield_bonus)
+            .unwrap()
+            .value
+            .unwrap()
+            / duration;
     }
     let shield_ehp_multiplier = attr_shield_ehp_multiplier.value.unwrap();
 
@@ -110,32 +119,42 @@ pub fn attribute_armor_recharge(ship: &mut Ship) {
 
     let mut base_armor_recharge = 0.0;
     for item in &ship.items {
-        if item.attributes.contains_key(&attr_duration)
-            && item.attributes.contains_key(&attr_armor_bonus)
-            && item.state >= EffectCategory::Active
-        {
-            let duration = item.attributes.get(&attr_duration).unwrap().base_value / 1000.0;
-            base_armor_recharge +=
-                item.attributes.get(&attr_armor_bonus).unwrap().base_value / duration;
+        if !item.slot.is_module() || !item.state.is_active() {
+            continue;
         }
+
+        if !item.attributes.contains_key(&attr_duration)
+            || !item.attributes.contains_key(&attr_armor_bonus)
+        {
+            continue;
+        }
+
+        let duration = item.attributes.get(&attr_duration).unwrap().base_value / 1000.0;
+        base_armor_recharge +=
+            item.attributes.get(&attr_armor_bonus).unwrap().base_value / duration;
     }
     let base_armor_ehp_multiplier = attr_armor_ehp_multiplier.base_value;
 
     let mut armor_recharge = 0.0;
     for item in &ship.items {
-        if item.attributes.contains_key(&attr_duration)
-            && item.attributes.contains_key(&attr_armor_bonus)
-            && item.state >= EffectCategory::Active
-        {
-            let duration = item.attributes.get(&attr_duration).unwrap().value.unwrap() / 1000.0;
-            armor_recharge += item
-                .attributes
-                .get(&attr_armor_bonus)
-                .unwrap()
-                .value
-                .unwrap()
-                / duration;
+        if !item.slot.is_module() || !item.state.is_active() {
+            continue;
         }
+
+        if !item.attributes.contains_key(&attr_duration)
+            || !item.attributes.contains_key(&attr_armor_bonus)
+        {
+            continue;
+        }
+
+        let duration = item.attributes.get(&attr_duration).unwrap().value.unwrap() / 1000.0;
+        armor_recharge += item
+            .attributes
+            .get(&attr_armor_bonus)
+            .unwrap()
+            .value
+            .unwrap()
+            / duration;
     }
     let armor_ehp_multiplier = attr_armor_ehp_multiplier.value.unwrap();
 
@@ -164,32 +183,41 @@ pub fn attribute_hull_recharge(ship: &mut Ship) {
 
     let mut base_hull_recharge = 0.0;
     for item in &ship.items {
-        if item.attributes.contains_key(&attr_duration)
-            && item.attributes.contains_key(&attr_hull_bonus)
-            && item.state >= EffectCategory::Active
-        {
-            let duration = item.attributes.get(&attr_duration).unwrap().base_value / 1000.0;
-            base_hull_recharge +=
-                item.attributes.get(&attr_hull_bonus).unwrap().base_value / duration;
+        if !item.slot.is_module() || !item.state.is_active() {
+            continue;
         }
+
+        if !item.attributes.contains_key(&attr_duration)
+            || !item.attributes.contains_key(&attr_hull_bonus)
+        {
+            continue;
+        }
+
+        let duration = item.attributes.get(&attr_duration).unwrap().base_value / 1000.0;
+        base_hull_recharge += item.attributes.get(&attr_hull_bonus).unwrap().base_value / duration;
     }
     let base_hull_ehp_multiplier = attr_hull_ehp_multiplier.base_value;
 
     let mut hull_recharge = 0.0;
     for item in &ship.items {
-        if item.attributes.contains_key(&attr_duration)
-            && item.attributes.contains_key(&attr_hull_bonus)
-            && item.state >= EffectCategory::Active
-        {
-            let duration = item.attributes.get(&attr_duration).unwrap().value.unwrap() / 1000.0;
-            hull_recharge += item
-                .attributes
-                .get(&attr_hull_bonus)
-                .unwrap()
-                .value
-                .unwrap()
-                / duration;
+        if !item.slot.is_module() || !item.state.is_active() {
+            continue;
         }
+
+        if !item.attributes.contains_key(&attr_duration)
+            || !item.attributes.contains_key(&attr_hull_bonus)
+        {
+            continue;
+        }
+
+        let duration = item.attributes.get(&attr_duration).unwrap().value.unwrap() / 1000.0;
+        hull_recharge += item
+            .attributes
+            .get(&attr_hull_bonus)
+            .unwrap()
+            .value
+            .unwrap()
+            / duration;
     }
     let hull_ehp_multiplier = attr_hull_ehp_multiplier.value.unwrap();
 
