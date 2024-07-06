@@ -12,11 +12,11 @@ This Dogma engine implements a multi-pass approach.
 - [pass 1](./src/calculate/pass_1.rs): collect all the Dogma attributes of the hull and modules.
 - [pass 2](./src/calculate/pass_2.rs): collect all the Dogma effects of the hull and modules.
 - [pass 3](./src/calculate/pass_3.rs): apply all the Dogma effects to the hull/modules, calculating the actual Dogma attribute values.
-- [pass 4](./src/calculate/pass_4.rs): augment the Dogma attributes with EVEShip.fit specific attributes.
+- [pass 4](./src/calculate/pass_4.rs): augment the Dogma attributes with EVEShip.fit specific attributes, that are too complex for the Dogma itself to handle.
 
 ## EVEShip.fit's specific attributes
 
-`Pass 4` create Dogma attributes that do not exist in-game, but are calculated based on other Dogma attributes.
+`Pass 4` create Dogma attributes that do not exist in-game, but are rather complicated to calculate.
 To make rendering a fit easier, these are calculated by this library, and presented as new Dogma attributes.
 
 Their identifier is always a negative value, to visually separate them.
