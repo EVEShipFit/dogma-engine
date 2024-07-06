@@ -24,7 +24,7 @@ pub enum EffectOperator {
     PostMul,
     PostDiv,
     PostPercent,
-    PostAssignment,
+    PostAssign,
 }
 
 #[derive(Serialize, Debug, Copy, Clone)]

@@ -93,7 +93,7 @@ fn get_effect_operator(operation: i32) -> Option<EffectOperator> {
         4 => Some(EffectOperator::PostMul),
         5 => Some(EffectOperator::PostDiv),
         6 => Some(EffectOperator::PostPercent),
-        7 => Some(EffectOperator::PostAssignment),
+        7 => Some(EffectOperator::PostAssign),
         /* We ignore operator 9 (calculates Skill Level based on Skill Points; irrelevant for fits). */
         9 => None,
         _ => panic!("Unknown effect operation: {}", operation),
