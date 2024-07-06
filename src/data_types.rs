@@ -19,18 +19,11 @@ pub struct TypeDogmaAttribute {
     pub value: f64,
 }
 
-#[allow(non_snake_case)]
+#[allow(non_snake_case, dead_code)]
 #[derive(Deserialize, Debug)]
 pub struct TypeDogmaEffect {
     pub effectID: i32,
     pub isDefault: bool,
-}
-
-#[allow(non_snake_case)]
-#[derive(Deserialize, Debug)]
-pub struct TypeDogma {
-    pub dogmaAttributes: Vec<TypeDogmaAttribute>,
-    pub dogmaEffects: Vec<TypeDogmaEffect>,
 }
 
 #[allow(non_snake_case)]
@@ -78,7 +71,7 @@ pub struct DogmaEffectModifierInfo {
     pub skillTypeID: Option<i32>,
 }
 
-#[allow(non_snake_case)]
+#[allow(non_snake_case, dead_code)]
 #[derive(Deserialize, Debug)]
 pub struct DogmaEffect {
     pub dischargeAttributeID: Option<i32>,
