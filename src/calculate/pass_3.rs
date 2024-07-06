@@ -104,7 +104,7 @@ impl Attribute {
                     EffectOperator::PostMul => source_value - 1.0,
                     EffectOperator::PostDiv => 1.0 / source_value - 1.0,
                     EffectOperator::PostPercent => source_value / 100.0,
-                    EffectOperator::PostAssignment => source_value,
+                    EffectOperator::PostAssign => source_value,
                 };
 
                 /* Check whether stacking penalty counts; negative and positive values have their own penalty. */
@@ -125,7 +125,7 @@ impl Attribute {
 
             /* Apply the operator on the values. */
             match operator {
-                EffectOperator::PreAssign | EffectOperator::PostAssignment => {
+                EffectOperator::PreAssign | EffectOperator::PostAssign => {
                     let dogma_attribute = info.get_dogma_attribute(attribute_id);
 
                     current_value = if dogma_attribute.highIsGood {
