@@ -26,13 +26,18 @@ What additional attributes exist are defined in [EVEShipFit/data](https://github
 
 Make sure you have [Rust installed](https://www.rust-lang.org/tools/install).
 
+Next, we have to fetch the latest Protobuf definition and data files.
+These can be installed via the NPM package `@eveshipfit/data`:
+
 ```bash
-cargo install wasm-pack
-wasm-pack build --release
+npm i -U
 ```
 
-In the `pkg` folder is now a NPM module to use.
-See below on how to integrate this in your own website.
+After that, we can run the application.
+
+```bash
+cargo run --release --no-default-features --features rust
+```
 
 ## Integration
 
@@ -41,7 +46,14 @@ See below on how to integrate this in your own website.
 The primary goal of this library is to build a WebAssembly variant that can easily be used in the browser.
 This means that there is no need for a server-component, and everything can be calculated in the browser.
 
-This is done with [wasm-pack](https://rustwasm.github.io/wasm-pack/).
+This is done with [wasm-pack](https://rustwasm.github.io/wasm-pack/):
+
+```bash
+cargo install wasm-pack
+wasm-pack build --release -- --no-default-features --features wasm
+```
+
+In the `pkg` folder is now a NPM module to use.
 
 To make sure that EVEShip.fit is as fast as possible, all data-files are read by Javascript, and made available to this library by callbacks.
 Transferring all data-files from Javascript to Rust is simply too expensive.

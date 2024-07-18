@@ -1,4 +1,6 @@
-/target/
 __pycache__/
-Cargo.lock
+/Cargo.lock
+/node_modules/
 /pkg/
+/target/
+/package-lock.json
