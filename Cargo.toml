@@ -11,13 +11,19 @@ license = "MIT"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-console_error_panic_hook = "0.1"
 serde = { version = "1.0", features = ["derive"] }
 serde_repr = "0.1"
-serde-wasm-bindgen = "0.4"
 strum = "0.25"
 strum_macros = "0.25"
-wasm-bindgen = "0.2"
+
+# WASM dependencies
+console_error_panic_hook = { version = "0.1", optional = true }
+serde-wasm-bindgen = { version = "0.4", optional = true }
+wasm-bindgen = { version = "0.2", optional = true }
 
 [profile.release]
 opt-level = "s"
+
+[features]
+default = ["wasm"]
+wasm = ["dep:console_error_panic_hook", "dep:serde-wasm-bindgen", "dep:wasm-bindgen"]
