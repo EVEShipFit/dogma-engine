@@ -10,6 +10,14 @@ struct Module {
 pub fn attribute_capacitor_depletes_in(ship: &mut Ship) {
     /* Amount of seconds it takes for the capacitor to deplete; or negative if it is stable. */
 
+    if !ship
+        .hull
+        .attributes
+        .contains_key(&(AttributeId::capacitorDepletesIn as i32))
+    {
+        return;
+    }
+
     let mut depletes_in = -1.0;
 
     let attr_capacitor_peak_delta = ship
