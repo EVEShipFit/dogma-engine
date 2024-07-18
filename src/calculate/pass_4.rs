@@ -29,7 +29,7 @@ impl Item {
 
 /* Attributes don't contain all information displayed, so we calculate some fake attributes with those values. */
 impl Pass for PassFour {
-    fn pass(_info: &Info, ship: &mut Ship) {
+    fn pass(_info: &impl Info, ship: &mut Ship) {
         capacitor::attribute_capacitor_depletes_in(ship);
     }
 }

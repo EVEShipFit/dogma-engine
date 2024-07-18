@@ -103,7 +103,7 @@ fn get_effect_operator(operation: i32) -> Option<EffectOperator> {
 impl Item {
     fn add_effect(
         &mut self,
-        info: &Info,
+        info: &impl Info,
         attribute_id: i32,
         source_category_id: i32,
         effect: &Pass2Effect,
@@ -127,7 +127,12 @@ impl Item {
         });
     }
 
-    fn collect_effects(&mut self, info: &Info, origin: Object, effects: &mut Vec<Pass2Effect>) {
+    fn collect_effects(
+        &mut self,
+        info: &impl Info,
+        origin: Object,
+        effects: &mut Vec<Pass2Effect>,
+    ) {
         for dogma_effect in info.get_dogma_effects(self.type_id) {
             let type_dogma_effect = info.get_dogma_effect(dogma_effect.effectID);
             let category = get_effect_category(type_dogma_effect.effectCategory);
@@ -188,7 +193,7 @@ impl Item {
 }
 
 impl Pass for PassTwo {
-    fn pass(info: &Info, ship: &mut Ship) {
+    fn pass(info: &impl Info, ship: &mut Ship) {
         let mut effects = Vec::new();
 
         /* Collect all the effects in a single list. */
@@ -207,7 +212,7 @@ impl Pass for PassTwo {
         /* Depending on the modifier, move the effects to the correct attribute. */
         for effect in effects {
             let source_type_id = match effect.source {
-                Object::Ship => info.fit.ship_type_id,
+                Object::Ship => info.fit().ship_type_id,
                 Object::Item(index) => ship.items[index].type_id,
                 Object::Charge(index) => ship.items[index].charge.as_ref().unwrap().type_id,
                 Object::Skill(index) => ship.skills[index].type_id,

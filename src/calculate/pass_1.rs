@@ -15,7 +15,7 @@ impl Item {
         self.attributes.insert(attribute_id, Attribute::new(value));
     }
 
-    fn set_attributes(&mut self, info: &Info) {
+    fn set_attributes(&mut self, info: &impl Info) {
         for dogma_attribute in info.get_dogma_attributes(self.type_id) {
             self.set_attribute(dogma_attribute.attributeID, dogma_attribute.value);
         }
@@ -38,10 +38,10 @@ impl Item {
 }
 
 impl Pass for PassOne {
-    fn pass(info: &Info, ship: &mut Ship) {
+    fn pass(info: &impl Info, ship: &mut Ship) {
         ship.hull.set_attributes(info);
 
-        for (skill_id, skill_level) in info.skills {
+        for (skill_id, skill_level) in info.skills() {
             let mut skill = Item::new_fake(*skill_id);
 
             skill.set_attributes(info);
@@ -50,7 +50,7 @@ impl Pass for PassOne {
             ship.skills.push(skill);
         }
 
-        for module in &info.fit.modules {
+        for module in &info.fit().modules {
             let state = match module.state {
                 EsfState::Passive => EffectCategory::Passive,
                 EsfState::Online => EffectCategory::Online,
@@ -82,7 +82,7 @@ impl Pass for PassOne {
             ship.items.push(item);
         }
 
-        for drone in &info.fit.drones {
+        for drone in &info.fit().drones {
             let state = match drone.state {
                 EsfState::Passive => EffectCategory::Passive,
                 _ => EffectCategory::Active,

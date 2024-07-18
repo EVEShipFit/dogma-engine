@@ -1,14 +1,12 @@
 use serde::Serialize;
-use std::collections::BTreeMap;
 
-mod info;
 mod item;
 mod pass_1;
 mod pass_2;
 mod pass_3;
 mod pass_4;
 
-use info::Info;
+use super::info::Info;
 use item::Item;
 
 #[derive(Serialize, Debug)]
@@ -51,17 +49,16 @@ impl Ship {
 }
 
 trait Pass {
-    fn pass(info: &Info, ship: &mut Ship);
+    fn pass(info: &impl Info, ship: &mut Ship);
 }
 
-pub fn calculate(fit: &super::data_types::EsfFit, skills: &BTreeMap<i32, i32>) -> Ship {
-    let info = Info::new(fit, skills);
-    let mut ship = Ship::new(info.fit.ship_type_id);
+pub fn calculate(info: &impl Info) -> Ship {
+    let mut ship = Ship::new(info.fit().ship_type_id);
 
-    pass_1::PassOne::pass(&info, &mut ship);
-    pass_2::PassTwo::pass(&info, &mut ship);
-    pass_3::PassThree::pass(&info, &mut ship);
-    pass_4::PassFour::pass(&info, &mut ship);
+    pass_1::PassOne::pass(info, &mut ship);
+    pass_2::PassTwo::pass(info, &mut ship);
+    pass_3::PassThree::pass(info, &mut ship);
+    pass_4::PassFour::pass(info, &mut ship);
 
     ship
 }
