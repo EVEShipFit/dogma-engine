@@ -30,7 +30,7 @@ struct Cache {
 impl Attribute {
     fn calculate_value(
         &self,
-        info: &Info,
+        info: &impl Info,
         ship: &Ship,
         cache: &mut Cache,
         item: Object,
@@ -232,13 +232,13 @@ impl Attribute {
 }
 
 impl Item {
-    fn calculate_values(&self, info: &Info, ship: &Ship, cache: &mut Cache, item: Object) {
+    fn calculate_values(&self, info: &impl Info, ship: &Ship, cache: &mut Cache, item: Object) {
         for attribute_id in self.attributes.keys() {
             self.attributes[&attribute_id].calculate_value(info, ship, cache, item, *attribute_id);
         }
     }
 
-    fn store_cached_values(&mut self, info: &Info, cache: &BTreeMap<i32, f64>) {
+    fn store_cached_values(&mut self, info: &impl Info, cache: &BTreeMap<i32, f64>) {
         for (attribute_id, value) in cache {
             if let Some(attribute) = self.attributes.get_mut(&attribute_id) {
                 attribute.value = Some(*value);
@@ -255,7 +255,7 @@ impl Item {
 }
 
 impl Pass for PassThree {
-    fn pass(info: &Info, ship: &mut Ship) {
+    fn pass(info: &impl Info, ship: &mut Ship) {
         let mut cache = Cache {
             hull: BTreeMap::new(),
             char: BTreeMap::new(),
