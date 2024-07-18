@@ -22,13 +22,30 @@ jobs:
       with:
         toolchain: stable
 
+    - name: Install NodeJS
+      uses: actions/setup-node@v4
+      with:
+        registry-url: https://npm.pkg.github.com
+        scope: "@eveshipfit"
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Install Protobuf Compiler
+      run: |
+        sudo apt install -y --no-install-recommends protobuf-compiler
+
     - name: Install wasm-pack
       run: |
         cargo install wasm-pack
 
-    - name: Build library
+    - name: Build WASM library
       run: |
-        wasm-pack build --release --target web
+        wasm-pack build --release --target web -- --no-default-features --features wasm
+
+    - name: Build Rust binary
+      run: |
+        npm i
+        cargo build --release --no-default-features --features rust
 
     - name: Check coding style
       run: |

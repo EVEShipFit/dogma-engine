@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@eveshipfit/data": "^10"
+  }
+}

@@ -139,3 +139,32 @@ pub struct EsfFit {
     pub modules: Vec<EsfModule>,
     pub drones: Vec<EsfDrone>,
 }
+
+impl From<i32> for DogmaEffectModifierInfoDomain {
+    fn from(value: i32) -> DogmaEffectModifierInfoDomain {
+        match value {
+            0 => DogmaEffectModifierInfoDomain::ItemID,
+            1 => DogmaEffectModifierInfoDomain::ShipID,
+            2 => DogmaEffectModifierInfoDomain::CharID,
+            3 => DogmaEffectModifierInfoDomain::OtherID,
+            4 => DogmaEffectModifierInfoDomain::StructureID,
+            5 => DogmaEffectModifierInfoDomain::Target,
+            6 => DogmaEffectModifierInfoDomain::TargetID,
+            _ => DogmaEffectModifierInfoDomain::ItemID,
+        }
+    }
+}
+
+impl From<i32> for DogmaEffectModifierInfoFunc {
+    fn from(value: i32) -> DogmaEffectModifierInfoFunc {
+        match value {
+            0 => DogmaEffectModifierInfoFunc::ItemModifier,
+            1 => DogmaEffectModifierInfoFunc::LocationGroupModifier,
+            2 => DogmaEffectModifierInfoFunc::LocationModifier,
+            3 => DogmaEffectModifierInfoFunc::LocationRequiredSkillModifier,
+            4 => DogmaEffectModifierInfoFunc::OwnerRequiredSkillModifier,
+            5 => DogmaEffectModifierInfoFunc::EffectStopper,
+            _ => DogmaEffectModifierInfoFunc::ItemModifier,
+        }
+    }
+}
