@@ -20,18 +20,18 @@ impl Item {
             self.set_attribute(dogma_attribute.attributeID, dogma_attribute.value);
         }
 
-        /* Some attributes of items come from the TypeID information. */
-        let type_id = info.get_type_id(self.type_id);
-        if let Some(mass) = type_id.mass {
+        /* Some attributes of items come from the Type information. */
+        let r#type = info.get_type(self.type_id);
+        if let Some(mass) = r#type.mass {
             self.set_attribute(ATTRIBUTE_MASS_ID, mass);
         }
-        if let Some(capacity) = type_id.capacity {
+        if let Some(capacity) = r#type.capacity {
             self.set_attribute(ATTRIBUTE_CAPACITY_ID, capacity);
         }
-        if let Some(volume) = type_id.volume {
+        if let Some(volume) = r#type.volume {
             self.set_attribute(ATTRIBUTE_VOLUME_ID, volume);
         }
-        if let Some(radius) = type_id.radius {
+        if let Some(radius) = r#type.radius {
             self.set_attribute(ATTRIBUTE_RADIUS_ID, radius);
         }
     }

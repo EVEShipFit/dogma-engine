@@ -3,7 +3,7 @@ use serde_repr::*;
 
 #[allow(non_snake_case)]
 #[derive(Deserialize, Debug)]
-pub struct TypeId {
+pub struct Type {
     pub groupID: i32,
     pub categoryID: i32,
     pub capacity: Option<f64>,

@@ -21,7 +21,7 @@ extern "C" {
     fn get_dogma_effect(effect_id: i32) -> JsValue;
 
     #[wasm_bindgen(js_namespace = window)]
-    fn get_type_id(type_id: i32) -> JsValue;
+    fn get_type(type_id: i32) -> JsValue;
 }
 
 pub struct InfoWasm {
@@ -50,8 +50,8 @@ impl Info for InfoWasm {
         serde_wasm_bindgen::from_value(js).unwrap()
     }
 
-    fn get_type_id(&self, type_id: i32) -> data_types::TypeId {
-        let js = get_type_id(type_id);
+    fn get_type(&self, type_id: i32) -> data_types::Type {
+        let js = get_type(type_id);
         serde_wasm_bindgen::from_value(js).unwrap()
     }
 

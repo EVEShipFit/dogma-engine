@@ -117,9 +117,9 @@ impl Info for InfoMain {
         }
     }
 
-    fn get_type_id(&self, type_id: i32) -> data_types::TypeId {
+    fn get_type(&self, type_id: i32) -> data_types::Type {
         match self.types.get(&type_id) {
-            None => data_types::TypeId {
+            None => data_types::Type {
                 groupID: 0,
                 categoryID: 0,
                 capacity: None,
@@ -127,7 +127,7 @@ impl Info for InfoMain {
                 volume: None,
                 radius: None,
             },
-            Some(type_) => data_types::TypeId {
+            Some(type_) => data_types::Type {
                 groupID: type_.group_id,
                 categoryID: type_.category_id,
                 capacity: type_.capacity.map(|x| x as f64),

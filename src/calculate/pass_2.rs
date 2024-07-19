@@ -220,7 +220,7 @@ impl Pass for PassTwo {
                 Object::Structure => continue, // TODO
                 Object::Target => continue,    // TODO
             };
-            let category_id = info.get_type_id(source_type_id).categoryID;
+            let category_id = info.get_type(source_type_id).categoryID;
 
             match effect.modifier {
                 Modifier::ItemModifier() => {
@@ -254,8 +254,8 @@ impl Pass for PassTwo {
                     }
                 }
                 Modifier::LocationGroupModifier(group_id) => {
-                    let type_id = info.get_type_id(ship.hull.type_id);
-                    if type_id.groupID == group_id {
+                    let r#type = info.get_type(ship.hull.type_id);
+                    if r#type.groupID == group_id {
                         ship.hull.add_effect(
                             info,
                             effect.target_attribute_id,
@@ -265,16 +265,16 @@ impl Pass for PassTwo {
                     }
 
                     for item in &mut ship.items {
-                        let type_id = info.get_type_id(item.type_id);
+                        let r#type = info.get_type(item.type_id);
 
-                        if type_id.groupID == group_id {
+                        if r#type.groupID == group_id {
                             item.add_effect(info, effect.target_attribute_id, category_id, &effect);
                         }
 
                         if let Some(charge) = &mut item.charge {
-                            let type_id = info.get_type_id(charge.type_id);
+                            let r#type = info.get_type(charge.type_id);
 
-                            if type_id.groupID == group_id {
+                            if r#type.groupID == group_id {
                                 charge.add_effect(
                                     info,
                                     effect.target_attribute_id,
