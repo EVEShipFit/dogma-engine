@@ -1,10 +1,10 @@
 use std::collections::{BTreeMap, HashMap};
 use std::path::PathBuf;
 
-use super::super::data_types;
-use super::super::info::Info;
 use super::esf_data;
 use super::protobuf;
+use crate::data_types;
+use crate::info::Info;
 
 pub struct InfoMain {
     pub fit: data_types::EsfFit,

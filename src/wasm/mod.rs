@@ -2,9 +2,9 @@ use serde_wasm_bindgen;
 use std::collections::BTreeMap;
 use wasm_bindgen::prelude::*;
 
-use super::calculate;
-use super::data_types;
-use super::info::Info;
+use crate::calculate;
+use crate::data_types;
+use crate::info::Info;
 
 #[wasm_bindgen]
 extern "C" {

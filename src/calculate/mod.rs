@@ -6,7 +6,7 @@ mod pass_2;
 mod pass_3;
 mod pass_4;
 
-use super::info::Info;
+use crate::info::Info;
 use item::Item;
 
 #[derive(Serialize, Debug)]

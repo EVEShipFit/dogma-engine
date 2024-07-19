@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 
-use super::data_types;
+use crate::data_types;
 
 pub trait Info {
     fn skills(&self) -> &BTreeMap<i32, i32>;
