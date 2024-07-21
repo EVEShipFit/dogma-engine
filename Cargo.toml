@@ -33,6 +33,7 @@ prost-build = "0.13"
 opt-level = "s"
 
 [features]
-default = ["rust", "wasm"]
+default = ["eft", "rust", "wasm"]
+eft = []
 rust = ["dep:clap", "dep:prost", "dep:serde_json"]
 wasm = ["dep:console_error_panic_hook", "dep:serde-wasm-bindgen", "dep:wasm-bindgen"]

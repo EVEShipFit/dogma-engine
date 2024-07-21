@@ -24,7 +24,8 @@ pub fn main() {
     };
     let skills: BTreeMap<i32, i32> = BTreeMap::new();
 
-    let info = rust::InfoMain::new(fit, skills, &args.protobuf_location);
+    let data = rust::Data::new(&args.protobuf_location);
+    let info = rust::InfoMain::new(fit, skills, &data);
 
     let statistics = calculate::calculate(&info);
 

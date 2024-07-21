@@ -99,7 +99,7 @@ pub enum EsfState {
     Overload,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Eq, Hash, PartialEq)]
 pub enum EsfSlotType {
     High,
     Medium,
