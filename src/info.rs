@@ -13,3 +13,9 @@ pub trait Info {
     fn get_type(&self, type_id: i32) -> data_types::Type;
     fn attribute_name_to_id(&self, name: &str) -> i32;
 }
+
+pub trait InfoName {
+    fn get_dogma_effects(&self, type_id: i32) -> Vec<data_types::TypeDogmaEffect>;
+    fn get_type(&self, type_id: i32) -> data_types::Type;
+    fn type_name_to_id(&self, name: &str) -> i32;
+}

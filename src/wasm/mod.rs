@@ -5,6 +5,7 @@ use wasm_bindgen::prelude::*;
 use crate::calculate;
 use crate::data_types;
 use crate::info::Info;
+use crate::info::InfoName;
 
 #[wasm_bindgen]
 extern "C" {
@@ -22,6 +23,9 @@ extern "C" {
 
     #[wasm_bindgen(js_namespace = window)]
     fn get_type(type_id: i32) -> JsValue;
+
+    #[wasm_bindgen(js_namespace = window)]
+    fn type_name_to_id(name: &str) -> JsValue;
 
     #[wasm_bindgen(js_namespace = window)]
     fn attribute_name_to_id(name: &str) -> JsValue;
@@ -69,6 +73,23 @@ impl Info for InfoWasm {
 
     fn fit(&self) -> &data_types::EsfFit {
         &self.fit
+    }
+}
+
+impl InfoName for InfoWasm {
+    fn get_dogma_effects(&self, type_id: i32) -> Vec<data_types::TypeDogmaEffect> {
+        let js = get_dogma_effects(type_id);
+        serde_wasm_bindgen::from_value(js).unwrap()
+    }
+
+    fn get_type(&self, type_id: i32) -> data_types::Type {
+        let js = get_type(type_id);
+        serde_wasm_bindgen::from_value(js).unwrap()
+    }
+
+    fn type_name_to_id(&self, name: &str) -> i32 {
+        let js = type_name_to_id(name);
+        serde_wasm_bindgen::from_value(js).unwrap()
     }
 }
 
