@@ -40,12 +40,12 @@ jobs:
 
     - name: Build WASM library
       run: |
-        wasm-pack build --release --target web -- --no-default-features --features wasm
+        wasm-pack build --release --target web -- --no-default-features --features wasm,eft
 
     - name: Build Rust binary
       run: |
         npm i
-        cargo build --release --no-default-features --features rust
+        cargo build --release --no-default-features --features rust,eft
 
     - name: Check coding style
       run: |
