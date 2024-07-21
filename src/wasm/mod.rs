@@ -22,6 +22,9 @@ extern "C" {
 
     #[wasm_bindgen(js_namespace = window)]
     fn get_type(type_id: i32) -> JsValue;
+
+    #[wasm_bindgen(js_namespace = window)]
+    fn attribute_name_to_id(name: &str) -> JsValue;
 }
 
 pub struct InfoWasm {
@@ -52,6 +55,11 @@ impl Info for InfoWasm {
 
     fn get_type(&self, type_id: i32) -> data_types::Type {
         let js = get_type(type_id);
+        serde_wasm_bindgen::from_value(js).unwrap()
+    }
+
+    fn attribute_name_to_id(&self, name: &str) -> i32 {
+        let js = attribute_name_to_id(name);
         serde_wasm_bindgen::from_value(js).unwrap()
     }
 

@@ -1,5 +1,6 @@
+use crate::info::Info;
+
 use super::super::Ship;
-use super::AttributeId;
 
 struct Module {
     capacitor_need: f64,
@@ -7,40 +8,39 @@ struct Module {
     time_next: f64,
 }
 
-pub fn attribute_capacitor_depletes_in(ship: &mut Ship) {
+pub fn attribute_capacitor_depletes_in(info: &impl Info, ship: &mut Ship) {
     /* Amount of seconds it takes for the capacitor to deplete; or negative if it is stable. */
+
+    let attr_capacitor_peak_delta_id = info.attribute_name_to_id("capacitorPeakDelta");
+    let attr_capacitor_capacity_id = info.attribute_name_to_id("capacitorCapacity");
+    let attr_recharge_rate_id = info.attribute_name_to_id("rechargeRate");
+    let attr_capacitor_need_id = info.attribute_name_to_id("capacitorNeed");
+    let attr_cycle_time_id = info.attribute_name_to_id("cycleTime");
+    let attr_capacitor_depletes_in_id = info.attribute_name_to_id("capacitorDepletesIn");
 
     if !ship
         .hull
         .attributes
-        .contains_key(&(AttributeId::capacitorDepletesIn as i32))
+        .contains_key(&attr_capacitor_peak_delta_id)
     {
         return;
     }
 
-    let mut depletes_in = -1.0;
+    let mut depletes_in = -1000.0;
 
     let attr_capacitor_peak_delta = ship
         .hull
         .attributes
-        .get(&(AttributeId::capacitorPeakDelta as i32))
+        .get(&attr_capacitor_peak_delta_id)
         .unwrap();
 
     if attr_capacitor_peak_delta.value.unwrap() < 0.0 {
         let attr_capacitor_capacity = ship
             .hull
             .attributes
-            .get(&(AttributeId::capacitorCapacity as i32))
+            .get(&attr_capacitor_capacity_id)
             .unwrap();
-        let attr_recharge_rate = ship
-            .hull
-            .attributes
-            .get(&(AttributeId::rechargeRate as i32))
-            .unwrap();
-
-        let attr_capacitor_need = AttributeId::capacitorNeed as i32;
-        let attr_duration = AttributeId::duration as i32;
-        let attr_rate_of_fire = AttributeId::speed as i32;
+        let attr_recharge_rate = ship.hull.attributes.get(&attr_recharge_rate_id).unwrap();
 
         /* Find all modules consuming capacitor. */
         let mut modules = Vec::new();
@@ -49,27 +49,22 @@ pub fn attribute_capacitor_depletes_in(ship: &mut Ship) {
                 continue;
             }
 
-            if !item.attributes.contains_key(&attr_capacitor_need) {
+            if !item.attributes.contains_key(&attr_capacitor_need_id)
+                || !item.attributes.contains_key(&attr_cycle_time_id)
+            {
                 continue;
             }
 
-            /* Depending on the module, the duration is based either on "duration" or on "speed" (read: rate-of-fire). */
-            let duration = if item.attributes.contains_key(&attr_duration) {
-                item.attributes.get(&attr_duration).unwrap().value.unwrap()
-            } else if item.attributes.contains_key(&attr_rate_of_fire) {
-                item.attributes
-                    .get(&attr_rate_of_fire)
-                    .unwrap()
-                    .value
-                    .unwrap()
-            } else {
-                /* Neither speed nor duration; so no cap use. */
-                continue;
-            };
+            let duration = item
+                .attributes
+                .get(&attr_cycle_time_id)
+                .unwrap()
+                .value
+                .unwrap();
 
             let capacitor_need = item
                 .attributes
-                .get(&attr_capacitor_need)
+                .get(&attr_capacitor_need_id)
                 .unwrap()
                 .value
                 .unwrap();
@@ -116,5 +111,5 @@ pub fn attribute_capacitor_depletes_in(ship: &mut Ship) {
     }
 
     ship.hull
-        .add_attribute(AttributeId::capacitorDepletesIn, 0.0, depletes_in / 1000.0);
+        .add_attribute(attr_capacitor_depletes_in_id, 0.0, depletes_in / 1000.0);
 }

@@ -138,6 +138,15 @@ impl Info for InfoMain {
         }
     }
 
+    fn attribute_name_to_id(&self, name: &str) -> i32 {
+        for (attribute_id, attribute) in &self.dogma_attributes {
+            if attribute.name == name {
+                return *attribute_id;
+            }
+        }
+        0
+    }
+
     fn skills(&self) -> &BTreeMap<i32, i32> {
         &self.skills
     }
