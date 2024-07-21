@@ -38,7 +38,7 @@ jobs:
 
     - name: Create NPM package
       run: |
-        wasm-pack build --release -- --no-default-features --features wasm
+        wasm-pack build --release -- --no-default-features --features wasm,eft
         sed -i s%esf-dogma-engine%@eveshipfit/dogma-engine% pkg/package.json
 
     - uses: JS-DevTools/npm-publish@v3
