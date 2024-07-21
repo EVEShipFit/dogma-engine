@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-mod item;
+pub mod item;
 mod pass_1;
 mod pass_2;
 mod pass_3;
