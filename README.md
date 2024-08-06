@@ -64,7 +64,9 @@ In result, Javascript needs to have the following functions defined:
 - `get_dogma_attribute(attribute_id)` - To get all the details of a single Dogma attribute.
 - `get_dogma_effects(type_id)` - To get a list of all Dogma effects for a given item.
 - `get_dogma_effect(effect_id)` - To get all the details of a single Dogma effect.
-- `get_type_id(type_id)` - To get all the details of a single item.
+- `get_type(type_id)` - To get all the details of a single item.
+- `attribute_name_to_id(attribute_name)` -> To get the ID of the attribute by given name.
+- `type_name_to_id(type_name)` - To get the ID of the type by given name;
 
 The returning value should be a Javascript object.
 The fields are defined in in [data_types.rs](./src/data_types.rs).
