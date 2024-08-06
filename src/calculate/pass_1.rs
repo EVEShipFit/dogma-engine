@@ -67,6 +67,7 @@ impl Pass for PassOne {
                         EsfSlotType::Low => SlotType::Low,
                         EsfSlotType::Rig => SlotType::Rig,
                         EsfSlotType::SubSystem => SlotType::SubSystem,
+                        EsfSlotType::Service => SlotType::Service,
                     },
                     index: Some(module.slot.index),
                 },
