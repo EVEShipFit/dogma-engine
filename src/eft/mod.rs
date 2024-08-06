@@ -84,6 +84,13 @@ fn find_slot_type_index(
                 *index += 1;
                 return Some((data_types::EsfSlotType::SubSystem, *index - 1));
             }
+            6306 => {
+                let index = module_slots
+                    .entry(data_types::EsfSlotType::Service)
+                    .or_insert(0);
+                *index += 1;
+                return Some((data_types::EsfSlotType::Service, *index - 1));
+            }
             _ => {}
         }
     }

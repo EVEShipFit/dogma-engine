@@ -106,6 +106,7 @@ pub enum EsfSlotType {
     Low,
     Rig,
     SubSystem,
+    Service,
 }
 
 #[derive(Deserialize, Debug)]

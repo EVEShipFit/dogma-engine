@@ -61,6 +61,7 @@ pub enum SlotType {
     Low,
     Rig,
     SubSystem,
+    Service,
     DroneBay,
     Charge,
     None,
