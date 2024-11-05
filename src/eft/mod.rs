@@ -140,11 +140,11 @@ pub fn load_eft(info: &impl InfoName, eft: &String) -> Result<EftFit, String> {
                 for line in section {
                     if line.starts_with("[Empty") {
                         let slot_type = match line {
-                            "[Empty High Slots]" => data_types::EsfSlotType::High,
-                            "[Empty Medium Slots]" => data_types::EsfSlotType::Medium,
-                            "[Empty Low Slots]" => data_types::EsfSlotType::Low,
-                            "[Empty Rig Slots]" => data_types::EsfSlotType::Rig,
-                            "[Empty Subsystem Slots]" => data_types::EsfSlotType::SubSystem,
+                            "[Empty High slot]" => data_types::EsfSlotType::High,
+                            "[Empty Med slot]" => data_types::EsfSlotType::Medium,
+                            "[Empty Low slot]" => data_types::EsfSlotType::Low,
+                            "[Empty Rig slot]" => data_types::EsfSlotType::Rig,
+                            "[Empty Subsystem slot]" => data_types::EsfSlotType::SubSystem,
                             _ => panic!("Invalid slot type"),
                         };
 
