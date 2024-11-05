@@ -17,18 +17,19 @@ const OPERATOR_HAS_PENALTY: [EffectOperator; 5] = [
 
 pub struct PassThree {}
 
-struct Cache {
-    hull: BTreeMap<i32, f64>,
-    char: BTreeMap<i32, f64>,
-    structure: BTreeMap<i32, f64>,
-    target: BTreeMap<i32, f64>,
-    items: BTreeMap<usize, BTreeMap<i32, f64>>,
-    charge: BTreeMap<usize, BTreeMap<i32, f64>>,
-    skills: BTreeMap<usize, BTreeMap<i32, f64>>,
+#[derive(Default)]
+pub struct Cache {
+    pub hull: BTreeMap<i32, f64>,
+    pub char: BTreeMap<i32, f64>,
+    pub structure: BTreeMap<i32, f64>,
+    pub target: BTreeMap<i32, f64>,
+    pub items: BTreeMap<usize, BTreeMap<i32, f64>>,
+    pub charge: BTreeMap<usize, BTreeMap<i32, f64>>,
+    pub skills: BTreeMap<usize, BTreeMap<i32, f64>>,
 }
 
 impl Attribute {
-    fn calculate_value(
+    pub fn calculate_value(
         &self,
         info: &impl Info,
         ship: &Ship,
@@ -232,13 +233,13 @@ impl Attribute {
 }
 
 impl Item {
-    fn calculate_values(&self, info: &impl Info, ship: &Ship, cache: &mut Cache, item: Object) {
+    pub fn calculate_values(&self, info: &impl Info, ship: &Ship, cache: &mut Cache, item: Object) {
         for attribute_id in self.attributes.keys() {
             self.attributes[&attribute_id].calculate_value(info, ship, cache, item, *attribute_id);
         }
     }
 
-    fn store_cached_values(&mut self, info: &impl Info, cache: &BTreeMap<i32, f64>) {
+    pub fn store_cached_values(&mut self, info: &impl Info, cache: &BTreeMap<i32, f64>) {
         for (attribute_id, value) in cache {
             if let Some(attribute) = self.attributes.get_mut(&attribute_id) {
                 attribute.value = Some(*value);
@@ -256,15 +257,7 @@ impl Item {
 
 impl Pass for PassThree {
     fn pass(info: &impl Info, ship: &mut Ship) {
-        let mut cache = Cache {
-            hull: BTreeMap::new(),
-            char: BTreeMap::new(),
-            structure: BTreeMap::new(),
-            target: BTreeMap::new(),
-            items: BTreeMap::new(),
-            charge: BTreeMap::new(),
-            skills: BTreeMap::new(),
-        };
+        let mut cache = Cache::default();
 
         ship.hull
             .calculate_values(info, ship, &mut cache, Object::Ship);

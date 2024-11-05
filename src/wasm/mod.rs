@@ -115,6 +115,6 @@ pub fn calculate(js_esf_fit: JsValue, js_skills: JsValue) -> JsValue {
 
     let info = InfoWasm::new(fit, skills);
 
-    let statistics = calculate::calculate(&info);
+    let statistics = calculate::calculate(&info, calculate::DamageProfile::default());
     serde_wasm_bindgen::to_value(&statistics).unwrap()
 }

@@ -166,11 +166,19 @@ struct Args {
     #[clap(short, long)]
     eft_filename: Option<PathBuf>,
 
-    #[clap(short, long)]
+    #[clap(short = 'f', long)]
     skills_filename: Option<PathBuf>,
 
     #[clap(short, long, default_value = "node_modules/@eveshipfit/data/dist/sde")]
     protobuf_location: PathBuf,
+
+    #[clap(
+        short,
+        long,
+        value_delimiter = ',',
+        default_value = "0.25,0.25,0.25,0.25"
+    )]
+    damage_profile: Vec<f64>,
 }
 
 fn get_attribute_by_name(
@@ -301,7 +309,15 @@ pub fn main() {
     }
 
     let info = rust::InfoMain::new(fit, skills, &data);
-    let statistics = calculate::calculate(&info);
+    let statistics = calculate::calculate(
+        &info,
+        calculate::DamageProfile {
+            em: args.damage_profile[0],
+            explosive: args.damage_profile[3],
+            kinetic: args.damage_profile[2],
+            thermal: args.damage_profile[1],
+        },
+    );
 
     let output = Output {
         capacitor: OutputCapacitor {
