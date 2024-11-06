@@ -40,22 +40,6 @@ impl Item {
 impl Pass for PassOne {
     fn pass(info: &impl Info, ship: &mut Ship) {
         ship.hull.set_attributes(info);
-        ship.hull.set_attribute(
-            info.attribute_name_to_id("damageProfileEm"),
-            ship.damage_profile.em,
-        );
-        ship.hull.set_attribute(
-            info.attribute_name_to_id("damageProfileExplosive"),
-            ship.damage_profile.explosive,
-        );
-        ship.hull.set_attribute(
-            info.attribute_name_to_id("damageProfileKinetic"),
-            ship.damage_profile.kinetic,
-        );
-        ship.hull.set_attribute(
-            info.attribute_name_to_id("damageProfileThermal"),
-            ship.damage_profile.thermal,
-        );
 
         for (skill_id, skill_level) in info.skills() {
             let mut skill = Item::new_fake(*skill_id);

@@ -37,7 +37,12 @@ pub fn adapt_rah_to_damage_pattern(info: &impl Info, ship: &mut Ship) {
     let mut cycle_list: Vec<[f64; 4]> = Vec::new();
     let mut cycle_start = None;
 
+    // The RAH changes its resistances every cycle based on the damaged received on that cycle.
+    // We can't statically determine if it will converge to some value or get stuck in a loop, so
+    // we need to run a simulation.
     'sim: for _ in 0..50 {
+        // Damage received is the same as effective resonance, which is just resonance multiplied
+        // by the damage profile.
         let effective_resonance =
             get_effective_resonance(ship, &mut cache, effective_resonance_ids);
         let rah_resonance = get_rah_resonance(ship, &mut cache, rah_index);
@@ -45,6 +50,7 @@ pub fn adapt_rah_to_damage_pattern(info: &impl Info, ship: &mut Ship) {
         let shift = calculate_rah_shift(effective_resonance, rah_resonance, shift_amount);
         let shifted = std::array::from_fn(|i| rah_resonance[i] + shift[i]);
 
+        // Stop the simulation if we found a loop
         for (i, val) in cycle_list.iter().enumerate() {
             if shifted.iter().zip(val).all(|(a, b)| (a - b).abs() <= 1e-6) {
                 cycle_start = Some(i);
@@ -57,6 +63,8 @@ pub fn adapt_rah_to_damage_pattern(info: &impl Info, ship: &mut Ship) {
         recalculate_values(info, ship, &mut cache, &rah_affected_attributes);
     }
 
+    // Take the average of the loop, or use the last 20 steps if somehow there is no loop even
+    // after 50 steps.
     let cycle = if let Some(cycle_start) = cycle_start {
         &cycle_list[cycle_start..]
     } else {
@@ -120,6 +128,7 @@ fn calculate_rah_shift(
 
 fn set_rah_resonance(ship: &mut Ship, cache: &mut Cache, rah_index: usize, resonance: [f64; 4]) {
     for (id, resonance) in RESONANCE_IDS.iter().zip(resonance) {
+        // Attribute.value has priority over the cache, so it must be set to None
         ship.items[rah_index].attributes.get_mut(id).unwrap().value = None;
         cache
             .items
@@ -129,12 +138,14 @@ fn set_rah_resonance(ship: &mut Ship, cache: &mut Cache, rah_index: usize, reson
     }
 }
 
-// assumes that the rah only affects the hull
+// Finds all attributes that must be recalculated when the RAH resists change.
 fn rah_affected_attributes(ship: &Ship, rah_index: usize) -> Vec<i32> {
     let mut ret = Vec::new();
     let mut source = Vec::from(RESONANCE_IDS.map(|id| (Object::Item(rah_index), id)));
     while !source.is_empty() {
         let mut attrs = Vec::new();
+        // The RAH is the only module that is affected by armor resists, so we only need to check hull
+        // attributes.
         for (id, attr) in ship.hull.attributes.iter() {
             if attr
                 .effects
@@ -152,10 +163,12 @@ fn rah_affected_attributes(ship: &Ship, rah_index: usize) -> Vec<i32> {
 }
 
 fn recalculate_values(info: &impl Info, ship: &mut Ship, cache: &mut Cache, attribute_ids: &[i32]) {
+    // Remove cached values so they get recalculated
     for id in attribute_ids {
         ship.hull.attributes.get_mut(id).unwrap().value = None;
         cache.hull.remove(id);
     }
+
     for id in attribute_ids {
         ship.hull.attributes[id].calculate_value(info, ship, cache, Object::Ship, *id);
     }
