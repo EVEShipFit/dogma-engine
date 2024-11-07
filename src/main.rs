@@ -166,7 +166,7 @@ struct Args {
     #[clap(short, long)]
     eft_filename: Option<PathBuf>,
 
-    #[clap(short, long)]
+    #[clap(short = 'f', long)]
     skills_filename: Option<PathBuf>,
 
     #[clap(short, long, default_value = "node_modules/@eveshipfit/data/dist/sde")]
