@@ -17,6 +17,7 @@ const OPERATOR_HAS_PENALTY: [EffectOperator; 5] = [
 
 pub struct PassThree {}
 
+#[derive(Default)]
 struct Cache {
     hull: BTreeMap<i32, f64>,
     char: BTreeMap<i32, f64>,
@@ -256,15 +257,7 @@ impl Item {
 
 impl Pass for PassThree {
     fn pass(info: &impl Info, ship: &mut Ship) {
-        let mut cache = Cache {
-            hull: BTreeMap::new(),
-            char: BTreeMap::new(),
-            structure: BTreeMap::new(),
-            target: BTreeMap::new(),
-            items: BTreeMap::new(),
-            charge: BTreeMap::new(),
-            skills: BTreeMap::new(),
-        };
+        let mut cache = Cache::default();
 
         ship.hull
             .calculate_values(info, ship, &mut cache, Object::Ship);
