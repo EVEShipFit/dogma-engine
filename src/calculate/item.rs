@@ -27,7 +27,7 @@ pub enum EffectOperator {
     PostAssign,
 }
 
-#[derive(Serialize, Debug, Copy, Clone)]
+#[derive(Serialize, Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Object {
     Ship,
     Item(usize),
