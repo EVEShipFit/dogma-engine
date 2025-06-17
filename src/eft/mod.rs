@@ -138,6 +138,9 @@ pub fn load_eft(info: &impl InfoName, eft: &String) -> Result<EftFit, String> {
                 let mut module_slots: HashMap<data_types::EsfSlotType, i32> = HashMap::new();
 
                 for line in section {
+                    let mut line = line.trim();
+                    let mut offline = false;
+
                     if line.starts_with("[Empty") {
                         let slot_type = match line {
                             "[Empty High slot]" => data_types::EsfSlotType::High,
@@ -151,6 +154,11 @@ pub fn load_eft(info: &impl InfoName, eft: &String) -> Result<EftFit, String> {
                         let index = module_slots.entry(slot_type).or_insert(0);
                         *index += 1;
                         continue;
+                    }
+
+                    if line.ends_with("/offline") {
+                        offline = true;
+                        line = line[..line.len() - 8].trim_end();
                     }
 
                     /* Can either be "<Module Name>" or "<Module Name>, <Charge Name>". */
@@ -185,7 +193,11 @@ pub fn load_eft(info: &impl InfoName, eft: &String) -> Result<EftFit, String> {
                             r#type: slot_type,
                             index,
                         },
-                        state: data_types::EsfState::Active,
+                        state: if offline {
+                            data_types::EsfState::Passive
+                        } else {
+                            data_types::EsfState::Active
+                        },
                         charge: charge_type_id.map(|charge_type_id| data_types::EsfCharge {
                             type_id: charge_type_id,
                         }),
