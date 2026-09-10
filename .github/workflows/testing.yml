@@ -30,7 +30,8 @@ jobs:
       uses: actions-rust-lang/setup-rust-toolchain@v2
       with:
         toolchain: stable
-        components: rustfmt
+        components: rustfmt, clippy
+        target: wasm32-unknown-unknown
 
     - name: Install NodeJS
       uses: actions/setup-node@v7
@@ -73,3 +74,8 @@ jobs:
     - name: Check coding style
       run: |
         cargo fmt --check
+
+    - name: Check lints
+      run: |
+        cargo clippy --locked --all-targets --no-default-features --features rust,eft -- -D warnings
+        cargo clippy --locked --all-targets --no-default-features --features wasm,eft --target wasm32-unknown-unknown -- -D warnings
