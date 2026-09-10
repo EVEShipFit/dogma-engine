@@ -39,6 +39,22 @@ After that, we can run the application.
 cargo run --release --no-default-features --features rust
 ```
 
+## Regression
+
+The engine is locked down by snapshot tests.
+A case calculates one fit with one set of skills, and compares the result against a stored snapshot in [tests/snapshots](./tests/snapshots).
+
+```bash
+cargo test
+```
+
+If failures are expected differences, use `insta` to resolve them:
+
+```bash
+cargo install cargo-insta
+cargo insta review
+```
+
 ## Integration
 
 ### Javascript (WebAssembly)
