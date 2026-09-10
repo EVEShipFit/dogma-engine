@@ -37,3 +37,6 @@ default = ["eft", "rust", "wasm"]
 eft = []
 rust = ["dep:clap", "dep:prost", "dep:serde_json"]
 wasm = ["dep:console_error_panic_hook", "dep:serde-wasm-bindgen", "dep:wasm-bindgen"]
+
+[dev-dependencies]
+insta = { version = "1.48.0", features = ["glob"] }
