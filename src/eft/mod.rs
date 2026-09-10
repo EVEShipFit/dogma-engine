@@ -22,7 +22,7 @@ fn section_iter(eft_lines: Vec<&str>) -> impl Iterator<Item = Vec<&str>> {
         .skip(1)
         .fold(Vec::new(), |mut sections, line| {
             if line.is_empty() {
-                if section.len() > 0 {
+                if !section.is_empty() {
                     sections.push(section.clone());
                     section.clear();
                 }
@@ -33,7 +33,7 @@ fn section_iter(eft_lines: Vec<&str>) -> impl Iterator<Item = Vec<&str>> {
             sections
         });
 
-    if section.len() > 0 {
+    if !section.is_empty() {
         eft_lines.push(section);
     }
 
@@ -99,7 +99,7 @@ fn find_slot_type_index(
 }
 
 /* Load an EFT string and return an ESF fit structure. */
-pub fn load_eft(info: &impl InfoName, eft: &String) -> Result<EftFit, String> {
+pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<EftFit, String> {
     let eft_lines: Vec<&str> = eft.lines().collect();
 
     /* First line of an EFT always start with "[ship-type,name]". */
@@ -128,9 +128,7 @@ pub fn load_eft(info: &impl InfoName, eft: &String) -> Result<EftFit, String> {
         /* This is a module section if none of the strings end with "x<quantity>". */
         let is_module_section = !section.iter().all(|line| {
             let x_pos = line.find("x");
-            x_pos.map_or(false, |x_pos| {
-                line[x_pos + 1..].chars().all(|c| c.is_numeric())
-            })
+            x_pos.is_some_and(|x_pos| line[x_pos + 1..].chars().all(|c| c.is_numeric()))
         });
 
         match is_module_section {

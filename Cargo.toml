@@ -10,6 +10,17 @@ license = "MIT"
 [lib]
 crate-type = ["cdylib", "rlib"]
 
+# The binary and the regression suite both need the "rust" feature.
+[[bin]]
+name = "esf-dogma-engine"
+path = "src/main.rs"
+required-features = ["rust"]
+
+[[test]]
+name = "regression"
+path = "tests/regression.rs"
+required-features = ["rust"]
+
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
 serde_repr = "0.1"

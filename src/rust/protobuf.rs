@@ -1,13 +1,10 @@
-use std::{collections::HashMap, fs::File, io::Read, path::PathBuf};
+use std::{collections::HashMap, fs::File, io::Read, path::Path};
 
 use prost::Message;
 
 use super::esf_data;
 
-fn load_protobuf<T: Message + std::default::Default>(
-    path: &PathBuf,
-    name: &str,
-) -> Result<T, String> {
+fn load_protobuf<T: Message + std::default::Default>(path: &Path, name: &str) -> Result<T, String> {
     let mut filename = path.join(name);
     filename.set_extension("pb2");
 
@@ -31,7 +28,7 @@ pub struct Data {
 }
 
 impl Data {
-    pub fn new(path: &PathBuf) -> Data {
+    pub fn new(path: &Path) -> Data {
         let dogma_attributes: esf_data::DogmaAttributes =
             load_protobuf(path, "dogmaAttributes").unwrap();
         let dogma_effects: esf_data::DogmaEffects = load_protobuf(path, "dogmaEffects").unwrap();

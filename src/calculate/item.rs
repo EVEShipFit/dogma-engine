@@ -96,23 +96,16 @@ impl Attribute {
 
 impl EffectCategory {
     pub fn is_active(&self) -> bool {
-        match self {
-            EffectCategory::Active | EffectCategory::Overload => true,
-            _ => false,
-        }
+        matches!(self, EffectCategory::Active | EffectCategory::Overload)
     }
 }
 
 impl Slot {
     pub fn is_module(&self) -> bool {
-        match self.r#type {
-            SlotType::High
-            | SlotType::Medium
-            | SlotType::Low
-            | SlotType::Rig
-            | SlotType::SubSystem => true,
-            _ => false,
-        }
+        matches!(
+            self.r#type,
+            SlotType::High | SlotType::Medium | SlotType::Low | SlotType::Rig | SlotType::SubSystem
+        )
     }
 }
 

@@ -169,7 +169,7 @@ fn get_attribute_by_name(
 }
 
 fn effect_category_to_name(
-    items: &Vec<Item>,
+    items: &[Item],
     slot_type: calculate::item::SlotType,
     index: i32,
 ) -> String {
