@@ -1,4 +1,6 @@
 {
+  "name": "dogma-engine",
+  "private": true,
   "dependencies": {
     "@eveshipfit/data": "^10"
   }

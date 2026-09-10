@@ -8,44 +8,63 @@ on:
     branches:
     - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+  packages: read
+
 jobs:
   testing:
     name: Testing
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v7
 
     - name: Install Rust toolchain
-      uses: actions-rust-lang/setup-rust-toolchain@v1
+      uses: actions-rust-lang/setup-rust-toolchain@v2
       with:
         toolchain: stable
+        components: rustfmt
 
     - name: Install NodeJS
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v7
       with:
+        node-version: lts/*
         registry-url: https://npm.pkg.github.com
         scope: "@eveshipfit"
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        cache: npm
 
     - name: Install Protobuf Compiler
       run: |
-        sudo apt install -y --no-install-recommends protobuf-compiler
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends protobuf-compiler
 
     - name: Install wasm-pack
+      uses: taiki-e/install-action@v2
+      with:
+        tool: wasm-pack
+
+    - name: Install NPM dependencies
+      # The token has to be set here, as setup-node only writes a reference to
+      # this variable into .npmrc; it is resolved when npm actually runs.
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        cargo install wasm-pack
+        npm ci
 
     - name: Build WASM library
       run: |
-        wasm-pack build --release --target web -- --no-default-features --features wasm,eft
+        wasm-pack build --release --target web -- --locked --no-default-features --features wasm,eft
 
     - name: Build Rust binary
       run: |
-        npm i
-        cargo build --release --no-default-features --features rust,eft
+        cargo build --release --locked --no-default-features --features rust,eft
 
     - name: Check coding style
       run: |
