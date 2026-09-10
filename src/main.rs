@@ -238,7 +238,9 @@ pub fn main() {
      * calculation. By default everything will be set to Active. */
     if let Some(state) = args.state {
         if state.len() != 24 {
-            panic!("State should be 24 letters; 8 for each high/medium/low slot. P = Passive (Offline), O = Online, A = Active, V = Overload.");
+            panic!(
+                "State should be 24 letters; 8 for each high/medium/low slot. P = Passive (Offline), O = Online, A = Active, V = Overload."
+            );
         }
 
         let state = state.chars().collect::<Vec<char>>();
