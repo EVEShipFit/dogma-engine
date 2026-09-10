@@ -139,7 +139,7 @@ pub fn load_eft(info: &impl InfoName, eft: &String) -> Result<EftFit, String> {
 
                 for line in section {
                     let mut line = line.trim();
-                    let mut offline = false;
+                    let mut state = data_types::EsfState::Active;
 
                     if line.starts_with("[Empty") {
                         let slot_type = match line {
@@ -156,9 +156,22 @@ pub fn load_eft(info: &impl InfoName, eft: &String) -> Result<EftFit, String> {
                         continue;
                     }
 
-                    if line.ends_with("/offline") {
-                        offline = true;
-                        line = line[..line.len() - 8].trim_end();
+                    /* EVE only writes "/offline"; the other three are an
+                     * EVEShip.fit extension, so a fit can pin the state of a
+                     * single module. */
+                    if let Some(position) = line.rfind('/') {
+                        let suffix = match &line[position..] {
+                            "/offline" => Some(data_types::EsfState::Passive),
+                            "/online" => Some(data_types::EsfState::Online),
+                            "/active" => Some(data_types::EsfState::Active),
+                            "/overload" => Some(data_types::EsfState::Overload),
+                            _ => None,
+                        };
+
+                        if let Some(suffix) = suffix {
+                            state = suffix;
+                            line = line[..position].trim_end();
+                        }
                     }
 
                     /* Can either be "<Module Name>" or "<Module Name>, <Charge Name>". */
@@ -193,11 +206,7 @@ pub fn load_eft(info: &impl InfoName, eft: &String) -> Result<EftFit, String> {
                             r#type: slot_type,
                             index,
                         },
-                        state: if offline {
-                            data_types::EsfState::Passive
-                        } else {
-                            data_types::EsfState::Active
-                        },
+                        state,
                         charge: charge_type_id.map(|charge_type_id| data_types::EsfCharge {
                             type_id: charge_type_id,
                         }),

@@ -91,7 +91,7 @@ pub struct DogmaEffect {
     pub modifierInfo: Vec<DogmaEffectModifierInfo>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, PartialEq)]
 pub enum EsfState {
     Passive,
     Online,
