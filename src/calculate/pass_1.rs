@@ -76,9 +76,9 @@ impl Pass for PassOne {
             );
 
             item.set_attributes(info);
-            item.charge
-                .as_mut()
-                .map(|charge| charge.set_attributes(info));
+            if let Some(charge) = item.charge.as_mut() {
+                charge.set_attributes(info)
+            }
 
             ship.items.push(item);
         }

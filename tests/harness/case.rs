@@ -24,7 +24,7 @@ pub fn snapshot(module_path: &str, name: &str, eft_fit: &str, skills: Skills) {
 }
 
 fn calculate_fit(eft_fit: &str, skills: Skills) -> String {
-    let fit = eft::load_eft(&rust::InfoNameMain::new(&DATA), &eft_fit.trim().to_owned())
+    let fit = eft::load_eft(&rust::InfoNameMain::new(&DATA), eft_fit.trim())
         .unwrap()
         .esf_fit;
 

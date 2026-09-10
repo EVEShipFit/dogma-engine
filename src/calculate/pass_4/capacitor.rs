@@ -71,12 +71,12 @@ pub fn attribute_capacitor_depletes_in(info: &impl Info, ship: &mut Ship) {
 
             modules.push(Module {
                 capacitor_need,
-                duration: duration,
+                duration,
                 time_next: 0.0,
             });
         }
 
-        if modules.len() > 0 {
+        if !modules.is_empty() {
             let capacitor_capacity = attr_capacitor_capacity.value.unwrap();
             let recharge_rate = attr_recharge_rate.value.unwrap();
 

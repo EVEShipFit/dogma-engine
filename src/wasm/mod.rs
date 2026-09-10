@@ -1,4 +1,3 @@
-use serde_wasm_bindgen;
 use std::collections::BTreeMap;
 use wasm_bindgen::prelude::*;
 
@@ -94,7 +93,7 @@ impl InfoName for InfoWasm {
 }
 
 impl InfoWasm {
-    pub fn new<'a>(fit: data_types::EsfFit, skills: BTreeMap<i32, i32>) -> InfoWasm {
+    pub fn new(fit: data_types::EsfFit, skills: BTreeMap<i32, i32>) -> InfoWasm {
         InfoWasm { fit, skills }
     }
 }

@@ -11,6 +11,8 @@ const EXEMPT_PENALTY_CATEGORY_IDS: [i32; 5] = [6, 8, 16, 20, 32];
 
 pub struct PassTwo {}
 
+/* Variant names mirror the dogma modifier names used by EVE. */
+#[allow(clippy::enum_variant_names)]
 #[derive(Debug)]
 enum Modifier {
     LocationRequiredSkillModifier(i32),
@@ -156,13 +158,11 @@ impl Item {
                     }
 
                     /* If the origin is an Item(), the domain is OtherID, but there is no charge, skip the effect. */
-                    match (&origin, &modifier.domain) {
-                        (Object::Item(_), DogmaEffectModifierInfoDomain::OtherID) => {
-                            if self.charge.is_none() {
-                                continue;
-                            }
-                        }
-                        _ => {}
+                    if let (Object::Item(_), DogmaEffectModifierInfoDomain::OtherID) =
+                        (&origin, &modifier.domain)
+                        && self.charge.is_none()
+                    {
+                        continue;
                     }
 
                     let target = get_target_object(modifier.domain, origin);
@@ -320,18 +320,17 @@ impl Pass for PassTwo {
                                 );
                             }
 
-                            if let Some(charge) = &mut item.charge {
-                                if charge.attributes.contains_key(attribute_skill_id)
-                                    && charge.attributes[attribute_skill_id].base_value
-                                        == skill_type_id as f64
-                                {
-                                    charge.add_effect(
-                                        info,
-                                        effect.target_attribute_id,
-                                        category_id,
-                                        &effect,
-                                    );
-                                }
+                            if let Some(charge) = &mut item.charge
+                                && charge.attributes.contains_key(attribute_skill_id)
+                                && charge.attributes[attribute_skill_id].base_value
+                                    == skill_type_id as f64
+                            {
+                                charge.add_effect(
+                                    info,
+                                    effect.target_attribute_id,
+                                    category_id,
+                                    &effect,
+                                );
                             }
                         }
                     }

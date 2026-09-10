@@ -37,8 +37,8 @@ impl Attribute {
         item: Object,
         attribute_id: i32,
     ) -> f64 {
-        if self.value.is_some() {
-            return self.value.unwrap();
+        if let Some(value) = self.value {
+            return value;
         }
         let cache_value = match item {
             Object::Ship => cache.hull.get(&attribute_id),
@@ -49,8 +49,8 @@ impl Attribute {
             Object::Charge(index) => cache.charge.get(&index).and_then(|x| x.get(&attribute_id)),
             Object::Skill(index) => cache.skills.get(&index).and_then(|x| x.get(&attribute_id)),
         };
-        if cache_value.is_some() {
-            return *cache_value.unwrap();
+        if let Some(cache_value) = cache_value {
+            return *cache_value;
         }
 
         let mut current_value = self.base_value;
@@ -68,7 +68,7 @@ impl Attribute {
                     Object::Ship => &ship.hull,
                     Object::Item(index) => &ship.items[index],
                     Object::Charge(index) => match &ship.items[index].charge {
-                        Some(charge) => &*charge,
+                        Some(charge) => charge,
                         None => continue,
                     },
                     Object::Skill(index) => &ship.skills[index],
@@ -197,9 +197,7 @@ impl Attribute {
                 cache.target.insert(attribute_id, current_value);
             }
             Object::Item(index) => {
-                if !cache.items.contains_key(&index) {
-                    cache.items.insert(index, BTreeMap::new());
-                }
+                cache.items.entry(index).or_default();
                 cache
                     .items
                     .get_mut(&index)
@@ -207,9 +205,7 @@ impl Attribute {
                     .insert(attribute_id, current_value);
             }
             Object::Charge(index) => {
-                if !cache.charge.contains_key(&index) {
-                    cache.charge.insert(index, BTreeMap::new());
-                }
+                cache.charge.entry(index).or_default();
                 cache
                     .charge
                     .get_mut(&index)
@@ -217,9 +213,7 @@ impl Attribute {
                     .insert(attribute_id, current_value);
             }
             Object::Skill(index) => {
-                if !cache.skills.contains_key(&index) {
-                    cache.skills.insert(index, BTreeMap::new());
-                }
+                cache.skills.entry(index).or_default();
                 cache
                     .skills
                     .get_mut(&index)
@@ -235,13 +229,13 @@ impl Attribute {
 impl Item {
     fn calculate_values(&self, info: &impl Info, ship: &Ship, cache: &mut Cache, item: Object) {
         for attribute_id in self.attributes.keys() {
-            self.attributes[&attribute_id].calculate_value(info, ship, cache, item, *attribute_id);
+            self.attributes[attribute_id].calculate_value(info, ship, cache, item, *attribute_id);
         }
     }
 
     fn store_cached_values(&mut self, info: &impl Info, cache: &BTreeMap<i32, f64>) {
         for (attribute_id, value) in cache {
-            if let Some(attribute) = self.attributes.get_mut(&attribute_id) {
+            if let Some(attribute) = self.attributes.get_mut(attribute_id) {
                 attribute.value = Some(*value);
             } else {
                 let dogma_attribute = info.get_dogma_attribute(*attribute_id);
