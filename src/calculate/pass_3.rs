@@ -104,10 +104,11 @@ impl Attribute {
                         effect.source,
                         effect.source_attribute_id,
                     ),
-                    None => {
-                        let dogma_attribute = info.get_dogma_attribute(effect.source_attribute_id);
-                        dogma_attribute.defaultValue
-                    }
+                    None => info
+                        .get_dogma_attribute(effect.source_attribute_id)
+                        .map_or(0.0, |dogma_attribute| {
+                            dogma_attribute.default_value() as f64
+                        }),
                 };
 
                 /* Simplify the values so we can do the math easier later on. */
@@ -142,9 +143,11 @@ impl Attribute {
             /* Apply the operator on the values. */
             match operator {
                 EffectOperator::PreAssign | EffectOperator::PostAssign => {
-                    let dogma_attribute = info.get_dogma_attribute(attribute_id);
+                    let high_is_good = info
+                        .get_dogma_attribute(attribute_id)
+                        .is_some_and(|dogma_attribute| dogma_attribute.high_is_good());
 
-                    current_value = if dogma_attribute.highIsGood {
+                    current_value = if high_is_good {
                         *values
                             .0
                             .iter()
@@ -238,9 +241,13 @@ impl Item {
             if let Some(attribute) = self.attributes.get_mut(attribute_id) {
                 attribute.value = Some(*value);
             } else {
-                let dogma_attribute = info.get_dogma_attribute(*attribute_id);
+                let default_value = info
+                    .get_dogma_attribute(*attribute_id)
+                    .map_or(0.0, |dogma_attribute| {
+                        dogma_attribute.default_value() as f64
+                    });
 
-                let mut attribute = Attribute::new(dogma_attribute.defaultValue);
+                let mut attribute = Attribute::new(default_value);
                 attribute.value = Some(*value);
 
                 self.attributes.insert(*attribute_id, attribute);
