@@ -1,9 +1,9 @@
 use std::collections::BTreeMap;
 
 use esf_dogma_engine::info::InfoName;
-use esf_dogma_engine::rust;
+use esf_dogma_engine::sde;
 
-use super::DATA;
+use super::{NAMES, SDE};
 
 const SKILL_CATEGORY_ID: i32 = 16;
 
@@ -13,11 +13,10 @@ pub struct Skills {
 
 pub fn all(level: i32) -> Skills {
     Skills {
-        levels: DATA
-            .types
-            .iter()
-            .filter(|(_, r#type)| r#type.category_id == SKILL_CATEGORY_ID)
-            .map(|(type_id, _)| (*type_id, level))
+        levels: SDE
+            .types()
+            .filter(|r#type| r#type.category_id() == SKILL_CATEGORY_ID)
+            .map(|r#type| (r#type.id(), level))
             .collect(),
     }
 }
@@ -30,7 +29,9 @@ pub fn none() -> Skills {
 
 impl Skills {
     pub fn with(mut self, name: &str, level: i32) -> Skills {
-        let type_id = rust::InfoNameMain::new(&DATA).type_name_to_id(name);
+        let type_id = sde::InfoNameSde::new(&SDE, Some(&NAMES))
+            .unwrap()
+            .type_name_to_id(name);
         assert!(type_id != 0, "no such skill: {name}");
 
         self.levels.insert(type_id, level);

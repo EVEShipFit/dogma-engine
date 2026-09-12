@@ -20,24 +20,33 @@ This Dogma engine implements a multi-pass approach.
 To make rendering a fit easier, these are calculated by this library, and presented as new Dogma attributes.
 
 Their identifier is always a negative value, to visually separate them.
-What additional attributes exist are defined in [EVEShipFit/data](https://github.com/EVEShipFit/data) repository.
+What additional attributes exist are defined in [EVEShipFit/sde-patched](https://github.com/EVEShipFit/sde-patched) repository.
 
 ## Development
 
 Make sure you have [Rust installed](https://www.rust-lang.org/tools/install).
 
-Next, we have to fetch the latest Protobuf definition and data files.
-These can be installed via the NPM package `@eveshipfit/data`:
+Next, we need the data-files.
+They are Flatbuffers, built by [sde-patched](https://github.com/EVEShipFit/sde-patched) and published on npm as [`@eveshipfit/sde`](https://www.npmjs.com/package/@eveshipfit/sde):
 
 ```bash
-npm i -U
+npm ci
 ```
+
+- `sde.dat` holds everything needed to calculate a fit.
+- `names.dat` holds the type names in the other seven languages EVE supports.
+  It is optional.
+
+English names live in `sde.dat`, so an EFT-fit written in English imports without it; `names.dat` is only consulted when a name does not match.
 
 After that, we can run the application.
 
 ```bash
+flatc --rust --gen-onefile -o src/sde/ node_modules/@eveshipfit/sde/specs/eve.fbs node_modules/@eveshipfit/sde/specs/names.fbs
 cargo run --release --no-default-features --features rust
 ```
+
+The regression suite reads the same paths; set `ESF_SDE` and `ESF_NAMES` to point it elsewhere.
 
 ## Regression
 
@@ -71,18 +80,17 @@ wasm-pack build --release -- --no-default-features --features wasm
 
 In the `pkg` folder is now a NPM module to use.
 
-To make sure that EVEShip.fit is as fast as possible, all data-files are read by Javascript, and made available to this library by callbacks.
-Transferring all data-files from Javascript to Rust is simply too expensive.
+Javascript hands over `sde.dat` once, and every lookup after that happens inside WebAssembly.
+The file is a Flatbuffer, so nothing is parsed: the bytes are used where they land.
 
-In result, Javascript needs to have the following functions defined:
+```js
+import init, { init as initPanicHook, load_sde, calculate } from "@eveshipfit/dogma-engine";
 
-- `get_dogma_attributes(type_id)` - To get a list of all Dogma attributes for a given item.
-- `get_dogma_attribute(attribute_id)` - To get all the details of a single Dogma attribute.
-- `get_dogma_effects(type_id)` - To get a list of all Dogma effects for a given item.
-- `get_dogma_effect(effect_id)` - To get all the details of a single Dogma effect.
-- `get_type(type_id)` - To get all the details of a single item.
-- `attribute_name_to_id(attribute_name)` -> To get the ID of the attribute by given name.
-- `type_name_to_id(type_name)` - To get the ID of the type by given name;
+await init();
+initPanicHook();
 
-The returning value should be a Javascript object.
-The fields are defined in in [data_types.rs](./src/data_types.rs).
+const sde = await fetch("/sde.dat").then((response) => response.arrayBuffer());
+const buildNumber = load_sde(new Uint8Array(sde));
+
+const statistics = calculate(fit, skills);
+```

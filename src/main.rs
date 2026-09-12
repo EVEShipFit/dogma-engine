@@ -8,6 +8,7 @@ use esf_dogma_engine::calculate;
 use esf_dogma_engine::data_types::{EsfFit, EsfSlotType, EsfState};
 use esf_dogma_engine::eft;
 use esf_dogma_engine::rust;
+use esf_dogma_engine::sde;
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
@@ -21,8 +22,19 @@ struct Args {
     #[clap(short = 'f', long)]
     skills_filename: Option<PathBuf>,
 
-    #[clap(short, long, default_value = "node_modules/@eveshipfit/data/dist/sde")]
-    protobuf_location: PathBuf,
+    #[clap(
+        short = 'd',
+        long,
+        default_value = "node_modules/@eveshipfit/sde/dist/sde.dat"
+    )]
+    sde_filename: PathBuf,
+
+    #[clap(
+        short = 'n',
+        long,
+        default_value = "node_modules/@eveshipfit/sde/dist/names.dat"
+    )]
+    names_filename: PathBuf,
 }
 
 /// Set the state of every module from a 24-letter string; 8 letters for each
@@ -78,8 +90,17 @@ pub fn main() {
         }
     };
 
-    let data = rust::Data::new(&args.protobuf_location);
-    let info_name = rust::InfoNameMain::new(&data);
+    let sde_bytes = std::fs::read(&args.sde_filename).unwrap();
+    let sde = sde::Sde::new(&sde_bytes).unwrap();
+
+    /* English names come from the SDE; the names file only widens that to the
+     * other seven languages, so a missing one is not fatal. */
+    let names_bytes = std::fs::read(&args.names_filename).ok();
+    let names = names_bytes
+        .as_ref()
+        .map(|bytes| sde::Names::new(bytes).unwrap());
+
+    let info_name = sde::InfoNameSde::new(&sde, names.as_ref()).unwrap();
 
     let mut fit = eft::load_eft(&info_name, &eft).unwrap().esf_fit;
     let mut skills: BTreeMap<i32, i32> = BTreeMap::new();
@@ -102,7 +123,7 @@ pub fn main() {
         }
     }
 
-    let info = rust::InfoMain::new(fit, skills, &data);
+    let info = sde::InfoSde::new(fit, skills, &sde);
     let statistics = calculate::calculate(&info);
     let output = rust::Output::new(&info, &statistics);
 
