@@ -1,6 +1,6 @@
 use crate::data_types::{DogmaEffectModifierInfoDomain, DogmaEffectModifierInfoFunc};
 
-use super::item::{Effect, EffectCategory, EffectOperator, Item, Object};
+use super::item::{Attribute, Effect, EffectCategory, EffectOperator, Item, Object};
 use super::{Info, Pass, Ship};
 
 /** AttributeIDs for requiredSkill1, requiredSkill2, .. */
@@ -112,14 +112,13 @@ impl Item {
     ) {
         let attr = info.get_dogma_attribute(attribute_id);
 
-        if !self.attributes.contains_key(&attribute_id) {
-            self.set_attribute(attribute_id, attr.defaultValue);
-        }
-
         /* Penalties are only count when an attribute is not stackable and when the item is not in the exempt category. */
         let penalty = !attr.stackable && !EXEMPT_PENALTY_CATEGORY_IDS.contains(&source_category_id);
 
-        let attribute = self.attributes.get_mut(&attribute_id).unwrap();
+        let attribute = self
+            .attributes
+            .entry(attribute_id)
+            .or_insert_with(|| Attribute::new(attr.defaultValue));
         attribute.effects.push(Effect {
             operator: effect.operator,
             penalty,
