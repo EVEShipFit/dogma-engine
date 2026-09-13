@@ -14,7 +14,7 @@ pub fn attribute_capacitor_depletes_in(info: &impl Info, ship: &mut Ship) {
     let attr_capacitor_peak_delta_id = info.attribute_name_to_id("capacitorPeakDelta");
     let attr_capacitor_capacity_id = info.attribute_name_to_id("capacitorCapacity");
     let attr_recharge_rate_id = info.attribute_name_to_id("rechargeRate");
-    let attr_capacitor_need_id = info.attribute_name_to_id("capacitorNeed");
+    let attr_capacitor_peak_load_id = info.attribute_name_to_id("capacitorPeakLoad");
     let attr_cycle_time_id = info.attribute_name_to_id("cycleTime");
     let attr_capacitor_depletes_in_id = info.attribute_name_to_id("capacitorDepletesIn");
 
@@ -42,14 +42,14 @@ pub fn attribute_capacitor_depletes_in(info: &impl Info, ship: &mut Ship) {
             .unwrap();
         let attr_recharge_rate = ship.hull.attributes.get(&attr_recharge_rate_id).unwrap();
 
-        /* Find all modules consuming capacitor. */
+        /* Find all modules consuming or bringing in capacitor. */
         let mut modules = Vec::new();
         for item in &ship.items {
             if !item.slot.is_module() || !item.state.is_active() {
                 continue;
             }
 
-            if !item.attributes.contains_key(&attr_capacitor_need_id)
+            if !item.attributes.contains_key(&attr_capacitor_peak_load_id)
                 || !item.attributes.contains_key(&attr_cycle_time_id)
             {
                 continue;
@@ -63,16 +63,17 @@ pub fn attribute_capacitor_depletes_in(info: &impl Info, ship: &mut Ship) {
                 .get()
                 .unwrap();
 
-            let capacitor_need = item
+            /* Unlike capacitorNeed, peak load is net of capacitor a nosferatu brings in. */
+            let capacitor_peak_load = item
                 .attributes
-                .get(&attr_capacitor_need_id)
+                .get(&attr_capacitor_peak_load_id)
                 .unwrap()
                 .value
                 .get()
                 .unwrap();
 
             modules.push(Module {
-                capacitor_need,
+                capacitor_need: capacitor_peak_load * duration / 1000.0,
                 duration,
                 time_next: 0.0,
             });
@@ -106,6 +107,9 @@ pub fn attribute_capacitor_depletes_in(info: &impl Info, ship: &mut Ship) {
                     /* Find the next module that would use capacitor. */
                     time_next = f64::min(time_next, module.time_next);
                 }
+
+                /* Clamped after the whole step, so module order does not matter. */
+                capacitor = f64::min(capacitor, capacitor_capacity);
             }
 
             depletes_in = time_last;

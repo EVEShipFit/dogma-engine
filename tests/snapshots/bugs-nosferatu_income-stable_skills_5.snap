@@ -1,0 +1,78 @@
+---
+source: tests/harness/case.rs
+expression: "calculate_fit(eft_fit, skills)"
+---
+capacitor/capacity             = 400.000000
+capacitor/depletes_in          = -1.000000
+capacitor/peak                 = 4.444445
+capacitor/percentage           = 53.333334
+capacitor/recharge             = 120.000000
+capacitor/stable               = true
+cpu/capacity                   = 175.000000
+cpu/free                       = 114.000000
+defense/armor/hp               = 625.000000
+defense/armor/resist/em        = 60.000000
+defense/armor/resist/expl      = 35.999999
+defense/armor/resist/kin       = 40.000000
+defense/armor/resist/therm     = 48.000002
+defense/ehp                    = 2600.407899
+defense/recharge/armor         = 20.444444
+defense/recharge/hull          = 0.000000
+defense/recharge/passive       = 2.333333
+defense/recharge/shield        = 0.000000
+defense/shield/hp              = 437.500000
+defense/shield/recharge        = 468.750000
+defense/shield/resist/em       = 0.000000
+defense/shield/resist/expl     = 50.000000
+defense/shield/resist/kin      = 39.999998
+defense/shield/resist/therm    = 19.999999
+defense/structure/hp           = 562.500000
+defense/structure/resist/em    = 32.999998
+defense/structure/resist/expl  = 32.999998
+defense/structure/resist/kin   = 32.999998
+defense/structure/resist/therm = 32.999998
+drones/active                  = 0.000000
+drones/bandwidth               = 0.000000
+drones/bandwidth_load          = 0.000000
+drones/capacity                = 0.000000
+drones/capacity_load           = 0.000000
+drones/dps                     = 0.000000
+drones/range                   = 60.000000
+navigation/agility             = 1.957500
+navigation/align_time          = 4.586105
+navigation/mass                = 1690.000000
+navigation/speed               = 2954.613535
+navigation/warp_speed          = 5.000000
+offense/alpha                  = 0.000000
+offense/dps                    = 0.000000
+offense/dps_with_reload        = 0.000000
+offense/drone_dps              = 0.000000
+power/capacity                 = 83.750000
+power/free                     = 40.750000
+targeting/lock_range           = 31.250000
+targeting/max_locked_targets   = 4.000000
+targeting/scan_resolution      = 800.000000
+targeting/sensor_strength      = 12.000000
+targeting/signature_radius     = 212.750000
+
+low_1/type              = Small Armor Repairer II
+low_1/state             = active
+low_1/armorRepairRate   = 20.444444
+low_1/capacitorPeakLoad = 8.888889
+low_1/cycleTime         = 4500.000000
+low_1/duration          = 4500.000000
+low_1/heatDamage        = 4.050000
+
+medium_1/type              = 5MN Microwarpdrive II
+medium_1/state             = active
+medium_1/capacitorPeakLoad = 3.000000
+medium_1/cycleTime         = 10000.000000
+medium_1/capacitorNeed     = 30.000000
+medium_1/speedFactor       = 637.500000
+medium_1/heatDamage        = 14.250000
+
+high_1-2/type              = Small Energy Nosferatu II
+high_1-2/state             = active
+high_1-2/capacitorPeakLoad = -4.000000
+high_1-2/cycleTime         = 2500.000000
+high_1-2/heatDamage        = 0.862500
