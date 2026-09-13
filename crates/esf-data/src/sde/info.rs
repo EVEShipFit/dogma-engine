@@ -4,12 +4,12 @@ use super::{Names, Sde, eve};
 use crate::info::{Info, InfoName};
 
 pub struct InfoSde<'a> {
-    pub sde: &'a Sde<'a>,
+    sde: &'a Sde<'a>,
 }
 
 pub struct InfoNameSde<'a> {
-    pub sde: &'a Sde<'a>,
-    pub names: Option<&'a Names<'a>>,
+    sde: &'a Sde<'a>,
+    names: Option<&'a Names<'a>>,
 }
 
 impl Info for InfoSde<'_> {
