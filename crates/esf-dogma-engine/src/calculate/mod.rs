@@ -29,7 +29,6 @@ pub(crate) struct Objects {
     pub items: Vec<Item>,
     pub skills: Vec<Item>,
     pub char: Item,
-    pub structure: Item,
     pub target: Item,
     pub sources: bool,
 }
@@ -39,7 +38,6 @@ impl Objects {
         match object {
             Object::Ship => Some(&self.ship),
             Object::Char => Some(&self.char),
-            Object::Structure => Some(&self.structure),
             Object::Target => Some(&self.target),
             Object::Item(index) => Some(&self.items[index]),
             Object::Charge(index) => self.items[index].charge.as_deref(),
@@ -51,7 +49,6 @@ impl Objects {
         match object {
             Object::Ship => Some(&mut self.ship),
             Object::Char => Some(&mut self.char),
-            Object::Structure => Some(&mut self.structure),
             Object::Target => Some(&mut self.target),
             Object::Item(index) => Some(&mut self.items[index]),
             Object::Charge(index) => self.items[index].charge.as_deref_mut(),
@@ -65,7 +62,6 @@ impl Objects {
             items: Vec::new(),
             skills: Vec::new(),
             char: Item::new_fake(1373),
-            structure: Item::new_fake(0),
             target: Item::new_fake(0),
             sources: false,
         }

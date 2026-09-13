@@ -215,7 +215,6 @@ impl Pass for PassThree {
     fn pass(info: &impl Info, objects: &mut Objects) {
         objects.ship.calculate_values(info, objects);
         objects.char.calculate_values(info, objects);
-        objects.structure.calculate_values(info, objects);
         objects.target.calculate_values(info, objects);
         for item in &objects.items {
             item.calculate_values(info, objects);

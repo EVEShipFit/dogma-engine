@@ -1,0 +1,77 @@
+---
+source: tests/harness/case.rs
+expression: "calculate_fit(eft_fit, skills, edit)"
+---
+ship/type                                      = Astrahus
+ship/scanStrength                              = 500.000000
+ship/passiveShieldEffectiveRechargeRate        = 0.044999
+ship/passiveShieldRechargeRate                 = 0.035999
+ship/ehp                                       = 30149999.550730
+ship/shieldThermalDamageEffectiveResonance     = 0.200000
+ship/shieldKineticDamageEffectiveResonance     = 0.200000
+ship/shieldExplosiveDamageEffectiveResonance   = 0.200000
+ship/shieldEmDamageEffectiveResonance          = 0.200000
+ship/hullThermalDamageEffectiveResonance       = 0.200000
+ship/hullKineticDamageEffectiveResonance       = 0.200000
+ship/hullExplosiveDamageEffectiveResonance     = 0.200000
+ship/hullEmDamageEffectiveResonance            = 0.200000
+ship/armorThermalDamageEffectiveResonance      = 0.200000
+ship/armorKineticDamageEffectiveResonance      = 0.200000
+ship/armorExplosiveDamageEffectiveResonance    = 0.200000
+ship/armorEmDamageEffectiveResonance           = 0.200000
+ship/shieldEhp                                 = 17999999.731779
+ship/hullEhp                                   = 2249999.966472
+ship/armorEhp                                  = 9899999.852479
+ship/shieldDamageEffectiveResonance            = 0.800000
+ship/hullDamageEffectiveResonance              = 0.800000
+ship/armorDamageEffectiveResonance             = 0.800000
+ship/powerFree                                 = 930000.000000
+ship/cpuFree                                   = 17400.000000
+ship/capacitorDepletesIn                       = -1.000000
+ship/capacitorPeakDeltaPercentage              = 100.000000
+ship/capacitorPeakDelta                        = 173.611111
+ship/capacitorPeakRecharge                     = 173.611111
+ship/powerLoad                                 = 570000.000000
+ship/cpuLoad                                   = 6600.000000
+ship/shieldCapacity                            = 14400000.000000
+ship/armorHP                                   = 7920000.000000
+ship/capacitorCapacity                         = 250000.000000
+ship/shipBonus2AF                              = 0.000000
+ship/shipBonusGC                               = 0.000000
+ship/shipBonusCC                               = 0.000000
+ship/shipBonusMB                               = 0.000000
+ship/shipBonusCB                               = 0.000000
+ship/shipBonusAB                               = 0.000000
+ship/shipBonusMI                               = 0.000000
+ship/shipBonusAI                               = 0.000000
+ship/shipBonusCI                               = 0.000000
+ship/shipBonusGI                               = 0.000000
+ship/structureFullPowerStateHitpointMultiplier = 4.000000
+ship/hiddenArmorHPMultiplier                   = 1.100000
+ship/structurePowerStateArmorPlatingMultiplier = 1.000000
+ship/shipBonusUF1                              = 0.000000
+ship/shipBonusUF2                              = 0.000000
+ship/shipBonusUC1                              = 0.000000
+ship/shipBonusUC2                              = 0.000000
+ship/shipBonusUB1                              = 0.000000
+ship/shipBonusUB2                              = 0.000000
+ship/shipBonusOreDestroyer1                    = 0.000000
+ship/shipBonusOreDestroyer2                    = 0.000000
+ship/shipBonusOreDestroyer3                    = 0.000000
+ship/shipBonusSoEECS1                          = 0.000000
+ship/shipBonusSoEECS2                          = 0.000000
+ship/shipBonusSoEECS3                          = 0.000000
+ship/shipBonusSoEECS4                          = 0.000000
+ship/shipBonusSoEECS5                          = 0.000000
+ship/shipBonusAB3                              = 0.000000
+
+low_1/type  = Standup Layered Armor Plating I
+low_1/state = online
+
+medium_1/type  = Standup Cap Battery I
+medium_1/state = online
+
+service_1/type                          = Standup Cloning Center I
+service_1/state                         = online
+service_1/serviceModuleFuelAmount       = 7.500000
+service_1/serviceModuleFuelOnlineAmount = 540.000000

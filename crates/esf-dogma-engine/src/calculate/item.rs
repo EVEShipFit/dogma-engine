@@ -50,7 +50,6 @@ pub enum Object {
     Charge(usize),
     Skill(usize),
     Char,
-    Structure,
     Target,
 }
 

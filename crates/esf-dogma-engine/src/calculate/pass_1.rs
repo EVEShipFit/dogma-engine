@@ -59,7 +59,6 @@ impl PassOne {
 
         /* These carry no attributes, but pass 2 still wants their category. */
         objects.char.set_type_ids(info);
-        objects.structure.set_type_ids(info);
         objects.target.set_type_ids(info);
 
         for (skill_id, skill_level) in &fit.character.skills {
