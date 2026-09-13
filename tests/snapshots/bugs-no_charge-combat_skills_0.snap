@@ -1,0 +1,93 @@
+---
+source: tests/harness/case.rs
+expression: "calculate_fit(eft_fit, skills)"
+---
+capacitor/capacity             = 350.000000
+capacitor/depletes_in          = -1.000000
+capacitor/peak                 = 1.500000
+capacitor/percentage           = 30.000000
+capacitor/recharge             = 175.000000
+capacitor/stable               = true
+cpu/capacity                   = 130.000000
+cpu/free                       = 93.000000
+defense/armor/hp               = 450.000000
+defense/armor/resist/em        = 50.000000
+defense/armor/resist/expl      = 10.000002
+defense/armor/resist/kin       = 35.000002
+defense/armor/resist/therm     = 35.000002
+defense/ehp                    = 1970.320801
+defense/recharge/armor         = 0.000000
+defense/recharge/hull          = 0.000000
+defense/recharge/passive       = 1.400000
+defense/recharge/shield        = 0.000000
+defense/shield/hp              = 350.000000
+defense/shield/recharge        = 625.000000
+defense/shield/resist/em       = 0.000000
+defense/shield/resist/expl     = 50.000000
+defense/shield/resist/kin      = 39.999998
+defense/shield/resist/therm    = 19.999999
+defense/structure/hp           = 550.000000
+defense/structure/resist/em    = 32.999998
+defense/structure/resist/expl  = 32.999998
+defense/structure/resist/kin   = 32.999998
+defense/structure/resist/therm = 32.999998
+drones/active                  = 2.000000
+drones/bandwidth               = 25.000000
+drones/bandwidth_load          = 10.000000
+drones/capacity                = 40.000000
+drones/capacity_load           = 10.000000
+drones/dps                     = 19.200000
+drones/range                   = 20.000000
+navigation/agility             = 3.440000
+navigation/align_time          = 4.978682
+navigation/mass                = 1044.000000
+navigation/speed               = 315.000000
+navigation/warp_speed          = 5.000000
+offense/alpha                  = 86.449999
+offense/dps                    = 37.474999
+offense/dps_with_reload        = 37.312704
+offense/drone_dps              = 19.200000
+power/capacity                 = 35.000000
+power/free                     = 20.000000
+targeting/lock_range           = 40.000000
+targeting/max_locked_targets   = 5.000000
+targeting/scan_resolution      = 600.000000
+targeting/sensor_strength      = 9.000000
+targeting/signature_radius     = 41.000000
+
+high_1/type                         = Small EMP Smartbomb I
+high_1/state                        = active
+high_1/damageVolley                 = 50.000000
+high_1/speedWithReload              = 10000.000000
+high_1/damagePerSecondWithoutReload = 5.000000
+high_1/capacitorPeakLoad            = 3.000000
+high_1/cycleTime                    = 10000.000000
+
+high_2/type                         = Civilian Gatling Autocannon
+high_2/state                        = active
+high_2/damageVolley                 = 6.750000
+high_2/speedWithReload              = 2000.000000
+high_2/damagePerSecondWithoutReload = 3.375000
+high_2/capacitorPeakLoad            = 0.500000
+high_2/cycleTime                    = 2000.000000
+
+high_3/type                         = 125mm Gatling AutoCannon II
+high_3/state                        = active
+high_3/damageVolley                 = 29.699999
+high_3/speedWithReload              = 3049.999999
+high_3/speedOfReload                = 49.999999
+high_3/damagePerSecondWithReload    = 9.737705
+high_3/damagePerSecondWithoutReload = 9.900000
+high_3/chargeAmount                 = 200.000004
+high_3/cycleTime                    = 3000.000000
+high_3/maxRange                     = 480.000000
+high_3/barrageDmgMultiplier         = 2.475000
+high_3/barrageFalloff               = 4300.000000
+high_3/entityFlyRange               = 250.000000
+high_3/charge/type                  = EMP S
+
+dronebay_1-2/type                         = Hobgoblin II
+dronebay_1-2/state                        = active
+dronebay_1-2/damageVolley                 = 38.399999
+dronebay_1-2/speedWithReload              = 4000.000000
+dronebay_1-2/damagePerSecondWithoutReload = 9.600000

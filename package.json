@@ -2,6 +2,6 @@
   "name": "dogma-engine",
   "private": true,
   "dependencies": {
-    "@eveshipfit/sde": "1.3503375.1"
+    "@eveshipfit/sde": "1.3503375.2"
   }
 }
