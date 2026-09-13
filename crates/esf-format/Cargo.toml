@@ -11,7 +11,7 @@ keywords.workspace = true
 
 [dependencies]
 esf-data.workspace = true
-esf-dogma.workspace = true
+esf-dogma-engine.workspace = true
 
 [dev-dependencies]
 flatbuffers.workspace = true

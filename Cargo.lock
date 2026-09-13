@@ -178,7 +178,7 @@ version = "0.0.0-git"
 dependencies = [
  "clap",
  "esf-data",
- "esf-dogma",
+ "esf-dogma-engine",
  "esf-format",
  "serde_json",
 ]
@@ -191,7 +191,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "esf-dogma"
+name = "esf-dogma-engine"
 version = "0.0.0-git"
 dependencies = [
  "esf-data",
@@ -206,7 +206,7 @@ name = "esf-format"
 version = "0.0.0-git"
 dependencies = [
  "esf-data",
- "esf-dogma",
+ "esf-dogma-engine",
  "flatbuffers",
 ]
 
@@ -215,7 +215,7 @@ name = "esf-regression"
 version = "0.0.0-git"
 dependencies = [
  "esf-data",
- "esf-dogma",
+ "esf-dogma-engine",
  "esf-format",
  "insta",
 ]
@@ -226,7 +226,7 @@ version = "0.0.0-git"
 dependencies = [
  "console_error_panic_hook",
  "esf-data",
- "esf-dogma",
+ "esf-dogma-engine",
  "serde-wasm-bindgen",
  "wasm-bindgen",
 ]

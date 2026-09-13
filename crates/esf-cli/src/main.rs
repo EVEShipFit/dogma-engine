@@ -5,8 +5,8 @@ use std::path::PathBuf;
 use clap::Parser;
 
 use esf_data::sde;
-use esf_dogma::Options;
-use esf_dogma::fit::{Fit, Slot, State};
+use esf_dogma_engine::Options;
+use esf_dogma_engine::fit::{Fit, Slot, State};
 use esf_format::eft;
 
 #[derive(Parser)]
@@ -123,7 +123,7 @@ pub fn main() {
     let options = Options {
         sources: args.sources,
     };
-    let calculation = esf_dogma::calculate(&info, &fit, &options);
+    let calculation = esf_dogma_engine::calculate(&info, &fit, &options);
 
     println!("{}", serde_json::to_string(&calculation).unwrap());
 }

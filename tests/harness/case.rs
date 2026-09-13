@@ -1,6 +1,6 @@
 use esf_data::sde;
-use esf_dogma::fit::Fit;
-use esf_dogma::{Calculation, Options};
+use esf_dogma_engine::fit::Fit;
+use esf_dogma_engine::{Calculation, Options};
 use esf_format::eft;
 
 use super::dump::dump;
@@ -37,7 +37,7 @@ pub fn calculate(
     edit(&mut fit);
 
     let info = sde::InfoSde::new(&SDE);
-    let calculation = esf_dogma::calculate(&info, &fit, options);
+    let calculation = esf_dogma_engine::calculate(&info, &fit, options);
     (fit, calculation)
 }
 

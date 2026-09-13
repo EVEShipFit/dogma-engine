@@ -6,8 +6,8 @@
 //!
 //! ```no_run
 //! use esf_data::sde::{InfoSde, Sde};
-//! use esf_dogma::fit::Fit;
-//! use esf_dogma::{Options, calculate};
+//! use esf_dogma_engine::fit::Fit;
+//! use esf_dogma_engine::{Options, calculate};
 //!
 //! let bytes = std::fs::read("sde.dat").unwrap();
 //! let sde = Sde::new(&bytes).unwrap();

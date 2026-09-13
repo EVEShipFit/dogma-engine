@@ -11,6 +11,6 @@ doctest = false
 
 [dev-dependencies]
 esf-data.workspace = true
-esf-dogma.workspace = true
+esf-dogma-engine.workspace = true
 esf-format.workspace = true
 insta.workspace = true
