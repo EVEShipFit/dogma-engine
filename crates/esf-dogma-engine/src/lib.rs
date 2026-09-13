@@ -22,6 +22,8 @@
 //! let calculation = calculate(&InfoSde::new(&sde), &fit, &Options::default());
 //! ```
 
+#![warn(missing_docs)]
+
 mod calculate;
 mod fit;
 

@@ -15,6 +15,7 @@ use item::{Item, Object};
 pub use item::EffectOperator;
 pub use output::{AttributeValue, Calculation, ItemResult, Source, SourceRef};
 
+/// What [`calculate()`] reports on top of the values.
 #[derive(Deserialize, Debug, Default, Clone)]
 #[serde(default)]
 pub struct Options {
@@ -75,6 +76,7 @@ trait Pass {
     fn pass(info: &impl Info, objects: &mut Objects);
 }
 
+/// Calculate every attribute of the ship, its items and the character.
 pub fn calculate(info: &impl Info, fit: &Fit, options: &Options) -> Calculation {
     let mut objects = pass_1::PassOne::pass(info, fit);
     objects.sources = options.sources;
