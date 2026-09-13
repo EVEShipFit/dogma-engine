@@ -207,7 +207,6 @@ version = "0.0.0-git"
 dependencies = [
  "esf-data",
  "esf-dogma-engine",
- "flatbuffers",
 ]
 
 [[package]]
