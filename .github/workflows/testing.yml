@@ -56,20 +56,20 @@ jobs:
 
     - name: Check generated code
       run: |
-        flatc --rust --gen-onefile -o src/sde/ node_modules/@eveshipfit/sde/specs/eve.fbs node_modules/@eveshipfit/sde/specs/names.fbs
+        flatc --rust --gen-onefile -o crates/esf-data/src/sde/ node_modules/@eveshipfit/sde/specs/eve.fbs node_modules/@eveshipfit/sde/specs/names.fbs
         git diff --exit-code
 
     - name: Build WASM library
       run: |
-        wasm-pack build --release --target web -- --locked --no-default-features --features wasm,eft
+        wasm-pack build crates/esf-wasm --release --target web -- --locked
 
     - name: Build Rust binary
       run: |
-        cargo build --release --locked --no-default-features --features rust,eft
+        cargo build --release --locked -p esf-cli
 
     - name: Run tests
       run: |
-        cargo test --locked --no-default-features --features rust,eft
+        cargo test --locked --workspace
 
     - name: Check coding style
       run: |
@@ -77,5 +77,5 @@ jobs:
 
     - name: Check lints
       run: |
-        cargo clippy --locked --all-targets --no-default-features --features rust,eft -- -D warnings
-        cargo clippy --locked --all-targets --no-default-features --features wasm,eft --target wasm32-unknown-unknown -- -D warnings
+        cargo clippy --locked --workspace --all-targets -- -D warnings
+        cargo clippy --locked -p esf-wasm --all-targets --target wasm32-unknown-unknown -- -D warnings

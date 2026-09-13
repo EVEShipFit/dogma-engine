@@ -1,0 +1,12 @@
+[package]
+name = "esf-format"
+description = "Imports EVE Online ship fits, like EFT, into the dogma engine"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+esf-data.workspace = true
+esf-dogma.workspace = true

@@ -1,0 +1,20 @@
+[package]
+name = "esf-wasm"
+description = "Library to calculate statistics for EVE Online ship fits"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+
+# Keeps the file names in the npm package as they were.
+[lib]
+name = "esf_dogma_engine"
+crate-type = ["cdylib"]
+
+[dependencies]
+console_error_panic_hook.workspace = true
+esf-data.workspace = true
+esf-dogma.workspace = true
+serde-wasm-bindgen.workspace = true
+wasm-bindgen.workspace = true

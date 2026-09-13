@@ -2,9 +2,9 @@ use std::sync::OnceLock;
 
 use wasm_bindgen::prelude::*;
 
-use crate::calculate;
-use crate::fit::Fit;
-use crate::sde::{InfoSde, Sde};
+use esf_data::sde::{InfoSde, Sde};
+use esf_dogma::calculate;
+use esf_dogma::fit::Fit;
 
 /// The SDE is handed over once and then read straight out of WASM memory, so
 /// no lookup crosses back into JavaScript.
