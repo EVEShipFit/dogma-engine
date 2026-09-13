@@ -8,10 +8,10 @@ use super::{NAMES, SDE};
 const SKILL_CATEGORY_ID: i32 = 16;
 
 pub struct Skills {
-    pub levels: BTreeMap<i32, i32>,
+    pub levels: BTreeMap<i32, u8>,
 }
 
-pub fn all(level: i32) -> Skills {
+pub fn all(level: u8) -> Skills {
     Skills {
         levels: SDE
             .types()
@@ -28,7 +28,7 @@ pub fn none() -> Skills {
 }
 
 impl Skills {
-    pub fn with(mut self, name: &str, level: i32) -> Skills {
+    pub fn with(mut self, name: &str, level: u8) -> Skills {
         let type_id = sde::InfoNameSde::new(&SDE, Some(&NAMES))
             .unwrap()
             .type_name_to_id(name);

@@ -34,11 +34,14 @@ static NAMES: LazyLock<sde::Names<'static>> =
     LazyLock::new(|| sde::Names::new(&NAMES_BYTES).unwrap());
 
 macro_rules! regression {
-    ($($name:ident = $fit:ident, skills: $skills:expr;)*) => {
+    ($($name:ident = $fit:ident, skills: $skills:expr $(, edit: $edit:expr)?;)*) => {
         $(
             #[test]
             fn $name() {
-                crate::harness::snapshot(module_path!(), stringify!($name), $fit, $skills);
+                #[allow(unused_variables)]
+                let edit: fn(&mut esf_dogma_engine::fit::Fit) = |_| {};
+                $(let edit: fn(&mut esf_dogma_engine::fit::Fit) = $edit;)?
+                crate::harness::snapshot(module_path!(), stringify!($name), $fit, $skills, edit);
             }
         )*
     };

@@ -3,6 +3,8 @@ use std::cell::Cell;
 use std::collections::BTreeMap;
 use strum_macros::EnumIter;
 
+use crate::fit::{FitItem, Slot, State};
+
 #[derive(Serialize, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum EffectCategory {
     Passive,
@@ -29,7 +31,7 @@ pub enum EffectOperator {
     PostAssign,
 }
 
-#[derive(Serialize, Debug, Copy, Clone)]
+#[derive(Serialize, Debug, Copy, Clone, PartialEq)]
 pub enum Object {
     Ship,
     Item(usize),
@@ -47,6 +49,7 @@ pub struct Effect {
     pub source: Object,
     pub source_category: EffectCategory,
     pub source_attribute_id: i32,
+    pub quantity: u32,
 }
 
 #[derive(Serialize, Debug)]
@@ -54,25 +57,6 @@ pub struct Attribute {
     pub base_value: f64,
     pub value: Cell<Option<f64>>,
     pub effects: Vec<Effect>,
-}
-
-#[derive(Serialize, Debug, PartialEq)]
-pub enum SlotType {
-    High,
-    Medium,
-    Low,
-    Rig,
-    SubSystem,
-    Service,
-    DroneBay,
-    Charge,
-    None,
-}
-
-#[derive(Serialize, Debug)]
-pub struct Slot {
-    pub r#type: SlotType,
-    pub index: Option<i32>,
 }
 
 #[derive(Serialize, Debug)]
@@ -83,7 +67,8 @@ pub struct Item {
     #[serde(skip)]
     pub category_id: i32,
 
-    pub slot: Slot,
+    pub slot: Option<Slot>,
+    pub quantity: u32,
     pub charge: Option<Box<Item>>,
     pub state: EffectCategory,
     pub max_state: EffectCategory,
@@ -107,30 +92,55 @@ impl EffectCategory {
     }
 }
 
-impl Slot {
+impl From<State> for EffectCategory {
+    fn from(state: State) -> EffectCategory {
+        match state {
+            State::Offline => EffectCategory::Passive,
+            State::Online => EffectCategory::Online,
+            State::Active => EffectCategory::Active,
+            State::Overload => EffectCategory::Overload,
+        }
+    }
+}
+
+impl From<EffectCategory> for State {
+    fn from(category: EffectCategory) -> State {
+        match category {
+            EffectCategory::Passive => State::Offline,
+            EffectCategory::Online => State::Online,
+            EffectCategory::Active => State::Active,
+            EffectCategory::Overload => State::Overload,
+            category => unreachable!("{category:?} is not an item state"),
+        }
+    }
+}
+
+impl Item {
     pub fn is_module(&self) -> bool {
         matches!(
-            self.r#type,
-            SlotType::High | SlotType::Medium | SlotType::Low | SlotType::Rig | SlotType::SubSystem
+            self.slot,
+            Some(
+                Slot::High(_) | Slot::Medium(_) | Slot::Low(_) | Slot::Rig(_) | Slot::Subsystem(_)
+            )
         )
     }
 
     /* Drones are owned by the character, but not located in the ship. */
     pub fn is_in_ship(&self) -> bool {
-        !matches!(self.r#type, SlotType::DroneBay)
+        self.is_module() || matches!(self.slot, Some(Slot::Service(_)))
     }
-}
 
-impl Item {
+    pub fn is_calculated(&self) -> bool {
+        self.is_in_ship() || self.slot == Some(Slot::DroneBay)
+    }
+
     pub fn new_charge(type_id: i32) -> Item {
         Item {
             type_id,
             group_id: 0,
             category_id: 0,
-            slot: Slot {
-                r#type: SlotType::Charge,
-                index: None,
-            },
+            slot: None,
+            quantity: 1,
             charge: None,
             state: EffectCategory::Active,
             max_state: EffectCategory::Active,
@@ -139,40 +149,33 @@ impl Item {
         }
     }
 
-    pub fn new_module(
-        type_id: i32,
-        slot: Slot,
-        charge_type_id: Option<i32>,
-        state: EffectCategory,
-    ) -> Item {
-        Item {
-            type_id,
+    pub fn new_fit(fit_item: &FitItem) -> Item {
+        let mut item = Item {
+            type_id: fit_item.type_id,
             group_id: 0,
             category_id: 0,
-            slot,
-            charge: charge_type_id.map(|charge_type_id| Box::new(Item::new_charge(charge_type_id))),
-            state,
+            slot: Some(fit_item.slot),
+            quantity: fit_item.quantity,
+            charge: fit_item
+                .charge
+                .as_ref()
+                .map(|charge| Box::new(Item::new_charge(charge.type_id))),
+            state: fit_item.state.into(),
             max_state: EffectCategory::Passive,
             attributes: BTreeMap::new(),
             effects: Vec::new(),
-        }
-    }
+        };
 
-    pub fn new_drone(type_id: i32, state: EffectCategory) -> Item {
-        Item {
-            type_id,
-            group_id: 0,
-            category_id: 0,
-            slot: Slot {
-                r#type: SlotType::DroneBay,
-                index: None,
-            },
-            charge: None,
-            state,
-            max_state: EffectCategory::Active,
-            attributes: BTreeMap::new(),
-            effects: Vec::new(),
+        if item.slot == Some(Slot::DroneBay) {
+            if item.state != EffectCategory::Passive {
+                item.state = EffectCategory::Active;
+            }
+            item.max_state = EffectCategory::Active;
+        } else if !item.is_calculated() {
+            item.state = EffectCategory::Passive;
         }
+
+        item
     }
 
     pub fn new_fake(type_id: i32) -> Item {
@@ -180,10 +183,8 @@ impl Item {
             type_id,
             group_id: 0,
             category_id: 0,
-            slot: Slot {
-                r#type: SlotType::None,
-                index: None,
-            },
+            slot: None,
+            quantity: 1,
             charge: None,
             state: EffectCategory::Active,
             max_state: EffectCategory::Active,

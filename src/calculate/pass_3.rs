@@ -2,6 +2,7 @@ use strum::IntoEnumIterator;
 
 use super::item::{Attribute, EffectOperator, Item};
 use super::{Info, Pass, Ship};
+use crate::fit::Fit;
 
 /* Penalty factor: 1 / math.exp((1 / 2.67) ** 2) */
 const PENALTY_FACTOR: f64 = 0.8691199808003974;
@@ -73,15 +74,15 @@ impl Attribute {
                 };
 
                 /* Check whether stacking penalty counts; negative and positive values have their own penalty. */
-                if effect.penalty && OPERATOR_HAS_PENALTY.contains(&effect.operator) {
-                    if source_value < 0.0 {
-                        values.negative.push(source_value);
-                    } else {
-                        values.positive.push(source_value);
-                    }
+                let bucket = if !effect.penalty || !OPERATOR_HAS_PENALTY.contains(&effect.operator)
+                {
+                    &mut values.unpenalized
+                } else if source_value < 0.0 {
+                    &mut values.negative
                 } else {
-                    values.unpenalized.push(source_value);
-                }
+                    &mut values.positive
+                };
+                bucket.extend(std::iter::repeat_n(source_value, effect.quantity as usize));
             }
 
             if values.unpenalized.is_empty()
@@ -165,7 +166,7 @@ impl Item {
 }
 
 impl Pass for PassThree {
-    fn pass(info: &impl Info, ship: &mut Ship) {
+    fn pass(info: &impl Info, _fit: &Fit, ship: &mut Ship) {
         ship.hull.calculate_values(info, ship);
         ship.char.calculate_values(info, ship);
         ship.structure.calculate_values(info, ship);

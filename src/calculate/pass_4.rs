@@ -1,5 +1,6 @@
 use super::item::Attribute;
 use super::{Info, Item, Pass, Ship};
+use crate::fit::Fit;
 
 pub struct PassFour {}
 
@@ -15,7 +16,7 @@ impl Item {
 
 /* Attributes don't contain all information displayed, so we calculate some fake attributes with those values. */
 impl Pass for PassFour {
-    fn pass(info: &impl Info, ship: &mut Ship) {
+    fn pass(info: &impl Info, _fit: &Fit, ship: &mut Ship) {
         capacitor::attribute_capacitor_depletes_in(info, ship);
     }
 }

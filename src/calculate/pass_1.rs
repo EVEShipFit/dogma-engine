@@ -2,9 +2,9 @@ use super::attribute_ids::{
     ATTRIBUTE_CAPACITY_ID, ATTRIBUTE_MASS_ID, ATTRIBUTE_RADIUS_ID, ATTRIBUTE_SKILL_LEVEL_ID,
     ATTRIBUTE_VOLUME_ID,
 };
-use super::item::{Attribute, EffectCategory, Item, Slot, SlotType};
+use super::item::{Attribute, Item};
 use super::{Info, Pass, Ship};
-use crate::data_types::{EsfSlotType, EsfState};
+use crate::fit::Fit;
 
 pub struct PassOne {}
 
@@ -52,7 +52,7 @@ impl Item {
 }
 
 impl Pass for PassOne {
-    fn pass(info: &impl Info, ship: &mut Ship) {
+    fn pass(info: &impl Info, fit: &Fit, ship: &mut Ship) {
         ship.hull.set_attributes(info);
 
         /* These carry no attributes, but pass 2 still wants their category. */
@@ -60,7 +60,7 @@ impl Pass for PassOne {
         ship.structure.set_type_ids(info);
         ship.target.set_type_ids(info);
 
-        for (skill_id, skill_level) in info.skills() {
+        for (skill_id, skill_level) in &fit.character.skills {
             let mut skill = Item::new_fake(*skill_id);
 
             skill.set_attributes(info);
@@ -69,48 +69,15 @@ impl Pass for PassOne {
             ship.skills.push(skill);
         }
 
-        for module in &info.fit().modules {
-            let state = match module.state {
-                EsfState::Passive => EffectCategory::Passive,
-                EsfState::Online => EffectCategory::Online,
-                EsfState::Active => EffectCategory::Active,
-                EsfState::Overload => EffectCategory::Overload,
-            };
+        for fit_item in &fit.items {
+            let mut item = Item::new_fit(fit_item);
 
-            let mut item = Item::new_module(
-                module.type_id,
-                Slot {
-                    r#type: match module.slot.r#type {
-                        EsfSlotType::High => SlotType::High,
-                        EsfSlotType::Medium => SlotType::Medium,
-                        EsfSlotType::Low => SlotType::Low,
-                        EsfSlotType::Rig => SlotType::Rig,
-                        EsfSlotType::SubSystem => SlotType::SubSystem,
-                        EsfSlotType::Service => SlotType::Service,
-                    },
-                    index: Some(module.slot.index),
-                },
-                module.charge.as_ref().map(|charge| charge.type_id),
-                state,
-            );
-
-            item.set_attributes(info);
-            if let Some(charge) = item.charge.as_mut() {
-                charge.set_attributes(info)
+            if item.is_calculated() {
+                item.set_attributes(info);
+                if let Some(charge) = item.charge.as_mut() {
+                    charge.set_attributes(info)
+                }
             }
-
-            ship.items.push(item);
-        }
-
-        for drone in &info.fit().drones {
-            let state = match drone.state {
-                EsfState::Passive => EffectCategory::Passive,
-                _ => EffectCategory::Active,
-            };
-
-            let mut item = Item::new_drone(drone.type_id, state);
-
-            item.set_attributes(info);
 
             ship.items.push(item);
         }

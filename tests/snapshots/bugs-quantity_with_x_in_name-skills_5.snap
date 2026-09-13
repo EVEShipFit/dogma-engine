@@ -64,3 +64,6 @@ dronebay_1-2/damageMultiplier = 1.500000
 dronebay_1-2/miningAmount     = 165.000000
 dronebay_1-2/shieldCapacity   = 1875.000000
 dronebay_1-2/armorHP          = 1250.000000
+
+cargo_1-100/type  = Meson Exotic Plasma L
+cargo_1-100/state = offline

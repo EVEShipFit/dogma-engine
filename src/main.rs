@@ -5,9 +5,8 @@ use std::path::PathBuf;
 use clap::Parser;
 
 use esf_dogma_engine::calculate;
-use esf_dogma_engine::data_types::{EsfFit, EsfSlotType, EsfState};
 use esf_dogma_engine::eft;
-use esf_dogma_engine::rust;
+use esf_dogma_engine::fit::{Fit, Slot, State};
 use esf_dogma_engine::sde;
 
 #[derive(Parser)]
@@ -43,7 +42,7 @@ struct Args {
 /// P = Passive (Offline), O = Online, A = Active, V = Overload.
 ///
 /// A module set to a state it cannot reach is lowered again during calculation.
-fn apply_state(fit: &mut EsfFit, state: &str) {
+fn apply_state(fit: &mut Fit, state: &str) {
     let state: Vec<char> = state.chars().collect();
     if state.len() != 24 {
         panic!(
@@ -51,26 +50,20 @@ fn apply_state(fit: &mut EsfFit, state: &str) {
         );
     }
 
-    for (offset, slot_type) in [
-        (0, EsfSlotType::High),
-        (8, EsfSlotType::Medium),
-        (16, EsfSlotType::Low),
-    ]
-    .iter()
-    {
+    type Rack = fn(u8) -> Slot;
+    let racks: [(usize, Rack); 3] = [(0, Slot::High), (8, Slot::Medium), (16, Slot::Low)];
+
+    for (offset, rack) in racks {
         for index in 0..8 {
-            let module = fit
-                .modules
-                .iter_mut()
-                .find(|module| module.slot.index == index && module.slot.r#type == *slot_type);
+            let Some(item) = fit.items.iter_mut().find(|item| item.slot == rack(index)) else {
+                continue;
+            };
 
-            let Some(module) = module else { continue };
-
-            module.state = match state[offset + index as usize] {
-                'P' => EsfState::Passive,
-                'O' => EsfState::Online,
-                'A' => EsfState::Active,
-                'V' => EsfState::Overload,
+            item.state = match state[offset + index as usize] {
+                'P' => State::Offline,
+                'O' => State::Online,
+                'A' => State::Active,
+                'V' => State::Overload,
                 character => panic!("Invalid state character: {}", character),
             };
         }
@@ -102,8 +95,7 @@ pub fn main() {
 
     let info_name = sde::InfoNameSde::new(&sde, names.as_ref()).unwrap();
 
-    let mut fit = eft::load_eft(&info_name, &eft).unwrap().esf_fit;
-    let mut skills: BTreeMap<i32, i32> = BTreeMap::new();
+    let mut fit = eft::load_eft(&info_name, &eft).unwrap();
 
     /* Without this the states from the EFT are used. */
     if let Some(state) = args.state {
@@ -116,16 +108,15 @@ pub fn main() {
      */
     if let Some(skills_filename) = args.skills_filename {
         let skills_file = std::fs::File::open(skills_filename).unwrap();
-        let skills_file: BTreeMap<String, i32> = serde_json::from_reader(skills_file).unwrap();
+        let skills_file: BTreeMap<String, u8> = serde_json::from_reader(skills_file).unwrap();
         for (skill_id, level) in skills_file {
             let skill_id = skill_id.parse::<i32>().unwrap();
-            skills.insert(skill_id, level);
+            fit.character.skills.insert(skill_id, level);
         }
     }
 
-    let info = sde::InfoSde::new(fit, skills, &sde);
-    let statistics = calculate::calculate(&info);
-    let output = rust::Output::new(&info, &statistics);
+    let info = sde::InfoSde::new(&sde);
+    let calculation = calculate::calculate(&info, &fit);
 
-    println!("{}", serde_json::to_string(&output).unwrap());
+    println!("{}", serde_json::to_string(&calculation).unwrap());
 }

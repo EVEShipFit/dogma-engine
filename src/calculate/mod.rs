@@ -2,32 +2,27 @@ use serde::Serialize;
 
 mod attribute_ids;
 pub mod item;
+mod output;
 mod pass_1;
 mod pass_2;
 mod pass_3;
 mod pass_4;
 
+use crate::fit::Fit;
 use crate::info::Info;
 use item::{Item, Object};
 
-#[derive(Serialize, Debug)]
-pub struct DamageProfile {
-    pub em: f64,
-    pub explosive: f64,
-    pub kinetic: f64,
-    pub thermal: f64,
-}
+pub use output::{AttributeValue, Calculation, ItemResult};
 
 #[derive(Serialize, Debug)]
 pub struct Ship {
     pub hull: Item,
+
     pub items: Vec<Item>,
     pub skills: Vec<Item>,
     pub char: Item,
     pub structure: Item,
     pub target: Item,
-
-    pub damage_profile: DamageProfile,
 }
 
 impl Ship {
@@ -63,27 +58,21 @@ impl Ship {
             char: Item::new_fake(1373),
             structure: Item::new_fake(0),
             target: Item::new_fake(0),
-            damage_profile: DamageProfile {
-                em: 0.25,
-                explosive: 0.25,
-                kinetic: 0.25,
-                thermal: 0.25,
-            },
         }
     }
 }
 
 trait Pass {
-    fn pass(info: &impl Info, ship: &mut Ship);
+    fn pass(info: &impl Info, fit: &Fit, ship: &mut Ship);
 }
 
-pub fn calculate(info: &impl Info) -> Ship {
-    let mut ship = Ship::new(info.fit().ship_type_id);
+pub fn calculate(info: &impl Info, fit: &Fit) -> Calculation {
+    let mut ship = Ship::new(fit.ship.type_id);
 
-    pass_1::PassOne::pass(info, &mut ship);
-    pass_2::PassTwo::pass(info, &mut ship);
-    pass_3::PassThree::pass(info, &mut ship);
-    pass_4::PassFour::pass(info, &mut ship);
+    pass_1::PassOne::pass(info, fit, &mut ship);
+    pass_2::PassTwo::pass(info, fit, &mut ship);
+    pass_3::PassThree::pass(info, fit, &mut ship);
+    pass_4::PassFour::pass(info, fit, &mut ship);
 
-    ship
+    Calculation::new(&ship)
 }
