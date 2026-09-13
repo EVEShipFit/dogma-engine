@@ -1,0 +1,77 @@
+---
+source: tests/harness/case.rs
+expression: "calculate_fit(eft_fit, skills)"
+---
+capacitor/capacity             = 400.000000
+capacitor/depletes_in          = 240.000000
+capacitor/peak                 = -0.616667
+capacitor/percentage           = -9.866667
+capacitor/recharge             = 160.000000
+capacitor/stable               = false
+cpu/capacity                   = 140.000000
+cpu/free                       = 45.000000
+defense/armor/hp               = 500.000000
+defense/armor/resist/em        = 50.000000
+defense/armor/resist/expl      = 19.999999
+defense/armor/resist/kin       = 25.000000
+defense/armor/resist/therm     = 35.000002
+defense/ehp                    = 1895.141133
+defense/recharge/armor         = 15.333333
+defense/recharge/hull          = 0.000000
+defense/recharge/passive       = 1.400000
+defense/recharge/shield        = 0.000000
+defense/shield/hp              = 350.000000
+defense/shield/recharge        = 625.000000
+defense/shield/resist/em       = 0.000000
+defense/shield/resist/expl     = 50.000000
+defense/shield/resist/kin      = 39.999998
+defense/shield/resist/therm    = 19.999999
+defense/structure/hp           = 450.000000
+defense/structure/resist/em    = 32.999998
+defense/structure/resist/expl  = 32.999998
+defense/structure/resist/kin   = 32.999998
+defense/structure/resist/therm = 32.999998
+drones/active                  = 0.000000
+drones/bandwidth               = 0.000000
+drones/bandwidth_load          = 0.000000
+drones/capacity                = 0.000000
+drones/capacity_load           = 0.000000
+drones/dps                     = 0.000000
+drones/range                   = 20.000000
+navigation/agility             = 2.900000
+navigation/align_time          = 6.794229
+navigation/mass                = 1690.000000
+navigation/speed               = 780.369822
+navigation/warp_speed          = 5.000000
+offense/alpha                  = 0.000000
+offense/dps                    = 0.000000
+offense/dps_with_reload        = 0.000000
+offense/drone_dps              = 0.000000
+power/capacity                 = 67.000000
+power/free                     = 29.000000
+targeting/lock_range           = 25.000000
+targeting/max_locked_targets   = 4.000000
+targeting/scan_resolution      = 640.000000
+targeting/sensor_strength      = 10.000000
+targeting/signature_radius     = 37.000000
+
+low_1/type              = Small Armor Repairer II
+low_1/state             = active
+low_1/armorRepairRate   = 15.333333
+low_1/capacitorPeakLoad = 6.666667
+low_1/cycleTime         = 6000.000000
+
+medium_1/type              = 1MN Afterburner II
+medium_1/state             = active
+medium_1/capacitorPeakLoad = 2.200000
+medium_1/cycleTime         = 10000.000000
+
+medium_2/type              = Warp Disruptor II
+medium_2/state             = active
+medium_2/capacitorPeakLoad = 6.000000
+medium_2/cycleTime         = 5000.000000
+
+high_1-2/type              = Small Energy Nosferatu II
+high_1-2/state             = active
+high_1-2/capacitorPeakLoad = -4.000000
+high_1-2/cycleTime         = 2500.000000
