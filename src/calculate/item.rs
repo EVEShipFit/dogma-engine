@@ -1,4 +1,5 @@
 use serde::Serialize;
+use std::cell::Cell;
 use std::collections::BTreeMap;
 use strum_macros::EnumIter;
 
@@ -51,7 +52,7 @@ pub struct Effect {
 #[derive(Serialize, Debug)]
 pub struct Attribute {
     pub base_value: f64,
-    pub value: Option<f64>,
+    pub value: Cell<Option<f64>>,
     pub effects: Vec<Effect>,
 }
 
@@ -94,7 +95,7 @@ impl Attribute {
     pub fn new(value: f64) -> Attribute {
         Attribute {
             base_value: value,
-            value: None,
+            value: Cell::new(None),
             effects: Vec::new(),
         }
     }

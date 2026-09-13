@@ -164,7 +164,7 @@ fn get_attribute_by_name(
         .iter()
         .find(|attribute| *attribute.0 == attribute_id);
     if let Some(attribute) = attribute {
-        attribute.1.value.unwrap_or(default_value)
+        attribute.1.value.get().unwrap_or(default_value)
     } else {
         default_value
     }

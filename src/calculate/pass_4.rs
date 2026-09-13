@@ -7,8 +7,8 @@ mod capacitor;
 
 impl Item {
     pub fn add_attribute(&mut self, attribute_id: i32, base_value: f64, value: f64) {
-        let mut attribute = Attribute::new(base_value);
-        attribute.value = Some(value);
+        let attribute = Attribute::new(base_value);
+        attribute.value.set(Some(value));
         self.attributes.insert(attribute_id, attribute);
     }
 }
