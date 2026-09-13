@@ -1,12 +1,10 @@
+use super::attribute_ids::{
+    ATTRIBUTE_CAPACITY_ID, ATTRIBUTE_MASS_ID, ATTRIBUTE_RADIUS_ID, ATTRIBUTE_SKILL_LEVEL_ID,
+    ATTRIBUTE_VOLUME_ID,
+};
 use super::item::{Attribute, EffectCategory, Item, Slot, SlotType};
 use super::{Info, Pass, Ship};
 use crate::data_types::{EsfSlotType, EsfState};
-
-const ATTRIBUTE_MASS_ID: i32 = 4;
-const ATTRIBUTE_CAPACITY_ID: i32 = 38;
-const ATTRIBUTE_VOLUME_ID: i32 = 161;
-const ATTRIBUTE_RADIUS_ID: i32 = 162;
-const ATTRIBUTE_SKILL_LEVEL_ID: i32 = 280;
 
 pub struct PassOne {}
 

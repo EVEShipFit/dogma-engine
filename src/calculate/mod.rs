@@ -1,5 +1,6 @@
 use serde::Serialize;
 
+mod attribute_ids;
 pub mod item;
 mod pass_1;
 mod pass_2;
