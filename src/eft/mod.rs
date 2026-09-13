@@ -96,6 +96,13 @@ fn find_slot_type_index(
     None
 }
 
+/* Split "<Type Name> x<Quantity>" on its last token, as type names can contain an "x" too. */
+fn parse_quantity(line: &str) -> Option<(&str, i32)> {
+    let (type_name, quantity) = line.trim().rsplit_once(char::is_whitespace)?;
+    let quantity = quantity.strip_prefix('x')?.parse().ok()?;
+    Some((type_name.trim(), quantity))
+}
+
 /* Load an EFT string and return an ESF fit structure. */
 pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<EftFit, String> {
     let eft_lines: Vec<&str> = eft.lines().collect();
@@ -124,10 +131,7 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<EftFit, String> {
     /* An EFT has sections, which are seperated by a new line. */
     for section in section_iter(eft_lines) {
         /* This is a module section if none of the strings end with "x<quantity>". */
-        let is_module_section = !section.iter().all(|line| {
-            let x_pos = line.find("x");
-            x_pos.is_some_and(|x_pos| line[x_pos + 1..].chars().all(|c| c.is_numeric()))
-        });
+        let is_module_section = !section.iter().all(|line| parse_quantity(line).is_some());
 
         match is_module_section {
             true => {
@@ -218,9 +222,7 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<EftFit, String> {
 
                 for line in section {
                     /* Always in the form "<Type Name> x<Quantity>" */
-                    let x_pos = line.find("x").unwrap();
-                    let type_name = line[..x_pos].trim();
-                    let quantity = line[x_pos + 1..].parse::<i32>().unwrap();
+                    let (type_name, quantity) = parse_quantity(line).unwrap();
 
                     let type_id = info.type_name_to_id(type_name);
 
