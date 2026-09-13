@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::fmt;
 
-use esf_data::info::InfoName;
+use esf_data::InfoName;
 use esf_dogma_engine::fit::{self, Fit, FitItem, Slot, State};
 
 /// Why an EFT could not be loaded.
@@ -257,8 +257,8 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
 mod tests {
     use super::*;
 
+    use esf_data::eve;
     use esf_data::flatbuffers::Vector;
-    use esf_data::sde::eve;
 
     /* Knows type names only, which is enough to fail before any slot lookup. */
     struct Names;

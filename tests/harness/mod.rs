@@ -6,7 +6,7 @@
 use std::path::PathBuf;
 use std::sync::LazyLock;
 
-use esf_data::sde;
+use esf_data::{Names, Sde};
 
 mod case;
 mod dump;
@@ -43,9 +43,8 @@ static NAMES_BYTES: LazyLock<Vec<u8>> = LazyLock::new(|| {
     )
 });
 
-static SDE: LazyLock<sde::Sde<'static>> = LazyLock::new(|| sde::Sde::new(&SDE_BYTES).unwrap());
-static NAMES: LazyLock<sde::Names<'static>> =
-    LazyLock::new(|| sde::Names::new(&NAMES_BYTES).unwrap());
+static SDE: LazyLock<Sde<'static>> = LazyLock::new(|| Sde::new(&SDE_BYTES).unwrap());
+static NAMES: LazyLock<Names<'static>> = LazyLock::new(|| Names::new(&NAMES_BYTES).unwrap());
 
 macro_rules! regression {
     ($($name:ident = $fit:ident, skills: $skills:expr $(, edit: $edit:expr)?;)*) => {

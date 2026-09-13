@@ -1,7 +1,6 @@
 use std::collections::BTreeMap;
 
-use esf_data::info::InfoName;
-use esf_data::sde;
+use esf_data::{InfoName, InfoNameSde};
 
 use super::{NAMES, SDE};
 
@@ -29,7 +28,7 @@ pub fn none() -> Skills {
 
 impl Skills {
     pub fn with(mut self, name: &str, level: u8) -> Skills {
-        let type_id = sde::InfoNameSde::new(&SDE, Some(&NAMES))
+        let type_id = InfoNameSde::new(&SDE, Some(&NAMES))
             .unwrap()
             .type_name_to_id(name)
             .unwrap_or_else(|| panic!("no such skill: {name}"));

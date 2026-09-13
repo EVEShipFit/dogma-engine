@@ -5,7 +5,7 @@
 //! also match names in the other languages EVE supports.
 //!
 //! ```no_run
-//! use esf_data::sde::{InfoNameSde, Sde};
+//! use esf_data::{InfoNameSde, Sde};
 //! use esf_format::eft::load_eft;
 //!
 //! let bytes = std::fs::read("sde.dat").unwrap();

@@ -2,14 +2,16 @@
 //!
 //! The data comes as flatbuffers built by
 //! [sde-patched](https://github.com/EVEShipFit/sde-patched). Load `sde.dat` into
-//! [`sde::Sde`], and hand it to the engine through [`sde::InfoSde`].
+//! [`Sde`], and hand it to the engine through [`InfoSde`].
 
 mod error;
-pub mod info;
-pub mod sde;
+mod info;
+mod sde;
 
 pub use error::Error;
+pub use info::{Info, InfoName};
+pub use sde::{InfoNameSde, InfoSde, Names, Sde, eve};
 
-/// The traits in [`info`] hand out flatbuffers types; implementing them needs
+/// [`Info`] and [`InfoName`] hand out flatbuffers types; implementing them needs
 /// this exact version.
 pub use flatbuffers;

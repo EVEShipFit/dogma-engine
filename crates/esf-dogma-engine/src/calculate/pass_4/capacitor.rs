@@ -1,4 +1,4 @@
-use esf_data::info::Info;
+use esf_data::Info;
 
 use super::super::Objects;
 

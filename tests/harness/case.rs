@@ -1,4 +1,4 @@
-use esf_data::sde;
+use esf_data::{InfoNameSde, InfoSde};
 use esf_dogma_engine::fit::Fit;
 use esf_dogma_engine::{Calculation, Options};
 use esf_format::eft;
@@ -31,17 +31,17 @@ pub fn calculate(
     edit: fn(&mut Fit),
     options: &Options,
 ) -> (Fit, Calculation) {
-    let info_name = sde::InfoNameSde::new(&SDE, Some(&NAMES)).unwrap();
+    let info_name = InfoNameSde::new(&SDE, Some(&NAMES)).unwrap();
     let mut fit = eft::load_eft(&info_name, eft_fit.trim()).unwrap();
     fit.character.skills = skills.levels;
     edit(&mut fit);
 
-    let info = sde::InfoSde::new(&SDE);
+    let info = InfoSde::new(&SDE);
     let calculation = esf_dogma_engine::calculate(&info, &fit, options);
     (fit, calculation)
 }
 
 fn calculate_fit(eft_fit: &str, skills: Skills, edit: fn(&mut Fit)) -> String {
     let (fit, calculation) = calculate(eft_fit, skills, edit, &Options::default());
-    dump(&sde::InfoSde::new(&SDE), &fit, &calculation)
+    dump(&InfoSde::new(&SDE), &fit, &calculation)
 }

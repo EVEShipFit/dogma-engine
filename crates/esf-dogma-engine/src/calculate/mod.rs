@@ -9,7 +9,7 @@ mod pass_4;
 use serde::Deserialize;
 
 use crate::fit::Fit;
-use esf_data::info::Info;
+use esf_data::Info;
 use item::{Item, Object};
 
 pub use item::EffectOperator;
