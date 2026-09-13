@@ -23,6 +23,17 @@ struct Values {
     negative: Vec<f64>,
 }
 
+fn apply_penalized(mut current_value: f64, values: &mut [f64]) -> f64 {
+    /* The highest absolute value goes first. */
+    values.sort_by(|x, y| y.abs().partial_cmp(&x.abs()).unwrap());
+
+    for (position, value) in values.iter().enumerate() {
+        current_value *= 1.0 + value * PENALTY_FACTOR.powi(position.pow(2) as i32);
+    }
+
+    current_value
+}
+
 impl Attribute {
     fn calculate_value(&self, info: &impl Info, objects: &Objects, attribute_id: i32) -> f64 {
         if let Some(value) = self.value.get() {
@@ -125,19 +136,8 @@ impl Attribute {
                         current_value *= 1.0 + value;
                     }
 
-                    /* For positive values, the highest number goes first. For negative values, the lowest number. */
-                    let sort_func = |x: &f64, y: &f64| y.abs().partial_cmp(&x.abs()).unwrap();
-                    values.positive.sort_by(sort_func);
-                    values.negative.sort_by(sort_func);
-
-                    /* Apply positive stacking penalty. */
-                    for (index, value) in values.positive.iter().enumerate() {
-                        current_value *= 1.0 + value * PENALTY_FACTOR.powi(index.pow(2) as i32);
-                    }
-                    /* Apply negative stacking penalty. */
-                    for (index, value) in values.negative.iter().enumerate() {
-                        current_value *= 1.0 + value * PENALTY_FACTOR.powi(index.pow(2) as i32);
-                    }
+                    current_value = apply_penalized(current_value, &mut values.positive);
+                    current_value = apply_penalized(current_value, &mut values.negative);
                 }
 
                 EffectOperator::ModAdd | EffectOperator::ModSub => {
