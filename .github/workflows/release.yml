@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   registries:
-    name: Publish to NPM
+    name: Publish to NPM and crates.io
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -35,6 +35,10 @@ jobs:
       with:
         tool: wasm-pack
 
+    - name: Authenticate with crates.io
+      id: crates-io-auth
+      uses: rust-lang/crates-io-auth-action@v1
+
     - name: Set version
       run: |
         # Remove the "v" from the version.
@@ -52,3 +56,9 @@ jobs:
     - name: Publish to NPM
       run: |
         npm publish ./pkg --access public
+
+    - name: Publish to crates.io
+      env:
+        CARGO_REGISTRY_TOKEN: ${{ steps.crates-io-auth.outputs.token }}
+      run: |
+        cargo publish --workspace --allow-dirty
