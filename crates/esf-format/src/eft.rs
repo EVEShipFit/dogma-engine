@@ -71,10 +71,8 @@ fn find_slot(
 }
 
 fn type_name_to_id(info: &impl InfoName, name: &str) -> Result<i32, String> {
-    match info.type_name_to_id(name) {
-        0 => Err(format!("Unknown type {}", name)),
-        type_id => Ok(type_id),
-    }
+    info.type_name_to_id(name)
+        .ok_or_else(|| format!("Unknown type {}", name))
 }
 
 /* Split "<Type Name> x<Quantity>" on its last token, as type names can contain an "x" too. */
@@ -243,11 +241,11 @@ mod tests {
             None
         }
 
-        fn type_name_to_id(&self, name: &str) -> i32 {
+        fn type_name_to_id(&self, name: &str) -> Option<i32> {
             match name {
-                "Rifter" => 587,
-                "200mm AutoCannon II" => 2881,
-                _ => 0,
+                "Rifter" => Some(587),
+                "200mm AutoCannon II" => Some(2881),
+                _ => None,
             }
         }
     }

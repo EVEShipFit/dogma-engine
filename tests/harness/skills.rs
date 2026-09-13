@@ -31,8 +31,8 @@ impl Skills {
     pub fn with(mut self, name: &str, level: u8) -> Skills {
         let type_id = sde::InfoNameSde::new(&SDE, Some(&NAMES))
             .unwrap()
-            .type_name_to_id(name);
-        assert!(type_id != 0, "no such skill: {name}");
+            .type_name_to_id(name)
+            .unwrap_or_else(|| panic!("no such skill: {name}"));
 
         self.levels.insert(type_id, level);
         self

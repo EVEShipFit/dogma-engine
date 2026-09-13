@@ -33,8 +33,8 @@ impl Info for InfoSde<'_> {
         self.sde.get_type(type_id)
     }
 
-    fn attribute_name_to_id(&self, name: &str) -> i32 {
-        self.sde.attribute_name_to_id(name).unwrap_or(0)
+    fn attribute_name_to_id(&self, name: &str) -> Option<i32> {
+        self.sde.attribute_name_to_id(name)
     }
 }
 
@@ -49,23 +49,20 @@ impl InfoName for InfoNameSde<'_> {
 
     /// An exact English name wins over a translation, even when unpublished;
     /// among translations, a published type wins.
-    fn type_name_to_id(&self, name: &str) -> i32 {
-        self.sde
-            .type_name_to_id(name)
-            .or_else(|| {
-                let mut type_ids = self.names?.type_name_to_ids(name).peekable();
-                let first = *type_ids.peek()?;
-                Some(
-                    type_ids
-                        .find(|type_id| {
-                            self.sde
-                                .get_type(*type_id)
-                                .is_some_and(|r#type| r#type.published())
-                        })
-                        .unwrap_or(first),
-                )
-            })
-            .unwrap_or(0)
+    fn type_name_to_id(&self, name: &str) -> Option<i32> {
+        self.sde.type_name_to_id(name).or_else(|| {
+            let mut type_ids = self.names?.type_name_to_ids(name).peekable();
+            let first = *type_ids.peek()?;
+            Some(
+                type_ids
+                    .find(|type_id| {
+                        self.sde
+                            .get_type(*type_id)
+                            .is_some_and(|r#type| r#type.published())
+                    })
+                    .unwrap_or(first),
+            )
+        })
     }
 }
 

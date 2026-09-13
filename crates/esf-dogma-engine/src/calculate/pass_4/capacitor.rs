@@ -11,12 +11,24 @@ struct Module {
 pub fn attribute_capacitor_depletes_in(info: &impl Info, objects: &mut Objects) {
     /* Amount of seconds it takes for the capacitor to deplete; or negative if it is stable. */
 
-    let attr_capacitor_peak_delta_id = info.attribute_name_to_id("capacitorPeakDelta");
-    let attr_capacitor_capacity_id = info.attribute_name_to_id("capacitorCapacity");
-    let attr_recharge_rate_id = info.attribute_name_to_id("rechargeRate");
-    let attr_capacitor_peak_load_id = info.attribute_name_to_id("capacitorPeakLoad");
-    let attr_cycle_time_id = info.attribute_name_to_id("cycleTime");
-    let attr_capacitor_depletes_in_id = info.attribute_name_to_id("capacitorDepletesIn");
+    let (
+        Some(attr_capacitor_peak_delta_id),
+        Some(attr_capacitor_capacity_id),
+        Some(attr_recharge_rate_id),
+        Some(attr_capacitor_peak_load_id),
+        Some(attr_cycle_time_id),
+        Some(attr_capacitor_depletes_in_id),
+    ) = (
+        info.attribute_name_to_id("capacitorPeakDelta"),
+        info.attribute_name_to_id("capacitorCapacity"),
+        info.attribute_name_to_id("rechargeRate"),
+        info.attribute_name_to_id("capacitorPeakLoad"),
+        info.attribute_name_to_id("cycleTime"),
+        info.attribute_name_to_id("capacitorDepletesIn"),
+    )
+    else {
+        return;
+    };
 
     if !objects
         .ship
