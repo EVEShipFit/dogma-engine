@@ -49,32 +49,66 @@ offense/dps_with_reload        = 622.860367
 offense/drone_dps              = 622.860367
 power/capacity                 = 12500.000000
 power/free                     = 11136.000000
-slots/hi_1                     = online
-slots/hi_2                     = online
-slots/hi_3                     = online
-slots/hi_4                     = online
-slots/hi_5                     = empty
-slots/hi_6                     = empty
-slots/hi_7                     = empty
-slots/hi_8                     = empty
-slots/lo_1                     = online
-slots/lo_2                     = online
-slots/lo_3                     = online
-slots/lo_4                     = online
-slots/lo_5                     = online
-slots/lo_6                     = online
-slots/lo_7                     = online
-slots/lo_8                     = empty
-slots/med_1                    = active
-slots/med_2                    = active
-slots/med_3                    = active
-slots/med_4                    = active
-slots/med_5                    = active
-slots/med_6                    = empty
-slots/med_7                    = empty
-slots/med_8                    = empty
 targeting/lock_range           = 136.500000
 targeting/max_locked_targets   = 7.000000
 targeting/scan_resolution      = 190.125000
 targeting/sensor_strength      = 39.072000
 targeting/signature_radius     = 1162.500000
+
+low_1-4/type             = Drone Damage Amplifier II
+low_1-4/state            = online
+low_1-4/hp               = 75.000000
+low_1-4/damageMultiplier = 3.774911
+low_1-4/falloff          = 1.569332
+
+low_5-7/type  = Omnidirectional Tracking Enhancer II
+low_5-7/state = online
+
+medium_1/type              = Large Micro Jump Drive
+medium_1/state             = active
+medium_1/capacitorPeakLoad = 4.158730
+medium_1/cycleTime         = 189000.000000
+medium_1/duration          = 9000.000000
+
+medium_2-3/type              = Multispectrum Shield Hardener II
+medium_2-3/state             = active
+medium_2-3/capacitorPeakLoad = 3.200000
+medium_2-3/cycleTime         = 10000.000000
+medium_2-3/heatDamage        = 2.550000
+
+medium_4/type              = X-Large Shield Booster II
+medium_4/state             = active
+medium_4/shieldBoostRate   = 138.000000
+medium_4/capacitorPeakLoad = 72.000000
+medium_4/cycleTime         = 5000.000000
+medium_4/capacitorNeed     = 360.000000
+medium_4/heatDamage        = 1.050000
+
+medium_5/type              = Sensor Booster II
+medium_5/state             = active
+medium_5/capacitorPeakLoad = 1.200000
+medium_5/cycleTime         = 10000.000000
+medium_5/heatDamage        = 2.550000
+
+high_1-4/type  = Drone Link Augmentor II
+high_1-4/state = online
+
+rig_1-2/type  = Large Processor Overclocking Unit I
+rig_1-2/state = online
+
+rig_3/type  = Large Capacitor Control Circuit I
+rig_3/state = online
+
+dronebay_1-5/type                         = Garde I
+dronebay_1-5/state                        = active
+dronebay_1-5/damageVolley                 = 498.288293
+dronebay_1-5/speedWithReload              = 4000.000000
+dronebay_1-5/damagePerSecondWithoutReload = 124.572073
+dronebay_1-5/hp                           = 2700.000000
+dronebay_1-5/maxVelocity                  = 0.000012
+dronebay_1-5/maxRange                     = 32582.918697
+dronebay_1-5/damageMultiplier             = 7.785755
+dronebay_1-5/falloff                      = 39233.304999
+dronebay_1-5/trackingSpeed                = 0.048112
+dronebay_1-5/shieldCapacity               = 1125.000000
+dronebay_1-5/armorHP                      = 1500.000000

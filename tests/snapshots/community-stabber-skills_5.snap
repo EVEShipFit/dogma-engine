@@ -49,32 +49,117 @@ offense/dps_with_reload        = 351.688130
 offense/drone_dps              = 86.624997
 power/capacity                 = 983.125000
 power/free                     = 9.125000
-slots/hi_1                     = active
-slots/hi_2                     = active
-slots/hi_3                     = active
-slots/hi_4                     = active
-slots/hi_5                     = active
-slots/hi_6                     = active
-slots/hi_7                     = empty
-slots/hi_8                     = empty
-slots/lo_1                     = online
-slots/lo_2                     = online
-slots/lo_3                     = online
-slots/lo_4                     = online
-slots/lo_5                     = empty
-slots/lo_6                     = empty
-slots/lo_7                     = empty
-slots/lo_8                     = empty
-slots/med_1                    = active
-slots/med_2                    = online
-slots/med_3                    = online
-slots/med_4                    = active
-slots/med_5                    = empty
-slots/med_6                    = empty
-slots/med_7                    = empty
-slots/med_8                    = empty
 targeting/lock_range           = 59.375000
 targeting/max_locked_targets   = 5.000000
 targeting/scan_resolution      = 400.000000
 targeting/sensor_strength      = 15.600000
 targeting/signature_radius     = 939.110399
+
+low_1/type  = Tracking Enhancer II
+low_1/state = online
+
+low_2/type  = Damage Control II
+low_2/state = online
+
+low_3-4/type  = Gyrostabilizer II
+low_3-4/state = online
+
+medium_1/type              = 50MN Cold-Gas Enduring Microwarpdrive
+medium_1/state             = active
+medium_1/capacitorPeakLoad = 9.750000
+medium_1/cycleTime         = 10000.000000
+medium_1/capacitorNeed     = 97.500000
+medium_1/speedFactor       = 631.250000
+medium_1/heatDamage        = 8.550000
+
+medium_2-3/type  = Large Shield Extender II
+medium_2-3/state = online
+medium_2-3/power = 120.000000
+
+medium_4/type              = Warp Disruptor II
+medium_4/state             = active
+medium_4/capacitorPeakLoad = 4.500000
+medium_4/cycleTime         = 5000.000000
+medium_4/capacitorNeed     = 22.500000
+medium_4/heatDamage        = 3.750000
+
+high_1-2/type                         = 220mm Vulcan AutoCannon II
+high_1-2/state                        = active
+high_1-2/damageVolley                 = 115.293160
+high_1-2/speedWithReload              = 1739.859614
+high_1-2/speedOfReload                = 62.500001
+high_1-2/damagePerSecondWithReload    = 66.265783
+high_1-2/damagePerSecondWithoutReload = 68.734909
+high_1-2/chargeAmount                 = 159.999998
+high_1-2/cycleTime                    = 1677.359613
+high_1-2/power                        = 99.000000
+high_1-2/cpu                          = 16.500000
+high_1-2/speed                        = 1677.359613
+high_1-2/maxRange                     = 2970.000000
+high_1-2/damageMultiplier             = 5.240598
+high_1-2/falloff                      = 33523.875000
+high_1-2/trackingSpeed                = 39.893042
+high_1-2/barrageDmgMultiplier         = 5.240598
+high_1-2/barrageFalloff               = 33523.875000
+high_1-2/heatDamage                   = 0.525000
+high_1-2/charge/type                  = Barrage M
+high_1-2/charge/damageMultiplier      = 1.100000
+
+high_3/type              = Medium Infectious Scoped Energy Neutralizer
+high_3/state             = active
+high_3/capacitorPeakLoad = 9.375000
+high_3/cycleTime         = 12000.000000
+high_3/capacitorNeed     = 112.500000
+high_3/heatDamage        = 2.400000
+
+high_4/type              = Small Infectious Scoped Energy Neutralizer
+high_4/state             = active
+high_4/capacitorPeakLoad = 5.625000
+high_4/cycleTime         = 6000.000000
+high_4/capacitorNeed     = 33.750000
+high_4/heatDamage        = 1.950000
+
+high_5-6/type                         = 220mm Vulcan AutoCannon II
+high_5-6/state                        = active
+high_5-6/damageVolley                 = 115.293160
+high_5-6/speedWithReload              = 1739.859614
+high_5-6/speedOfReload                = 62.500001
+high_5-6/damagePerSecondWithReload    = 66.265783
+high_5-6/damagePerSecondWithoutReload = 68.734909
+high_5-6/chargeAmount                 = 159.999998
+high_5-6/cycleTime                    = 1677.359613
+high_5-6/power                        = 99.000000
+high_5-6/cpu                          = 16.500000
+high_5-6/speed                        = 1677.359613
+high_5-6/maxRange                     = 2970.000000
+high_5-6/damageMultiplier             = 5.240598
+high_5-6/falloff                      = 33523.875000
+high_5-6/trackingSpeed                = 39.893042
+high_5-6/barrageDmgMultiplier         = 5.240598
+high_5-6/barrageFalloff               = 33523.875000
+high_5-6/heatDamage                   = 0.525000
+high_5-6/charge/type                  = Barrage M
+high_5-6/charge/damageMultiplier      = 1.100000
+
+rig_1/type  = Medium Ancillary Current Router I
+rig_1/state = online
+
+rig_2/type     = Medium EM Shield Reinforcer I
+rig_2/state    = online
+rig_2/drawback = 5.000000
+
+rig_3/type     = Medium Polycarbon Engine Housing I
+rig_3/state    = online
+rig_3/drawback = -5.000000
+
+dronebay_1-5/type                         = Acolyte II
+dronebay_1-5/state                        = active
+dronebay_1-5/damageVolley                 = 69.299998
+dronebay_1-5/speedWithReload              = 4000.000000
+dronebay_1-5/damagePerSecondWithoutReload = 17.324999
+dronebay_1-5/hp                           = 255.000000
+dronebay_1-5/maxVelocity                  = 5775.000000
+dronebay_1-5/maxRange                     = 3000.000000
+dronebay_1-5/damageMultiplier             = 3.465000
+dronebay_1-5/shieldCapacity               = 60.000000
+dronebay_1-5/armorHP                      = 285.000000

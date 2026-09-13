@@ -49,32 +49,31 @@ offense/dps_with_reload        = 0.000000
 offense/drone_dps              = 0.000000
 power/capacity                 = 200.000000
 power/free                     = -103.000000
-slots/hi_1                     = empty
-slots/hi_2                     = empty
-slots/hi_3                     = empty
-slots/hi_4                     = empty
-slots/hi_5                     = empty
-slots/hi_6                     = empty
-slots/hi_7                     = empty
-slots/hi_8                     = empty
-slots/lo_1                     = online
-slots/lo_2                     = online
-slots/lo_3                     = online
-slots/lo_4                     = online
-slots/lo_5                     = online
-slots/lo_6                     = empty
-slots/lo_7                     = empty
-slots/lo_8                     = empty
-slots/med_1                    = online
-slots/med_2                    = online
-slots/med_3                    = active
-slots/med_4                    = online
-slots/med_5                    = online
-slots/med_6                    = empty
-slots/med_7                    = empty
-slots/med_8                    = empty
 targeting/lock_range           = 35.000000
 targeting/max_locked_targets   = 2.000000
 targeting/scan_resolution      = 95.000000
 targeting/sensor_strength      = 7.000000
 targeting/signature_radius     = 273.858356
+
+low_1-3/type  = Expanded Cargohold II
+low_1-3/state = online
+
+low_4-5/type  = Inertial Stabilizers II
+low_4-5/state = online
+
+medium_1-2/type  = Large Shield Extender I
+medium_1-2/state = online
+
+medium_3/type              = Multispectrum Shield Hardener I
+medium_3/state             = active
+medium_3/capacitorPeakLoad = 4.000000
+medium_3/cycleTime         = 10000.000000
+
+medium_4/type  = Thermal Shield Amplifier I
+medium_4/state = online
+
+medium_5/type  = EM Shield Amplifier I
+medium_5/state = online
+
+rig_1-3/type  = Medium Hyperspatial Velocity Optimizer I
+rig_1-3/state = online

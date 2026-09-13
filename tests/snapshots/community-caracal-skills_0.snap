@@ -49,32 +49,57 @@ offense/dps_with_reload        = 124.396753
 offense/drone_dps              = 15.000000
 power/capacity                 = 838.530000
 power/free                     = -212.470000
-slots/hi_1                     = active
-slots/hi_2                     = active
-slots/hi_3                     = active
-slots/hi_4                     = active
-slots/hi_5                     = active
-slots/hi_6                     = empty
-slots/hi_7                     = empty
-slots/hi_8                     = empty
-slots/lo_1                     = online
-slots/lo_2                     = online
-slots/lo_3                     = online
-slots/lo_4                     = online
-slots/lo_5                     = empty
-slots/lo_6                     = empty
-slots/lo_7                     = empty
-slots/lo_8                     = empty
-slots/med_1                    = active
-slots/med_2                    = active
-slots/med_3                    = online
-slots/med_4                    = online
-slots/med_5                    = active
-slots/med_6                    = empty
-slots/med_7                    = empty
-slots/med_8                    = empty
 targeting/lock_range           = 57.500000
 targeting/max_locked_targets   = 6.000000
 targeting/scan_resolution      = 270.000000
 targeting/sensor_strength      = 16.000000
 targeting/signature_radius     = 125.000000
+
+low_1-3/type  = Ballistic Control System I
+low_1-3/state = online
+
+low_4/type  = IFFA Compact Damage Control
+low_4/state = online
+
+medium_1/type              = 10MN Y-S8 Compact Afterburner
+medium_1/state             = active
+medium_1/capacitorPeakLoad = 8.000000
+medium_1/cycleTime         = 10000.000000
+
+medium_2/type              = Large C5-L Compact Shield Booster
+medium_2/state             = active
+medium_2/shieldBoostRate   = 59.500000
+medium_2/capacitorPeakLoad = 40.000000
+medium_2/cycleTime         = 4000.000000
+
+medium_3/type  = Large Compact Pb-Acid Cap Battery
+medium_3/state = online
+
+medium_4/type  = Compact EM Shield Amplifier
+medium_4/state = online
+
+medium_5/type              = X5 Enduring Stasis Webifier
+medium_5/state             = active
+medium_5/capacitorPeakLoad = 0.400000
+medium_5/cycleTime         = 5000.000000
+
+high_1-5/type                         = Prototype 'Arbalest' Heavy Assault Missile Launcher I
+high_1-5/state                        = active
+high_1-5/damageVolley                 = 118.043394
+high_1-5/speedWithReload              = 5395.196431
+high_1-5/speedOfReload                = 166.666667
+high_1-5/damagePerSecondWithReload    = 21.879351
+high_1-5/damagePerSecondWithoutReload = 22.576785
+high_1-5/chargeAmount                 = 60.000000
+high_1-5/speed                        = 5228.529764
+high_1-5/charge/type                  = Scourge Heavy Assault Missile
+high_1-5/charge/kineticDamage         = 118.043394
+
+rig_1-3/type  = Medium Ancillary Current Router I
+rig_1-3/state = online
+
+dronebay_1-2/type                         = Hornet I
+dronebay_1-2/state                        = active
+dronebay_1-2/damageVolley                 = 30.000000
+dronebay_1-2/speedWithReload              = 4000.000000
+dronebay_1-2/damagePerSecondWithoutReload = 7.500000

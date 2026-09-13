@@ -49,32 +49,81 @@ offense/dps_with_reload        = 296.822351
 offense/drone_dps              = 255.750617
 power/capacity                 = 670.000000
 power/free                     = -11.000000
-slots/hi_1                     = active
-slots/hi_2                     = active
-slots/hi_3                     = online
-slots/hi_4                     = active
-slots/hi_5                     = active
-slots/hi_6                     = empty
-slots/hi_7                     = empty
-slots/hi_8                     = empty
-slots/lo_1                     = online
-slots/lo_2                     = online
-slots/lo_3                     = online
-slots/lo_4                     = empty
-slots/lo_5                     = empty
-slots/lo_6                     = empty
-slots/lo_7                     = empty
-slots/lo_8                     = empty
-slots/med_1                    = active
-slots/med_2                    = online
-slots/med_3                    = active
-slots/med_4                    = active
-slots/med_5                    = online
-slots/med_6                    = active
-slots/med_7                    = empty
-slots/med_8                    = empty
 targeting/lock_range           = 58.000000
 targeting/max_locked_targets   = 7.000000
 targeting/scan_resolution      = 285.000000
 targeting/sensor_strength      = 22.000000
 targeting/signature_radius     = 183.254234
+
+low_1-3/type             = Drone Damage Amplifier II
+low_1-3/state            = online
+low_1-3/damageMultiplier = 1.585755
+
+medium_1/type              = Multispectrum Shield Hardener II
+medium_1/state             = active
+medium_1/capacitorPeakLoad = 3.200000
+medium_1/cycleTime         = 10000.000000
+
+medium_2/type  = Republic Fleet Large Cap Battery
+medium_2/state = online
+
+medium_3/type              = 10MN Monopropellant Enduring Afterburner
+medium_3/state             = active
+medium_3/capacitorPeakLoad = 6.000000
+medium_3/cycleTime         = 10000.000000
+
+medium_4/type              = Multispectrum Shield Hardener II
+medium_4/state             = active
+medium_4/capacitorPeakLoad = 3.200000
+medium_4/cycleTime         = 10000.000000
+
+medium_5/type  = Copasetic Compact Shield Boost Amplifier
+medium_5/state = online
+
+medium_6/type              = Pithum C-Type Medium Shield Booster
+medium_6/state             = active
+medium_6/shieldBoostRate   = 124.553057
+medium_6/capacitorPeakLoad = 34.602076
+medium_6/cycleTime         = 1734.000000
+medium_6/shieldBonus       = 215.975000
+medium_6/duration          = 1734.000000
+medium_6/heatDamage        = 2.000000
+
+high_1-2/type                         = Upgraded 'Malkuth' Rapid Light Missile Launcher
+high_1-2/state                        = active
+high_1-2/damageVolley                 = 95.000000
+high_1-2/speedWithReload              = 9252.105245
+high_1-2/speedOfReload                = 1842.105245
+high_1-2/damagePerSecondWithReload    = 10.267933
+high_1-2/damagePerSecondWithoutReload = 12.820513
+high_1-2/chargeAmount                 = 19.000000
+high_1-2/charge/type                  = Caldari Navy Mjolnir Light Missile
+
+high_3/type  = Drone Link Augmentor I
+high_3/state = online
+
+high_4-5/type                         = Upgraded 'Malkuth' Rapid Light Missile Launcher
+high_4-5/state                        = active
+high_4-5/damageVolley                 = 95.000000
+high_4-5/speedWithReload              = 9252.105245
+high_4-5/speedOfReload                = 1842.105245
+high_4-5/damagePerSecondWithReload    = 10.267933
+high_4-5/damagePerSecondWithoutReload = 12.820513
+high_4-5/chargeAmount                 = 19.000000
+high_4-5/charge/type                  = Caldari Navy Mjolnir Light Missile
+
+rig_1-2/type  = Medium Core Defense Operational Solidifier I
+rig_1-2/state = online
+
+rig_3/type  = Medium Core Defense Operational Solidifier II
+rig_3/state = online
+
+dronebay_1-2/type                         = Imperial Navy Infiltrator
+dronebay_1-2/state                        = active
+dronebay_1-2/damageVolley                 = 511.501235
+dronebay_1-2/speedWithReload              = 4000.000000
+dronebay_1-2/damagePerSecondWithoutReload = 127.875309
+dronebay_1-2/hp                           = 1190.000000
+dronebay_1-2/damageMultiplier             = 15.984414
+dronebay_1-2/shieldCapacity               = 672.000000
+dronebay_1-2/armorHP                      = 3192.000000

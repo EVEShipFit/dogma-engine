@@ -49,32 +49,77 @@ offense/dps_with_reload        = 215.868319
 offense/drone_dps              = 61.679998
 power/capacity                 = 1000.000000
 power/free                     = -366.250000
-slots/hi_1                     = active
-slots/hi_2                     = active
-slots/hi_3                     = active
-slots/hi_4                     = active
-slots/hi_5                     = active
-slots/hi_6                     = empty
-slots/hi_7                     = empty
-slots/hi_8                     = empty
-slots/lo_1                     = online
-slots/lo_2                     = online
-slots/lo_3                     = online
-slots/lo_4                     = online
-slots/lo_5                     = active
-slots/lo_6                     = online
-slots/lo_7                     = empty
-slots/lo_8                     = empty
-slots/med_1                    = active
-slots/med_2                    = active
-slots/med_3                    = active
-slots/med_4                    = empty
-slots/med_5                    = empty
-slots/med_6                    = empty
-slots/med_7                    = empty
-slots/med_8                    = empty
 targeting/lock_range           = 55.000000
 targeting/max_locked_targets   = 6.000000
 targeting/scan_resolution      = 300.000000
 targeting/sensor_strength      = 15.000000
 targeting/signature_radius     = 632.500000
+
+low_1/type  = 800mm Crystalline Carbonide Restrained Plates
+low_1/state = online
+
+low_2/type  = Damage Control II
+low_2/state = online
+
+low_3-4/type  = Heat Sink II
+low_3-4/state = online
+
+low_5/type              = Medium Ancillary Armor Repairer
+low_5/state             = active
+low_5/chargeAmount      = 0.320000
+low_5/capacitorPeakLoad = 13.333333
+low_5/cycleTime         = 12000.000000
+
+low_6/type  = Multispectrum Energized Membrane II
+low_6/state = online
+
+medium_1/type              = 50MN Quad LiF Restrained Microwarpdrive
+medium_1/state             = active
+medium_1/capacitorPeakLoad = 18.000000
+medium_1/cycleTime         = 10000.000000
+
+medium_2/type              = Warp Disruptor II
+medium_2/state             = active
+medium_2/capacitorPeakLoad = 6.000000
+medium_2/cycleTime         = 5000.000000
+
+medium_3/type         = Medium F-RX Compact Capacitor Booster
+medium_3/state        = active
+medium_3/chargeAmount = 1.333333
+medium_3/charge/type  = Navy Cap Booster 800
+
+high_1-5/type                         = Focused Medium Pulse Laser II
+high_1-5/state                        = active
+high_1-5/damageVolley                 = 101.578460
+high_1-5/speedWithReload              = 3293.973891
+high_1-5/speedOfReload                = 0.010000
+high_1-5/damagePerSecondWithReload    = 30.837664
+high_1-5/damagePerSecondWithoutReload = 30.837758
+high_1-5/capacitorPeakLoad            = 3.035856
+high_1-5/cycleTime                    = 3293.963891
+high_1-5/capacitorNeed                = 10.000000
+high_1-5/power                        = 151.250000
+high_1-5/speed                        = 3293.963891
+high_1-5/maxRange                     = 7986.698470
+high_1-5/damageMultiplier             = 2.869448
+high_1-5/trackingSpeed                = 20.159999
+high_1-5/entityFlyRange               = 250.000000
+high_1-5/charge/type                  = Conflagration M
+
+rig_1-2/type  = Medium Energy Locus Coordinator II
+rig_1-2/state = online
+
+rig_3/type  = Medium Polycarbon Engine Housing I
+rig_3/state = online
+
+dronebay_1-2/type                         = Warrior II
+dronebay_1-2/state                        = active
+dronebay_1-2/damageVolley                 = 31.199999
+dronebay_1-2/speedWithReload              = 4000.000000
+dronebay_1-2/damagePerSecondWithoutReload = 7.800000
+
+dronebay_3-5/type                         = Hammerhead II
+dronebay_3-5/state                        = active
+dronebay_3-5/damageVolley                 = 61.439999
+dronebay_3-5/speedWithReload              = 4000.000000
+dronebay_3-5/damagePerSecondWithoutReload = 15.360000

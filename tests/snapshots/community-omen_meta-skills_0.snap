@@ -49,32 +49,62 @@ offense/dps_with_reload        = 155.540244
 offense/drone_dps              = 34.999999
 power/capacity                 = 1000.000000
 power/free                     = -71.680000
-slots/hi_1                     = active
-slots/hi_2                     = active
-slots/hi_3                     = active
-slots/hi_4                     = active
-slots/hi_5                     = active
-slots/hi_6                     = empty
-slots/hi_7                     = empty
-slots/hi_8                     = empty
-slots/lo_1                     = online
-slots/lo_2                     = online
-slots/lo_3                     = online
-slots/lo_4                     = online
-slots/lo_5                     = online
-slots/lo_6                     = active
-slots/lo_7                     = empty
-slots/lo_8                     = empty
-slots/med_1                    = active
-slots/med_2                    = online
-slots/med_3                    = active
-slots/med_4                    = empty
-slots/med_5                    = empty
-slots/med_6                    = empty
-slots/med_7                    = empty
-slots/med_8                    = empty
 targeting/lock_range           = 55.000000
 targeting/max_locked_targets   = 6.000000
 targeting/scan_resolution      = 300.000000
 targeting/sensor_strength      = 15.000000
 targeting/signature_radius     = 115.000000
+
+low_1-3/type  = Extruded Compact Heat Sink
+low_1-3/state = online
+
+low_4-5/type  = Compact Multispectrum Energized Membrane
+low_4-5/state = online
+
+low_6/type              = Medium ACM Compact Armor Repairer
+low_6/state             = active
+low_6/armorRepairRate   = 34.339638
+low_6/capacitorPeakLoad = 13.333333
+low_6/cycleTime         = 12000.000000
+low_6/power             = 130.680000
+low_6/armorDamageAmount = 412.075653
+
+medium_1/type              = 10MN Y-S8 Compact Afterburner
+medium_1/state             = active
+medium_1/capacitorPeakLoad = 8.000000
+medium_1/cycleTime         = 10000.000000
+
+medium_2/type  = Large Compact Pb-Acid Cap Battery
+medium_2/state = online
+
+medium_3/type              = X5 Enduring Stasis Webifier
+medium_3/state             = active
+medium_3/capacitorPeakLoad = 0.400000
+medium_3/cycleTime         = 5000.000000
+
+high_1-5/type                         = Focused Anode Pulse Particle Stream I
+high_1-5/state                        = active
+high_1-5/damageVolley                 = 76.672297
+high_1-5/speedWithReload              = 3180.360920
+high_1-5/speedOfReload                = 0.010000
+high_1-5/damagePerSecondWithReload    = 24.108049
+high_1-5/damagePerSecondWithoutReload = 24.108125
+high_1-5/capacitorPeakLoad            = 2.138129
+high_1-5/cycleTime                    = 3180.350920
+high_1-5/speed                        = 3180.350920
+high_1-5/maxRange                     = 5434.000000
+high_1-5/damageMultiplier             = 2.777982
+high_1-5/entityFlyRange               = 250.000000
+high_1-5/charge/type                  = Imperial Navy Multifrequency M
+
+rig_1/type  = Medium EM Armor Reinforcer I
+rig_1/state = online
+
+rig_2-3/type  = Medium Auxiliary Nano Pump I
+rig_2-3/state = online
+
+dronebay_1-5/type                         = Acolyte I
+dronebay_1-5/state                        = active
+dronebay_1-5/damageVolley                 = 28.000000
+dronebay_1-5/speedWithReload              = 4000.000000
+dronebay_1-5/damagePerSecondWithoutReload = 7.000000

@@ -49,32 +49,112 @@ offense/dps_with_reload        = 549.099313
 offense/drone_dps              = 479.532408
 power/capacity                 = 837.500000
 power/free                     = 185.700000
-slots/hi_1                     = active
-slots/hi_2                     = active
-slots/hi_3                     = online
-slots/hi_4                     = active
-slots/hi_5                     = active
-slots/hi_6                     = empty
-slots/hi_7                     = empty
-slots/hi_8                     = empty
-slots/lo_1                     = online
-slots/lo_2                     = online
-slots/lo_3                     = online
-slots/lo_4                     = empty
-slots/lo_5                     = empty
-slots/lo_6                     = empty
-slots/lo_7                     = empty
-slots/lo_8                     = empty
-slots/med_1                    = active
-slots/med_2                    = online
-slots/med_3                    = active
-slots/med_4                    = active
-slots/med_5                    = online
-slots/med_6                    = active
-slots/med_7                    = empty
-slots/med_8                    = empty
 targeting/lock_range           = 72.500000
 targeting/max_locked_targets   = 7.000000
 targeting/scan_resolution      = 356.250000
 targeting/sensor_strength      = 26.400000
 targeting/signature_radius     = 163.398494
+
+low_1-3/type             = Drone Damage Amplifier II
+low_1-3/state            = online
+low_1-3/hp               = 50.000000
+low_1-3/damageMultiplier = 2.378633
+
+medium_1/type              = Multispectrum Shield Hardener II
+medium_1/state             = active
+medium_1/capacitorPeakLoad = 3.200000
+medium_1/cycleTime         = 10000.000000
+medium_1/heatDamage        = 2.550000
+
+medium_2/type  = Republic Fleet Large Cap Battery
+medium_2/state = online
+medium_2/cpu   = 30.000000
+
+medium_3/type              = 10MN Monopropellant Enduring Afterburner
+medium_3/state             = active
+medium_3/capacitorPeakLoad = 2.000000
+medium_3/cycleTime         = 7500.000000
+medium_3/capacitorNeed     = 15.000000
+medium_3/speedFactor       = 156.250000
+medium_3/duration          = 7500.000000
+medium_3/heatDamage        = 4.275000
+
+medium_4/type              = Multispectrum Shield Hardener II
+medium_4/state             = active
+medium_4/capacitorPeakLoad = 3.200000
+medium_4/cycleTime         = 10000.000000
+medium_4/heatDamage        = 2.550000
+
+medium_5/type  = Copasetic Compact Shield Boost Amplifier
+medium_5/state = online
+
+medium_6/type              = Pithum C-Type Medium Shield Booster
+medium_6/state             = active
+medium_6/shieldBoostRate   = 124.553057
+medium_6/capacitorPeakLoad = 31.141869
+medium_6/cycleTime         = 1734.000000
+medium_6/capacitorNeed     = 54.000000
+medium_6/shieldBonus       = 215.975000
+medium_6/duration          = 1734.000000
+medium_6/heatDamage        = 1.500000
+
+high_1-2/type                         = Upgraded 'Malkuth' Rapid Light Missile Launcher
+high_1-2/state                        = active
+high_1-2/damageVolley                 = 130.625000
+high_1-2/speedWithReload              = 7510.755245
+high_1-2/speedOfReload                = 1842.105245
+high_1-2/damagePerSecondWithReload    = 17.391726
+high_1-2/damagePerSecondWithoutReload = 23.043405
+high_1-2/chargeAmount                 = 19.000000
+high_1-2/power                        = 65.700000
+high_1-2/cpu                          = 21.000000
+high_1-2/speed                        = 5668.650000
+high_1-2/heatDamage                   = 1.275000
+high_1-2/charge/type                  = Caldari Navy Mjolnir Light Missile
+high_1-2/charge/maxVelocity           = 5625.000000
+high_1-2/charge/emDamage              = 130.625000
+high_1-2/charge/explosionDelay        = 7500.000000
+high_1-2/charge/aoeVelocity           = 255.000000
+high_1-2/charge/aoeCloudSize          = 30.000000
+
+high_3/type  = Drone Link Augmentor I
+high_3/state = online
+
+high_4-5/type                         = Upgraded 'Malkuth' Rapid Light Missile Launcher
+high_4-5/state                        = active
+high_4-5/damageVolley                 = 130.625000
+high_4-5/speedWithReload              = 7510.755245
+high_4-5/speedOfReload                = 1842.105245
+high_4-5/damagePerSecondWithReload    = 17.391726
+high_4-5/damagePerSecondWithoutReload = 23.043405
+high_4-5/chargeAmount                 = 19.000000
+high_4-5/power                        = 65.700000
+high_4-5/cpu                          = 21.000000
+high_4-5/speed                        = 5668.650000
+high_4-5/heatDamage                   = 1.275000
+high_4-5/charge/type                  = Caldari Navy Mjolnir Light Missile
+high_4-5/charge/maxVelocity           = 5625.000000
+high_4-5/charge/emDamage              = 130.625000
+high_4-5/charge/explosionDelay        = 7500.000000
+high_4-5/charge/aoeVelocity           = 255.000000
+high_4-5/charge/aoeCloudSize          = 30.000000
+
+rig_1-2/type     = Medium Core Defense Operational Solidifier I
+rig_1-2/state    = online
+rig_1-2/drawback = 5.000000
+
+rig_3/type     = Medium Core Defense Operational Solidifier II
+rig_3/state    = online
+rig_3/drawback = 5.000000
+
+dronebay_1-2/type                         = Imperial Navy Infiltrator
+dronebay_1-2/state                        = active
+dronebay_1-2/damageVolley                 = 959.064815
+dronebay_1-2/speedWithReload              = 4000.000000
+dronebay_1-2/damagePerSecondWithoutReload = 239.766204
+dronebay_1-2/hp                           = 1487.500000
+dronebay_1-2/maxVelocity                  = 3450.000000
+dronebay_1-2/maxRange                     = 6000.000000
+dronebay_1-2/damageMultiplier             = 29.970775
+dronebay_1-2/shieldCapacity               = 840.000000
+dronebay_1-2/armorHP                      = 3990.000000

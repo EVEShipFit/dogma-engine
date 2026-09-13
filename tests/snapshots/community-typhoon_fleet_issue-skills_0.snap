@@ -49,32 +49,82 @@ offense/dps_with_reload        = 472.202763
 offense/drone_dps              = 218.065049
 power/capacity                 = 13000.000000
 power/free                     = 4313.000000
-slots/hi_1                     = active
-slots/hi_2                     = active
-slots/hi_3                     = active
-slots/hi_4                     = active
-slots/hi_5                     = active
-slots/hi_6                     = active
-slots/hi_7                     = active
-slots/hi_8                     = online
-slots/lo_1                     = online
-slots/lo_2                     = online
-slots/lo_3                     = online
-slots/lo_4                     = online
-slots/lo_5                     = online
-slots/lo_6                     = online
-slots/lo_7                     = online
-slots/lo_8                     = empty
-slots/med_1                    = active
-slots/med_2                    = active
-slots/med_3                    = active
-slots/med_4                    = online
-slots/med_5                    = active
-slots/med_6                    = empty
-slots/med_7                    = empty
-slots/med_8                    = empty
 targeting/lock_range           = 86.400000
 targeting/max_locked_targets   = 9.000000
 targeting/scan_resolution      = 150.000000
 targeting/sensor_strength      = 23.000000
 targeting/signature_radius     = 1912.965117
+
+low_1-3/type  = Ballistic Control System II
+low_1-3/state = online
+
+low_4-5/type             = Drone Damage Amplifier II
+low_4-5/state            = online
+low_4-5/damageMultiplier = 1.419694
+
+low_6/type  = Ballistic Control System II
+low_6/state = online
+
+low_7/type  = Missile Guidance Enhancer II
+low_7/state = online
+
+medium_1/type              = Large Shield Booster II
+medium_1/state             = active
+medium_1/shieldBoostRate   = 69.000000
+medium_1/capacitorPeakLoad = 40.000000
+medium_1/cycleTime         = 4000.000000
+
+medium_2-3/type                 = Missile Guidance Computer II
+medium_2-3/state                = active
+medium_2-3/capacitorPeakLoad    = 0.700000
+medium_2-3/cycleTime            = 10000.000000
+medium_2-3/missileVelocityBonus = 0.000000
+medium_2-3/explosionDelayBonus  = 0.000000
+medium_2-3/aoeVelocityBonus     = 16.500000
+medium_2-3/aoeCloudSizeBonus    = -16.500000
+medium_2-3/charge/type          = Missile Precision Script
+
+medium_4/type  = Eutectic Compact Cap Recharger
+medium_4/state = online
+
+medium_5/type              = 500MN Quad LiF Restrained Microwarpdrive
+medium_5/state             = active
+medium_5/capacitorPeakLoad = 32.000000
+medium_5/cycleTime         = 10000.000000
+
+high_1-6/type                         = Rapid Heavy Missile Launcher II
+high_1-6/state                        = active
+high_1-6/damageVolley                 = 222.228673
+high_1-6/speedWithReload              = 5246.651578
+high_1-6/speedOfReload                = 1399.999969
+high_1-6/damagePerSecondWithReload    = 42.356286
+high_1-6/damagePerSecondWithoutReload = 57.771978
+high_1-6/chargeAmount                 = 25.000001
+high_1-6/speed                        = 3846.651609
+high_1-6/charge/type                  = Caldari Navy Scourge Heavy Missile
+high_1-6/charge/maxVelocity           = 4558.000000
+high_1-6/charge/kineticDamage         = 222.228673
+high_1-6/charge/explosionDelay        = 6890.000000
+high_1-6/charge/aoeVelocity           = 117.101939
+high_1-6/charge/aoeCloudSize          = 96.707825
+
+high_7/type              = Auto Targeting System I
+high_7/state             = active
+high_7/capacitorPeakLoad = 1.600000
+high_7/cycleTime         = 5000.000000
+
+high_8/type  = Drone Link Augmentor II
+high_8/state = online
+
+rig_1/type  = Large EM Shield Reinforcer II
+rig_1/state = online
+
+rig_2-3/type  = Large Capacitor Control Circuit I
+rig_2-3/state = online
+
+dronebay_1-5/type                         = Ogre II
+dronebay_1-5/state                        = active
+dronebay_1-5/damageVolley                 = 174.452039
+dronebay_1-5/speedWithReload              = 4000.000000
+dronebay_1-5/damagePerSecondWithoutReload = 43.613010
+dronebay_1-5/damageMultiplier             = 2.725813
