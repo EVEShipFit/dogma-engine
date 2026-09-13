@@ -10,9 +10,9 @@ repository = "https://github.com/EVEShipFit/dogma-engine"
 license = "MIT"
 
 [workspace.dependencies]
-esf-data = { path = "crates/esf-data" }
-esf-dogma = { path = "crates/esf-dogma" }
-esf-format = { path = "crates/esf-format" }
+esf-data = { path = "crates/esf-data", version = "0.0.0-git" }
+esf-dogma = { path = "crates/esf-dogma", version = "0.0.0-git" }
+esf-format = { path = "crates/esf-format", version = "0.0.0-git" }
 
 clap = { version = "4.5", features = ["derive"] }
 console_error_panic_hook = "0.1"
