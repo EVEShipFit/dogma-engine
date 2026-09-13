@@ -6,3 +6,7 @@
 
 pub mod info;
 pub mod sde;
+
+/// The traits in [`info`] hand out flatbuffers types; implementing them needs
+/// this exact version.
+pub use flatbuffers;

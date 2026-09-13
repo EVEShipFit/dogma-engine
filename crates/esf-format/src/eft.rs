@@ -228,8 +228,8 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, String> {
 mod tests {
     use super::*;
 
+    use esf_data::flatbuffers::Vector;
     use esf_data::sde::eve;
-    use flatbuffers::Vector;
 
     /* Knows type names only, which is enough to fail before any slot lookup. */
     struct Names;
