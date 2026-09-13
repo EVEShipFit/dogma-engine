@@ -151,13 +151,13 @@ impl Attribute {
                         *values
                             .0
                             .iter()
-                            .max_by(|x, y| x.abs().partial_cmp(&y.abs()).unwrap())
+                            .max_by(|x, y| x.partial_cmp(y).unwrap())
                             .unwrap()
                     } else {
                         *values
                             .0
                             .iter()
-                            .min_by(|x, y| x.abs().partial_cmp(&y.abs()).unwrap())
+                            .min_by(|x, y| x.partial_cmp(y).unwrap())
                             .unwrap()
                     };
 
