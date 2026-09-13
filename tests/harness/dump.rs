@@ -1,8 +1,7 @@
 use std::collections::HashMap;
 
 use esf_data::Info;
-use esf_dogma_engine::fit::{Fit, Slot, State};
-use esf_dogma_engine::{Calculation, ItemResult};
+use esf_dogma_engine::{Calculation, Fit, ItemResult, Slot, State};
 
 /// Only attributes an effect moved away from their base value; the rest is SDE data.
 pub fn dump(info: &impl Info, fit: &Fit, calculation: &Calculation) -> String {

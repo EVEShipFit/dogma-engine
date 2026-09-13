@@ -5,8 +5,7 @@ use std::path::PathBuf;
 use clap::Parser;
 
 use esf_data::{InfoNameSde, InfoSde, Names, Sde};
-use esf_dogma_engine::Options;
-use esf_dogma_engine::fit::{Fit, Slot, State};
+use esf_dogma_engine::{Fit, Options, Slot, State};
 use esf_format::eft;
 
 #[derive(Parser)]
