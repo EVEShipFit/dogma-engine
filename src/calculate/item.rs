@@ -14,6 +14,7 @@ pub enum EffectCategory {
     System,
 }
 
+/* Declaration order is the order pass 3 applies operators in; do not reorder. */
 #[derive(Serialize, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, EnumIter)]
 pub enum EffectOperator {
     PreAssign,
@@ -188,5 +189,29 @@ impl Item {
             attributes: BTreeMap::new(),
             effects: Vec::new(),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::EffectOperator;
+    use strum::IntoEnumIterator;
+
+    #[test]
+    fn effect_operator_iterates_in_application_order() {
+        assert_eq!(
+            EffectOperator::iter().collect::<Vec<_>>(),
+            [
+                EffectOperator::PreAssign,
+                EffectOperator::PreMul,
+                EffectOperator::PreDiv,
+                EffectOperator::ModAdd,
+                EffectOperator::ModSub,
+                EffectOperator::PostMul,
+                EffectOperator::PostDiv,
+                EffectOperator::PostPercent,
+                EffectOperator::PostAssign,
+            ]
+        );
     }
 }
