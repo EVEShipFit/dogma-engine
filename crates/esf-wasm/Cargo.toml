@@ -1,5 +1,7 @@
 [package]
 name = "esf-wasm"
+# Published to npm instead.
+publish = false
 description = "Library to calculate statistics for EVE Online ship fits"
 version.workspace = true
 authors.workspace = true
