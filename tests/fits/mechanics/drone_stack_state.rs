@@ -2,7 +2,7 @@
 //! counts towards the drones in space, and each stack is its quantity strong.
 
 use crate::harness::all;
-use esf_dogma_engine::fit::State;
+use esf_dogma::fit::State;
 
 const FIT: &str = r#"
 [Vexor, Drone stack state]

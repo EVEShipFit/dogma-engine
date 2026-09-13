@@ -6,7 +6,7 @@
 use std::path::PathBuf;
 use std::sync::LazyLock;
 
-use esf_dogma_engine::sde;
+use esf_data::sde;
 
 mod case;
 mod dump;
@@ -24,10 +24,24 @@ fn read(variable: &str, default: &str) -> Vec<u8> {
         .unwrap_or_else(|error| panic!("cannot read {}: {}", filename.display(), error))
 }
 
-static SDE_BYTES: LazyLock<Vec<u8>> =
-    LazyLock::new(|| read("ESF_SDE", "node_modules/@eveshipfit/sde/dist/sde.dat"));
-static NAMES_BYTES: LazyLock<Vec<u8>> =
-    LazyLock::new(|| read("ESF_NAMES", "node_modules/@eveshipfit/sde/dist/names.dat"));
+static SDE_BYTES: LazyLock<Vec<u8>> = LazyLock::new(|| {
+    read(
+        "ESF_SDE",
+        concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../node_modules/@eveshipfit/sde/dist/sde.dat"
+        ),
+    )
+});
+static NAMES_BYTES: LazyLock<Vec<u8>> = LazyLock::new(|| {
+    read(
+        "ESF_NAMES",
+        concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../node_modules/@eveshipfit/sde/dist/names.dat"
+        ),
+    )
+});
 
 static SDE: LazyLock<sde::Sde<'static>> = LazyLock::new(|| sde::Sde::new(&SDE_BYTES).unwrap());
 static NAMES: LazyLock<sde::Names<'static>> =
@@ -39,8 +53,8 @@ macro_rules! regression {
             #[test]
             fn $name() {
                 #[allow(unused_variables)]
-                let edit: fn(&mut esf_dogma_engine::fit::Fit) = |_| {};
-                $(let edit: fn(&mut esf_dogma_engine::fit::Fit) = $edit;)?
+                let edit: fn(&mut esf_dogma::fit::Fit) = |_| {};
+                $(let edit: fn(&mut esf_dogma::fit::Fit) = $edit;)?
                 crate::harness::snapshot(module_path!(), stringify!($name), $fit, $skills, edit);
             }
         )*

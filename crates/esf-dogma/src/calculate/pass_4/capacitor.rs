@@ -1,4 +1,4 @@
-use crate::info::Info;
+use esf_data::info::Info;
 
 use super::super::Objects;
 

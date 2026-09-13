@@ -9,7 +9,7 @@ mod pass_3;
 mod pass_4;
 
 use crate::fit::Fit;
-use crate::info::Info;
+use esf_data::info::Info;
 use item::{Item, Object};
 
 pub use output::{AttributeValue, Calculation, ItemResult};

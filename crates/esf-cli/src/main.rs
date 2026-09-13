@@ -4,10 +4,10 @@ use std::path::PathBuf;
 
 use clap::Parser;
 
-use esf_dogma_engine::calculate;
-use esf_dogma_engine::eft;
-use esf_dogma_engine::fit::{Fit, Slot, State};
-use esf_dogma_engine::sde;
+use esf_data::sde;
+use esf_dogma::calculate;
+use esf_dogma::fit::{Fit, Slot, State};
+use esf_format::eft;
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]

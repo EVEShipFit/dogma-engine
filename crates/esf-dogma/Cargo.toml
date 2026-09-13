@@ -1,0 +1,17 @@
+[package]
+name = "esf-dogma"
+description = "Calculates the dogma attributes of EVE Online ship fits"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+esf-data.workspace = true
+serde.workspace = true
+strum.workspace = true
+strum_macros.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true

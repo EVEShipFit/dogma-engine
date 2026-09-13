@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 
-use esf_dogma_engine::info::InfoName;
-use esf_dogma_engine::sde;
+use esf_data::info::InfoName;
+use esf_data::sde;
 
 use super::{NAMES, SDE};
 

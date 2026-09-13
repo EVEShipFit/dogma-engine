@@ -1,0 +1,15 @@
+[package]
+name = "esf-cli"
+description = "Command line interface to the EVE Online dogma engine"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+clap.workspace = true
+esf-data.workspace = true
+esf-dogma.workspace = true
+esf-format.workspace = true
+serde_json.workspace = true

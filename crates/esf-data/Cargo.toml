@@ -1,0 +1,11 @@
+[package]
+name = "esf-data"
+description = "Reads the EVE Online static data the dogma engine calculates with"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+flatbuffers.workspace = true

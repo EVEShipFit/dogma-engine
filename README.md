@@ -9,10 +9,10 @@ The output are all the Dogma attributes of the ship, its items and the character
 
 This Dogma engine implements a multi-pass approach.
 
-- [pass 1](./src/calculate/pass_1.rs): collect all the Dogma attributes of the hull and modules.
-- [pass 2](./src/calculate/pass_2.rs): collect all the Dogma effects of the hull and modules.
-- [pass 3](./src/calculate/pass_3.rs): apply all the Dogma effects to the hull/modules, calculating the actual Dogma attribute values.
-- [pass 4](./src/calculate/pass_4.rs): augment the Dogma attributes with EVEShip.fit specific attributes, that are too complex for the Dogma itself to handle.
+- [pass 1](./crates/esf-dogma/src/calculate/pass_1.rs): collect all the Dogma attributes of the hull and modules.
+- [pass 2](./crates/esf-dogma/src/calculate/pass_2.rs): collect all the Dogma effects of the hull and modules.
+- [pass 3](./crates/esf-dogma/src/calculate/pass_3.rs): apply all the Dogma effects to the hull/modules, calculating the actual Dogma attribute values.
+- [pass 4](./crates/esf-dogma/src/calculate/pass_4.rs): augment the Dogma attributes with EVEShip.fit specific attributes, that are too complex for the Dogma itself to handle.
 
 ## Input and output
 
@@ -81,8 +81,8 @@ English names live in `sde.dat`, so an EFT-fit written in English imports withou
 After that, we can run the application.
 
 ```bash
-flatc --rust --gen-onefile -o src/sde/ node_modules/@eveshipfit/sde/specs/eve.fbs node_modules/@eveshipfit/sde/specs/names.fbs
-cargo run --release --no-default-features --features rust
+flatc --rust --gen-onefile -o crates/esf-data/src/sde/ node_modules/@eveshipfit/sde/specs/eve.fbs node_modules/@eveshipfit/sde/specs/names.fbs
+cargo run --release -p esf-cli
 ```
 
 The regression suite reads the same paths; set `ESF_SDE` and `ESF_NAMES` to point it elsewhere.
@@ -114,7 +114,7 @@ This is done with [wasm-pack](https://rustwasm.github.io/wasm-pack/):
 
 ```bash
 cargo install wasm-pack
-wasm-pack build --release -- --no-default-features --features wasm
+wasm-pack build crates/esf-wasm --release --out-dir ../../pkg
 ```
 
 In the `pkg` folder is now a NPM module to use.

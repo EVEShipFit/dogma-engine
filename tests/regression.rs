@@ -5,7 +5,7 @@
 //!
 //! Run `cargo insta review` to inspect and accept changed snapshots.
 
-#![cfg(all(feature = "eft", feature = "rust"))]
+#![cfg(test)]
 
 #[macro_use]
 mod harness;

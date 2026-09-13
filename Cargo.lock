@@ -173,18 +173,60 @@ dependencies = [
 ]
 
 [[package]]
-name = "esf-dogma-engine"
+name = "esf-cli"
 version = "0.0.0-git"
 dependencies = [
  "clap",
- "console_error_panic_hook",
+ "esf-data",
+ "esf-dogma",
+ "esf-format",
+ "serde_json",
+]
+
+[[package]]
+name = "esf-data"
+version = "0.0.0-git"
+dependencies = [
  "flatbuffers",
- "insta",
+]
+
+[[package]]
+name = "esf-dogma"
+version = "0.0.0-git"
+dependencies = [
+ "esf-data",
  "serde",
- "serde-wasm-bindgen",
  "serde_json",
  "strum",
  "strum_macros",
+]
+
+[[package]]
+name = "esf-format"
+version = "0.0.0-git"
+dependencies = [
+ "esf-data",
+ "esf-dogma",
+]
+
+[[package]]
+name = "esf-regression"
+version = "0.0.0-git"
+dependencies = [
+ "esf-data",
+ "esf-dogma",
+ "esf-format",
+ "insta",
+]
+
+[[package]]
+name = "esf-wasm"
+version = "0.0.0-git"
+dependencies = [
+ "console_error_panic_hook",
+ "esf-data",
+ "esf-dogma",
+ "serde-wasm-bindgen",
  "wasm-bindgen",
 ]
 
