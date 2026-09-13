@@ -112,6 +112,11 @@ impl Slot {
             SlotType::High | SlotType::Medium | SlotType::Low | SlotType::Rig | SlotType::SubSystem
         )
     }
+
+    /* Drones are owned by the character, but not located in the ship. */
+    pub fn is_in_ship(&self) -> bool {
+        !matches!(self.r#type, SlotType::DroneBay)
+    }
 }
 
 impl Item {

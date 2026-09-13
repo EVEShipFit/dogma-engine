@@ -77,7 +77,7 @@ fn for_each_in_location(ship: &mut Ship, location: Object, mut apply: impl FnMut
         Object::Ship | Object::Structure => {
             apply(&mut ship.hull);
 
-            for item in &mut ship.items {
+            for item in ship.items.iter_mut().filter(|item| item.slot.is_in_ship()) {
                 apply(item);
 
                 if let Some(charge) = &mut item.charge {
@@ -292,6 +292,8 @@ impl Pass for PassTwo {
                     } else {
                         skill_type_id
                     };
+                    let location_only =
+                        matches!(effect.modifier, Modifier::LocationRequiredSkillModifier(_));
 
                     for attribute_skill_id in &ATTRIBUTE_SKILLS {
                         if ship.hull.attributes.contains_key(attribute_skill_id)
@@ -306,7 +308,11 @@ impl Pass for PassTwo {
                             );
                         }
 
-                        for item in &mut ship.items {
+                        for item in ship
+                            .items
+                            .iter_mut()
+                            .filter(|item| !location_only || item.slot.is_in_ship())
+                        {
                             if item.attributes.contains_key(attribute_skill_id)
                                 && item.attributes[attribute_skill_id].base_value
                                     == skill_type_id as f64
