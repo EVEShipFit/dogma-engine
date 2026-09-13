@@ -4,7 +4,7 @@ use esf_dogma_engine::rust;
 use esf_dogma_engine::sde;
 
 use super::skills::Skills;
-use super::statistics::dump;
+use super::statistics::{dump, dump_items};
 use super::{NAMES, SDE};
 
 const SNAPSHOTS: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/snapshots");
@@ -31,5 +31,9 @@ fn calculate_fit(eft_fit: &str, skills: Skills) -> String {
     let info = sde::InfoSde::new(fit, skills.levels, &SDE);
     let statistics = calculate::calculate(&info);
 
-    dump(&rust::Output::new(&info, &statistics))
+    format!(
+        "{}\n{}",
+        dump(&rust::Output::new(&info, &statistics)),
+        dump_items(&info, &statistics)
+    )
 }

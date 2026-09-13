@@ -49,32 +49,71 @@ offense/dps_with_reload        = 134.913959
 offense/drone_dps              = 34.999999
 power/capacity                 = 860.000000
 power/free                     = -135.000000
-slots/hi_1                     = active
-slots/hi_2                     = active
-slots/hi_3                     = active
-slots/hi_4                     = active
-slots/hi_5                     = empty
-slots/hi_6                     = empty
-slots/hi_7                     = empty
-slots/hi_8                     = empty
-slots/lo_1                     = online
-slots/lo_2                     = online
-slots/lo_3                     = online
-slots/lo_4                     = online
-slots/lo_5                     = online
-slots/lo_6                     = empty
-slots/lo_7                     = empty
-slots/lo_8                     = empty
-slots/med_1                    = active
-slots/med_2                    = active
-slots/med_3                    = active
-slots/med_4                    = online
-slots/med_5                    = empty
-slots/med_6                    = empty
-slots/med_7                    = empty
-slots/med_8                    = empty
 targeting/lock_range           = 50.000000
 targeting/max_locked_targets   = 6.000000
 targeting/scan_resolution      = 290.000000
 targeting/sensor_strength      = 15.000000
 targeting/signature_radius     = 137.500000
+
+low_1-3/type  = Counterbalanced Compact Gyrostabilizer
+low_1-3/state = online
+
+low_4/type  = Fourier Compact Tracking Enhancer
+low_4/state = online
+
+low_5/type  = IFFA Compact Damage Control
+low_5/state = online
+
+medium_1/type              = Large C5-L Compact Shield Booster
+medium_1/state             = active
+medium_1/shieldBoostRate   = 59.500000
+medium_1/capacitorPeakLoad = 40.000000
+medium_1/cycleTime         = 4000.000000
+
+medium_2/type              = Compact Multispectrum Shield Hardener
+medium_2/state             = active
+medium_2/capacitorPeakLoad = 4.000000
+medium_2/cycleTime         = 10000.000000
+
+medium_3/type              = 10MN Y-S8 Compact Afterburner
+medium_3/state             = active
+medium_3/capacitorPeakLoad = 8.000000
+medium_3/cycleTime         = 10000.000000
+
+medium_4/type  = Large Compact Pb-Acid Cap Battery
+medium_4/state = online
+
+high_1-4/type                         = 220mm Medium Prototype Automatic Cannon
+high_1-4/state                        = active
+high_1-4/damageVolley                 = 88.556509
+high_1-4/speedWithReload              = 3545.310732
+high_1-4/speedOfReload                = 62.500001
+high_1-4/damagePerSecondWithReload    = 24.978490
+high_1-4/damagePerSecondWithoutReload = 25.426736
+high_1-4/chargeAmount                 = 159.999998
+high_1-4/cycleTime                    = 3482.810731
+high_1-4/power                        = 121.000000
+high_1-4/speed                        = 3482.810731
+high_1-4/maxRange                     = 1120.387500
+high_1-4/damageMultiplier             = 3.208569
+high_1-4/falloff                      = 13080.556292
+high_1-4/trackingSpeed                = 41.969666
+high_1-4/barrageDmgMultiplier         = 3.208569
+high_1-4/barrageFalloff               = 13080.556292
+high_1-4/entityFlyRange               = 250.000000
+high_1-4/charge/type                  = Republic Fleet EMP M
+
+rig_1/type  = Medium EM Shield Reinforcer I
+rig_1/state = online
+
+rig_2/type  = Medium Projectile Ambit Extension I
+rig_2/state = online
+
+rig_3/type  = Medium Projectile Burst Aerator I
+rig_3/state = online
+
+dronebay_1-5/type                         = Acolyte I
+dronebay_1-5/state                        = active
+dronebay_1-5/damageVolley                 = 28.000000
+dronebay_1-5/speedWithReload              = 4000.000000
+dronebay_1-5/damagePerSecondWithoutReload = 7.000000

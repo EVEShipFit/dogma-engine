@@ -49,32 +49,75 @@ offense/dps_with_reload        = 0.000000
 offense/drone_dps              = 0.000000
 power/capacity                 = 18.975000
 power/free                     = -3.025000
-slots/hi_1                     = active
-slots/hi_2                     = active
-slots/hi_3                     = active
-slots/hi_4                     = empty
-slots/hi_5                     = empty
-slots/hi_6                     = empty
-slots/hi_7                     = empty
-slots/hi_8                     = empty
-slots/lo_1                     = online
-slots/lo_2                     = online
-slots/lo_3                     = active
-slots/lo_4                     = empty
-slots/lo_5                     = empty
-slots/lo_6                     = empty
-slots/lo_7                     = empty
-slots/lo_8                     = empty
-slots/med_1                    = active
-slots/med_2                    = active
-slots/med_3                    = active
-slots/med_4                    = active
-slots/med_5                    = active
-slots/med_6                    = empty
-slots/med_7                    = empty
-slots/med_8                    = empty
 targeting/lock_range           = 26.094080
 targeting/max_locked_targets   = 5.000000
 targeting/scan_resolution      = 132.101286
 targeting/sensor_strength      = 24.000000
 targeting/signature_radius     = 349.310339
+
+low_1-2/type  = Inertial Stabilizers II
+low_1-2/state = online
+
+low_3/type              = Warp Core Stabilizer II
+low_3/state             = active
+low_3/capacitorPeakLoad = 0.484848
+low_3/cycleTime         = 165000.000000
+
+medium_1/type                  = Relic Analyzer II
+medium_1/state                 = active
+medium_1/capacitorPeakLoad     = 2.000000
+medium_1/cycleTime             = 10000.000000
+medium_1/accessDifficultyBonus = 0.000000
+medium_1/virusStrength         = 40.000000
+
+medium_2/type              = Cargo Scanner II
+medium_2/state             = active
+medium_2/capacitorPeakLoad = 1.333333
+medium_2/cycleTime         = 3000.000000
+
+medium_3/type                  = Data Analyzer II
+medium_3/state                 = active
+medium_3/capacitorPeakLoad     = 2.000000
+medium_3/cycleTime             = 10000.000000
+medium_3/accessDifficultyBonus = 0.000000
+medium_3/virusStrength         = 40.000000
+
+medium_4/type                             = Sensor Booster II
+medium_4/state                            = active
+medium_4/capacitorPeakLoad                = 1.200000
+medium_4/cycleTime                        = 10000.000000
+medium_4/maxTargetRangeBonus              = 60.000000
+medium_4/scanResolutionBonus              = 0.000000
+medium_4/scanGravimetricStrengthPercent   = 0.000000
+medium_4/scanLadarStrengthPercent         = 0.000000
+medium_4/scanMagnetometricStrengthPercent = 0.000000
+medium_4/scanRadarStrengthPercent         = 0.000000
+medium_4/charge/type                      = Targeting Range Script
+
+medium_5/type              = 5MN Y-T8 Compact Microwarpdrive
+medium_5/state             = active
+medium_5/capacitorPeakLoad = 4.500000
+medium_5/cycleTime         = 10000.000000
+
+high_1/type                      = Sisters Core Probe Launcher
+high_1/state                     = active
+high_1/speedWithReload           = 2750.000000
+high_1/speedOfReload             = 1250.000000
+high_1/chargeAmount              = 8.000000
+high_1/charge/type               = Sisters Core Scanner Probe
+high_1/charge/baseSensorStrength = 48.400000
+
+high_2/type              = Interdiction Nullifier II
+high_2/state             = active
+high_2/capacitorPeakLoad = 0.303030
+high_2/cycleTime         = 165000.000000
+
+high_3/type                    = Covert Ops Cloaking Device II
+high_3/state                   = active
+high_3/moduleReactivationDelay = 5000.000000
+
+rig_1/type  = Small Ancillary Current Router II
+rig_1/state = online
+
+rig_2/type  = Small Ancillary Current Router I
+rig_2/state = online

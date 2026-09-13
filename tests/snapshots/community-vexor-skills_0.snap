@@ -49,32 +49,69 @@ offense/dps_with_reload        = 80.473387
 offense/drone_dps              = 0.000000
 power/capacity                 = 700.000000
 power/free                     = -205.980000
-slots/hi_1                     = active
-slots/hi_2                     = active
-slots/hi_3                     = active
-slots/hi_4                     = active
-slots/hi_5                     = empty
-slots/hi_6                     = empty
-slots/hi_7                     = empty
-slots/hi_8                     = empty
-slots/lo_1                     = online
-slots/lo_2                     = online
-slots/lo_3                     = active
-slots/lo_4                     = online
-slots/lo_5                     = online
-slots/lo_6                     = empty
-slots/lo_7                     = empty
-slots/lo_8                     = empty
-slots/med_1                    = online
-slots/med_2                    = active
-slots/med_3                    = active
-slots/med_4                    = active
-slots/med_5                    = empty
-slots/med_6                    = empty
-slots/med_7                    = empty
-slots/med_8                    = empty
 targeting/lock_range           = 52.500000
 targeting/max_locked_targets   = 6.000000
 targeting/scan_resolution      = 280.000000
 targeting/sensor_strength      = 16.000000
 targeting/signature_radius     = 145.000000
+
+low_1-2/type             = Drone Damage Amplifier II
+low_1-2/state            = online
+low_1-2/damageMultiplier = 1.419694
+
+low_3/type              = Medium Armor Repairer II
+low_3/state             = active
+low_3/armorRepairRate   = 39.864311
+low_3/capacitorPeakLoad = 13.333333
+low_3/cycleTime         = 12000.000000
+low_3/power             = 166.980000
+low_3/armorDamageAmount = 478.371736
+
+low_4/type  = Multispectrum Energized Membrane II
+low_4/state = online
+
+low_5/type  = Damage Control II
+low_5/state = online
+
+medium_1/type  = Large Compact Pb-Acid Cap Battery
+medium_1/state = online
+
+medium_2/type              = Stasis Webifier II
+medium_2/state             = active
+medium_2/capacitorPeakLoad = 1.200000
+medium_2/cycleTime         = 5000.000000
+
+medium_3/type               = Omnidirectional Tracking Link II
+medium_3/state              = active
+medium_3/capacitorPeakLoad  = 0.133333
+medium_3/cycleTime          = 30000.000000
+medium_3/falloffBonus       = 0.000000
+medium_3/maxRangeBonus      = 0.000000
+medium_3/trackingSpeedBonus = 30.000000
+medium_3/aoeVelocityBonus   = 16.500000
+medium_3/aoeCloudSizeBonus  = -16.500000
+medium_3/charge/type        = Tracking Speed Script
+
+medium_4/type              = 10MN Y-S8 Compact Afterburner
+medium_4/state             = active
+medium_4/capacitorPeakLoad = 8.000000
+medium_4/cycleTime         = 10000.000000
+
+high_1-4/type                         = Heavy Electron Blaster II
+high_1-4/state                        = active
+high_1-4/damageVolley                 = 60.857999
+high_1-4/speedWithReload              = 3025.000000
+high_1-4/speedOfReload                = 25.000000
+high_1-4/damagePerSecondWithReload    = 20.118347
+high_1-4/damagePerSecondWithoutReload = 20.286000
+high_1-4/chargeAmount                 = 199.999997
+high_1-4/capacitorPeakLoad            = 0.653333
+high_1-4/cycleTime                    = 3000.000000
+high_1-4/maxRange                     = 1200.000000
+high_1-4/charge/type                  = Caldari Navy Antimatter Charge M
+
+rig_1-2/type  = Medium Auxiliary Nano Pump I
+rig_1-2/state = online
+
+rig_3/type  = Medium Explosive Armor Reinforcer I
+rig_3/state = online

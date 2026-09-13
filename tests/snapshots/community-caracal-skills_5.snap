@@ -49,32 +49,81 @@ offense/dps_with_reload        = 284.414027
 offense/drone_dps              = 28.125000
 power/capacity                 = 1048.162500
 power/free                     = 51.412500
-slots/hi_1                     = active
-slots/hi_2                     = active
-slots/hi_3                     = active
-slots/hi_4                     = active
-slots/hi_5                     = active
-slots/hi_6                     = empty
-slots/hi_7                     = empty
-slots/hi_8                     = empty
-slots/lo_1                     = online
-slots/lo_2                     = online
-slots/lo_3                     = online
-slots/lo_4                     = online
-slots/lo_5                     = empty
-slots/lo_6                     = empty
-slots/lo_7                     = empty
-slots/lo_8                     = empty
-slots/med_1                    = active
-slots/med_2                    = active
-slots/med_3                    = online
-slots/med_4                    = online
-slots/med_5                    = active
-slots/med_6                    = empty
-slots/med_7                    = empty
-slots/med_8                    = empty
 targeting/lock_range           = 71.875000
 targeting/max_locked_targets   = 6.000000
 targeting/scan_resolution      = 337.500000
 targeting/sensor_strength      = 19.200000
 targeting/signature_radius     = 125.000000
+
+low_1-3/type  = Ballistic Control System I
+low_1-3/state = online
+
+low_4/type  = IFFA Compact Damage Control
+low_4/state = online
+
+medium_1/type              = 10MN Y-S8 Compact Afterburner
+medium_1/state             = active
+medium_1/capacitorPeakLoad = 2.666667
+medium_1/cycleTime         = 7500.000000
+medium_1/capacitorNeed     = 20.000000
+medium_1/speedFactor       = 156.250000
+medium_1/duration          = 7500.000000
+medium_1/heatDamage        = 4.275000
+
+medium_2/type              = Large C5-L Compact Shield Booster
+medium_2/state             = active
+medium_2/shieldBoostRate   = 59.500000
+medium_2/capacitorPeakLoad = 36.000000
+medium_2/cycleTime         = 4000.000000
+medium_2/capacitorNeed     = 144.000000
+medium_2/heatDamage        = 0.900000
+
+medium_3/type  = Large Compact Pb-Acid Cap Battery
+medium_3/state = online
+medium_3/cpu   = 30.000000
+
+medium_4/type                    = Compact EM Shield Amplifier
+medium_4/state                   = online
+medium_4/power                   = 0.750000
+medium_4/emDamageResistanceBonus = -43.750000
+
+medium_5/type              = X5 Enduring Stasis Webifier
+medium_5/state             = active
+medium_5/capacitorPeakLoad = 0.300000
+medium_5/cycleTime         = 5000.000000
+medium_5/capacitorNeed     = 1.500000
+medium_5/heatDamage        = 3.750000
+
+high_1-5/type                         = Prototype 'Arbalest' Heavy Assault Missile Launcher I
+high_1-5/state                        = active
+high_1-5/damageVolley                 = 162.309666
+high_1-5/speedWithReload              = 3166.535620
+high_1-5/speedOfReload                = 166.666667
+high_1-5/damagePerSecondWithReload    = 51.257805
+high_1-5/damagePerSecondWithoutReload = 54.105586
+high_1-5/chargeAmount                 = 60.000000
+high_1-5/power                        = 97.200000
+high_1-5/cpu                          = 29.250000
+high_1-5/speed                        = 2999.868952
+high_1-5/heatDamage                   = 0.750000
+high_1-5/charge/type                  = Scourge Heavy Assault Missile
+high_1-5/charge/maxVelocity           = 5062.500000
+high_1-5/charge/kineticDamage         = 162.309666
+high_1-5/charge/explosionDelay        = 6000.000000
+high_1-5/charge/aoeVelocity           = 151.500000
+high_1-5/charge/aoeCloudSize          = 93.750000
+
+rig_1-3/type  = Medium Ancillary Current Router I
+rig_1-3/state = online
+
+dronebay_1-2/type                         = Hornet I
+dronebay_1-2/state                        = active
+dronebay_1-2/damageVolley                 = 56.250000
+dronebay_1-2/speedWithReload              = 4000.000000
+dronebay_1-2/damagePerSecondWithoutReload = 14.062500
+dronebay_1-2/hp                           = 187.500000
+dronebay_1-2/maxVelocity                  = 3937.500000
+dronebay_1-2/maxRange                     = 3000.000000
+dronebay_1-2/damageMultiplier             = 2.812500
+dronebay_1-2/shieldCapacity               = 225.000000
+dronebay_1-2/armorHP                      = 87.500000

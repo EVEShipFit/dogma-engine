@@ -49,32 +49,102 @@ offense/dps_with_reload        = 1091.317179
 offense/drone_dps              = 80.437497
 power/capacity                 = 22437.500000
 power/free                     = 5636.500000
-slots/hi_1                     = active
-slots/hi_2                     = active
-slots/hi_3                     = active
-slots/hi_4                     = active
-slots/hi_5                     = active
-slots/hi_6                     = active
-slots/hi_7                     = active
-slots/hi_8                     = active
-slots/lo_1                     = online
-slots/lo_2                     = online
-slots/lo_3                     = online
-slots/lo_4                     = online
-slots/lo_5                     = online
-slots/lo_6                     = online
-slots/lo_7                     = empty
-slots/lo_8                     = empty
-slots/med_1                    = active
-slots/med_2                    = active
-slots/med_3                    = active
-slots/med_4                    = active
-slots/med_5                    = active
-slots/med_6                    = active
-slots/med_7                    = empty
-slots/med_8                    = empty
 targeting/lock_range           = 112.500000
 targeting/max_locked_targets   = 7.000000
 targeting/scan_resolution      = 203.750000
 targeting/sensor_strength      = 31.200000
 targeting/signature_radius     = 4130.775791
+
+low_1-3/type  = Republic Fleet Gyrostabilizer
+low_1-3/state = online
+
+low_4-6/type  = Domination Tracking Enhancer
+low_4-6/state = online
+
+medium_1/type              = Gist X-Type 500MN Microwarpdrive
+medium_1/state             = active
+medium_1/capacitorPeakLoad = 24.000000
+medium_1/cycleTime         = 10000.000000
+medium_1/capacitorNeed     = 240.000000
+medium_1/speedFactor       = 650.000000
+medium_1/heatDamage        = 6.150000
+
+medium_2/type              = Gist X-Type X-Large Shield Booster
+medium_2/state             = active
+medium_2/shieldBoostRate   = 184.750000
+medium_2/capacitorPeakLoad = 45.900000
+medium_2/cycleTime         = 4000.000000
+medium_2/capacitorNeed     = 183.600000
+medium_2/heatDamage        = 0.825000
+
+medium_3/type              = Pithum C-Type Multispectrum Shield Hardener
+medium_3/state             = active
+medium_3/capacitorPeakLoad = 3.333333
+medium_3/cycleTime         = 12000.000000
+medium_3/heatDamage        = 3.000000
+
+medium_4/type              = Large Micro Jump Drive
+medium_4/state             = active
+medium_4/capacitorPeakLoad = 4.158730
+medium_4/cycleTime         = 189000.000000
+medium_4/duration          = 9000.000000
+
+medium_5/type               = Shadow Serpentis Tracking Computer
+medium_5/state              = active
+medium_5/capacitorPeakLoad  = 0.700000
+medium_5/cycleTime          = 10000.000000
+medium_5/falloffBonus       = 32.000000
+medium_5/maxRangeBonus      = 16.000000
+medium_5/trackingSpeedBonus = 0.000000
+medium_5/heatDamage         = 2.475000
+medium_5/charge/type        = Optimal Range Script
+
+medium_6/type              = Multispectrum Shield Hardener II
+medium_6/state             = active
+medium_6/capacitorPeakLoad = 3.200000
+medium_6/cycleTime         = 10000.000000
+medium_6/heatDamage        = 2.550000
+
+high_1-7/type                         = 800mm Repeating Cannon II
+high_1-7/state                        = active
+high_1-7/damageVolley                 = 466.288677
+high_1-7/speedWithReload              = 3228.891430
+high_1-7/speedOfReload                = 20.833334
+high_1-7/damagePerSecondWithReload    = 144.411383
+high_1-7/damagePerSecondWithoutReload = 145.349200
+high_1-7/chargeAmount                 = 119.999998
+high_1-7/cycleTime                    = 3208.058096
+high_1-7/power                        = 1980.000000
+high_1-7/cpu                          = 30.750000
+high_1-7/speed                        = 3208.058096
+high_1-7/maxRange                     = 4144.680629
+high_1-7/damageMultiplier             = 8.447258
+high_1-7/falloff                      = 65693.234524
+high_1-7/trackingSpeed                = 6.824641
+high_1-7/barrageDmgMultiplier         = 8.447258
+high_1-7/barrageFalloff               = 65693.234524
+high_1-7/entityFlyRange               = 250.000000
+high_1-7/heatDamage                   = 0.675000
+high_1-7/reloadTime                   = 2500.000000
+high_1-7/charge/type                  = Republic Fleet EMP L
+
+high_8/type              = Small Tractor Beam II
+high_8/state             = active
+high_8/capacitorPeakLoad = 1.000000
+high_8/cycleTime         = 5000.000000
+
+rig_1-3/type     = Large Hyperspatial Velocity Optimizer II
+rig_1-3/state    = online
+rig_1-3/drawback = 5.000000
+
+dronebay_1-5/type                         = Warrior II
+dronebay_1-5/state                        = active
+dronebay_1-5/damageVolley                 = 64.349998
+dronebay_1-5/speedWithReload              = 4000.000000
+dronebay_1-5/damagePerSecondWithoutReload = 16.087499
+dronebay_1-5/hp                           = 195.000000
+dronebay_1-5/maxVelocity                  = 6300.000000
+dronebay_1-5/maxRange                     = 2625.000000
+dronebay_1-5/damageMultiplier             = 3.217500
+dronebay_1-5/shieldCapacity               = 150.000000
+dronebay_1-5/armorHP                      = 135.000000

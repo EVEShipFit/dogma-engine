@@ -49,32 +49,91 @@ offense/dps_with_reload        = 118.953379
 offense/drone_dps              = 41.999999
 power/capacity                 = 786.500000
 power/free                     = -311.500000
-slots/hi_1                     = active
-slots/hi_2                     = active
-slots/hi_3                     = active
-slots/hi_4                     = active
-slots/hi_5                     = active
-slots/hi_6                     = active
-slots/hi_7                     = empty
-slots/hi_8                     = empty
-slots/lo_1                     = online
-slots/lo_2                     = online
-slots/lo_3                     = online
-slots/lo_4                     = online
-slots/lo_5                     = empty
-slots/lo_6                     = empty
-slots/lo_7                     = empty
-slots/lo_8                     = empty
-slots/med_1                    = active
-slots/med_2                    = online
-slots/med_3                    = online
-slots/med_4                    = active
-slots/med_5                    = empty
-slots/med_6                    = empty
-slots/med_7                    = empty
-slots/med_8                    = empty
 targeting/lock_range           = 47.500000
 targeting/max_locked_targets   = 5.000000
 targeting/scan_resolution      = 320.000000
 targeting/sensor_strength      = 13.000000
 targeting/signature_radius     = 978.220798
+
+low_1/type  = Tracking Enhancer II
+low_1/state = online
+
+low_2/type  = Damage Control II
+low_2/state = online
+
+low_3-4/type  = Gyrostabilizer II
+low_3-4/state = online
+
+medium_1/type              = 50MN Cold-Gas Enduring Microwarpdrive
+medium_1/state             = active
+medium_1/capacitorPeakLoad = 13.000000
+medium_1/cycleTime         = 10000.000000
+
+medium_2-3/type  = Large Shield Extender II
+medium_2-3/state = online
+
+medium_4/type              = Warp Disruptor II
+medium_4/state             = active
+medium_4/capacitorPeakLoad = 6.000000
+medium_4/cycleTime         = 5000.000000
+
+high_1-2/type                         = 220mm Vulcan AutoCannon II
+high_1-2/state                        = active
+high_1-2/damageVolley                 = 72.912670
+high_1-2/speedWithReload              = 3789.965807
+high_1-2/speedOfReload                = 62.500001
+high_1-2/damagePerSecondWithReload    = 19.238345
+high_1-2/damagePerSecondWithoutReload = 19.560923
+high_1-2/chargeAmount                 = 159.999998
+high_1-2/cycleTime                    = 3727.465806
+high_1-2/speed                        = 3727.465806
+high_1-2/maxRange                     = 2376.000000
+high_1-2/damageMultiplier             = 3.314212
+high_1-2/falloff                      = 17879.400000
+high_1-2/trackingSpeed                = 31.914433
+high_1-2/barrageDmgMultiplier         = 3.314212
+high_1-2/barrageFalloff               = 17879.400000
+high_1-2/charge/type                  = Barrage M
+
+high_3/type              = Medium Infectious Scoped Energy Neutralizer
+high_3/state             = active
+high_3/capacitorPeakLoad = 12.500000
+high_3/cycleTime         = 12000.000000
+
+high_4/type              = Small Infectious Scoped Energy Neutralizer
+high_4/state             = active
+high_4/capacitorPeakLoad = 7.500000
+high_4/cycleTime         = 6000.000000
+
+high_5-6/type                         = 220mm Vulcan AutoCannon II
+high_5-6/state                        = active
+high_5-6/damageVolley                 = 72.912670
+high_5-6/speedWithReload              = 3789.965807
+high_5-6/speedOfReload                = 62.500001
+high_5-6/damagePerSecondWithReload    = 19.238345
+high_5-6/damagePerSecondWithoutReload = 19.560923
+high_5-6/chargeAmount                 = 159.999998
+high_5-6/cycleTime                    = 3727.465806
+high_5-6/speed                        = 3727.465806
+high_5-6/maxRange                     = 2376.000000
+high_5-6/damageMultiplier             = 3.314212
+high_5-6/falloff                      = 17879.400000
+high_5-6/trackingSpeed                = 31.914433
+high_5-6/barrageDmgMultiplier         = 3.314212
+high_5-6/barrageFalloff               = 17879.400000
+high_5-6/charge/type                  = Barrage M
+
+rig_1/type  = Medium Ancillary Current Router I
+rig_1/state = online
+
+rig_2/type  = Medium EM Shield Reinforcer I
+rig_2/state = online
+
+rig_3/type  = Medium Polycarbon Engine Housing I
+rig_3/state = online
+
+dronebay_1-5/type                         = Acolyte II
+dronebay_1-5/state                        = active
+dronebay_1-5/damageVolley                 = 33.599999
+dronebay_1-5/speedWithReload              = 4000.000000
+dronebay_1-5/damagePerSecondWithoutReload = 8.400000

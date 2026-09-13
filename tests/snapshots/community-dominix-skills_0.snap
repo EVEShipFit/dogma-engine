@@ -49,32 +49,56 @@ offense/dps_with_reload        = 221.461464
 offense/drone_dps              = 221.461464
 power/capacity                 = 10000.000000
 power/free                     = 8636.000000
-slots/hi_1                     = online
-slots/hi_2                     = online
-slots/hi_3                     = online
-slots/hi_4                     = online
-slots/hi_5                     = empty
-slots/hi_6                     = empty
-slots/hi_7                     = empty
-slots/hi_8                     = empty
-slots/lo_1                     = online
-slots/lo_2                     = online
-slots/lo_3                     = online
-slots/lo_4                     = online
-slots/lo_5                     = online
-slots/lo_6                     = online
-slots/lo_7                     = online
-slots/lo_8                     = empty
-slots/med_1                    = active
-slots/med_2                    = active
-slots/med_3                    = active
-slots/med_4                    = active
-slots/med_5                    = active
-slots/med_6                    = empty
-slots/med_7                    = empty
-slots/med_8                    = empty
 targeting/lock_range           = 109.200000
 targeting/max_locked_targets   = 7.000000
 targeting/scan_resolution      = 152.100000
 targeting/sensor_strength      = 32.560000
 targeting/signature_radius     = 1162.500000
+
+low_1-4/type             = Drone Damage Amplifier II
+low_1-4/state            = online
+low_1-4/damageMultiplier = 1.677738
+low_1-4/falloff          = 1.569332
+
+low_5-7/type  = Omnidirectional Tracking Enhancer II
+low_5-7/state = online
+
+medium_1/type              = Large Micro Jump Drive
+medium_1/state             = active
+medium_1/capacitorPeakLoad = 4.093750
+medium_1/cycleTime         = 192000.000000
+
+medium_2-3/type              = Multispectrum Shield Hardener II
+medium_2-3/state             = active
+medium_2-3/capacitorPeakLoad = 3.200000
+medium_2-3/cycleTime         = 10000.000000
+
+medium_4/type              = X-Large Shield Booster II
+medium_4/state             = active
+medium_4/shieldBoostRate   = 138.000000
+medium_4/capacitorPeakLoad = 80.000000
+medium_4/cycleTime         = 5000.000000
+
+medium_5/type              = Sensor Booster II
+medium_5/state             = active
+medium_5/capacitorPeakLoad = 1.200000
+medium_5/cycleTime         = 10000.000000
+
+high_1-4/type  = Drone Link Augmentor II
+high_1-4/state = online
+
+rig_1-2/type  = Large Processor Overclocking Unit I
+rig_1-2/state = online
+
+rig_3/type  = Large Capacitor Control Circuit I
+rig_3/state = online
+
+dronebay_1-5/type                         = Garde I
+dronebay_1-5/state                        = active
+dronebay_1-5/damageVolley                 = 177.169171
+dronebay_1-5/speedWithReload              = 4000.000000
+dronebay_1-5/damagePerSecondWithoutReload = 44.292293
+dronebay_1-5/maxRange                     = 18957.334515
+dronebay_1-5/damageMultiplier             = 2.768268
+dronebay_1-5/falloff                      = 39233.304999
+dronebay_1-5/trackingSpeed                = 0.034991
