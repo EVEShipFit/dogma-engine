@@ -1,0 +1,59 @@
+---
+source: tests/harness/case.rs
+expression: "calculate_fit(eft_fit, skills)"
+---
+capacitor/capacity             = 312.000000
+capacitor/depletes_in          = -1.000000
+capacitor/peak                 = 8.333333
+capacitor/percentage           = 100.000000
+capacitor/recharge             = 93.750000
+capacitor/stable               = true
+cpu/capacity                   = 162.500000
+cpu/free                       = 162.500000
+defense/armor/hp               = 562.500000
+defense/armor/resist/em        = 100.000000
+defense/armor/resist/expl      = 100.000000
+defense/armor/resist/kin       = 100.000000
+defense/armor/resist/therm     = 100.000000
+defense/ehp                    = non-finite
+defense/recharge/armor         = 0.000000
+defense/recharge/hull          = 0.000000
+defense/recharge/passive       = 3.000000
+defense/recharge/shield        = 0.000000
+defense/shield/hp              = 562.500000
+defense/shield/recharge        = 468.750000
+defense/shield/resist/em       = 100.000000
+defense/shield/resist/expl     = 100.000000
+defense/shield/resist/kin      = 100.000000
+defense/shield/resist/therm    = 100.000000
+defense/structure/hp           = 437.500000
+defense/structure/resist/em    = 100.000000
+defense/structure/resist/expl  = 100.000000
+defense/structure/resist/kin   = 100.000000
+defense/structure/resist/therm = 100.000000
+drones/active                  = 0.000000
+drones/bandwidth               = 0.000000
+drones/bandwidth_load          = 0.000000
+drones/capacity                = 0.000000
+drones/capacity_load           = 0.000000
+drones/dps                     = 0.000000
+drones/range                   = 60.000000
+navigation/agility             = 2.160000
+navigation/align_time          = 3.195020
+navigation/mass                = 1067.000000
+navigation/speed               = 456.250000
+navigation/warp_speed          = 5.000000
+offense/alpha                  = 0.000000
+offense/dps                    = 0.000000
+offense/dps_with_reload        = 0.000000
+offense/drone_dps              = 0.000000
+power/capacity                 = 51.250000
+power/free                     = 51.250000
+targeting/lock_range           = 28.125000
+targeting/max_locked_targets   = 4.000000
+targeting/scan_resolution      = 825.000000
+targeting/sensor_strength      = 9.600000
+targeting/signature_radius     = 35.000000
+
+medium_1/type  = QA Immunity Module
+medium_1/state = active
