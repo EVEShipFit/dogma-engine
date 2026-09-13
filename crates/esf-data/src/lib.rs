@@ -4,6 +4,8 @@
 //! [sde-patched](https://github.com/EVEShipFit/sde-patched). Load `sde.dat` into
 //! [`Sde`], and hand it to the engine through [`InfoSde`].
 
+#![warn(missing_docs)]
+
 mod error;
 mod info;
 mod sde;

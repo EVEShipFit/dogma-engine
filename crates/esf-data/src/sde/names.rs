@@ -10,11 +10,13 @@ pub struct Names<'a> {
 }
 
 impl<'a> Names<'a> {
+    /// Check the bytes are a valid names file.
     pub fn new(bytes: &'a [u8]) -> Result<Names<'a>, Error> {
         let names = eve::root_as_names(bytes).map_err(Error::InvalidNames)?;
         Ok(Names { names })
     }
 
+    /// The EVE build the names were exported from; it has to match the SDE.
     pub fn build_number(&self) -> i32 {
         self.names.build_number()
     }

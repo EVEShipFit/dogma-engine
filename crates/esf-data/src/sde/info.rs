@@ -4,10 +4,13 @@ use super::{Names, Sde, eve};
 use crate::Error;
 use crate::info::{Info, InfoName};
 
+/// [`Info`] answered from `sde.dat`.
 pub struct InfoSde<'a> {
     sde: &'a Sde<'a>,
 }
 
+/// [`InfoName`] answered from `sde.dat`, and from `names.dat` when given, to
+/// also match names in the other languages EVE supports.
 pub struct InfoNameSde<'a> {
     sde: &'a Sde<'a>,
     names: Option<&'a Names<'a>>,
@@ -68,6 +71,7 @@ impl InfoName for InfoNameSde<'_> {
 }
 
 impl<'a> InfoSde<'a> {
+    /// Answer [`Info`] from this SDE.
     pub fn new(sde: &'a Sde<'a>) -> InfoSde<'a> {
         InfoSde { sde }
     }
