@@ -8,6 +8,8 @@ authors = ["EVEShipFit Team <info@eveship.fit>"]
 edition = "2024"
 repository = "https://github.com/EVEShipFit/dogma-engine"
 license = "MIT"
+readme = "README.md"
+keywords = ["eve-online", "sde", "dogma-engine"]
 
 [workspace.dependencies]
 esf-data = { path = "crates/esf-data", version = "0.0.0-git" }
