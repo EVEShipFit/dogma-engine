@@ -17,15 +17,30 @@ const OPERATOR_HAS_PENALTY: [EffectOperator; 5] = [
 
 pub struct PassThree {}
 
-#[derive(Default)]
 struct Cache {
     hull: BTreeMap<i32, f64>,
     char: BTreeMap<i32, f64>,
     structure: BTreeMap<i32, f64>,
     target: BTreeMap<i32, f64>,
-    items: BTreeMap<usize, BTreeMap<i32, f64>>,
-    charge: BTreeMap<usize, BTreeMap<i32, f64>>,
-    skills: BTreeMap<usize, BTreeMap<i32, f64>>,
+
+    items: Vec<BTreeMap<i32, f64>>,
+    charge: Vec<BTreeMap<i32, f64>>,
+    skills: Vec<BTreeMap<i32, f64>>,
+}
+
+impl Cache {
+    fn new(ship: &Ship) -> Cache {
+        Cache {
+            hull: BTreeMap::new(),
+            char: BTreeMap::new(),
+            structure: BTreeMap::new(),
+            target: BTreeMap::new(),
+
+            items: vec![BTreeMap::new(); ship.items.len()],
+            charge: vec![BTreeMap::new(); ship.items.len()],
+            skills: vec![BTreeMap::new(); ship.skills.len()],
+        }
+    }
 }
 
 impl Attribute {
@@ -45,9 +60,9 @@ impl Attribute {
             Object::Char => cache.char.get(&attribute_id),
             Object::Structure => cache.structure.get(&attribute_id),
             Object::Target => cache.target.get(&attribute_id),
-            Object::Item(index) => cache.items.get(&index).and_then(|x| x.get(&attribute_id)),
-            Object::Charge(index) => cache.charge.get(&index).and_then(|x| x.get(&attribute_id)),
-            Object::Skill(index) => cache.skills.get(&index).and_then(|x| x.get(&attribute_id)),
+            Object::Item(index) => cache.items[index].get(&attribute_id),
+            Object::Charge(index) => cache.charge[index].get(&attribute_id),
+            Object::Skill(index) => cache.skills[index].get(&attribute_id),
         };
         if let Some(cache_value) = cache_value {
             return *cache_value;
@@ -197,28 +212,13 @@ impl Attribute {
                 cache.target.insert(attribute_id, current_value);
             }
             Object::Item(index) => {
-                cache.items.entry(index).or_default();
-                cache
-                    .items
-                    .get_mut(&index)
-                    .unwrap()
-                    .insert(attribute_id, current_value);
+                cache.items[index].insert(attribute_id, current_value);
             }
             Object::Charge(index) => {
-                cache.charge.entry(index).or_default();
-                cache
-                    .charge
-                    .get_mut(&index)
-                    .unwrap()
-                    .insert(attribute_id, current_value);
+                cache.charge[index].insert(attribute_id, current_value);
             }
             Object::Skill(index) => {
-                cache.skills.entry(index).or_default();
-                cache
-                    .skills
-                    .get_mut(&index)
-                    .unwrap()
-                    .insert(attribute_id, current_value);
+                cache.skills[index].insert(attribute_id, current_value);
             }
         }
 
@@ -251,7 +251,7 @@ impl Item {
 
 impl Pass for PassThree {
     fn pass(info: &impl Info, ship: &mut Ship) {
-        let mut cache = Cache::default();
+        let mut cache = Cache::new(ship);
 
         ship.hull
             .calculate_values(info, ship, &mut cache, Object::Ship);
@@ -276,13 +276,13 @@ impl Pass for PassThree {
         ship.structure.store_cached_values(info, &cache.structure);
         ship.target.store_cached_values(info, &cache.target);
         for (index, item) in ship.items.iter_mut().enumerate() {
-            item.store_cached_values(info, &cache.items[&index]);
+            item.store_cached_values(info, &cache.items[index]);
             if let Some(charge) = &mut item.charge {
-                charge.store_cached_values(info, &cache.charge[&index]);
+                charge.store_cached_values(info, &cache.charge[index]);
             }
         }
         for (index, skill) in ship.skills.iter_mut().enumerate() {
-            skill.store_cached_values(info, &cache.skills[&index]);
+            skill.store_cached_values(info, &cache.skills[index]);
         }
     }
 }
