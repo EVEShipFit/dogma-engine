@@ -55,6 +55,5 @@ targeting/scan_resolution      = 750.000000
 targeting/sensor_strength      = 4.000000
 targeting/signature_radius     = 40.000000
 
-dronebay_1-2/type         = 'Excavator' Mining Drone
-dronebay_1-2/state        = active
-dronebay_1-2/miningAmount = 160.000000
+dronebay_1-2/type  = 'Excavator' Mining Drone
+dronebay_1-2/state = active

@@ -1,0 +1,62 @@
+---
+source: tests/harness/case.rs
+expression: "calculate_fit(eft_fit, skills)"
+---
+capacitor/capacity             = 5500.000000
+capacitor/depletes_in          = -1.000000
+capacitor/peak                 = 12.500000
+capacitor/percentage           = 100.000000
+capacitor/recharge             = 1100.000000
+capacitor/stable               = true
+cpu/capacity                   = 750.000000
+cpu/free                       = 750.000000
+defense/armor/hp               = 6050.000000
+defense/armor/resist/em        = 50.000000
+defense/armor/resist/expl      = 10.000002
+defense/armor/resist/kin       = 25.000000
+defense/armor/resist/therm     = 44.999999
+defense/ehp                    = 29193.225100
+defense/recharge/armor         = 0.000000
+defense/recharge/hull          = 0.000000
+defense/recharge/passive       = 6.930000
+defense/recharge/shield        = 0.000000
+defense/shield/hp              = 6930.000000
+defense/shield/recharge        = 2500.000000
+defense/shield/resist/em       = 0.000000
+defense/shield/resist/expl     = 50.000000
+defense/shield/resist/kin      = 39.999998
+defense/shield/resist/therm    = 19.999999
+defense/structure/hp           = 7150.000000
+defense/structure/resist/em    = 32.999998
+defense/structure/resist/expl  = 32.999998
+defense/structure/resist/kin   = 32.999998
+defense/structure/resist/therm = 32.999998
+drones/active                  = 5.000000
+drones/bandwidth               = 75.000000
+drones/bandwidth_load          = 25.000000
+drones/capacity                = 75.000000
+drones/capacity_load           = 25.000000
+drones/dps                     = 0.000000
+drones/range                   = 20.000000
+navigation/agility             = 0.116000
+navigation/align_time          = 16.659931
+navigation/mass                = 103600.000000
+navigation/speed               = 94.000000
+navigation/warp_speed          = 3.000000
+offense/alpha                  = 0.000000
+offense/dps                    = 0.000000
+offense/dps_with_reload        = 0.000000
+offense/drone_dps              = 0.000000
+power/capacity                 = 9500.000000
+power/free                     = 9500.000000
+targeting/lock_range           = 108.000000
+targeting/max_locked_targets   = 7.000000
+targeting/scan_resolution      = 143.000000
+targeting/sensor_strength      = 24.000000
+targeting/signature_radius     = 440.000000
+
+rig_1/type  = Large Particle Dispersion Augmentor II
+rig_1/state = online
+
+dronebay_1-5/type  = Hornet EC-300
+dronebay_1-5/state = active
