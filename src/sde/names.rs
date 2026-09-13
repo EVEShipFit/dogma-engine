@@ -19,10 +19,11 @@ impl<'a> Names<'a> {
     }
 
     /// Names are lowercased and sorted by UTF-8 bytes, which is what `str`
-    /// compares by. Several types can share a name; this returns the first,
-    /// matching how the SDE orders them.
-    pub fn type_name_to_id(&self, name: &str) -> Option<i32> {
+    /// compares by. Several types can share a name; this returns all of them,
+    /// lowest id first. `names.dat` does not know which ones are published.
+    pub fn type_name_to_ids(&self, name: &str) -> impl Iterator<Item = i32> {
         let names = self.names.names();
+        let type_ids = self.names.type_ids();
         let wanted = name.to_lowercase();
 
         let mut low = 0;
@@ -36,9 +37,8 @@ impl<'a> Names<'a> {
             }
         }
 
-        if low >= names.len() || names.get(low) != wanted {
-            return None;
-        }
-        Some(self.names.type_ids().get(low))
+        (low..names.len())
+            .take_while(move |index| names.get(*index) == wanted)
+            .map(move |index| type_ids.get(index))
     }
 }

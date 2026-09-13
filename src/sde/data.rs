@@ -16,7 +16,7 @@ pub struct Sde<'a> {
     attribute_ids: HashMap<&'a str, i32>,
     /// Built on first use: only an EFT import looks a type up by name, and
     /// the borrowed names mean building it allocates one vector and no more.
-    type_names: OnceLock<Vec<(&'a str, i32)>>,
+    type_names: OnceLock<Vec<(&'a str, bool, i32)>>,
 }
 
 impl<'a> Sde<'a> {
@@ -70,17 +70,17 @@ impl<'a> Sde<'a> {
     }
 
     /// Look a type up by its English name. Several types can share one; this
-    /// returns the lowest id, the same one `names.dat` would give.
+    /// prefers a published type, then the lowest id.
     pub fn type_name_to_id(&self, name: &str) -> Option<i32> {
         let type_names = self.type_names.get_or_init(|| {
-            let mut entries: Vec<(&'a str, i32)> = self
+            let mut entries: Vec<(&'a str, bool, i32)> = self
                 .types()
-                .map(|r#type| (r#type.name(), r#type.id()))
+                .map(|r#type| (r#type.name(), r#type.published(), r#type.id()))
                 .collect();
             /* Lowercasing during the sort would redo it on every comparison;
              * types arrive in id order and the sort is stable, so a shared
-             * name still ends up lowest id first. */
-            entries.sort_by_cached_key(|entry| entry.0.to_lowercase());
+             * name ends up published first, then lowest id. */
+            entries.sort_by_cached_key(|entry| (entry.0.to_lowercase(), !entry.1));
             entries
         });
 
@@ -88,6 +88,6 @@ impl<'a> Sde<'a> {
             type_names.partition_point(|entry| compare_lowercase(entry.0, name) == Ordering::Less);
 
         let entry = type_names.get(position)?;
-        (compare_lowercase(entry.0, name) == Ordering::Equal).then_some(entry.1)
+        (compare_lowercase(entry.0, name) == Ordering::Equal).then_some(entry.2)
     }
 }
