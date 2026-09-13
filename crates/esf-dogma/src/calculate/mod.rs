@@ -6,11 +6,21 @@ mod pass_2;
 mod pass_3;
 mod pass_4;
 
+use serde::Deserialize;
+
 use crate::fit::Fit;
 use esf_data::info::Info;
 use item::{Item, Object};
 
-pub use output::{AttributeValue, Calculation, ItemResult};
+pub use item::EffectOperator;
+pub use output::{AttributeValue, Calculation, ItemResult, Source, SourceRef};
+
+#[derive(Deserialize, Debug, Default, Clone)]
+#[serde(default)]
+pub struct Options {
+    /// Report per attribute the modifiers its value was calculated from.
+    pub sources: bool,
+}
 
 #[derive(Debug)]
 pub(crate) struct Objects {
@@ -20,6 +30,7 @@ pub(crate) struct Objects {
     pub char: Item,
     pub structure: Item,
     pub target: Item,
+    pub sources: bool,
 }
 
 impl Objects {
@@ -55,6 +66,7 @@ impl Objects {
             char: Item::new_fake(1373),
             structure: Item::new_fake(0),
             target: Item::new_fake(0),
+            sources: false,
         }
     }
 }
@@ -63,8 +75,9 @@ trait Pass {
     fn pass(info: &impl Info, objects: &mut Objects);
 }
 
-pub fn calculate(info: &impl Info, fit: &Fit) -> Calculation {
+pub fn calculate(info: &impl Info, fit: &Fit, options: &Options) -> Calculation {
     let mut objects = pass_1::PassOne::pass(info, fit);
+    objects.sources = options.sources;
 
     pass_2::PassTwo::pass(info, &mut objects);
     pass_3::PassThree::pass(info, &mut objects);

@@ -1,5 +1,6 @@
 use esf_data::sde;
 use esf_dogma::fit::Fit;
+use esf_dogma::{Calculation, Options};
 use esf_format::eft;
 
 use super::dump::dump;
@@ -24,14 +25,23 @@ pub fn snapshot(module_path: &str, name: &str, eft_fit: &str, skills: Skills, ed
 }
 
 /* EFT cannot express everything a fit can, so a case may edit the loaded fit. */
-fn calculate_fit(eft_fit: &str, skills: Skills, edit: fn(&mut Fit)) -> String {
+pub fn calculate(
+    eft_fit: &str,
+    skills: Skills,
+    edit: fn(&mut Fit),
+    options: &Options,
+) -> (Fit, Calculation) {
     let info_name = sde::InfoNameSde::new(&SDE, Some(&NAMES)).unwrap();
     let mut fit = eft::load_eft(&info_name, eft_fit.trim()).unwrap();
     fit.character.skills = skills.levels;
     edit(&mut fit);
 
     let info = sde::InfoSde::new(&SDE);
-    let calculation = esf_dogma::calculate(&info, &fit);
+    let calculation = esf_dogma::calculate(&info, &fit, options);
+    (fit, calculation)
+}
 
-    dump(&info, &fit, &calculation)
+fn calculate_fit(eft_fit: &str, skills: Skills, edit: fn(&mut Fit)) -> String {
+    let (fit, calculation) = calculate(eft_fit, skills, edit, &Options::default());
+    dump(&sde::InfoSde::new(&SDE), &fit, &calculation)
 }

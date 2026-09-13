@@ -5,6 +5,7 @@ use std::path::PathBuf;
 use clap::Parser;
 
 use esf_data::sde;
+use esf_dogma::Options;
 use esf_dogma::fit::{Fit, Slot, State};
 use esf_format::eft;
 
@@ -33,6 +34,10 @@ struct Args {
         default_value = "node_modules/@eveshipfit/sde/dist/names.dat"
     )]
     names_filename: PathBuf,
+
+    /// Report per attribute the modifiers its value was calculated from.
+    #[clap(long)]
+    sources: bool,
 }
 
 /// Set the state of every module from a 24-letter string; 8 letters for each
@@ -115,7 +120,10 @@ pub fn main() {
     }
 
     let info = sde::InfoSde::new(&sde);
-    let calculation = esf_dogma::calculate(&info, &fit);
+    let options = Options {
+        sources: args.sources,
+    };
+    let calculation = esf_dogma::calculate(&info, &fit, &options);
 
     println!("{}", serde_json::to_string(&calculation).unwrap());
 }

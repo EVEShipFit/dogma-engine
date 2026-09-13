@@ -3,6 +3,7 @@ use std::sync::OnceLock;
 use wasm_bindgen::prelude::*;
 
 use esf_data::sde::{InfoSde, Sde};
+use esf_dogma::Options;
 use esf_dogma::fit::Fit;
 
 /// The SDE is handed over once and then read straight out of WASM memory, so
@@ -32,16 +33,21 @@ pub fn load_sde(bytes: Vec<u8>) -> Result<i32, JsError> {
     Ok(build_number)
 }
 
+/// `js_options` may be left out; it then uses the defaults.
 #[wasm_bindgen]
-pub fn calculate(js_fit: JsValue) -> Result<JsValue, JsError> {
+pub fn calculate(js_fit: JsValue, js_options: JsValue) -> Result<JsValue, JsError> {
     let Some(sde) = SDE.get() else {
         return Err(JsError::new("SDE is not loaded; call load_sde() first"));
     };
 
     let fit: Fit = serde_wasm_bindgen::from_value(js_fit)?;
+    let options: Options = match js_options.is_undefined() || js_options.is_null() {
+        true => Options::default(),
+        false => serde_wasm_bindgen::from_value(js_options)?,
+    };
 
     let info = InfoSde::new(sde);
 
-    let calculation = esf_dogma::calculate(&info, &fit);
+    let calculation = esf_dogma::calculate(&info, &fit, &options);
     Ok(serde_wasm_bindgen::to_value(&calculation)?)
 }

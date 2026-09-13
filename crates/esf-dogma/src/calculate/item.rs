@@ -1,7 +1,9 @@
-use std::cell::Cell;
+use serde::Serialize;
+use std::cell::{Cell, RefCell};
 use std::collections::BTreeMap;
 use strum_macros::EnumIter;
 
+use super::output::Source;
 use crate::fit::{FitItem, Slot, State};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -17,7 +19,8 @@ pub enum EffectCategory {
 }
 
 /* Declaration order is the order pass 3 applies operators in; do not reorder. */
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, EnumIter)]
+#[derive(Serialize, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, EnumIter)]
+#[serde(rename_all = "snake_case")]
 pub enum EffectOperator {
     PreAssign,
     PreMul,
@@ -43,6 +46,7 @@ pub enum Object {
 
 #[derive(Debug)]
 pub struct Effect {
+    pub effect_id: i32,
     pub operator: EffectOperator,
     pub penalty: bool,
     pub source: Object,
@@ -56,6 +60,8 @@ pub struct Attribute {
     pub base_value: f64,
     pub value: Cell<Option<f64>>,
     pub effects: Vec<Effect>,
+    /* Only filled when the calculation asks for sources. */
+    pub sources: RefCell<Vec<Source>>,
 }
 
 #[derive(Debug)]
@@ -79,6 +85,7 @@ impl Attribute {
             base_value: value,
             value: Cell::new(None),
             effects: Vec::new(),
+            sources: RefCell::new(Vec::new()),
         }
     }
 }
