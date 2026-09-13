@@ -5,7 +5,6 @@ use std::path::PathBuf;
 use clap::Parser;
 
 use esf_data::sde;
-use esf_dogma::calculate;
 use esf_dogma::fit::{Fit, Slot, State};
 use esf_format::eft;
 
@@ -116,7 +115,7 @@ pub fn main() {
     }
 
     let info = sde::InfoSde::new(&sde);
-    let calculation = calculate::calculate(&info, &fit);
+    let calculation = esf_dogma::calculate(&info, &fit);
 
     println!("{}", serde_json::to_string(&calculation).unwrap());
 }

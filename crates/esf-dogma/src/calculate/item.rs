@@ -1,11 +1,10 @@
-use serde::Serialize;
 use std::cell::Cell;
 use std::collections::BTreeMap;
 use strum_macros::EnumIter;
 
 use crate::fit::{FitItem, Slot, State};
 
-#[derive(Serialize, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum EffectCategory {
     Passive,
     Online,
@@ -18,7 +17,7 @@ pub enum EffectCategory {
 }
 
 /* Declaration order is the order pass 3 applies operators in; do not reorder. */
-#[derive(Serialize, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, EnumIter)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, EnumIter)]
 pub enum EffectOperator {
     PreAssign,
     PreMul,
@@ -31,7 +30,7 @@ pub enum EffectOperator {
     PostAssign,
 }
 
-#[derive(Serialize, Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Object {
     Ship,
     Item(usize),
@@ -42,7 +41,7 @@ pub enum Object {
     Target,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Debug)]
 pub struct Effect {
     pub operator: EffectOperator,
     pub penalty: bool,
@@ -52,19 +51,17 @@ pub struct Effect {
     pub quantity: u32,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Debug)]
 pub struct Attribute {
     pub base_value: f64,
     pub value: Cell<Option<f64>>,
     pub effects: Vec<Effect>,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Debug)]
 pub struct Item {
     pub type_id: i32,
-    #[serde(skip)]
     pub group_id: i32,
-    #[serde(skip)]
     pub category_id: i32,
 
     pub slot: Option<Slot>,

@@ -1,5 +1,4 @@
 use esf_data::sde;
-use esf_dogma::calculate;
 use esf_dogma::fit::Fit;
 use esf_format::eft;
 
@@ -32,7 +31,7 @@ fn calculate_fit(eft_fit: &str, skills: Skills, edit: fn(&mut Fit)) -> String {
     edit(&mut fit);
 
     let info = sde::InfoSde::new(&SDE);
-    let calculation = calculate::calculate(&info, &fit);
+    let calculation = esf_dogma::calculate(&info, &fit);
 
     dump(&info, &fit, &calculation)
 }

@@ -1,7 +1,5 @@
-use serde::Serialize;
-
 mod attribute_ids;
-pub mod item;
+mod item;
 mod output;
 mod pass_1;
 mod pass_2;
@@ -14,8 +12,8 @@ use item::{Item, Object};
 
 pub use output::{AttributeValue, Calculation, ItemResult};
 
-#[derive(Serialize, Debug)]
-pub struct Objects {
+#[derive(Debug)]
+pub(crate) struct Objects {
     pub ship: Item,
     pub items: Vec<Item>,
     pub skills: Vec<Item>,
