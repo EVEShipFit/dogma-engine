@@ -9,10 +9,10 @@ The output are all the Dogma attributes of the ship, its items and the character
 
 This Dogma engine implements a multi-pass approach.
 
-- [pass 1](./crates/esf-dogma/src/calculate/pass_1.rs): collect all the Dogma attributes of the hull and modules.
-- [pass 2](./crates/esf-dogma/src/calculate/pass_2.rs): collect all the Dogma effects of the hull and modules.
-- [pass 3](./crates/esf-dogma/src/calculate/pass_3.rs): apply all the Dogma effects to the hull/modules, calculating the actual Dogma attribute values.
-- [pass 4](./crates/esf-dogma/src/calculate/pass_4.rs): augment the Dogma attributes with EVEShip.fit specific attributes, that are too complex for the Dogma itself to handle.
+- [pass 1](./crates/esf-dogma-engine/src/calculate/pass_1.rs): collect all the Dogma attributes of the hull and modules.
+- [pass 2](./crates/esf-dogma-engine/src/calculate/pass_2.rs): collect all the Dogma effects of the hull and modules.
+- [pass 3](./crates/esf-dogma-engine/src/calculate/pass_3.rs): apply all the Dogma effects to the hull/modules, calculating the actual Dogma attribute values.
+- [pass 4](./crates/esf-dogma-engine/src/calculate/pass_4.rs): augment the Dogma attributes with EVEShip.fit specific attributes, that are too complex for the Dogma itself to handle.
 
 ## Input and output
 

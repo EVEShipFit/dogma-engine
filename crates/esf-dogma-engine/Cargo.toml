@@ -1,5 +1,5 @@
 [package]
-name = "esf-dogma"
+name = "esf-dogma-engine"
 description = "Calculates the dogma attributes of EVE Online ship fits"
 version.workspace = true
 authors.workspace = true

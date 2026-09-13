@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use esf_data::info::InfoName;
-use esf_dogma::fit::{self, Fit, FitItem, Slot, State};
+use esf_dogma_engine::fit::{self, Fit, FitItem, Slot, State};
 
 /* The effect that marks which rack a module fits in. */
 const EFFECT_LO_POWER: i32 = 11;

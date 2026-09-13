@@ -12,6 +12,6 @@ keywords.workspace = true
 [dependencies]
 clap.workspace = true
 esf-data.workspace = true
-esf-dogma.workspace = true
+esf-dogma-engine.workspace = true
 esf-format.workspace = true
 serde_json.workspace = true
