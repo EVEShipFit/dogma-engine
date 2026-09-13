@@ -90,10 +90,9 @@ fn for_each_in_location(ship: &mut Ship, location: Object, mut apply: impl FnMut
             apply(&mut ship.char);
             ship.skills.iter_mut().for_each(apply);
         }
-        Object::Item(index) => apply(&mut ship.items[index]),
-        Object::Charge(index) => apply(ship.items[index].charge.as_mut().unwrap()),
-        Object::Skill(index) => apply(&mut ship.skills[index]),
-        Object::Target => apply(&mut ship.target),
+        Object::Item(_) | Object::Charge(_) | Object::Skill(_) | Object::Target => {
+            apply(ship.get_mut(location).unwrap())
+        }
     }
 }
 
@@ -267,29 +266,13 @@ impl Pass for PassTwo {
 
         /* Depending on the modifier, move the effects to the correct attribute. */
         for effect in effects {
-            let source = match effect.source {
-                Object::Ship => &ship.hull,
-                Object::Item(index) => &ship.items[index],
-                Object::Charge(index) => ship.items[index].charge.as_ref().unwrap(),
-                Object::Skill(index) => &ship.skills[index],
-                Object::Char => &ship.char,
-                Object::Structure => continue, // TODO
-                Object::Target => continue,    // TODO
-            };
+            let source = ship.get(effect.source).unwrap();
             let source_type_id = source.type_id;
             let category_id = source.category_id;
 
             match effect.modifier {
                 Modifier::ItemModifier() => {
-                    let target = match effect.target {
-                        Object::Ship => &mut ship.hull,
-                        Object::Char => &mut ship.char,
-                        Object::Structure => &mut ship.structure,
-                        Object::Item(index) => &mut ship.items[index],
-                        Object::Charge(index) => ship.items[index].charge.as_mut().unwrap(),
-                        Object::Skill(index) => &mut ship.skills[index],
-                        Object::Target => &mut ship.target,
-                    };
+                    let target = ship.get_mut(effect.target).unwrap();
 
                     target.add_effect(info, effect.target_attribute_id, category_id, &effect);
                 }
