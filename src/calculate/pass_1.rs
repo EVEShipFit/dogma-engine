@@ -15,7 +15,15 @@ impl Item {
         self.attributes.insert(attribute_id, Attribute::new(value));
     }
 
+    fn set_type_ids(&mut self, info: &impl Info) {
+        let r#type = info.get_type(self.type_id);
+        self.group_id = r#type.groupID;
+        self.category_id = r#type.categoryID;
+    }
+
     fn set_attributes(&mut self, info: &impl Info) {
+        self.set_type_ids(info);
+
         for dogma_attribute in info.get_dogma_attributes(self.type_id) {
             self.set_attribute(dogma_attribute.attributeID, dogma_attribute.value);
         }
@@ -40,6 +48,11 @@ impl Item {
 impl Pass for PassOne {
     fn pass(info: &impl Info, ship: &mut Ship) {
         ship.hull.set_attributes(info);
+
+        /* These carry no attributes, but pass 2 still wants their category. */
+        ship.char.set_type_ids(info);
+        ship.structure.set_type_ids(info);
+        ship.target.set_type_ids(info);
 
         for (skill_id, skill_level) in info.skills() {
             let mut skill = Item::new_fake(*skill_id);

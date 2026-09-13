@@ -210,16 +210,17 @@ impl Pass for PassTwo {
 
         /* Depending on the modifier, move the effects to the correct attribute. */
         for effect in effects {
-            let source_type_id = match effect.source {
-                Object::Ship => info.fit().ship_type_id,
-                Object::Item(index) => ship.items[index].type_id,
-                Object::Charge(index) => ship.items[index].charge.as_ref().unwrap().type_id,
-                Object::Skill(index) => ship.skills[index].type_id,
-                Object::Char => 1373,
+            let source = match effect.source {
+                Object::Ship => &ship.hull,
+                Object::Item(index) => &ship.items[index],
+                Object::Charge(index) => ship.items[index].charge.as_ref().unwrap(),
+                Object::Skill(index) => &ship.skills[index],
+                Object::Char => &ship.char,
                 Object::Structure => continue, // TODO
                 Object::Target => continue,    // TODO
             };
-            let category_id = info.get_type(source_type_id).categoryID;
+            let source_type_id = source.type_id;
+            let category_id = source.category_id;
 
             match effect.modifier {
                 Modifier::ItemModifier() => {
@@ -253,8 +254,7 @@ impl Pass for PassTwo {
                     }
                 }
                 Modifier::LocationGroupModifier(group_id) => {
-                    let r#type = info.get_type(ship.hull.type_id);
-                    if r#type.groupID == group_id {
+                    if ship.hull.group_id == group_id {
                         ship.hull.add_effect(
                             info,
                             effect.target_attribute_id,
@@ -264,23 +264,19 @@ impl Pass for PassTwo {
                     }
 
                     for item in &mut ship.items {
-                        let r#type = info.get_type(item.type_id);
-
-                        if r#type.groupID == group_id {
+                        if item.group_id == group_id {
                             item.add_effect(info, effect.target_attribute_id, category_id, &effect);
                         }
 
-                        if let Some(charge) = &mut item.charge {
-                            let r#type = info.get_type(charge.type_id);
-
-                            if r#type.groupID == group_id {
-                                charge.add_effect(
-                                    info,
-                                    effect.target_attribute_id,
-                                    category_id,
-                                    &effect,
-                                );
-                            }
+                        if let Some(charge) = &mut item.charge
+                            && charge.group_id == group_id
+                        {
+                            charge.add_effect(
+                                info,
+                                effect.target_attribute_id,
+                                category_id,
+                                &effect,
+                            );
                         }
                     }
                 }

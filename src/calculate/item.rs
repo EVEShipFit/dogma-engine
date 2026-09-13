@@ -76,6 +76,11 @@ pub struct Slot {
 #[derive(Serialize, Debug)]
 pub struct Item {
     pub type_id: i32,
+    #[serde(skip)]
+    pub group_id: i32,
+    #[serde(skip)]
+    pub category_id: i32,
+
     pub slot: Slot,
     pub charge: Option<Box<Item>>,
     pub state: EffectCategory,
@@ -113,6 +118,8 @@ impl Item {
     pub fn new_charge(type_id: i32) -> Item {
         Item {
             type_id,
+            group_id: 0,
+            category_id: 0,
             slot: Slot {
                 r#type: SlotType::Charge,
                 index: None,
@@ -133,6 +140,8 @@ impl Item {
     ) -> Item {
         Item {
             type_id,
+            group_id: 0,
+            category_id: 0,
             slot,
             charge: charge_type_id.map(|charge_type_id| Box::new(Item::new_charge(charge_type_id))),
             state,
@@ -145,6 +154,8 @@ impl Item {
     pub fn new_drone(type_id: i32, state: EffectCategory) -> Item {
         Item {
             type_id,
+            group_id: 0,
+            category_id: 0,
             slot: Slot {
                 r#type: SlotType::DroneBay,
                 index: None,
@@ -160,6 +171,8 @@ impl Item {
     pub fn new_fake(type_id: i32) -> Item {
         Item {
             type_id,
+            group_id: 0,
+            category_id: 0,
             slot: Slot {
                 r#type: SlotType::None,
                 index: None,
