@@ -6,38 +6,52 @@ use super::Objects;
 use super::item::{EffectOperator, Item, Object};
 use crate::fit::State;
 
+/// The result of [`calculate()`](crate::calculate).
 #[derive(Serialize, Debug)]
 pub struct Calculation {
+    /// The ship.
     pub ship: ItemResult,
     /// Index-parallel to `Fit::items`: same length, same order.
     pub items: Vec<ItemResult>,
+    /// The character.
     pub character: ItemResult,
 }
 
+/// The calculated attributes of the ship, the character, or one item.
 #[derive(Serialize, Debug)]
 pub struct ItemResult {
+    /// Every attribute, by attribute id.
     pub attributes: BTreeMap<i32, AttributeValue>,
     /// The state actually reached, which may be below what was requested.
     pub state: State,
+    /// The highest state the item can reach.
     pub max_state: State,
+    /// The charge loaded in the module, if any.
     pub charge: Option<Box<ItemResult>>,
 }
 
+/// One attribute, before and after the effects on it.
 #[derive(Serialize, Debug)]
 pub struct AttributeValue {
+    /// The value from the SDE.
     pub base: f64,
+    /// The value after every effect is applied.
     pub value: f64,
     /// In the order pass 3 applied them; empty unless `Options::sources` is set.
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub sources: Vec<Source>,
 }
 
+/// One modifier on an attribute, and where it came from.
 #[derive(Serialize, Debug, Clone)]
 pub struct Source {
+    /// The object the effect belongs to.
     pub from: SourceRef,
+    /// The effect that holds the modifier.
     pub effect_id: i32,
     /// The attribute on the source that holds `value`.
     pub source_attribute_id: i32,
+    /// How `value` changes the attribute.
     pub operator: EffectOperator,
     /// The source attribute's value, as pass 3 used it.
     pub value: f64,
@@ -53,11 +67,25 @@ pub struct Source {
 #[derive(Serialize, Debug, Clone, Copy, PartialEq)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum SourceRef {
+    /// The ship.
     Ship,
+    /// The character.
     Character,
-    Item { index: usize },
-    Charge { index: usize },
-    Skill { type_id: i32 },
+    /// An item of the fit.
+    Item {
+        /// The position in `Fit::items`.
+        index: usize,
+    },
+    /// The charge in an item of the fit.
+    Charge {
+        /// The position in `Fit::items` of the item holding the charge.
+        index: usize,
+    },
+    /// A skill of the character.
+    Skill {
+        /// The type id of the skill.
+        type_id: i32,
+    },
 }
 
 impl SourceRef {

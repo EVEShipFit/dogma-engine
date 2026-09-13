@@ -19,17 +19,27 @@ pub enum EffectCategory {
 }
 
 /* Declaration order is the order pass 3 applies operators in; do not reorder. */
+/// How a modifier changes an attribute. They are applied in this order.
 #[derive(Serialize, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, EnumIter)]
 #[serde(rename_all = "snake_case")]
 pub enum EffectOperator {
+    /// Set the value, before anything else.
     PreAssign,
+    /// Multiply the value.
     PreMul,
+    /// Divide the value.
     PreDiv,
+    /// Add to the value.
     ModAdd,
+    /// Subtract from the value.
     ModSub,
+    /// Multiply the value, after adding.
     PostMul,
+    /// Divide the value, after adding.
     PostDiv,
+    /// Change the value by a percentage.
     PostPercent,
+    /// Set the value, after everything else.
     PostAssign,
 }
 
