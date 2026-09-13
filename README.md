@@ -1,5 +1,12 @@
 # EVEShip.fit's Dogma Engine
 
+[![crates.io](https://img.shields.io/crates/v/esf-dogma-engine.svg)](https://crates.io/crates/esf-dogma-engine)
+[![npm](https://img.shields.io/npm/v/%40eveshipfit%2Fdogma-engine.svg)](https://www.npmjs.com/package/@eveshipfit/dogma-engine)
+[![CI](https://github.com/EVEShipFit/dogma-engine/actions/workflows/testing.yml/badge.svg)](https://github.com/EVEShipFit/dogma-engine/actions/workflows/testing.yml)
+[![docs.rs](https://img.shields.io/docsrs/esf-dogma-engine)](https://docs.rs/esf-dogma-engine)
+
+[![Discord](https://img.shields.io/badge/Discord-Join-5865F2?logo=discord&logoColor=white)](https://discord.gg/S5V5BkvNf7)
+
 This library calculates accurately statistics of an EVE Online ship fit.
 
 The input are several data-files provided by EVE Online, together with a ship fit.
