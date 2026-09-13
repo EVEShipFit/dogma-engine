@@ -1,7 +1,6 @@
-use std::collections::BTreeMap;
 use strum::IntoEnumIterator;
 
-use super::item::{Attribute, EffectOperator, Item, Object};
+use super::item::{Attribute, EffectOperator, Item};
 use super::{Info, Pass, Ship};
 
 /* Penalty factor: 1 / math.exp((1 / 2.67) ** 2) */
@@ -24,58 +23,10 @@ struct Values {
     negative: Vec<f64>,
 }
 
-struct Cache {
-    hull: BTreeMap<i32, f64>,
-    char: BTreeMap<i32, f64>,
-    structure: BTreeMap<i32, f64>,
-    target: BTreeMap<i32, f64>,
-
-    items: Vec<BTreeMap<i32, f64>>,
-    charge: Vec<BTreeMap<i32, f64>>,
-    skills: Vec<BTreeMap<i32, f64>>,
-}
-
-impl Cache {
-    fn new(ship: &Ship) -> Cache {
-        Cache {
-            hull: BTreeMap::new(),
-            char: BTreeMap::new(),
-            structure: BTreeMap::new(),
-            target: BTreeMap::new(),
-
-            items: vec![BTreeMap::new(); ship.items.len()],
-            charge: vec![BTreeMap::new(); ship.items.len()],
-            skills: vec![BTreeMap::new(); ship.skills.len()],
-        }
-    }
-
-    fn get_mut(&mut self, object: Object) -> &mut BTreeMap<i32, f64> {
-        match object {
-            Object::Ship => &mut self.hull,
-            Object::Char => &mut self.char,
-            Object::Structure => &mut self.structure,
-            Object::Target => &mut self.target,
-            Object::Item(index) => &mut self.items[index],
-            Object::Charge(index) => &mut self.charge[index],
-            Object::Skill(index) => &mut self.skills[index],
-        }
-    }
-}
-
 impl Attribute {
-    fn calculate_value(
-        &self,
-        info: &impl Info,
-        ship: &Ship,
-        cache: &mut Cache,
-        item: Object,
-        attribute_id: i32,
-    ) -> f64 {
-        if let Some(value) = self.value {
+    fn calculate_value(&self, info: &impl Info, ship: &Ship, attribute_id: i32) -> f64 {
+        if let Some(value) = self.value.get() {
             return value;
-        }
-        if let Some(cache_value) = cache.get_mut(item).get(&attribute_id) {
-            return *cache_value;
         }
 
         let mut current_value = self.base_value;
@@ -98,13 +49,9 @@ impl Attribute {
                 }
 
                 let source_value = match source.attributes.get(&effect.source_attribute_id) {
-                    Some(attribute) => attribute.calculate_value(
-                        info,
-                        ship,
-                        cache,
-                        effect.source,
-                        effect.source_attribute_id,
-                    ),
+                    Some(attribute) => {
+                        attribute.calculate_value(info, ship, effect.source_attribute_id)
+                    }
                     None => info
                         .get_dogma_attribute(effect.source_attribute_id)
                         .map_or(0.0, |dogma_attribute| {
@@ -204,73 +151,33 @@ impl Attribute {
             }
         }
 
-        cache.get_mut(item).insert(attribute_id, current_value);
-
+        self.value.set(Some(current_value));
         current_value
     }
 }
 
 impl Item {
-    fn calculate_values(&self, info: &impl Info, ship: &Ship, cache: &mut Cache, item: Object) {
-        for attribute_id in self.attributes.keys() {
-            self.attributes[attribute_id].calculate_value(info, ship, cache, item, *attribute_id);
-        }
-    }
-
-    fn store_cached_values(&mut self, info: &impl Info, cache: &BTreeMap<i32, f64>) {
-        for (attribute_id, value) in cache {
-            if let Some(attribute) = self.attributes.get_mut(attribute_id) {
-                attribute.value = Some(*value);
-            } else {
-                let default_value = info
-                    .get_dogma_attribute(*attribute_id)
-                    .map_or(0.0, |dogma_attribute| {
-                        dogma_attribute.default_value() as f64
-                    });
-
-                let mut attribute = Attribute::new(default_value);
-                attribute.value = Some(*value);
-
-                self.attributes.insert(*attribute_id, attribute);
-            }
+    fn calculate_values(&self, info: &impl Info, ship: &Ship) {
+        for (attribute_id, attribute) in &self.attributes {
+            attribute.calculate_value(info, ship, *attribute_id);
         }
     }
 }
 
 impl Pass for PassThree {
     fn pass(info: &impl Info, ship: &mut Ship) {
-        let mut cache = Cache::new(ship);
-
-        ship.hull
-            .calculate_values(info, ship, &mut cache, Object::Ship);
-        ship.char
-            .calculate_values(info, ship, &mut cache, Object::Char);
-        ship.structure
-            .calculate_values(info, ship, &mut cache, Object::Structure);
-        ship.target
-            .calculate_values(info, ship, &mut cache, Object::Target);
-        for (index, item) in ship.items.iter().enumerate() {
-            item.calculate_values(info, ship, &mut cache, Object::Item(index));
+        ship.hull.calculate_values(info, ship);
+        ship.char.calculate_values(info, ship);
+        ship.structure.calculate_values(info, ship);
+        ship.target.calculate_values(info, ship);
+        for item in &ship.items {
+            item.calculate_values(info, ship);
             if let Some(charge) = &item.charge {
-                charge.calculate_values(info, ship, &mut cache, Object::Charge(index));
+                charge.calculate_values(info, ship);
             }
         }
-        for (index, skill) in ship.skills.iter().enumerate() {
-            skill.calculate_values(info, ship, &mut cache, Object::Skill(index));
-        }
-
-        ship.hull.store_cached_values(info, &cache.hull);
-        ship.char.store_cached_values(info, &cache.char);
-        ship.structure.store_cached_values(info, &cache.structure);
-        ship.target.store_cached_values(info, &cache.target);
-        for (index, item) in ship.items.iter_mut().enumerate() {
-            item.store_cached_values(info, &cache.items[index]);
-            if let Some(charge) = &mut item.charge {
-                charge.store_cached_values(info, &cache.charge[index]);
-            }
-        }
-        for (index, skill) in ship.skills.iter_mut().enumerate() {
-            skill.store_cached_values(info, &cache.skills[index]);
+        for skill in &ship.skills {
+            skill.calculate_values(info, ship);
         }
     }
 }

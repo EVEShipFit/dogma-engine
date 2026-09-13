@@ -90,7 +90,7 @@ fn push_item(info: &impl Info, item: &Item, path: &str, statistics: &mut Vec<(St
     }
 
     for (attribute_id, attribute) in &item.attributes {
-        let value = attribute.value.unwrap_or(attribute.base_value);
+        let value = attribute.value.get().unwrap_or(attribute.base_value);
         if value == attribute.base_value {
             continue;
         }

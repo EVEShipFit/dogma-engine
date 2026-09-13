@@ -34,7 +34,7 @@ pub fn attribute_capacitor_depletes_in(info: &impl Info, ship: &mut Ship) {
         .get(&attr_capacitor_peak_delta_id)
         .unwrap();
 
-    if attr_capacitor_peak_delta.value.unwrap() < 0.0 {
+    if attr_capacitor_peak_delta.value.get().unwrap() < 0.0 {
         let attr_capacitor_capacity = ship
             .hull
             .attributes
@@ -60,6 +60,7 @@ pub fn attribute_capacitor_depletes_in(info: &impl Info, ship: &mut Ship) {
                 .get(&attr_cycle_time_id)
                 .unwrap()
                 .value
+                .get()
                 .unwrap();
 
             let capacitor_need = item
@@ -67,6 +68,7 @@ pub fn attribute_capacitor_depletes_in(info: &impl Info, ship: &mut Ship) {
                 .get(&attr_capacitor_need_id)
                 .unwrap()
                 .value
+                .get()
                 .unwrap();
 
             modules.push(Module {
@@ -77,8 +79,8 @@ pub fn attribute_capacitor_depletes_in(info: &impl Info, ship: &mut Ship) {
         }
 
         if !modules.is_empty() {
-            let capacitor_capacity = attr_capacitor_capacity.value.unwrap();
-            let recharge_rate = attr_recharge_rate.value.unwrap();
+            let capacitor_capacity = attr_capacitor_capacity.value.get().unwrap();
+            let recharge_rate = attr_recharge_rate.value.get().unwrap();
 
             let mut capacitor = capacitor_capacity;
             let mut time_last = 0.0;
