@@ -3,7 +3,6 @@ use std::sync::OnceLock;
 use wasm_bindgen::prelude::*;
 
 use esf_data::sde::{InfoSde, Sde};
-use esf_dogma::calculate;
 use esf_dogma::fit::Fit;
 
 /// The SDE is handed over once and then read straight out of WASM memory, so
@@ -43,6 +42,6 @@ pub fn calculate(js_fit: JsValue) -> Result<JsValue, JsError> {
 
     let info = InfoSde::new(sde);
 
-    let calculation = calculate::calculate(&info, &fit);
+    let calculation = esf_dogma::calculate(&info, &fit);
     Ok(serde_wasm_bindgen::to_value(&calculation)?)
 }
