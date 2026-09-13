@@ -1,18 +1,28 @@
 use std::collections::HashMap;
 
-use crate::data_types;
+use crate::fit::{self, Fit, FitItem, Slot, State};
 use crate::info::InfoName;
 
-pub struct EftCargo {
-    pub type_id: i32,
-    pub quantity: i32,
-}
+/* The effect that marks which rack a module fits in. */
+const EFFECT_LO_POWER: i32 = 11;
+const EFFECT_HI_POWER: i32 = 12;
+const EFFECT_MED_POWER: i32 = 13;
+const EFFECT_RIG_SLOT: i32 = 2663;
+const EFFECT_SUBSYSTEM: i32 = 3772;
+const EFFECT_SERVICE_SLOT: i32 = 6306;
 
-pub struct EftFit {
-    pub name: String,
-    pub esf_fit: data_types::EsfFit,
-    pub cargo: Vec<EftCargo>,
-}
+type Rack = fn(u8) -> Slot;
+
+const RACKS: [(i32, Rack); 6] = [
+    (EFFECT_LO_POWER, Slot::Low),
+    (EFFECT_HI_POWER, Slot::High),
+    (EFFECT_MED_POWER, Slot::Medium),
+    (EFFECT_RIG_SLOT, Slot::Rig),
+    (EFFECT_SUBSYSTEM, Slot::Subsystem),
+    (EFFECT_SERVICE_SLOT, Slot::Service),
+];
+
+const CATEGORY_DRONE: i32 = 18;
 
 fn section_iter(eft_lines: Vec<&str>) -> impl Iterator<Item = Vec<&str>> {
     let mut section: Vec<&str> = Vec::new();
@@ -40,71 +50,35 @@ fn section_iter(eft_lines: Vec<&str>) -> impl Iterator<Item = Vec<&str>> {
     eft_lines.into_iter()
 }
 
-fn find_slot_type_index(
+fn next_index(rack_indexes: &mut HashMap<i32, u8>, rack: i32) -> u8 {
+    let index = rack_indexes.entry(rack).or_insert(0);
+    *index += 1;
+    *index - 1
+}
+
+fn find_slot(
     info: &impl InfoName,
     type_id: i32,
-    module_slots: &mut HashMap<data_types::EsfSlotType, i32>,
-) -> Option<(data_types::EsfSlotType, i32)> {
-    for effect in info.get_dogma_effects(type_id).into_iter().flatten() {
-        match effect.effect_id() {
-            11 => {
-                let index = module_slots
-                    .entry(data_types::EsfSlotType::Low)
-                    .or_insert(0);
-                *index += 1;
-                return Some((data_types::EsfSlotType::Low, *index - 1));
-            }
-            12 => {
-                let index = module_slots
-                    .entry(data_types::EsfSlotType::High)
-                    .or_insert(0);
-                *index += 1;
-                return Some((data_types::EsfSlotType::High, *index - 1));
-            }
-            13 => {
-                let index = module_slots
-                    .entry(data_types::EsfSlotType::Medium)
-                    .or_insert(0);
-                *index += 1;
-                return Some((data_types::EsfSlotType::Medium, *index - 1));
-            }
-            2663 => {
-                let index = module_slots
-                    .entry(data_types::EsfSlotType::Rig)
-                    .or_insert(0);
-                *index += 1;
-                return Some((data_types::EsfSlotType::Rig, *index - 1));
-            }
-            3772 => {
-                let index = module_slots
-                    .entry(data_types::EsfSlotType::SubSystem)
-                    .or_insert(0);
-                *index += 1;
-                return Some((data_types::EsfSlotType::SubSystem, *index - 1));
-            }
-            6306 => {
-                let index = module_slots
-                    .entry(data_types::EsfSlotType::Service)
-                    .or_insert(0);
-                *index += 1;
-                return Some((data_types::EsfSlotType::Service, *index - 1));
-            }
-            _ => {}
-        }
-    }
-
-    None
+    rack_indexes: &mut HashMap<i32, u8>,
+) -> Option<Slot> {
+    info.get_dogma_effects(type_id)
+        .into_iter()
+        .flatten()
+        .find_map(|effect| {
+            let (rack, slot) = RACKS.iter().find(|(rack, _)| *rack == effect.effect_id())?;
+            Some(slot(next_index(rack_indexes, *rack)))
+        })
 }
 
 /* Split "<Type Name> x<Quantity>" on its last token, as type names can contain an "x" too. */
-fn parse_quantity(line: &str) -> Option<(&str, i32)> {
+fn parse_quantity(line: &str) -> Option<(&str, u32)> {
     let (type_name, quantity) = line.trim().rsplit_once(char::is_whitespace)?;
     let quantity = quantity.strip_prefix('x')?.parse().ok()?;
     Some((type_name.trim(), quantity))
 }
 
-/* Load an EFT string and return an ESF fit structure. */
-pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<EftFit, String> {
+/* Load an EFT string and return a fit without skills. */
+pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, String> {
     let eft_lines: Vec<&str> = eft.lines().collect();
 
     /* First line of an EFT always start with "[ship-type,name]". */
@@ -118,14 +92,13 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<EftFit, String> {
     let ship_type_name = header[0];
     let name = header[1];
 
-    let mut eft_fit = EftFit {
-        name: name.to_string(),
-        esf_fit: data_types::EsfFit {
-            ship_type_id: info.type_name_to_id(ship_type_name),
-            modules: Vec::new(),
-            drones: Vec::new(),
+    let mut fit = Fit {
+        name: Some(name.to_string()),
+        ship: fit::Ship {
+            type_id: info.type_name_to_id(ship_type_name),
         },
-        cargo: Vec::new(),
+        items: Vec::new(),
+        character: fit::Character::default(),
     };
 
     /* An EFT has sections, which are seperated by a new line. */
@@ -135,24 +108,23 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<EftFit, String> {
 
         match is_module_section {
             true => {
-                let mut module_slots: HashMap<data_types::EsfSlotType, i32> = HashMap::new();
+                let mut rack_indexes: HashMap<i32, u8> = HashMap::new();
 
                 for line in section {
                     let mut line = line.trim();
-                    let mut state = data_types::EsfState::Active;
+                    let mut state = State::Active;
 
                     if line.starts_with("[Empty") {
-                        let slot_type = match line {
-                            "[Empty High slot]" => data_types::EsfSlotType::High,
-                            "[Empty Med slot]" => data_types::EsfSlotType::Medium,
-                            "[Empty Low slot]" => data_types::EsfSlotType::Low,
-                            "[Empty Rig slot]" => data_types::EsfSlotType::Rig,
-                            "[Empty Subsystem slot]" => data_types::EsfSlotType::SubSystem,
+                        let rack = match line {
+                            "[Empty High slot]" => EFFECT_HI_POWER,
+                            "[Empty Med slot]" => EFFECT_MED_POWER,
+                            "[Empty Low slot]" => EFFECT_LO_POWER,
+                            "[Empty Rig slot]" => EFFECT_RIG_SLOT,
+                            "[Empty Subsystem slot]" => EFFECT_SUBSYSTEM,
                             _ => panic!("Invalid slot type"),
                         };
 
-                        let index = module_slots.entry(slot_type).or_insert(0);
-                        *index += 1;
+                        next_index(&mut rack_indexes, rack);
                         continue;
                     }
 
@@ -161,10 +133,10 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<EftFit, String> {
                      * single module. */
                     if let Some(position) = line.rfind('/') {
                         let suffix = match &line[position..] {
-                            "/offline" => Some(data_types::EsfState::Passive),
-                            "/online" => Some(data_types::EsfState::Online),
-                            "/active" => Some(data_types::EsfState::Active),
-                            "/overload" => Some(data_types::EsfState::Overload),
+                            "/offline" => Some(State::Offline),
+                            "/online" => Some(State::Online),
+                            "/active" => Some(State::Active),
+                            "/overload" => Some(State::Overload),
                             _ => None,
                         };
 
@@ -193,26 +165,17 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<EftFit, String> {
                     let charge_type_id =
                         charge_name.map(|charge_name| info.type_name_to_id(charge_name));
 
-                    let slot_type_index =
-                        find_slot_type_index(info, module_type_id, &mut module_slots);
-                    if slot_type_index.is_none() {
+                    let Some(slot) = find_slot(info, module_type_id, &mut rack_indexes) else {
                         return Err(format!("Module {} does not fit in any slot", module_name));
-                    }
-                    let (slot_type, index) = slot_type_index.unwrap();
-
-                    let module = data_types::EsfModule {
-                        type_id: module_type_id,
-                        slot: data_types::EsfSlot {
-                            r#type: slot_type,
-                            index,
-                        },
-                        state,
-                        charge: charge_type_id.map(|charge_type_id| data_types::EsfCharge {
-                            type_id: charge_type_id,
-                        }),
                     };
 
-                    eft_fit.esf_fit.modules.push(module);
+                    fit.items.push(FitItem {
+                        type_id: module_type_id,
+                        slot,
+                        quantity: 1,
+                        state,
+                        charge: charge_type_id.map(|type_id| fit::Charge { type_id }),
+                    });
                 }
             }
             false => {
@@ -227,33 +190,29 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<EftFit, String> {
                     let type_id = info.type_name_to_id(type_name);
 
                     let r#type = info.get_type(type_id);
-                    are_drones =
-                        are_drones && r#type.is_some_and(|r#type| r#type.category_id() == 18); // Drone
+                    are_drones = are_drones
+                        && r#type.is_some_and(|r#type| r#type.category_id() == CATEGORY_DRONE);
 
                     items.push((type_id, quantity));
                 }
 
-                if are_drones {
-                    for (type_id, quantity) in items {
-                        for _ in 0..quantity {
-                            let drone = data_types::EsfDrone {
-                                type_id,
-                                state: data_types::EsfState::Active,
-                            };
+                let (slot, state) = match are_drones {
+                    true => (Slot::DroneBay, State::Active),
+                    false => (Slot::Cargo, State::Offline),
+                };
 
-                            eft_fit.esf_fit.drones.push(drone);
-                        }
-                    }
-                } else {
-                    for (type_id, quantity) in items {
-                        let cargo = EftCargo { type_id, quantity };
-
-                        eft_fit.cargo.push(cargo);
-                    }
+                for (type_id, quantity) in items {
+                    fit.items.push(FitItem {
+                        type_id,
+                        slot,
+                        quantity,
+                        state,
+                        charge: None,
+                    });
                 }
             }
         }
     }
 
-    Ok(eft_fit)
+    Ok(fit)
 }

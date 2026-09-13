@@ -57,3 +57,6 @@ targeting/signature_radius     = 40.000000
 
 dronebay_1-2/type  = 'Excavator' Mining Drone
 dronebay_1-2/state = active
+
+cargo_1-100/type  = Meson Exotic Plasma L
+cargo_1-100/state = offline

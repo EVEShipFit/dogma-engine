@@ -1,14 +1,9 @@
-use std::collections::BTreeMap;
-
 use flatbuffers::Vector;
 
 use super::{Names, Sde, eve};
-use crate::data_types;
 use crate::info::{Info, InfoName};
 
 pub struct InfoSde<'a> {
-    pub fit: data_types::EsfFit,
-    pub skills: BTreeMap<i32, i32>,
     pub sde: &'a Sde<'a>,
 }
 
@@ -40,14 +35,6 @@ impl Info for InfoSde<'_> {
 
     fn attribute_name_to_id(&self, name: &str) -> i32 {
         self.sde.attribute_name_to_id(name).unwrap_or(0)
-    }
-
-    fn skills(&self) -> &BTreeMap<i32, i32> {
-        &self.skills
-    }
-
-    fn fit(&self) -> &data_types::EsfFit {
-        &self.fit
     }
 }
 
@@ -83,12 +70,8 @@ impl InfoName for InfoNameSde<'_> {
 }
 
 impl<'a> InfoSde<'a> {
-    pub fn new(
-        fit: data_types::EsfFit,
-        skills: BTreeMap<i32, i32>,
-        sde: &'a Sde<'a>,
-    ) -> InfoSde<'a> {
-        InfoSde { fit, skills, sde }
+    pub fn new(sde: &'a Sde<'a>) -> InfoSde<'a> {
+        InfoSde { sde }
     }
 }
 

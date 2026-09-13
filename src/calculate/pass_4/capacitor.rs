@@ -45,7 +45,7 @@ pub fn attribute_capacitor_depletes_in(info: &impl Info, ship: &mut Ship) {
         /* Find all modules consuming or bringing in capacitor. */
         let mut modules = Vec::new();
         for item in &ship.items {
-            if !item.slot.is_module() || !item.state.is_active() {
+            if !item.is_module() || !item.state.is_active() {
                 continue;
             }
 
@@ -73,7 +73,7 @@ pub fn attribute_capacitor_depletes_in(info: &impl Info, ship: &mut Ship) {
                 .unwrap();
 
             modules.push(Module {
-                capacitor_need: capacitor_peak_load * duration / 1000.0,
+                capacitor_need: capacitor_peak_load * duration / 1000.0 * item.quantity as f64,
                 duration,
                 time_next: 0.0,
             });

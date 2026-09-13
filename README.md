@@ -3,7 +3,7 @@
 This library calculates accurately statistics of an EVE Online ship fit.
 
 The input are several data-files provided by EVE Online, together with a ship fit.
-The output are all the Dogma attributes, containing all the details of the ship.
+The output are all the Dogma attributes of the ship, its items and the character.
 
 ## Implementation
 
@@ -13,6 +13,45 @@ This Dogma engine implements a multi-pass approach.
 - [pass 2](./src/calculate/pass_2.rs): collect all the Dogma effects of the hull and modules.
 - [pass 3](./src/calculate/pass_3.rs): apply all the Dogma effects to the hull/modules, calculating the actual Dogma attribute values.
 - [pass 4](./src/calculate/pass_4.rs): augment the Dogma attributes with EVEShip.fit specific attributes, that are too complex for the Dogma itself to handle.
+
+## Input and output
+
+`calculate` takes a fit and returns a calculation.
+All identifiers are those from the SDE.
+
+### Fit
+
+- `name` (optional): name of the fit.
+- `ship`: the ship being fitted.
+  - `type_id`: its type.
+- `items`: everything fitted or carried. Each item has:
+  - `type_id`: its type.
+  - `slot`: where the item is.
+    - `type`: `high`, `medium`, `low`, `rig`, `subsystem`, `service`, `drone_bay` or `cargo`.
+      _`cargo` is carried, but not calculated._
+    - `index`: position within that slot type, starting at 0. Absent for `drone_bay` and `cargo`.
+  - `quantity` (optional, default 1): stack size for drones and cargo.
+  - `state`: requested state; `offline`, `online`, `active` or `overload`.
+  - `charge` (optional): the loaded charge, as `type_id`.
+- `character` (optional):
+  - `skills`: level (0 to 5) per skill type ID. A missing skill gives no bonuses.
+
+### Calculation
+
+- `ship`: result for the ship.
+- `items`: one result per item of the fit, in the same order.
+- `character`: result for the character.
+
+Each result has:
+
+- `attributes`: per attribute ID, its `base` value before effects and its final `value`.
+- `state`: the state the item reached, which can be lower than requested.
+- `max_state`: the highest state the item can reach.
+- `charge`: result for its charge, if it has one.
+
+### Things to know
+
+- A stack, like five drones, has the attributes of a single item; its bonuses count once per item in the stack.
 
 ## EVEShip.fit's specific attributes
 
@@ -92,5 +131,9 @@ initPanicHook();
 const sde = await fetch("/sde.dat").then((response) => response.arrayBuffer());
 const buildNumber = load_sde(new Uint8Array(sde));
 
-const statistics = calculate(fit, skills);
+const calculation = calculate({
+  ship: { type_id: 587 },
+  items: [{ type_id: 2873, slot: { type: "high", index: 0 }, state: "active", charge: { type_id: 185 } }],
+  character: { skills: { 3300: 5 } },
+});
 ```

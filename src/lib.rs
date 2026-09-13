@@ -1,5 +1,5 @@
 pub mod calculate;
-pub mod data_types;
+pub mod fit;
 pub mod info;
 pub mod sde;
 
@@ -8,6 +8,3 @@ pub mod eft;
 
 #[cfg(feature = "wasm")]
 mod wasm;
-
-#[cfg(feature = "rust")]
-pub mod rust;

@@ -1,10 +1,9 @@
-use std::collections::BTreeMap;
 use std::sync::OnceLock;
 
 use wasm_bindgen::prelude::*;
 
 use crate::calculate;
-use crate::data_types;
+use crate::fit::Fit;
 use crate::sde::{InfoSde, Sde};
 
 /// The SDE is handed over once and then read straight out of WASM memory, so
@@ -35,20 +34,15 @@ pub fn load_sde(bytes: Vec<u8>) -> Result<i32, JsError> {
 }
 
 #[wasm_bindgen]
-pub fn calculate(js_esf_fit: JsValue, js_skills: JsValue) -> Result<JsValue, JsError> {
+pub fn calculate(js_fit: JsValue) -> Result<JsValue, JsError> {
     let Some(sde) = SDE.get() else {
         return Err(JsError::new("SDE is not loaded; call load_sde() first"));
     };
 
-    let fit: data_types::EsfFit = serde_wasm_bindgen::from_value(js_esf_fit)?;
-    let skills: BTreeMap<String, i32> = serde_wasm_bindgen::from_value(js_skills)?;
-    let skills = skills
-        .into_iter()
-        .map(|(skill_id, level)| (skill_id.parse::<i32>().unwrap(), level))
-        .collect();
+    let fit: Fit = serde_wasm_bindgen::from_value(js_fit)?;
 
-    let info = InfoSde::new(fit, skills, sde);
+    let info = InfoSde::new(sde);
 
-    let statistics = calculate::calculate(&info);
-    Ok(serde_wasm_bindgen::to_value(&statistics)?)
+    let calculation = calculate::calculate(&info, &fit);
+    Ok(serde_wasm_bindgen::to_value(&calculation)?)
 }
