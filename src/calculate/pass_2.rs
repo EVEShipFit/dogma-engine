@@ -71,6 +71,31 @@ fn get_target_object(domain: eve::ModifierDomain, origin: Object) -> Object {
     }
 }
 
+fn for_each_in_location(ship: &mut Ship, location: Object, mut apply: impl FnMut(&mut Item)) {
+    match location {
+        /* Structure bonuses target the modules of the structure, which live in the ship's location. */
+        Object::Ship | Object::Structure => {
+            apply(&mut ship.hull);
+
+            for item in &mut ship.items {
+                apply(item);
+
+                if let Some(charge) = &mut item.charge {
+                    apply(charge);
+                }
+            }
+        }
+        Object::Char => {
+            apply(&mut ship.char);
+            ship.skills.iter_mut().for_each(apply);
+        }
+        Object::Item(index) => apply(&mut ship.items[index]),
+        Object::Charge(index) => apply(ship.items[index].charge.as_mut().unwrap()),
+        Object::Skill(index) => apply(&mut ship.skills[index]),
+        Object::Target => apply(&mut ship.target),
+    }
+}
+
 fn get_effect_category(category: eve::EffectCategory) -> EffectCategory {
     match category {
         eve::EffectCategory::Passive => EffectCategory::Passive,
@@ -248,48 +273,16 @@ impl Pass for PassTwo {
                     target.add_effect(info, effect.target_attribute_id, category_id, &effect);
                 }
                 Modifier::LocationModifier() => {
-                    ship.hull
-                        .add_effect(info, effect.target_attribute_id, category_id, &effect);
-
-                    for item in &mut ship.items {
+                    for_each_in_location(ship, effect.target, |item| {
                         item.add_effect(info, effect.target_attribute_id, category_id, &effect);
-
-                        if let Some(charge) = &mut item.charge {
-                            charge.add_effect(
-                                info,
-                                effect.target_attribute_id,
-                                category_id,
-                                &effect,
-                            );
-                        }
-                    }
+                    });
                 }
                 Modifier::LocationGroupModifier(group_id) => {
-                    if ship.hull.group_id == group_id {
-                        ship.hull.add_effect(
-                            info,
-                            effect.target_attribute_id,
-                            category_id,
-                            &effect,
-                        );
-                    }
-
-                    for item in &mut ship.items {
+                    for_each_in_location(ship, effect.target, |item| {
                         if item.group_id == group_id {
                             item.add_effect(info, effect.target_attribute_id, category_id, &effect);
                         }
-
-                        if let Some(charge) = &mut item.charge
-                            && charge.group_id == group_id
-                        {
-                            charge.add_effect(
-                                info,
-                                effect.target_attribute_id,
-                                category_id,
-                                &effect,
-                            );
-                        }
-                    }
+                    });
                 }
                 Modifier::OwnerRequiredSkillModifier(skill_type_id)
                 | Modifier::LocationRequiredSkillModifier(skill_type_id) => {
