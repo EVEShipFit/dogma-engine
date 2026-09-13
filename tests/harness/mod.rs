@@ -9,8 +9,8 @@ use std::sync::LazyLock;
 use esf_dogma_engine::sde;
 
 mod case;
+mod dump;
 mod skills;
-mod statistics;
 
 pub use case::snapshot;
 pub use skills::{Skills, all, none};

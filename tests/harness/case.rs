@@ -3,8 +3,8 @@ use esf_dogma_engine::eft;
 use esf_dogma_engine::fit::Fit;
 use esf_dogma_engine::sde;
 
+use super::dump::dump;
 use super::skills::Skills;
-use super::statistics::{dump, dump_items};
 use super::{NAMES, SDE};
 
 const SNAPSHOTS: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/snapshots");
@@ -34,9 +34,5 @@ fn calculate_fit(eft_fit: &str, skills: Skills, edit: fn(&mut Fit)) -> String {
     let info = sde::InfoSde::new(&SDE);
     let calculation = calculate::calculate(&info, &fit);
 
-    format!(
-        "{}\n{}",
-        dump(&info, &calculation),
-        dump_items(&info, &fit, &calculation)
-    )
+    dump(&info, &fit, &calculation)
 }
