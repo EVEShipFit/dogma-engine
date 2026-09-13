@@ -17,6 +17,13 @@ const OPERATOR_HAS_PENALTY: [EffectOperator; 5] = [
 
 pub struct PassThree {}
 
+#[derive(Default)]
+struct Values {
+    unpenalized: Vec<f64>,
+    positive: Vec<f64>,
+    negative: Vec<f64>,
+}
+
 struct Cache {
     hull: BTreeMap<i32, f64>,
     char: BTreeMap<i32, f64>,
@@ -71,7 +78,7 @@ impl Attribute {
         let mut current_value = self.base_value;
 
         for operator in EffectOperator::iter() {
-            let mut values = (Vec::new(), Vec::new(), Vec::new());
+            let mut values = Values::default();
 
             /* Collect all the values for this operator. */
             for effect in &self.effects {
@@ -127,16 +134,19 @@ impl Attribute {
                 /* Check whether stacking penalty counts; negative and positive values have their own penalty. */
                 if effect.penalty && OPERATOR_HAS_PENALTY.contains(&effect.operator) {
                     if source_value < 0.0 {
-                        values.2.push(source_value);
+                        values.negative.push(source_value);
                     } else {
-                        values.1.push(source_value);
+                        values.positive.push(source_value);
                     }
                 } else {
-                    values.0.push(source_value);
+                    values.unpenalized.push(source_value);
                 }
             }
 
-            if values.0.is_empty() && values.1.is_empty() && values.2.is_empty() {
+            if values.unpenalized.is_empty()
+                && values.positive.is_empty()
+                && values.negative.is_empty()
+            {
                 continue;
             }
 
@@ -149,20 +159,20 @@ impl Attribute {
 
                     current_value = if high_is_good {
                         *values
-                            .0
+                            .unpenalized
                             .iter()
                             .max_by(|x, y| x.partial_cmp(y).unwrap())
                             .unwrap()
                     } else {
                         *values
-                            .0
+                            .unpenalized
                             .iter()
                             .min_by(|x, y| x.partial_cmp(y).unwrap())
                             .unwrap()
                     };
 
-                    assert!(values.1.is_empty());
-                    assert!(values.2.is_empty());
+                    assert!(values.positive.is_empty());
+                    assert!(values.negative.is_empty());
                 }
 
                 EffectOperator::PreMul
@@ -170,33 +180,32 @@ impl Attribute {
                 | EffectOperator::PostMul
                 | EffectOperator::PostDiv
                 | EffectOperator::PostPercent => {
-                    /* values.0 are non-stacking. */
-                    for value in values.0 {
+                    for value in values.unpenalized {
                         current_value *= 1.0 + value;
                     }
 
                     /* For positive values, the highest number goes first. For negative values, the lowest number. */
                     let sort_func = |x: &f64, y: &f64| y.abs().partial_cmp(&x.abs()).unwrap();
-                    values.1.sort_by(sort_func);
-                    values.2.sort_by(sort_func);
+                    values.positive.sort_by(sort_func);
+                    values.negative.sort_by(sort_func);
 
                     /* Apply positive stacking penalty. */
-                    for (index, value) in values.1.iter().enumerate() {
+                    for (index, value) in values.positive.iter().enumerate() {
                         current_value *= 1.0 + value * PENALTY_FACTOR.powi(index.pow(2) as i32);
                     }
                     /* Apply negative stacking penalty. */
-                    for (index, value) in values.2.iter().enumerate() {
+                    for (index, value) in values.negative.iter().enumerate() {
                         current_value *= 1.0 + value * PENALTY_FACTOR.powi(index.pow(2) as i32);
                     }
                 }
 
                 EffectOperator::ModAdd | EffectOperator::ModSub => {
-                    for value in values.0 {
+                    for value in values.unpenalized {
                         current_value += value;
                     }
 
-                    assert!(values.1.is_empty());
-                    assert!(values.2.is_empty());
+                    assert!(values.positive.is_empty());
+                    assert!(values.negative.is_empty());
                 }
             }
         }
