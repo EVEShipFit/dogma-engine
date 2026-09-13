@@ -1,3 +1,5 @@
+use std::collections::BTreeSet;
+
 use crate::sde::eve;
 
 use super::attribute_ids::{ATTRIBUTE_CAPACITOR_NEED_ID, ATTRIBUTE_SKILLS};
@@ -129,6 +131,14 @@ fn get_effect_operator(operation: eve::ModifierOperation) -> Option<EffectOperat
 }
 
 impl Item {
+    fn required_skills(&self) -> BTreeSet<i32> {
+        ATTRIBUTE_SKILLS
+            .iter()
+            .filter_map(|attribute_skill_id| self.attributes.get(attribute_skill_id))
+            .map(|attribute| attribute.base_value as i32)
+            .collect()
+    }
+
     fn add_effect(
         &mut self,
         info: &impl Info,
@@ -245,6 +255,16 @@ impl Pass for PassTwo {
             skill.collect_effects(info, Object::Skill(index), &mut effects);
         }
 
+        let hull_skills = ship.hull.required_skills();
+        let item_skills: Vec<_> = ship
+            .items
+            .iter()
+            .map(|item| {
+                let charge_skills = item.charge.as_ref().map(|charge| charge.required_skills());
+                (item.required_skills(), charge_skills.unwrap_or_default())
+            })
+            .collect();
+
         /* Depending on the modifier, move the effects to the correct attribute. */
         for effect in effects {
             let source = match effect.source {
@@ -296,48 +316,34 @@ impl Pass for PassTwo {
                     let location_only =
                         matches!(effect.modifier, Modifier::LocationRequiredSkillModifier(_));
 
-                    for attribute_skill_id in &ATTRIBUTE_SKILLS {
-                        if ship.hull.attributes.contains_key(attribute_skill_id)
-                            && ship.hull.attributes[attribute_skill_id].base_value
-                                == skill_type_id as f64
+                    if hull_skills.contains(&skill_type_id) {
+                        ship.hull.add_effect(
+                            info,
+                            effect.target_attribute_id,
+                            category_id,
+                            &effect,
+                        );
+                    }
+
+                    for (item, (skills, charge_skills)) in ship
+                        .items
+                        .iter_mut()
+                        .zip(&item_skills)
+                        .filter(|(item, _)| !location_only || item.slot.is_in_ship())
+                    {
+                        if skills.contains(&skill_type_id) {
+                            item.add_effect(info, effect.target_attribute_id, category_id, &effect);
+                        }
+
+                        if let Some(charge) = &mut item.charge
+                            && charge_skills.contains(&skill_type_id)
                         {
-                            ship.hull.add_effect(
+                            charge.add_effect(
                                 info,
                                 effect.target_attribute_id,
                                 category_id,
                                 &effect,
                             );
-                        }
-
-                        for item in ship
-                            .items
-                            .iter_mut()
-                            .filter(|item| !location_only || item.slot.is_in_ship())
-                        {
-                            if item.attributes.contains_key(attribute_skill_id)
-                                && item.attributes[attribute_skill_id].base_value
-                                    == skill_type_id as f64
-                            {
-                                item.add_effect(
-                                    info,
-                                    effect.target_attribute_id,
-                                    category_id,
-                                    &effect,
-                                );
-                            }
-
-                            if let Some(charge) = &mut item.charge
-                                && charge.attributes.contains_key(attribute_skill_id)
-                                && charge.attributes[attribute_skill_id].base_value
-                                    == skill_type_id as f64
-                            {
-                                charge.add_effect(
-                                    info,
-                                    effect.target_attribute_id,
-                                    category_id,
-                                    &effect,
-                                );
-                            }
                         }
                     }
                 }
