@@ -57,6 +57,8 @@ fn get_modifier_func(
     }
 }
 
+const STRUCTURE_CATEGORY_ID: i32 = 65;
+
 fn get_target_object(domain: eve::ModifierDomain, origin: Object) -> Object {
     match domain {
         eve::ModifierDomain::ShipID => Object::Ship,
@@ -187,6 +189,7 @@ impl Item {
         &mut self,
         info: &impl Info,
         origin: Object,
+        skip_ship_domain: bool,
         effects: &mut Vec<Pass2Effect>,
     ) {
         for dogma_effect in info.get_dogma_effects(self.type_id).into_iter().flatten() {
@@ -231,6 +234,10 @@ impl Item {
                     continue;
                 }
 
+                if skip_ship_domain && modifier.domain() == eve::ModifierDomain::ShipID {
+                    continue;
+                }
+
                 let target = get_target_object(modifier.domain(), origin);
                 effects.push(Pass2Effect {
                     effect_id: dogma_effect.effect_id(),
@@ -266,22 +273,24 @@ impl Pass for PassTwo {
         /* Collect all the effects in a single list. */
         objects
             .ship
-            .collect_effects(info, Object::Ship, &mut effects);
+            .collect_effects(info, Object::Ship, false, &mut effects);
         objects
             .char
-            .collect_effects(info, Object::Char, &mut effects);
+            .collect_effects(info, Object::Char, false, &mut effects);
         for (index, item) in objects.items.iter_mut().enumerate() {
             if !item.is_calculated() {
                 continue;
             }
 
-            item.collect_effects(info, Object::Item(index), &mut effects);
+            item.collect_effects(info, Object::Item(index), false, &mut effects);
             if let Some(charge) = &mut item.charge {
-                charge.collect_effects(info, Object::Charge(index), &mut effects);
+                charge.collect_effects(info, Object::Charge(index), false, &mut effects);
             }
         }
+        /* A structure is not the pilot's ship; only the structure skills, via the structure domain, reach it. */
+        let structure_fit = objects.ship.category_id == STRUCTURE_CATEGORY_ID;
         for (index, skill) in objects.skills.iter_mut().enumerate() {
-            skill.collect_effects(info, Object::Skill(index), &mut effects);
+            skill.collect_effects(info, Object::Skill(index), structure_fit, &mut effects);
         }
 
         let ship_skills = objects.ship.required_skills();
