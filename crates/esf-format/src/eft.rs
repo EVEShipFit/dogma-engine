@@ -1,3 +1,5 @@
+//! EFT, the text format EVE copies a fit to the clipboard in.
+
 use std::collections::HashMap;
 use std::fmt;
 
@@ -113,7 +115,12 @@ fn parse_quantity(line: &str) -> Option<(&str, u32)> {
     Some((type_name.trim(), quantity))
 }
 
-/* Load an EFT string and return a fit without skills. */
+/// Load a fit from EFT text. The fit has no skills.
+///
+/// Modules are active, unless the line ends in `/offline`. As an EVEShip.fit
+/// extension, `/online`, `/active` and `/overload` work too. A section where
+/// every line ends in `x<quantity>` goes in the drone bay if it holds only
+/// drones, and in the cargo hold otherwise.
 pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
     let eft_lines: Vec<&str> = eft.lines().collect();
 

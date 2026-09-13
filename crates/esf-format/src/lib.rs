@@ -15,4 +15,6 @@
 //! let fit = load_eft(&info, "[Rifter, My Rifter]\n200mm AutoCannon I").unwrap();
 //! ```
 
+#![warn(missing_docs)]
+
 pub mod eft;

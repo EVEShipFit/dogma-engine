@@ -12,7 +12,12 @@ pub enum Error {
     /// names file.
     InvalidNames(InvalidFlatbuffer),
     /// The SDE and the names file come from different builds.
-    BuildMismatch { sde: i32, names: i32 },
+    BuildMismatch {
+        /// The build of the SDE.
+        sde: i32,
+        /// The build of the names file.
+        names: i32,
+    },
 }
 
 impl fmt::Display for Error {

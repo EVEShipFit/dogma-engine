@@ -12,6 +12,9 @@ fn compare_lowercase(left: &str, right: &str) -> Ordering {
     left.cmp(right)
 }
 
+/// Reader for `sde.dat`, everything needed to calculate a fit.
+///
+/// It borrows the bytes it reads from instead of copying them.
 pub struct Sde<'a> {
     sde: eve::Sde<'a>,
     attribute_ids: HashMap<&'a str, i32>,
@@ -21,6 +24,7 @@ pub struct Sde<'a> {
 }
 
 impl<'a> Sde<'a> {
+    /// Check the bytes are a valid SDE, and index the attributes by name.
     pub fn new(bytes: &'a [u8]) -> Result<Sde<'a>, Error> {
         let sde = eve::root_as_sde(bytes).map_err(Error::InvalidSde)?;
 
@@ -38,20 +42,24 @@ impl<'a> Sde<'a> {
         })
     }
 
+    /// The EVE build the data was exported from.
     pub fn build_number(&self) -> i32 {
         self.sde.build_number()
     }
 
+    /// Every type, lowest id first.
     pub fn types(&self) -> impl Iterator<Item = eve::Type<'a>> {
         self.sde.types().into_iter().flatten()
     }
 
+    /// A type by id.
     pub fn get_type(&self, type_id: i32) -> Option<eve::Type<'a>> {
         self.sde
             .types()?
             .lookup_by_key(type_id, |entry, key| entry.key_compare_with_value(*key))
     }
 
+    /// An attribute by id.
     pub fn get_dogma_attribute(&self, attribute_id: i32) -> Option<eve::DogmaAttribute<'a>> {
         self.sde
             .dogma_attributes()?
@@ -60,12 +68,14 @@ impl<'a> Sde<'a> {
             })
     }
 
+    /// An effect by id.
     pub fn get_dogma_effect(&self, effect_id: i32) -> Option<eve::DogmaEffect<'a>> {
         self.sde
             .dogma_effects()?
             .lookup_by_key(effect_id, |entry, key| entry.key_compare_with_value(*key))
     }
 
+    /// The id of the attribute with exactly this name, like `"cycleTime"`.
     pub fn attribute_name_to_id(&self, name: &str) -> Option<i32> {
         self.attribute_ids.get(name).copied()
     }
