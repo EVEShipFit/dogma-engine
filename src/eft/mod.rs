@@ -45,10 +45,8 @@ fn find_slot_type_index(
     type_id: i32,
     module_slots: &mut HashMap<data_types::EsfSlotType, i32>,
 ) -> Option<(data_types::EsfSlotType, i32)> {
-    let effects = info.get_dogma_effects(type_id);
-
-    for effect in &effects {
-        match effect.effectID {
+    for effect in info.get_dogma_effects(type_id).into_iter().flatten() {
+        match effect.effect_id() {
             11 => {
                 let index = module_slots
                     .entry(data_types::EsfSlotType::Low)
@@ -227,7 +225,8 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<EftFit, String> {
                     let type_id = info.type_name_to_id(type_name);
 
                     let r#type = info.get_type(type_id);
-                    are_drones = are_drones && r#type.categoryID == 18; // Drone
+                    are_drones =
+                        are_drones && r#type.is_some_and(|r#type| r#type.category_id() == 18); // Drone
 
                     items.push((type_id, quantity));
                 }

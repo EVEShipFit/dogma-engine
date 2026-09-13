@@ -156,15 +156,17 @@ fn get_attribute_by_name(
     name: &str,
 ) -> f64 {
     let attribute_id = info.attribute_name_to_id(name);
-    let default_attribute = info.get_dogma_attribute(attribute_id);
+    let default_value = info
+        .get_dogma_attribute(attribute_id)
+        .map_or(0.0, |attribute| attribute.default_value() as f64);
 
     let attribute = attributes
         .iter()
         .find(|attribute| *attribute.0 == attribute_id);
     if let Some(attribute) = attribute {
-        attribute.1.value.unwrap_or(default_attribute.defaultValue)
+        attribute.1.value.unwrap_or(default_value)
     } else {
-        default_attribute.defaultValue
+        default_value
     }
 }
 

@@ -16,31 +16,39 @@ impl Item {
     }
 
     fn set_type_ids(&mut self, info: &impl Info) {
-        let r#type = info.get_type(self.type_id);
-        self.group_id = r#type.groupID;
-        self.category_id = r#type.categoryID;
+        if let Some(r#type) = info.get_type(self.type_id) {
+            self.group_id = r#type.group_id();
+            self.category_id = r#type.category_id();
+        }
     }
 
     fn set_attributes(&mut self, info: &impl Info) {
         self.set_type_ids(info);
 
-        for dogma_attribute in info.get_dogma_attributes(self.type_id) {
-            self.set_attribute(dogma_attribute.attributeID, dogma_attribute.value);
+        if let Some(dogma_attributes) = info.get_dogma_attributes(self.type_id) {
+            for dogma_attribute in dogma_attributes {
+                self.set_attribute(
+                    dogma_attribute.attribute_id(),
+                    dogma_attribute.value() as f64,
+                );
+            }
         }
 
         /* Some attributes of items come from the Type information. */
-        let r#type = info.get_type(self.type_id);
-        if let Some(mass) = r#type.mass {
-            self.set_attribute(ATTRIBUTE_MASS_ID, mass);
+        let Some(r#type) = info.get_type(self.type_id) else {
+            return;
+        };
+        if let Some(mass) = r#type.mass() {
+            self.set_attribute(ATTRIBUTE_MASS_ID, mass as f64);
         }
-        if let Some(capacity) = r#type.capacity {
-            self.set_attribute(ATTRIBUTE_CAPACITY_ID, capacity);
+        if let Some(capacity) = r#type.capacity() {
+            self.set_attribute(ATTRIBUTE_CAPACITY_ID, capacity as f64);
         }
-        if let Some(volume) = r#type.volume {
-            self.set_attribute(ATTRIBUTE_VOLUME_ID, volume);
+        if let Some(volume) = r#type.volume() {
+            self.set_attribute(ATTRIBUTE_VOLUME_ID, volume as f64);
         }
-        if let Some(radius) = r#type.radius {
-            self.set_attribute(ATTRIBUTE_RADIUS_ID, radius);
+        if let Some(radius) = r#type.radius() {
+            self.set_attribute(ATTRIBUTE_RADIUS_ID, radius as f64);
         }
     }
 }
