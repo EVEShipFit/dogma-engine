@@ -1,6 +1,7 @@
 use strum::IntoEnumIterator;
 
 use super::item::{Attribute, EffectOperator, Item};
+use super::output::{Source, SourceRef};
 use super::{Info, Objects, Pass};
 
 /* Penalty factor: 1 / math.exp((1 / 2.67) ** 2) */
@@ -19,16 +20,26 @@ pub struct PassThree {}
 #[derive(Default)]
 struct Values {
     unpenalized: Vec<f64>,
-    positive: Vec<f64>,
-    negative: Vec<f64>,
+    /* Paired with the index into the recorded sources, to fill in the penalty once sorted. */
+    positive: Vec<(f64, Option<usize>)>,
+    negative: Vec<(f64, Option<usize>)>,
 }
 
-fn apply_penalized(mut current_value: f64, values: &mut [f64]) -> f64 {
+fn apply_penalized(
+    mut current_value: f64,
+    values: &mut [(f64, Option<usize>)],
+    sources: &mut [Source],
+) -> f64 {
     /* The highest absolute value goes first. */
-    values.sort_by(|x, y| y.abs().partial_cmp(&x.abs()).unwrap());
+    values.sort_by(|x, y| y.0.abs().partial_cmp(&x.0.abs()).unwrap());
 
-    for (position, value) in values.iter().enumerate() {
-        current_value *= 1.0 + value * PENALTY_FACTOR.powi(position.pow(2) as i32);
+    for (position, (value, source_index)) in values.iter().enumerate() {
+        let penalty = PENALTY_FACTOR.powi(position.pow(2) as i32);
+        current_value *= 1.0 + value * penalty;
+
+        if let Some(source_index) = source_index {
+            sources[*source_index].penalty = Some(penalty);
+        }
     }
 
     current_value
@@ -41,6 +52,7 @@ impl Attribute {
         }
 
         let mut current_value = self.base_value;
+        let mut sources = Vec::new();
 
         for operator in EffectOperator::iter() {
             let mut values = Values::default();
@@ -55,7 +67,8 @@ impl Attribute {
                     continue;
                 };
 
-                if effect.source_category > source.state {
+                let applied = effect.source_category <= source.state;
+                if !applied && !objects.sources {
                     continue;
                 }
 
@@ -70,6 +83,22 @@ impl Attribute {
                         }),
                 };
 
+                let to_source = |quantity, penalty| Source {
+                    from: SourceRef::new(effect.source, source.type_id),
+                    effect_id: effect.effect_id,
+                    source_attribute_id: effect.source_attribute_id,
+                    operator,
+                    value: source_value,
+                    quantity,
+                    penalty,
+                    applied,
+                };
+
+                if !applied {
+                    sources.push(to_source(effect.quantity, None));
+                    continue;
+                }
+
                 /* Simplify the values so we can do the math easier later on. */
                 let source_value = match operator {
                     EffectOperator::PreAssign => source_value,
@@ -83,16 +112,29 @@ impl Attribute {
                     EffectOperator::PostAssign => source_value,
                 };
 
+                if !effect.penalty || !OPERATOR_HAS_PENALTY.contains(&effect.operator) {
+                    values
+                        .unpenalized
+                        .extend(std::iter::repeat_n(source_value, effect.quantity as usize));
+                    if objects.sources {
+                        sources.push(to_source(effect.quantity, None));
+                    }
+                    continue;
+                }
+
                 /* Check whether stacking penalty counts; negative and positive values have their own penalty. */
-                let bucket = if !effect.penalty || !OPERATOR_HAS_PENALTY.contains(&effect.operator)
-                {
-                    &mut values.unpenalized
-                } else if source_value < 0.0 {
+                let bucket = if source_value < 0.0 {
                     &mut values.negative
                 } else {
                     &mut values.positive
                 };
-                bucket.extend(std::iter::repeat_n(source_value, effect.quantity as usize));
+                for _ in 0..effect.quantity {
+                    let source_index = objects.sources.then(|| {
+                        sources.push(to_source(1, None));
+                        sources.len() - 1
+                    });
+                    bucket.push((source_value, source_index));
+                }
             }
 
             if values.unpenalized.is_empty()
@@ -136,8 +178,10 @@ impl Attribute {
                         current_value *= 1.0 + value;
                     }
 
-                    current_value = apply_penalized(current_value, &mut values.positive);
-                    current_value = apply_penalized(current_value, &mut values.negative);
+                    current_value =
+                        apply_penalized(current_value, &mut values.positive, &mut sources);
+                    current_value =
+                        apply_penalized(current_value, &mut values.negative, &mut sources);
                 }
 
                 EffectOperator::ModAdd | EffectOperator::ModSub => {
@@ -152,6 +196,9 @@ impl Attribute {
         }
 
         self.value.set(Some(current_value));
+        if objects.sources {
+            self.sources.replace(sources);
+        }
         current_value
     }
 }

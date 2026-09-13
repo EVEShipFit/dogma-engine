@@ -12,7 +12,7 @@ mod case;
 mod dump;
 mod skills;
 
-pub use case::snapshot;
+pub use case::{calculate, snapshot};
 pub use skills::{Skills, all, none};
 
 /// Override with ESF_SDE and ESF_NAMES when the flatbuffers live elsewhere.

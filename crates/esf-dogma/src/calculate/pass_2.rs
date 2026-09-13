@@ -25,6 +25,7 @@ enum Modifier {
 
 #[derive(Debug)]
 struct Pass2Effect {
+    effect_id: i32,
     modifier: Modifier,
     operator: EffectOperator,
     source: Object,
@@ -167,6 +168,7 @@ impl Item {
             Attribute::new(attr.map_or(0.0, |attr| attr.default_value() as f64))
         });
         attribute.effects.push(Effect {
+            effect_id: effect.effect_id,
             operator: effect.operator,
             penalty,
             source: effect.source,
@@ -231,6 +233,7 @@ impl Item {
 
                 let target = get_target_object(modifier.domain(), origin);
                 effects.push(Pass2Effect {
+                    effect_id: dogma_effect.effect_id(),
                     modifier: effect_modifier,
                     operator,
                     source: origin,

@@ -16,7 +16,7 @@ This Dogma engine implements a multi-pass approach.
 
 ## Input and output
 
-`calculate` takes a fit and returns a calculation.
+`calculate` takes a fit and options, and returns a calculation.
 All identifiers are those from the SDE.
 
 ### Fit
@@ -36,6 +36,11 @@ All identifiers are those from the SDE.
 - `character` (optional):
   - `skills`: level (0 to 5) per skill type ID. A missing skill gives no bonuses.
 
+### Options
+
+- `sources` (optional, default false): report per attribute what its value was calculated from.
+  Leave it off unless you show it; it makes the calculation several times bigger.
+
 ### Calculation
 
 - `ship`: result for the ship.
@@ -45,6 +50,17 @@ All identifiers are those from the SDE.
 Each result has:
 
 - `attributes`: per attribute ID, its `base` value before effects and its final `value`.
+  With the `sources` option, also `sources`: every modifier on it, in the order they were applied. Each has:
+  - `from`: where it comes from; `type` is `ship`, `character`, `item` or `charge` (with the `index` into `items`), or `skill` (with its `type_id`).
+  - `effect_id`: the effect that modifies.
+  - `source_attribute_id`: the attribute on the source that holds `value`.
+  - `operator`: `pre_assign`, `pre_mul`, `pre_div`, `mod_add`, `mod_sub`, `post_mul`, `post_div`, `post_percent` or `post_assign`.
+  - `value`: the value of the modifying attribute.
+  - `quantity`: how many times it counts. A stacking penalised stack is listed once per item instead.
+  - `penalty`: the stacking penalty factor it got, or `null` if not penalised.
+  - `applied`: false when the source's state is too low for the effect.
+
+  How much each source added is not reported: multiplications compound and stacking penalties depend on order, so there is no single answer.
 - `state`: the state the item reached, which can be lower than requested.
 - `max_state`: the highest state the item can reach.
 - `charge`: result for its charge, if it has one.
@@ -130,10 +146,13 @@ initPanicHook();
 
 const sde = await fetch("/sde.dat").then((response) => response.arrayBuffer());
 const buildNumber = load_sde(new Uint8Array(sde));
-
-const calculation = calculate({
+const fit = {
   ship: { type_id: 587 },
   items: [{ type_id: 2873, slot: { type: "high", index: 0 }, state: "active", charge: { type_id: 185 } }],
   character: { skills: { 3300: 5 } },
-});
+};
+
+const calculation = calculate(fit);
+/* Or if you want to know the source of the effects: */
+const withSources = calculate(fit, { sources: true });
 ```
