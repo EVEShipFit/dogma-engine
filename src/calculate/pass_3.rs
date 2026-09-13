@@ -1,8 +1,7 @@
 use strum::IntoEnumIterator;
 
 use super::item::{Attribute, EffectOperator, Item};
-use super::{Info, Pass, Ship};
-use crate::fit::Fit;
+use super::{Info, Objects, Pass};
 
 /* Penalty factor: 1 / math.exp((1 / 2.67) ** 2) */
 const PENALTY_FACTOR: f64 = 0.8691199808003974;
@@ -25,7 +24,7 @@ struct Values {
 }
 
 impl Attribute {
-    fn calculate_value(&self, info: &impl Info, ship: &Ship, attribute_id: i32) -> f64 {
+    fn calculate_value(&self, info: &impl Info, objects: &Objects, attribute_id: i32) -> f64 {
         if let Some(value) = self.value.get() {
             return value;
         }
@@ -41,7 +40,7 @@ impl Attribute {
                     continue;
                 }
 
-                let Some(source) = ship.get(effect.source) else {
+                let Some(source) = objects.get(effect.source) else {
                     continue;
                 };
 
@@ -51,7 +50,7 @@ impl Attribute {
 
                 let source_value = match source.attributes.get(&effect.source_attribute_id) {
                     Some(attribute) => {
-                        attribute.calculate_value(info, ship, effect.source_attribute_id)
+                        attribute.calculate_value(info, objects, effect.source_attribute_id)
                     }
                     None => info
                         .get_dogma_attribute(effect.source_attribute_id)
@@ -158,27 +157,27 @@ impl Attribute {
 }
 
 impl Item {
-    fn calculate_values(&self, info: &impl Info, ship: &Ship) {
+    fn calculate_values(&self, info: &impl Info, objects: &Objects) {
         for (attribute_id, attribute) in &self.attributes {
-            attribute.calculate_value(info, ship, *attribute_id);
+            attribute.calculate_value(info, objects, *attribute_id);
         }
     }
 }
 
 impl Pass for PassThree {
-    fn pass(info: &impl Info, _fit: &Fit, ship: &mut Ship) {
-        ship.hull.calculate_values(info, ship);
-        ship.char.calculate_values(info, ship);
-        ship.structure.calculate_values(info, ship);
-        ship.target.calculate_values(info, ship);
-        for item in &ship.items {
-            item.calculate_values(info, ship);
+    fn pass(info: &impl Info, objects: &mut Objects) {
+        objects.ship.calculate_values(info, objects);
+        objects.char.calculate_values(info, objects);
+        objects.structure.calculate_values(info, objects);
+        objects.target.calculate_values(info, objects);
+        for item in &objects.items {
+            item.calculate_values(info, objects);
             if let Some(charge) = &item.charge {
-                charge.calculate_values(info, ship);
+                charge.calculate_values(info, objects);
             }
         }
-        for skill in &ship.skills {
-            skill.calculate_values(info, ship);
+        for skill in &objects.skills {
+            skill.calculate_values(info, objects);
         }
     }
 }
