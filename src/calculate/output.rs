@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 
 use serde::Serialize;
 
-use super::Ship;
+use super::Objects;
 use super::item::Item;
 use crate::fit::State;
 
@@ -54,11 +54,11 @@ impl ItemResult {
 }
 
 impl Calculation {
-    pub(super) fn new(ship: &Ship) -> Calculation {
+    pub(super) fn new(objects: &Objects) -> Calculation {
         Calculation {
-            ship: ItemResult::new(&ship.hull),
-            items: ship.items.iter().map(ItemResult::new).collect(),
-            character: ItemResult::new(&ship.char),
+            ship: ItemResult::new(&objects.ship),
+            items: objects.items.iter().map(ItemResult::new).collect(),
+            character: ItemResult::new(&objects.char),
         }
     }
 }

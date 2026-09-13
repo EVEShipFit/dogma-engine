@@ -1,6 +1,6 @@
 use crate::info::Info;
 
-use super::super::Ship;
+use super::super::Objects;
 
 struct Module {
     capacitor_need: f64,
@@ -8,7 +8,7 @@ struct Module {
     time_next: f64,
 }
 
-pub fn attribute_capacitor_depletes_in(info: &impl Info, ship: &mut Ship) {
+pub fn attribute_capacitor_depletes_in(info: &impl Info, objects: &mut Objects) {
     /* Amount of seconds it takes for the capacitor to deplete; or negative if it is stable. */
 
     let attr_capacitor_peak_delta_id = info.attribute_name_to_id("capacitorPeakDelta");
@@ -18,8 +18,8 @@ pub fn attribute_capacitor_depletes_in(info: &impl Info, ship: &mut Ship) {
     let attr_cycle_time_id = info.attribute_name_to_id("cycleTime");
     let attr_capacitor_depletes_in_id = info.attribute_name_to_id("capacitorDepletesIn");
 
-    if !ship
-        .hull
+    if !objects
+        .ship
         .attributes
         .contains_key(&attr_capacitor_peak_delta_id)
     {
@@ -28,23 +28,23 @@ pub fn attribute_capacitor_depletes_in(info: &impl Info, ship: &mut Ship) {
 
     let mut depletes_in = -1000.0;
 
-    let attr_capacitor_peak_delta = ship
-        .hull
+    let attr_capacitor_peak_delta = objects
+        .ship
         .attributes
         .get(&attr_capacitor_peak_delta_id)
         .unwrap();
 
     if attr_capacitor_peak_delta.value.get().unwrap() < 0.0 {
-        let attr_capacitor_capacity = ship
-            .hull
+        let attr_capacitor_capacity = objects
+            .ship
             .attributes
             .get(&attr_capacitor_capacity_id)
             .unwrap();
-        let attr_recharge_rate = ship.hull.attributes.get(&attr_recharge_rate_id).unwrap();
+        let attr_recharge_rate = objects.ship.attributes.get(&attr_recharge_rate_id).unwrap();
 
         /* Find all modules consuming or bringing in capacitor. */
         let mut modules = Vec::new();
-        for item in &ship.items {
+        for item in &objects.items {
             if !item.is_module() || !item.state.is_active() {
                 continue;
             }
@@ -116,6 +116,7 @@ pub fn attribute_capacitor_depletes_in(info: &impl Info, ship: &mut Ship) {
         }
     }
 
-    ship.hull
+    objects
+        .ship
         .add_attribute(attr_capacitor_depletes_in_id, 0.0, depletes_in / 1000.0);
 }

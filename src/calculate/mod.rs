@@ -15,9 +15,8 @@ use item::{Item, Object};
 pub use output::{AttributeValue, Calculation, ItemResult};
 
 #[derive(Serialize, Debug)]
-pub struct Ship {
-    pub hull: Item,
-
+pub struct Objects {
+    pub ship: Item,
     pub items: Vec<Item>,
     pub skills: Vec<Item>,
     pub char: Item,
@@ -25,10 +24,10 @@ pub struct Ship {
     pub target: Item,
 }
 
-impl Ship {
+impl Objects {
     fn get(&self, object: Object) -> Option<&Item> {
         match object {
-            Object::Ship => Some(&self.hull),
+            Object::Ship => Some(&self.ship),
             Object::Char => Some(&self.char),
             Object::Structure => Some(&self.structure),
             Object::Target => Some(&self.target),
@@ -40,7 +39,7 @@ impl Ship {
 
     fn get_mut(&mut self, object: Object) -> Option<&mut Item> {
         match object {
-            Object::Ship => Some(&mut self.hull),
+            Object::Ship => Some(&mut self.ship),
             Object::Char => Some(&mut self.char),
             Object::Structure => Some(&mut self.structure),
             Object::Target => Some(&mut self.target),
@@ -50,9 +49,9 @@ impl Ship {
         }
     }
 
-    pub fn new(ship_type_id: i32) -> Ship {
-        Ship {
-            hull: Item::new_fake(ship_type_id),
+    pub fn new(ship_type_id: i32) -> Objects {
+        Objects {
+            ship: Item::new_fake(ship_type_id),
             items: Vec::new(),
             skills: Vec::new(),
             char: Item::new_fake(1373),
@@ -63,16 +62,15 @@ impl Ship {
 }
 
 trait Pass {
-    fn pass(info: &impl Info, fit: &Fit, ship: &mut Ship);
+    fn pass(info: &impl Info, objects: &mut Objects);
 }
 
 pub fn calculate(info: &impl Info, fit: &Fit) -> Calculation {
-    let mut ship = Ship::new(fit.ship.type_id);
+    let mut objects = pass_1::PassOne::pass(info, fit);
 
-    pass_1::PassOne::pass(info, fit, &mut ship);
-    pass_2::PassTwo::pass(info, fit, &mut ship);
-    pass_3::PassThree::pass(info, fit, &mut ship);
-    pass_4::PassFour::pass(info, fit, &mut ship);
+    pass_2::PassTwo::pass(info, &mut objects);
+    pass_3::PassThree::pass(info, &mut objects);
+    pass_4::PassFour::pass(info, &mut objects);
 
-    Calculation::new(&ship)
+    Calculation::new(&objects)
 }

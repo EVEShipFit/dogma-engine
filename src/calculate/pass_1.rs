@@ -3,7 +3,7 @@ use super::attribute_ids::{
     ATTRIBUTE_VOLUME_ID,
 };
 use super::item::{Attribute, Item};
-use super::{Info, Pass, Ship};
+use super::{Info, Objects};
 use crate::fit::Fit;
 
 pub struct PassOne {}
@@ -51,14 +51,16 @@ impl Item {
     }
 }
 
-impl Pass for PassOne {
-    fn pass(info: &impl Info, fit: &Fit, ship: &mut Ship) {
-        ship.hull.set_attributes(info);
+impl PassOne {
+    pub fn pass(info: &impl Info, fit: &Fit) -> Objects {
+        let mut objects = Objects::new(fit.ship.type_id);
+
+        objects.ship.set_attributes(info);
 
         /* These carry no attributes, but pass 2 still wants their category. */
-        ship.char.set_type_ids(info);
-        ship.structure.set_type_ids(info);
-        ship.target.set_type_ids(info);
+        objects.char.set_type_ids(info);
+        objects.structure.set_type_ids(info);
+        objects.target.set_type_ids(info);
 
         for (skill_id, skill_level) in &fit.character.skills {
             let mut skill = Item::new_fake(*skill_id);
@@ -66,7 +68,7 @@ impl Pass for PassOne {
             skill.set_attributes(info);
             skill.set_attribute(ATTRIBUTE_SKILL_LEVEL_ID, *skill_level as f64);
 
-            ship.skills.push(skill);
+            objects.skills.push(skill);
         }
 
         for fit_item in &fit.items {
@@ -79,7 +81,9 @@ impl Pass for PassOne {
                 }
             }
 
-            ship.items.push(item);
+            objects.items.push(item);
         }
+
+        objects
     }
 }

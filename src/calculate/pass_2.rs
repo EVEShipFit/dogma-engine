@@ -4,8 +4,7 @@ use crate::sde::eve;
 
 use super::attribute_ids::{ATTRIBUTE_CAPACITOR_NEED_ID, ATTRIBUTE_SKILLS};
 use super::item::{Attribute, Effect, EffectCategory, EffectOperator, Item, Object};
-use super::{Info, Pass, Ship};
-use crate::fit::Fit;
+use super::{Info, Objects, Pass};
 
 /** Categories of the effect source which are exempt of stacking penalty.
  * Ship (6), Charge (8), Skill (16), Implant (20) and Subsystem (32) */
@@ -75,16 +74,16 @@ fn get_target_object(domain: eve::ModifierDomain, origin: Object) -> Object {
 }
 
 fn for_each_in_location(
-    ship: &mut Ship,
+    objects: &mut Objects,
     location: Object,
     mut apply: impl FnMut(Object, &mut Item),
 ) {
     match location {
         /* Structure bonuses target the modules of the structure, which live in the ship's location. */
         Object::Ship | Object::Structure => {
-            apply(Object::Ship, &mut ship.hull);
+            apply(Object::Ship, &mut objects.ship);
 
-            for (index, item) in ship.items.iter_mut().enumerate() {
+            for (index, item) in objects.items.iter_mut().enumerate() {
                 if !item.is_in_ship() {
                     continue;
                 }
@@ -97,13 +96,13 @@ fn for_each_in_location(
             }
         }
         Object::Char => {
-            apply(Object::Char, &mut ship.char);
-            for (index, skill) in ship.skills.iter_mut().enumerate() {
+            apply(Object::Char, &mut objects.char);
+            for (index, skill) in objects.skills.iter_mut().enumerate() {
                 apply(Object::Skill(index), skill);
             }
         }
         Object::Item(_) | Object::Charge(_) | Object::Skill(_) | Object::Target => {
-            apply(location, ship.get_mut(location).unwrap())
+            apply(location, objects.get_mut(location).unwrap())
         }
     }
 }
@@ -258,13 +257,17 @@ impl Item {
 }
 
 impl Pass for PassTwo {
-    fn pass(info: &impl Info, _fit: &Fit, ship: &mut Ship) {
+    fn pass(info: &impl Info, objects: &mut Objects) {
         let mut effects = Vec::new();
 
         /* Collect all the effects in a single list. */
-        ship.hull.collect_effects(info, Object::Ship, &mut effects);
-        ship.char.collect_effects(info, Object::Char, &mut effects);
-        for (index, item) in ship.items.iter_mut().enumerate() {
+        objects
+            .ship
+            .collect_effects(info, Object::Ship, &mut effects);
+        objects
+            .char
+            .collect_effects(info, Object::Char, &mut effects);
+        for (index, item) in objects.items.iter_mut().enumerate() {
             if !item.is_calculated() {
                 continue;
             }
@@ -274,12 +277,12 @@ impl Pass for PassTwo {
                 charge.collect_effects(info, Object::Charge(index), &mut effects);
             }
         }
-        for (index, skill) in ship.skills.iter_mut().enumerate() {
+        for (index, skill) in objects.skills.iter_mut().enumerate() {
             skill.collect_effects(info, Object::Skill(index), &mut effects);
         }
 
-        let hull_skills = ship.hull.required_skills();
-        let item_skills: Vec<_> = ship
+        let ship_skills = objects.ship.required_skills();
+        let item_skills: Vec<_> = objects
             .items
             .iter()
             .map(|item| {
@@ -290,13 +293,13 @@ impl Pass for PassTwo {
 
         /* Depending on the modifier, move the effects to the correct attribute. */
         for effect in effects {
-            let source = ship.get(effect.source).unwrap();
+            let source = objects.get(effect.source).unwrap();
             let source_type_id = source.type_id;
             let category_id = source.category_id;
 
             match effect.modifier {
                 Modifier::ItemModifier() => {
-                    let target = ship.get_mut(effect.target).unwrap();
+                    let target = objects.get_mut(effect.target).unwrap();
 
                     target.add_effect(
                         info,
@@ -307,7 +310,7 @@ impl Pass for PassTwo {
                     );
                 }
                 Modifier::LocationModifier() => {
-                    for_each_in_location(ship, effect.target, |target, item| {
+                    for_each_in_location(objects, effect.target, |target, item| {
                         item.add_effect(
                             info,
                             target,
@@ -318,7 +321,7 @@ impl Pass for PassTwo {
                     });
                 }
                 Modifier::LocationGroupModifier(group_id) => {
-                    for_each_in_location(ship, effect.target, |target, item| {
+                    for_each_in_location(objects, effect.target, |target, item| {
                         if item.group_id == group_id {
                             item.add_effect(
                                 info,
@@ -341,8 +344,8 @@ impl Pass for PassTwo {
                     let location_only =
                         matches!(effect.modifier, Modifier::LocationRequiredSkillModifier(_));
 
-                    if hull_skills.contains(&skill_type_id) {
-                        ship.hull.add_effect(
+                    if ship_skills.contains(&skill_type_id) {
+                        objects.ship.add_effect(
                             info,
                             Object::Ship,
                             effect.target_attribute_id,
@@ -351,7 +354,7 @@ impl Pass for PassTwo {
                         );
                     }
 
-                    for (index, (item, (skills, charge_skills))) in ship
+                    for (index, (item, (skills, charge_skills))) in objects
                         .items
                         .iter_mut()
                         .zip(&item_skills)
