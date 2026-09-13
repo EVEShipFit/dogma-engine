@@ -7,8 +7,8 @@ use super::item::{Attribute, Effect, EffectCategory, EffectOperator, Item, Objec
 use super::{Info, Objects, Pass};
 
 /** Categories of the effect source which are exempt of stacking penalty.
- * Ship (6), Charge (8), Skill (16), Implant (20) and Subsystem (32) */
-const EXEMPT_PENALTY_CATEGORY_IDS: [i32; 5] = [6, 8, 16, 20, 32];
+ * Ship (6), Charge (8), Skill (16), Implant (20), Subsystem (32) and Structure (65) */
+const EXEMPT_PENALTY_CATEGORY_IDS: [i32; 6] = [6, 8, 16, 20, 32, 65];
 
 pub struct PassTwo {}
 
