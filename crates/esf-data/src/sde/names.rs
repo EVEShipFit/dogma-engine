@@ -1,4 +1,5 @@
 use super::names_generated::eve;
+use crate::Error;
 
 /// Reader for `names.dat`, the type names in every language EVE supports.
 ///
@@ -9,8 +10,8 @@ pub struct Names<'a> {
 }
 
 impl<'a> Names<'a> {
-    pub fn new(bytes: &'a [u8]) -> Result<Names<'a>, String> {
-        let names = eve::root_as_names(bytes).map_err(|error| format!("{:?}", error))?;
+    pub fn new(bytes: &'a [u8]) -> Result<Names<'a>, Error> {
+        let names = eve::root_as_names(bytes).map_err(Error::InvalidNames)?;
         Ok(Names { names })
     }
 

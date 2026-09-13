@@ -25,7 +25,7 @@ pub fn load_sde(bytes: Vec<u8>) -> Result<i32, JsError> {
     }
 
     let bytes = SDE_BYTES.get_or_init(|| bytes);
-    let sde = Sde::new(bytes).map_err(|error| JsError::new(&error))?;
+    let sde = Sde::new(bytes)?;
 
     let build_number = sde.build_number();
     let _ = SDE.set(sde);
