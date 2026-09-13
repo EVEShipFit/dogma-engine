@@ -1,10 +1,9 @@
 use crate::sde::eve;
 
+use super::attribute_ids::{ATTRIBUTE_CAPACITOR_NEED_ID, ATTRIBUTE_SKILLS};
 use super::item::{Attribute, Effect, EffectCategory, EffectOperator, Item, Object};
 use super::{Info, Pass, Ship};
 
-/** AttributeIDs for requiredSkill1, requiredSkill2, .. */
-const ATTRIBUTE_SKILLS: [i32; 6] = [182, 183, 184, 1285, 1289, 1290];
 /** Categories of the effect source which are exempt of stacking penalty.
  * Ship (6), Charge (8), Skill (16), Implant (20) and Subsystem (32) */
 const EXEMPT_PENALTY_CATEGORY_IDS: [i32; 5] = [6, 8, 16, 20, 32];
@@ -216,8 +215,10 @@ impl Item {
             }
         }
 
-        /* Any module that has a capacitorNeed (6), can be activated. */
-        if self.attributes.contains_key(&6) && self.max_state < EffectCategory::Active {
+        /* Any module that has a capacitorNeed, can be activated. */
+        if self.attributes.contains_key(&ATTRIBUTE_CAPACITOR_NEED_ID)
+            && self.max_state < EffectCategory::Active
+        {
             self.max_state = EffectCategory::Active;
         }
 
