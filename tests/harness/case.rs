@@ -1,10 +1,11 @@
 use esf_dogma_engine::calculate;
 use esf_dogma_engine::eft;
 use esf_dogma_engine::rust;
+use esf_dogma_engine::sde;
 
-use super::DATA;
 use super::skills::Skills;
 use super::statistics::dump;
+use super::{NAMES, SDE};
 
 const SNAPSHOTS: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/snapshots");
 
@@ -24,11 +25,10 @@ pub fn snapshot(module_path: &str, name: &str, eft_fit: &str, skills: Skills) {
 }
 
 fn calculate_fit(eft_fit: &str, skills: Skills) -> String {
-    let fit = eft::load_eft(&rust::InfoNameMain::new(&DATA), eft_fit.trim())
-        .unwrap()
-        .esf_fit;
+    let info_name = sde::InfoNameSde::new(&SDE, Some(&NAMES)).unwrap();
+    let fit = eft::load_eft(&info_name, eft_fit.trim()).unwrap().esf_fit;
 
-    let info = rust::InfoMain::new(fit, skills.levels, &DATA);
+    let info = sde::InfoSde::new(fit, skills.levels, &SDE);
     let statistics = calculate::calculate(&info);
 
     dump(&rust::Output::new(&info, &statistics))

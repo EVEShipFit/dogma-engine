@@ -14,7 +14,6 @@ concurrency:
 
 permissions:
   contents: read
-  packages: read
 
 jobs:
   testing:
@@ -37,14 +36,7 @@ jobs:
       uses: actions/setup-node@v7
       with:
         node-version: lts/*
-        registry-url: https://npm.pkg.github.com
-        scope: "@eveshipfit"
         cache: npm
-
-    - name: Install Protobuf Compiler
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends protobuf-compiler
 
     - name: Install wasm-pack
       uses: taiki-e/install-action@v2
@@ -52,12 +44,20 @@ jobs:
         tool: wasm-pack
 
     - name: Install NPM dependencies
-      # The token has to be set here, as setup-node only writes a reference to
-      # this variable into .npmrc; it is resolved when npm actually runs.
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         npm ci
+
+    - name: Install flatc
+      # Keep in sync with the flatbuffers version in Cargo.toml.
+      run: |
+        curl -sSfL -o /tmp/flatc.zip https://github.com/google/flatbuffers/releases/download/v25.2.10/Linux.flatc.binary.g++-13.zip
+        sudo unzip -o /tmp/flatc.zip -d /usr/local/bin
+        flatc --version
+
+    - name: Check generated code
+      run: |
+        flatc --rust --gen-onefile -o src/sde/ node_modules/@eveshipfit/sde/specs/eve.fbs node_modules/@eveshipfit/sde/specs/names.fbs
+        git diff --exit-code
 
     - name: Build WASM library
       run: |
