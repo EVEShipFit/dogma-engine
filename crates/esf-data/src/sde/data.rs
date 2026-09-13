@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use std::sync::OnceLock;
 
 use super::eve;
+use crate::Error;
 
 /// Compare two names case-insensitively without allocating.
 fn compare_lowercase(left: &str, right: &str) -> Ordering {
@@ -20,8 +21,8 @@ pub struct Sde<'a> {
 }
 
 impl<'a> Sde<'a> {
-    pub fn new(bytes: &'a [u8]) -> Result<Sde<'a>, String> {
-        let sde = eve::root_as_sde(bytes).map_err(|error| format!("{:?}", error))?;
+    pub fn new(bytes: &'a [u8]) -> Result<Sde<'a>, Error> {
+        let sde = eve::root_as_sde(bytes).map_err(Error::InvalidSde)?;
 
         let mut attribute_ids = HashMap::new();
         if let Some(attributes) = sde.dogma_attributes() {

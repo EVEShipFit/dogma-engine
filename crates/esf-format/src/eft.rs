@@ -1,7 +1,38 @@
 use std::collections::HashMap;
+use std::fmt;
 
 use esf_data::info::InfoName;
 use esf_dogma_engine::fit::{self, Fit, FitItem, Slot, State};
+
+/// Why an EFT could not be loaded.
+#[derive(Clone, Debug, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum Error {
+    /// The EFT has no lines at all.
+    Empty,
+    /// The first line is not `[<Ship Type>, <Fit Name>]`.
+    InvalidHeader,
+    /// A line starts with `[Empty` but names no known slot.
+    InvalidEmptySlot(String),
+    /// No type has this name.
+    UnknownType(String),
+    /// The type exists, but is not a module that fits in any slot.
+    NoSlot(String),
+}
+
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Error::Empty => write!(f, "empty EFT"),
+            Error::InvalidHeader => write!(f, "invalid EFT header"),
+            Error::InvalidEmptySlot(line) => write!(f, "invalid empty slot {line}"),
+            Error::UnknownType(name) => write!(f, "unknown type {name}"),
+            Error::NoSlot(name) => write!(f, "module {name} does not fit in any slot"),
+        }
+    }
+}
+
+impl std::error::Error for Error {}
 
 /* The effect that marks which rack a module fits in. */
 const EFFECT_LO_POWER: i32 = 11;
@@ -70,9 +101,9 @@ fn find_slot(
         })
 }
 
-fn type_name_to_id(info: &impl InfoName, name: &str) -> Result<i32, String> {
+fn type_name_to_id(info: &impl InfoName, name: &str) -> Result<i32, Error> {
     info.type_name_to_id(name)
-        .ok_or_else(|| format!("Unknown type {}", name))
+        .ok_or_else(|| Error::UnknownType(name.to_string()))
 }
 
 /* Split "<Type Name> x<Quantity>" on its last token, as type names can contain an "x" too. */
@@ -83,20 +114,20 @@ fn parse_quantity(line: &str) -> Option<(&str, u32)> {
 }
 
 /* Load an EFT string and return a fit without skills. */
-pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, String> {
+pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
     let eft_lines: Vec<&str> = eft.lines().collect();
 
     /* First line of an EFT always start with "[ship-type,name]". */
     let Some(header) = eft_lines.first() else {
-        return Err("Empty EFT".to_string());
+        return Err(Error::Empty);
     };
     if !header.starts_with("[") || !header.ends_with("]") {
-        return Err("Invalid EFT header".to_string());
+        return Err(Error::InvalidHeader);
     }
     let header = header.trim_start_matches("[").trim_end_matches("]");
 
     let Some((ship_type_name, name)) = header.split_once(",") else {
-        return Err("Invalid EFT header".to_string());
+        return Err(Error::InvalidHeader);
     };
 
     let mut fit = Fit {
@@ -128,7 +159,7 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, String> {
                             "[Empty Low slot]" => EFFECT_LO_POWER,
                             "[Empty Rig slot]" => EFFECT_RIG_SLOT,
                             "[Empty Subsystem slot]" => EFFECT_SUBSYSTEM,
-                            _ => return Err(format!("Invalid empty slot {}", line)),
+                            _ => return Err(Error::InvalidEmptySlot(line.to_string())),
                         };
 
                         next_index(&mut rack_indexes, rack);
@@ -174,7 +205,7 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, String> {
                         .transpose()?;
 
                     let Some(slot) = find_slot(info, module_type_id, &mut rack_indexes) else {
-                        return Err(format!("Module {} does not fit in any slot", module_name));
+                        return Err(Error::NoSlot(module_name.to_string()));
                     };
 
                     fit.items.push(FitItem {
@@ -250,38 +281,41 @@ mod tests {
         }
     }
 
-    fn error(eft: &str) -> String {
+    fn error(eft: &str) -> Error {
         load_eft(&Names, eft).unwrap_err()
     }
 
     #[test]
     fn empty_input() {
-        assert_eq!(error(""), "Empty EFT");
+        assert_eq!(error(""), Error::Empty);
     }
 
     #[test]
     fn header_without_comma() {
-        assert_eq!(error("[Rifter]"), "Invalid EFT header");
+        assert_eq!(error("[Rifter]"), Error::InvalidHeader);
     }
 
     #[test]
     fn unknown_empty_slot() {
         assert_eq!(
             error("[Rifter, Test]\n[Empty Hangar slot]"),
-            "Invalid empty slot [Empty Hangar slot]"
+            Error::InvalidEmptySlot("[Empty Hangar slot]".to_string())
         );
     }
 
     #[test]
     fn unknown_ship() {
-        assert_eq!(error("[Shuttle, Test]"), "Unknown type Shuttle");
+        assert_eq!(
+            error("[Shuttle, Test]"),
+            Error::UnknownType("Shuttle".to_string())
+        );
     }
 
     #[test]
     fn unknown_module() {
         assert_eq!(
             error("[Rifter, Test]\nNot A Module"),
-            "Unknown type Not A Module"
+            Error::UnknownType("Not A Module".to_string())
         );
     }
 
@@ -289,7 +323,7 @@ mod tests {
     fn unknown_charge() {
         assert_eq!(
             error("[Rifter, Test]\n200mm AutoCannon II, Not A Charge"),
-            "Unknown type Not A Charge"
+            Error::UnknownType("Not A Charge".to_string())
         );
     }
 
@@ -297,7 +331,7 @@ mod tests {
     fn unknown_quantity_item() {
         assert_eq!(
             error("[Rifter, Test]\n\nNot A Drone x5"),
-            "Unknown type Not A Drone"
+            Error::UnknownType("Not A Drone".to_string())
         );
     }
 }

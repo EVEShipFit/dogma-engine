@@ -1,6 +1,7 @@
 use flatbuffers::Vector;
 
 use super::{Names, Sde, eve};
+use crate::Error;
 use crate::info::{Info, InfoName};
 
 pub struct InfoSde<'a> {
@@ -75,15 +76,14 @@ impl<'a> InfoSde<'a> {
 impl<'a> InfoNameSde<'a> {
     /// The type ids in `names.dat` only mean anything against the SDE it was
     /// built from, so refuse a pair that does not match.
-    pub fn new(sde: &'a Sde<'a>, names: Option<&'a Names<'a>>) -> Result<InfoNameSde<'a>, String> {
+    pub fn new(sde: &'a Sde<'a>, names: Option<&'a Names<'a>>) -> Result<InfoNameSde<'a>, Error> {
         if let Some(names) = names
             && sde.build_number() != names.build_number()
         {
-            return Err(format!(
-                "SDE is build {} but the names are build {}",
-                sde.build_number(),
-                names.build_number()
-            ));
+            return Err(Error::BuildMismatch {
+                sde: sde.build_number(),
+                names: names.build_number(),
+            });
         }
 
         Ok(InfoNameSde { sde, names })
