@@ -66,7 +66,8 @@ fn get_target_object(domain: eve::ModifierDomain, origin: Object) -> Object {
             Object::Charge(index) => Object::Item(index),
             _ => panic!("Invalid origin for OtherID domain"),
         },
-        eve::ModifierDomain::StructureID => Object::Structure,
+        /* On a structure fit the hull is the structure. */
+        eve::ModifierDomain::StructureID => Object::Ship,
         eve::ModifierDomain::ItemID => origin,
         eve::ModifierDomain::TargetID => Object::Target,
         eve::ModifierDomain::Target => Object::Target,
@@ -80,8 +81,7 @@ fn for_each_in_location(
     mut apply: impl FnMut(Object, &mut Item),
 ) {
     match location {
-        /* Structure bonuses target the modules of the structure, which live in the ship's location. */
-        Object::Ship | Object::Structure => {
+        Object::Ship => {
             apply(Object::Ship, &mut objects.ship);
 
             for (index, item) in objects.items.iter_mut().enumerate() {

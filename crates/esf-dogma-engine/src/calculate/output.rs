@@ -96,7 +96,7 @@ impl SourceRef {
             Object::Item(index) => SourceRef::Item { index },
             Object::Charge(index) => SourceRef::Charge { index },
             Object::Skill(_) => SourceRef::Skill { type_id },
-            Object::Structure | Object::Target => {
+            Object::Target => {
                 unreachable!("{object:?} is never the source of an effect")
             }
         }
