@@ -3,8 +3,7 @@ use std::sync::OnceLock;
 use wasm_bindgen::prelude::*;
 
 use esf_data::{InfoSde, Sde};
-use esf_dogma_engine::Options;
-use esf_dogma_engine::fit::Fit;
+use esf_dogma_engine::{Fit, Options};
 
 /// The SDE is handed over once and then read straight out of WASM memory, so
 /// no lookup crosses back into JavaScript.

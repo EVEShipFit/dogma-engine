@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use std::fmt;
 
 use esf_data::InfoName;
-use esf_dogma_engine::fit::{self, Fit, FitItem, Slot, State};
+use esf_dogma_engine::{Character, Charge, Fit, FitItem, Ship, Slot, State};
 
 /// Why an EFT could not be loaded.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -139,11 +139,11 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
 
     let mut fit = Fit {
         name: Some(name.to_string()),
-        ship: fit::Ship {
+        ship: Ship {
             type_id: type_name_to_id(info, ship_type_name)?,
         },
         items: Vec::new(),
-        character: fit::Character::default(),
+        character: Character::default(),
     };
 
     /* An EFT has sections, which are seperated by a new line. */
@@ -220,7 +220,7 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
                         slot,
                         quantity: 1,
                         state,
-                        charge: charge_type_id.map(|type_id| fit::Charge { type_id }),
+                        charge: charge_type_id.map(|type_id| Charge { type_id }),
                     });
                 }
             }

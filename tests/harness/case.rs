@@ -1,6 +1,5 @@
 use esf_data::{InfoNameSde, InfoSde};
-use esf_dogma_engine::fit::Fit;
-use esf_dogma_engine::{Calculation, Options};
+use esf_dogma_engine::{Calculation, Fit, Options};
 use esf_format::eft;
 
 use super::dump::dump;

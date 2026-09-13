@@ -1,4 +1,4 @@
-//! Imports EVE Online ship fits into an [`esf_dogma_engine::fit::Fit`].
+//! Imports EVE Online ship fits into an [`esf_dogma_engine::Fit`].
 //!
 //! Only EFT, the text format EVE copies fits to, is supported; see
 //! [`eft::load_eft`]. English names are found in `sde.dat`; add `names.dat` to

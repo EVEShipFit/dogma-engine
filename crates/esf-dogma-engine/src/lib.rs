@@ -1,13 +1,12 @@
 //! Calculates the dogma attributes of an EVE Online ship fit: the ship, its
 //! items and the character.
 //!
-//! Describe the fit with [`fit::Fit`] and pass it to [`calculate()`], together
+//! Describe the fit with [`Fit`] and pass it to [`calculate()`], together
 //! with the static data from `esf-data`.
 //!
 //! ```no_run
 //! use esf_data::{InfoSde, Sde};
-//! use esf_dogma_engine::fit::Fit;
-//! use esf_dogma_engine::{Options, calculate};
+//! use esf_dogma_engine::{Fit, Options, calculate};
 //!
 //! let bytes = std::fs::read("sde.dat").unwrap();
 //! let sde = Sde::new(&bytes).unwrap();
@@ -24,8 +23,9 @@
 //! ```
 
 mod calculate;
-pub mod fit;
+mod fit;
 
 pub use calculate::{
     AttributeValue, Calculation, EffectOperator, ItemResult, Options, Source, SourceRef, calculate,
 };
+pub use fit::{Character, Charge, Fit, FitItem, Ship, Slot, State};

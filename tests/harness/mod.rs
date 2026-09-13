@@ -52,8 +52,8 @@ macro_rules! regression {
             #[test]
             fn $name() {
                 #[allow(unused_variables)]
-                let edit: fn(&mut esf_dogma_engine::fit::Fit) = |_| {};
-                $(let edit: fn(&mut esf_dogma_engine::fit::Fit) = $edit;)?
+                let edit: fn(&mut esf_dogma_engine::Fit) = |_| {};
+                $(let edit: fn(&mut esf_dogma_engine::Fit) = $edit;)?
                 crate::harness::snapshot(module_path!(), stringify!($name), $fit, $skills, edit);
             }
         )*
