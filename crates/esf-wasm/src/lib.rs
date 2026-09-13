@@ -2,7 +2,7 @@ use std::sync::OnceLock;
 
 use wasm_bindgen::prelude::*;
 
-use esf_data::sde::{InfoSde, Sde};
+use esf_data::{InfoSde, Sde};
 use esf_dogma_engine::Options;
 use esf_dogma_engine::fit::Fit;
 

@@ -5,7 +5,7 @@
 //! with the static data from `esf-data`.
 //!
 //! ```no_run
-//! use esf_data::sde::{InfoSde, Sde};
+//! use esf_data::{InfoSde, Sde};
 //! use esf_dogma_engine::fit::Fit;
 //! use esf_dogma_engine::{Options, calculate};
 //!

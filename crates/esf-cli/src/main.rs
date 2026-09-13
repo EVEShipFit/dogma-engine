@@ -4,7 +4,7 @@ use std::path::PathBuf;
 
 use clap::Parser;
 
-use esf_data::sde;
+use esf_data::{InfoNameSde, InfoSde, Names, Sde};
 use esf_dogma_engine::Options;
 use esf_dogma_engine::fit::{Fit, Slot, State};
 use esf_format::eft;
@@ -88,16 +88,14 @@ pub fn main() {
     };
 
     let sde_bytes = std::fs::read(&args.sde_filename).unwrap();
-    let sde = sde::Sde::new(&sde_bytes).unwrap();
+    let sde = Sde::new(&sde_bytes).unwrap();
 
     /* English names come from the SDE; the names file only widens that to the
      * other seven languages, so a missing one is not fatal. */
     let names_bytes = std::fs::read(&args.names_filename).ok();
-    let names = names_bytes
-        .as_ref()
-        .map(|bytes| sde::Names::new(bytes).unwrap());
+    let names = names_bytes.as_ref().map(|bytes| Names::new(bytes).unwrap());
 
-    let info_name = sde::InfoNameSde::new(&sde, names.as_ref()).unwrap();
+    let info_name = InfoNameSde::new(&sde, names.as_ref()).unwrap();
 
     let mut fit = eft::load_eft(&info_name, &eft).unwrap();
 
@@ -119,7 +117,7 @@ pub fn main() {
         }
     }
 
-    let info = sde::InfoSde::new(&sde);
+    let info = InfoSde::new(&sde);
     let options = Options {
         sources: args.sources,
     };

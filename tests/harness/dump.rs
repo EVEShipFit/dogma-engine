@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use esf_data::info::Info;
+use esf_data::Info;
 use esf_dogma_engine::fit::{Fit, Slot, State};
 use esf_dogma_engine::{Calculation, ItemResult};
 

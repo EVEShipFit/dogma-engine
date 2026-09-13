@@ -6,9 +6,9 @@ use flatbuffers::InvalidFlatbuffer;
 #[derive(Clone, Debug, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum Error {
-    /// The bytes handed to [`Sde::new`](crate::sde::Sde::new) are not an SDE.
+    /// The bytes handed to [`Sde::new`](crate::Sde::new) are not an SDE.
     InvalidSde(InvalidFlatbuffer),
-    /// The bytes handed to [`Names::new`](crate::sde::Names::new) are not a
+    /// The bytes handed to [`Names::new`](crate::Names::new) are not a
     /// names file.
     InvalidNames(InvalidFlatbuffer),
     /// The SDE and the names file come from different builds.

@@ -1,6 +1,6 @@
 use std::collections::BTreeSet;
 
-use esf_data::sde::eve;
+use esf_data::eve;
 
 use super::attribute_ids::{ATTRIBUTE_CAPACITOR_NEED_ID, ATTRIBUTE_SKILLS};
 use super::item::{Attribute, Effect, EffectCategory, EffectOperator, Item, Object};
