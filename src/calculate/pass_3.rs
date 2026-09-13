@@ -41,6 +41,18 @@ impl Cache {
             skills: vec![BTreeMap::new(); ship.skills.len()],
         }
     }
+
+    fn get_mut(&mut self, object: Object) -> &mut BTreeMap<i32, f64> {
+        match object {
+            Object::Ship => &mut self.hull,
+            Object::Char => &mut self.char,
+            Object::Structure => &mut self.structure,
+            Object::Target => &mut self.target,
+            Object::Item(index) => &mut self.items[index],
+            Object::Charge(index) => &mut self.charge[index],
+            Object::Skill(index) => &mut self.skills[index],
+        }
+    }
 }
 
 impl Attribute {
@@ -55,16 +67,7 @@ impl Attribute {
         if let Some(value) = self.value {
             return value;
         }
-        let cache_value = match item {
-            Object::Ship => cache.hull.get(&attribute_id),
-            Object::Char => cache.char.get(&attribute_id),
-            Object::Structure => cache.structure.get(&attribute_id),
-            Object::Target => cache.target.get(&attribute_id),
-            Object::Item(index) => cache.items[index].get(&attribute_id),
-            Object::Charge(index) => cache.charge[index].get(&attribute_id),
-            Object::Skill(index) => cache.skills[index].get(&attribute_id),
-        };
-        if let Some(cache_value) = cache_value {
+        if let Some(cache_value) = cache.get_mut(item).get(&attribute_id) {
             return *cache_value;
         }
 
@@ -79,17 +82,8 @@ impl Attribute {
                     continue;
                 }
 
-                let source = match effect.source {
-                    Object::Ship => &ship.hull,
-                    Object::Item(index) => &ship.items[index],
-                    Object::Charge(index) => match &ship.items[index].charge {
-                        Some(charge) => charge,
-                        None => continue,
-                    },
-                    Object::Skill(index) => &ship.skills[index],
-                    Object::Char => &ship.char,
-                    Object::Structure => &ship.structure,
-                    Object::Target => &ship.target,
+                let Some(source) = ship.get(effect.source) else {
+                    continue;
                 };
 
                 if effect.source_category > source.state {
@@ -201,29 +195,7 @@ impl Attribute {
             }
         }
 
-        match item {
-            Object::Ship => {
-                cache.hull.insert(attribute_id, current_value);
-            }
-            Object::Char => {
-                cache.char.insert(attribute_id, current_value);
-            }
-            Object::Structure => {
-                cache.structure.insert(attribute_id, current_value);
-            }
-            Object::Target => {
-                cache.target.insert(attribute_id, current_value);
-            }
-            Object::Item(index) => {
-                cache.items[index].insert(attribute_id, current_value);
-            }
-            Object::Charge(index) => {
-                cache.charge[index].insert(attribute_id, current_value);
-            }
-            Object::Skill(index) => {
-                cache.skills[index].insert(attribute_id, current_value);
-            }
-        }
+        cache.get_mut(item).insert(attribute_id, current_value);
 
         current_value
     }

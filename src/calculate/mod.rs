@@ -8,7 +8,7 @@ mod pass_3;
 mod pass_4;
 
 use crate::info::Info;
-use item::Item;
+use item::{Item, Object};
 
 #[derive(Serialize, Debug)]
 pub struct DamageProfile {
@@ -31,6 +31,30 @@ pub struct Ship {
 }
 
 impl Ship {
+    fn get(&self, object: Object) -> Option<&Item> {
+        match object {
+            Object::Ship => Some(&self.hull),
+            Object::Char => Some(&self.char),
+            Object::Structure => Some(&self.structure),
+            Object::Target => Some(&self.target),
+            Object::Item(index) => Some(&self.items[index]),
+            Object::Charge(index) => self.items[index].charge.as_deref(),
+            Object::Skill(index) => Some(&self.skills[index]),
+        }
+    }
+
+    fn get_mut(&mut self, object: Object) -> Option<&mut Item> {
+        match object {
+            Object::Ship => Some(&mut self.hull),
+            Object::Char => Some(&mut self.char),
+            Object::Structure => Some(&mut self.structure),
+            Object::Target => Some(&mut self.target),
+            Object::Item(index) => Some(&mut self.items[index]),
+            Object::Charge(index) => self.items[index].charge.as_deref_mut(),
+            Object::Skill(index) => Some(&mut self.skills[index]),
+        }
+    }
+
     pub fn new(ship_type_id: i32) -> Ship {
         Ship {
             hull: Item::new_fake(ship_type_id),
