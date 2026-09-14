@@ -31,6 +31,8 @@ All identifiers are those from the SDE.
 - `name` (optional): name of the fit.
 - `ship`: the ship being fitted.
   - `type_id`: its type.
+  - `mode` (optional): type ID of the active mode, for ships that have modes.
+    _Whether the mode belongs to the ship is not checked._
 - `items`: everything fitted or carried. Each item has:
   - `type_id`: its type.
   - `slot`: where the item is.
@@ -52,6 +54,7 @@ All identifiers are those from the SDE.
 ### Calculation
 
 - `ship`: result for the ship.
+- `mode`: result for the mode; absent when the fit has no mode.
 - `items`: one result per item of the fit, in the same order.
 - `character`: result for the character.
 
@@ -59,7 +62,7 @@ Each result has:
 
 - `attributes`: per attribute ID, its `base` value before effects and its final `value`.
   With the `sources` option, also `sources`: every modifier on it, in the order they were applied. Each has:
-  - `from`: where it comes from; `type` is `ship`, `character`, `item` or `charge` (with the `index` into `items`), or `skill` (with its `type_id`).
+  - `from`: where it comes from; `type` is `ship`, `mode`, `character`, `item` or `charge` (with the `index` into `items`), or `skill` (with its `type_id`).
   - `effect_id`: the effect that modifies.
   - `source_attribute_id`: the attribute on the source that holds `value`.
   - `operator`: `pre_assign`, `pre_mul`, `pre_div`, `mod_add`, `mod_sub`, `post_mul`, `post_div`, `post_percent` or `post_assign`.

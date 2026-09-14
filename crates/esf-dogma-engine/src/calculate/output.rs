@@ -11,13 +11,16 @@ use crate::fit::State;
 pub struct Calculation {
     /// The ship.
     pub ship: ItemResult,
+    /// The active mode, if the ship has one.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub mode: Option<ItemResult>,
     /// Index-parallel to `Fit::items`: same length, same order.
     pub items: Vec<ItemResult>,
     /// The character.
     pub character: ItemResult,
 }
 
-/// The calculated attributes of the ship, the character, or one item.
+/// The calculated attributes of the ship, its mode, the character, or one item.
 #[derive(Serialize, Debug)]
 pub struct ItemResult {
     /// Every attribute, by attribute id.
@@ -69,6 +72,8 @@ pub struct Source {
 pub enum SourceRef {
     /// The ship.
     Ship,
+    /// The active mode of the ship.
+    Mode,
     /// The character.
     Character,
     /// An item of the fit.
@@ -92,6 +97,7 @@ impl SourceRef {
     pub(super) fn new(object: Object, type_id: i32) -> SourceRef {
         match object {
             Object::Ship => SourceRef::Ship,
+            Object::Mode => SourceRef::Mode,
             Object::Char => SourceRef::Character,
             Object::Item(index) => SourceRef::Item { index },
             Object::Charge(index) => SourceRef::Charge { index },
@@ -132,6 +138,7 @@ impl Calculation {
     pub(super) fn new(objects: &Objects) -> Calculation {
         Calculation {
             ship: ItemResult::new(&objects.ship),
+            mode: objects.mode.as_ref().map(ItemResult::new),
             items: objects.items.iter().map(ItemResult::new).collect(),
             character: ItemResult::new(&objects.char),
         }

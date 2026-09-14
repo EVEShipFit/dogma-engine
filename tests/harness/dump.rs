@@ -18,6 +18,19 @@ pub fn dump(info: &impl Info, fit: &Fit, calculation: &Calculation) -> String {
     );
     blocks.push(align(&ship));
 
+    if let (Some(mode_type_id), Some(mode_result)) = (fit.ship.mode, &calculation.mode) {
+        let mut mode = Vec::new();
+        push_item(
+            info,
+            Some(mode_type_id),
+            None,
+            mode_result,
+            "mode",
+            &mut mode,
+        );
+        blocks.push(align(&mode));
+    }
+
     let mut character = Vec::new();
     push_item(
         info,

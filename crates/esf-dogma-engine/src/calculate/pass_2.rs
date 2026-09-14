@@ -104,7 +104,7 @@ fn for_each_in_location(
                 apply(Object::Skill(index), skill);
             }
         }
-        Object::Item(_) | Object::Charge(_) | Object::Skill(_) | Object::Target => {
+        Object::Mode | Object::Item(_) | Object::Charge(_) | Object::Skill(_) | Object::Target => {
             apply(location, objects.get_mut(location).unwrap())
         }
     }
@@ -285,6 +285,9 @@ impl Pass for PassTwo {
         objects
             .ship
             .collect_effects(info, Object::Ship, false, &mut effects);
+        if let Some(mode) = &mut objects.mode {
+            mode.collect_effects(info, Object::Mode, false, &mut effects);
+        }
         objects
             .char
             .collect_effects(info, Object::Char, false, &mut effects);
