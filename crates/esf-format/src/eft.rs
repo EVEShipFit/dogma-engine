@@ -56,6 +56,7 @@ const RACKS: [(i32, Rack); 6] = [
 ];
 
 const CATEGORY_DRONE: i32 = 18;
+const CATEGORY_FIGHTER: i32 = 87;
 
 fn section_iter(eft_lines: Vec<&str>) -> impl Iterator<Item = Vec<&str>> {
     let mut section: Vec<&str> = Vec::new();
@@ -120,7 +121,8 @@ fn parse_quantity(line: &str) -> Option<(&str, u32)> {
 /// Modules are active, unless the line ends in `/offline`. As an EVEShip.fit
 /// extension, `/online`, `/active` and `/overload` work too. A section where
 /// every line ends in `x<quantity>` goes in the drone bay if it holds only
-/// drones, and in the cargo hold otherwise.
+/// drones, in the fighter bay if it holds only fighters, and in the cargo hold
+/// otherwise.
 pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
     let eft_lines: Vec<&str> = eft.lines().collect();
 
@@ -221,6 +223,7 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
                         quantity: 1,
                         state,
                         charge: charge_type_id.map(|type_id| Charge { type_id }),
+                        fighter_abilities: None,
                     });
                 }
             }
@@ -228,20 +231,22 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
                 let mut items = Vec::new();
 
                 let mut are_drones = true;
+                let mut are_fighters = true;
 
                 for (type_name, quantity) in quantities {
                     let type_id = type_name_to_id(info, type_name)?;
 
-                    let r#type = info.get_type(type_id);
-                    are_drones = are_drones
-                        && r#type.is_some_and(|r#type| r#type.category_id() == CATEGORY_DRONE);
+                    let category_id = info.get_type(type_id).map(|r#type| r#type.category_id());
+                    are_drones = are_drones && category_id == Some(CATEGORY_DRONE);
+                    are_fighters = are_fighters && category_id == Some(CATEGORY_FIGHTER);
 
                     items.push((type_id, quantity));
                 }
 
-                let (slot, state) = match are_drones {
-                    true => (Slot::DroneBay, State::Active),
-                    false => (Slot::Cargo, State::Offline),
+                let (slot, state) = match (are_drones, are_fighters) {
+                    (true, _) => (Slot::DroneBay, State::Active),
+                    (_, true) => (Slot::FighterBay, State::Offline),
+                    _ => (Slot::Cargo, State::Offline),
                 };
 
                 for (type_id, quantity) in items {
@@ -251,6 +256,7 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
                         quantity,
                         state,
                         charge: None,
+                        fighter_abilities: None,
                     });
                 }
             }

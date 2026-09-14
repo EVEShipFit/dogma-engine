@@ -1,6 +1,6 @@
 use serde::Serialize;
 use std::cell::{Cell, RefCell};
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use strum_macros::EnumIter;
 
 use super::output::Source;
@@ -86,6 +86,7 @@ pub struct Item {
     pub max_state: EffectCategory,
     pub attributes: BTreeMap<i32, Attribute>,
     pub effects: Vec<i32>,
+    pub fighter_abilities: Option<BTreeSet<i32>>,
 }
 
 impl Attribute {
@@ -143,8 +144,12 @@ impl Item {
         self.is_module() || matches!(self.slot, Some(Slot::Service(_)))
     }
 
+    pub fn is_fighter(&self) -> bool {
+        matches!(self.slot, Some(Slot::FighterTube(_) | Slot::FighterBay))
+    }
+
     pub fn is_calculated(&self) -> bool {
-        self.is_in_ship() || self.slot == Some(Slot::DroneBay)
+        self.is_in_ship() || self.is_fighter() || self.slot == Some(Slot::DroneBay)
     }
 
     pub fn new_charge(type_id: i32) -> Item {
@@ -159,6 +164,7 @@ impl Item {
             max_state: EffectCategory::Active,
             attributes: BTreeMap::new(),
             effects: Vec::new(),
+            fighter_abilities: None,
         }
     }
 
@@ -177,15 +183,19 @@ impl Item {
             max_state: EffectCategory::Passive,
             attributes: BTreeMap::new(),
             effects: Vec::new(),
+            fighter_abilities: fit_item.fighter_abilities.clone(),
         };
 
-        if item.slot == Some(Slot::DroneBay) {
-            if item.state != EffectCategory::Passive {
-                item.state = EffectCategory::Active;
+        match item.slot {
+            Some(Slot::DroneBay | Slot::FighterTube(_)) => {
+                if item.state != EffectCategory::Passive {
+                    item.state = EffectCategory::Active;
+                }
+                item.max_state = EffectCategory::Active;
             }
-            item.max_state = EffectCategory::Active;
-        } else if !item.is_calculated() {
-            item.state = EffectCategory::Passive;
+            Some(Slot::FighterBay) => item.state = EffectCategory::Passive,
+            _ if !item.is_calculated() => item.state = EffectCategory::Passive,
+            _ => {}
         }
 
         item
@@ -203,6 +213,7 @@ impl Item {
             max_state: EffectCategory::Active,
             attributes: BTreeMap::new(),
             effects: Vec::new(),
+            fighter_abilities: None,
         }
     }
 }
