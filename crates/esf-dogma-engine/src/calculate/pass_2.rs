@@ -203,6 +203,17 @@ impl Item {
                 self.max_state = category;
             }
 
+            /* Every non-passive effect of a fighter is an ability, and the fit picks which run. */
+            if self.is_fighter() && category != EffectCategory::Passive {
+                let used = match &self.fighter_abilities {
+                    Some(abilities) => abilities.contains(&dogma_effect.effect_id()),
+                    None => dogma_effect.is_default(),
+                };
+                if !used {
+                    continue;
+                }
+            }
+
             let modifiers = type_dogma_effect
                 .modifiers()
                 .filter(|modifiers| !modifiers.is_empty());

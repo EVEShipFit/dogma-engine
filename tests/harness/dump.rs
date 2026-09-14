@@ -52,6 +52,8 @@ fn slot_name(slot: Slot) -> (&'static str, Option<u8>) {
         Slot::Rig(index) => ("rig", Some(index)),
         Slot::Subsystem(index) => ("subsystem", Some(index)),
         Slot::Service(index) => ("service", Some(index)),
+        Slot::FighterTube(index) => ("fightertube", Some(index)),
+        Slot::FighterBay => ("fighterbay", None),
         Slot::DroneBay => ("dronebay", None),
         Slot::Cargo => ("cargo", None),
     }

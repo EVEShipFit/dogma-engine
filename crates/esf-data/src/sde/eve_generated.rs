@@ -994,6 +994,233 @@ impl<'a> TypeDogmaEffect {
 
 }
 
+// struct TypeFighterAbility, aligned to 4
+#[repr(transparent)]
+#[derive(Clone, Copy, PartialEq)]
+pub struct TypeFighterAbility(pub [u8; 20]);
+impl Default for TypeFighterAbility { 
+  fn default() -> Self { 
+    Self([0; 20])
+  }
+}
+impl core::fmt::Debug for TypeFighterAbility {
+  fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+    f.debug_struct("TypeFighterAbility")
+      .field("slot", &self.slot())
+      .field("ability_id", &self.ability_id())
+      .field("cooldown_seconds", &self.cooldown_seconds())
+      .field("charge_count", &self.charge_count())
+      .field("rearm_time_seconds", &self.rearm_time_seconds())
+      .finish()
+  }
+}
+
+impl flatbuffers::SimpleToVerifyInSlice for TypeFighterAbility {}
+impl<'a> flatbuffers::Follow<'a> for TypeFighterAbility {
+  type Inner = &'a TypeFighterAbility;
+  #[inline]
+  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+    <&'a TypeFighterAbility>::follow(buf, loc)
+  }
+}
+impl<'a> flatbuffers::Follow<'a> for &'a TypeFighterAbility {
+  type Inner = &'a TypeFighterAbility;
+  #[inline]
+  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+    flatbuffers::follow_cast_ref::<TypeFighterAbility>(buf, loc)
+  }
+}
+impl<'b> flatbuffers::Push for TypeFighterAbility {
+    type Output = TypeFighterAbility;
+    #[inline]
+    unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
+        let src = ::core::slice::from_raw_parts(self as *const TypeFighterAbility as *const u8, <Self as flatbuffers::Push>::size());
+        dst.copy_from_slice(src);
+    }
+    #[inline]
+    fn alignment() -> flatbuffers::PushAlignment {
+        flatbuffers::PushAlignment::new(4)
+    }
+}
+
+impl<'a> flatbuffers::Verifiable for TypeFighterAbility {
+  #[inline]
+  fn run_verifier(
+    v: &mut flatbuffers::Verifier, pos: usize
+  ) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+    use self::flatbuffers::Verifiable;
+    v.in_buffer::<Self>(pos)
+  }
+}
+
+impl<'a> TypeFighterAbility {
+  #[allow(clippy::too_many_arguments)]
+  pub fn new(
+    slot: i8,
+    ability_id: i32,
+    cooldown_seconds: f32,
+    charge_count: i32,
+    rearm_time_seconds: f32,
+  ) -> Self {
+    let mut s = Self([0; 20]);
+    s.set_slot(slot);
+    s.set_ability_id(ability_id);
+    s.set_cooldown_seconds(cooldown_seconds);
+    s.set_charge_count(charge_count);
+    s.set_rearm_time_seconds(rearm_time_seconds);
+    s
+  }
+
+  /// The position in the fighter's ability bar, starting at 0.
+  pub fn slot(&self) -> i8 {
+    let mut mem = core::mem::MaybeUninit::<<i8 as EndianScalar>::Scalar>::uninit();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    EndianScalar::from_little_endian(unsafe {
+      core::ptr::copy_nonoverlapping(
+        self.0[0..].as_ptr(),
+        mem.as_mut_ptr() as *mut u8,
+        core::mem::size_of::<<i8 as EndianScalar>::Scalar>(),
+      );
+      mem.assume_init()
+    })
+  }
+
+  pub fn set_slot(&mut self, x: i8) {
+    let x_le = x.to_little_endian();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    unsafe {
+      core::ptr::copy_nonoverlapping(
+        &x_le as *const _ as *const u8,
+        self.0[0..].as_mut_ptr(),
+        core::mem::size_of::<<i8 as EndianScalar>::Scalar>(),
+      );
+    }
+  }
+
+  pub fn ability_id(&self) -> i32 {
+    let mut mem = core::mem::MaybeUninit::<<i32 as EndianScalar>::Scalar>::uninit();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    EndianScalar::from_little_endian(unsafe {
+      core::ptr::copy_nonoverlapping(
+        self.0[4..].as_ptr(),
+        mem.as_mut_ptr() as *mut u8,
+        core::mem::size_of::<<i32 as EndianScalar>::Scalar>(),
+      );
+      mem.assume_init()
+    })
+  }
+
+  pub fn set_ability_id(&mut self, x: i32) {
+    let x_le = x.to_little_endian();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    unsafe {
+      core::ptr::copy_nonoverlapping(
+        &x_le as *const _ as *const u8,
+        self.0[4..].as_mut_ptr(),
+        core::mem::size_of::<<i32 as EndianScalar>::Scalar>(),
+      );
+    }
+  }
+
+  /// 0 when the ability has no cooldown.
+  pub fn cooldown_seconds(&self) -> f32 {
+    let mut mem = core::mem::MaybeUninit::<<f32 as EndianScalar>::Scalar>::uninit();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    EndianScalar::from_little_endian(unsafe {
+      core::ptr::copy_nonoverlapping(
+        self.0[8..].as_ptr(),
+        mem.as_mut_ptr() as *mut u8,
+        core::mem::size_of::<<f32 as EndianScalar>::Scalar>(),
+      );
+      mem.assume_init()
+    })
+  }
+
+  pub fn set_cooldown_seconds(&mut self, x: f32) {
+    let x_le = x.to_little_endian();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    unsafe {
+      core::ptr::copy_nonoverlapping(
+        &x_le as *const _ as *const u8,
+        self.0[8..].as_mut_ptr(),
+        core::mem::size_of::<<f32 as EndianScalar>::Scalar>(),
+      );
+    }
+  }
+
+  /// 0 when the ability does not run out of charges.
+  pub fn charge_count(&self) -> i32 {
+    let mut mem = core::mem::MaybeUninit::<<i32 as EndianScalar>::Scalar>::uninit();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    EndianScalar::from_little_endian(unsafe {
+      core::ptr::copy_nonoverlapping(
+        self.0[12..].as_ptr(),
+        mem.as_mut_ptr() as *mut u8,
+        core::mem::size_of::<<i32 as EndianScalar>::Scalar>(),
+      );
+      mem.assume_init()
+    })
+  }
+
+  pub fn set_charge_count(&mut self, x: i32) {
+    let x_le = x.to_little_endian();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    unsafe {
+      core::ptr::copy_nonoverlapping(
+        &x_le as *const _ as *const u8,
+        self.0[12..].as_mut_ptr(),
+        core::mem::size_of::<<i32 as EndianScalar>::Scalar>(),
+      );
+    }
+  }
+
+  pub fn rearm_time_seconds(&self) -> f32 {
+    let mut mem = core::mem::MaybeUninit::<<f32 as EndianScalar>::Scalar>::uninit();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    EndianScalar::from_little_endian(unsafe {
+      core::ptr::copy_nonoverlapping(
+        self.0[16..].as_ptr(),
+        mem.as_mut_ptr() as *mut u8,
+        core::mem::size_of::<<f32 as EndianScalar>::Scalar>(),
+      );
+      mem.assume_init()
+    })
+  }
+
+  pub fn set_rearm_time_seconds(&mut self, x: f32) {
+    let x_le = x.to_little_endian();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    unsafe {
+      core::ptr::copy_nonoverlapping(
+        &x_le as *const _ as *const u8,
+        self.0[16..].as_mut_ptr(),
+        core::mem::size_of::<<f32 as EndianScalar>::Scalar>(),
+      );
+    }
+  }
+
+}
+
 pub enum TypeOffset {}
 #[derive(Copy, Clone, PartialEq)]
 
@@ -1025,6 +1252,7 @@ impl<'a> Type<'a> {
   pub const VT_VOLUME: flatbuffers::VOffsetT = 28;
   pub const VT_DOGMA_ATTRIBUTES: flatbuffers::VOffsetT = 30;
   pub const VT_DOGMA_EFFECTS: flatbuffers::VOffsetT = 32;
+  pub const VT_FIGHTER_ABILITIES: flatbuffers::VOffsetT = 34;
 
   #[inline]
   pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -1036,6 +1264,7 @@ impl<'a> Type<'a> {
     args: &'args TypeArgs<'args>
   ) -> flatbuffers::WIPOffset<Type<'bldr>> {
     let mut builder = TypeBuilder::new(_fbb);
+    if let Some(x) = args.fighter_abilities { builder.add_fighter_abilities(x); }
     if let Some(x) = args.dogma_effects { builder.add_dogma_effects(x); }
     if let Some(x) = args.dogma_attributes { builder.add_dogma_attributes(x); }
     if let Some(x) = args.volume { builder.add_volume(x); }
@@ -1171,6 +1400,13 @@ impl<'a> Type<'a> {
     // which contains a valid value in this slot
     unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, TypeDogmaEffect>>>(Type::VT_DOGMA_EFFECTS, None)}
   }
+  #[inline]
+  pub fn fighter_abilities(&self) -> Option<flatbuffers::Vector<'a, TypeFighterAbility>> {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, TypeFighterAbility>>>(Type::VT_FIGHTER_ABILITIES, None)}
+  }
 }
 
 impl flatbuffers::Verifiable for Type<'_> {
@@ -1195,6 +1431,7 @@ impl flatbuffers::Verifiable for Type<'_> {
      .visit_field::<f32>("volume", Self::VT_VOLUME, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, TypeDogmaAttribute>>>("dogma_attributes", Self::VT_DOGMA_ATTRIBUTES, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, TypeDogmaEffect>>>("dogma_effects", Self::VT_DOGMA_EFFECTS, false)?
+     .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, TypeFighterAbility>>>("fighter_abilities", Self::VT_FIGHTER_ABILITIES, false)?
      .finish();
     Ok(())
   }
@@ -1215,6 +1452,7 @@ pub struct TypeArgs<'a> {
     pub volume: Option<f32>,
     pub dogma_attributes: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, TypeDogmaAttribute>>>,
     pub dogma_effects: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, TypeDogmaEffect>>>,
+    pub fighter_abilities: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, TypeFighterAbility>>>,
 }
 impl<'a> Default for TypeArgs<'a> {
   #[inline]
@@ -1235,6 +1473,7 @@ impl<'a> Default for TypeArgs<'a> {
       volume: None,
       dogma_attributes: None,
       dogma_effects: None,
+      fighter_abilities: None,
     }
   }
 }
@@ -1305,6 +1544,10 @@ impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> TypeBuilder<'a, 'b, A> {
     self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Type::VT_DOGMA_EFFECTS, dogma_effects);
   }
   #[inline]
+  pub fn add_fighter_abilities(&mut self, fighter_abilities: flatbuffers::WIPOffset<flatbuffers::Vector<'b , TypeFighterAbility>>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Type::VT_FIGHTER_ABILITIES, fighter_abilities);
+  }
+  #[inline]
   pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> TypeBuilder<'a, 'b, A> {
     let start = _fbb.start_table();
     TypeBuilder {
@@ -1338,6 +1581,7 @@ impl core::fmt::Debug for Type<'_> {
       ds.field("volume", &self.volume());
       ds.field("dogma_attributes", &self.dogma_attributes());
       ds.field("dogma_effects", &self.dogma_effects());
+      ds.field("fighter_abilities", &self.fighter_abilities());
       ds.finish()
   }
 }

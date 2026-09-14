@@ -1,6 +1,6 @@
 //! The fit to calculate.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use serde::{Deserialize, Deserializer, Serialize};
 
@@ -11,7 +11,7 @@ pub struct Fit {
     pub name: Option<String>,
     /// The ship.
     pub ship: Ship,
-    /// Modules, drones and cargo.
+    /// Modules, drones, fighters and cargo.
     pub items: Vec<FitItem>,
     /// The character flying the ship.
     #[serde(default)]
@@ -25,14 +25,15 @@ pub struct Ship {
     pub type_id: i32,
 }
 
-/// A module, drone or item in cargo.
+/// A module, drone, fighter squadron or item in cargo.
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct FitItem {
     /// The type id of the item.
     pub type_id: i32,
     /// Where the item is.
     pub slot: Slot,
-    /// 1 for modules. Stack size for drones and cargo.
+    /// 1 for modules. Stack size for drones, fighters and cargo; for fighters
+    /// in a tube, the size of the squadron.
     #[serde(default = "one")]
     pub quantity: u32,
     /// The state asked for; the calculation lowers it when the item cannot
@@ -40,6 +41,10 @@ pub struct FitItem {
     pub state: State,
     /// The charge loaded in the module, if any.
     pub charge: Option<Charge>,
+    /// Only for fighters: the abilities used, by effect id. `None` uses the
+    /// abilities the fighter uses by default.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fighter_abilities: Option<BTreeSet<i32>>,
 }
 
 /// Where an item is. The number is the position in its rack, starting at 0.
@@ -58,6 +63,10 @@ pub enum Slot {
     Subsystem(u8),
     /// A service slot, on a structure.
     Service(u8),
+    /// A fighter tube; a squadron that is not offline is in space.
+    FighterTube(u8),
+    /// The fighter bay; nothing in it is in space.
+    FighterBay,
     /// The drone bay; a drone that is not offline is in space.
     DroneBay,
     /// The cargo hold; nothing in it is calculated.
@@ -135,9 +144,32 @@ mod tests {
 
         assert_eq!(fit.items[0].slot, Slot::High(0));
         assert_eq!(fit.items[0].quantity, 1);
+        assert_eq!(fit.items[0].fighter_abilities, None);
         assert_eq!(fit.items[1].slot, Slot::DroneBay);
         assert_eq!(fit.items[1].quantity, 5);
         assert_eq!(fit.character.skills[&3300], 5);
+    }
+
+    #[test]
+    fn reads_fighters() {
+        let fit: Fit = serde_json::from_str(
+            r#"{
+                "ship": {"type_id": 23911},
+                "items": [
+                    {"type_id": 40556, "slot": {"type": "fighter_tube", "index": 1}, "quantity": 6, "state": "active", "fighter_abilities": [6465, 6431]},
+                    {"type_id": 40556, "slot": {"type": "fighter_bay"}, "quantity": 3, "state": "offline", "fighter_abilities": []}
+                ]
+            }"#,
+        )
+        .unwrap();
+
+        assert_eq!(fit.items[0].slot, Slot::FighterTube(1));
+        assert_eq!(
+            fit.items[0].fighter_abilities,
+            Some(BTreeSet::from([6431, 6465]))
+        );
+        assert_eq!(fit.items[1].slot, Slot::FighterBay);
+        assert_eq!(fit.items[1].fighter_abilities, Some(BTreeSet::new()));
     }
 
     #[test]
@@ -151,6 +183,7 @@ mod tests {
                 quantity: 1,
                 state: State::Overload,
                 charge: None,
+                fighter_abilities: None,
             }],
             character: Character::default(),
         };
@@ -158,6 +191,7 @@ mod tests {
         let json = serde_json::to_string(&fit).unwrap();
         let parsed: Fit = serde_json::from_str(&json).unwrap();
 
+        assert!(!json.contains("fighter_abilities"));
         assert_eq!(parsed.items[0].slot, Slot::Medium(2));
         assert_eq!(parsed.items[0].state, State::Overload);
     }
