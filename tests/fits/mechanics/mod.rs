@@ -3,3 +3,4 @@
 mod drone_stack_state;
 mod fighters;
 mod stacking_per_operator;
+mod tactical_modes;

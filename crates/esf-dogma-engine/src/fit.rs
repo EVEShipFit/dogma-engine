@@ -23,6 +23,9 @@ pub struct Fit {
 pub struct Ship {
     /// The type id of the ship.
     pub type_id: i32,
+    /// The type id of the active mode, for ships that have modes.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub mode: Option<i32>,
 }
 
 /// A module, drone, fighter squadron or item in cargo.
@@ -142,6 +145,7 @@ mod tests {
         )
         .unwrap();
 
+        assert_eq!(fit.ship.mode, None);
         assert_eq!(fit.items[0].slot, Slot::High(0));
         assert_eq!(fit.items[0].quantity, 1);
         assert_eq!(fit.items[0].fighter_abilities, None);
@@ -173,10 +177,27 @@ mod tests {
     }
 
     #[test]
+    fn reads_mode() {
+        let fit: Fit = serde_json::from_str(
+            r#"{
+                "ship": {"type_id": 34317, "mode": 34319},
+                "items": []
+            }"#,
+        )
+        .unwrap();
+
+        assert_eq!(fit.ship.type_id, 34317);
+        assert_eq!(fit.ship.mode, Some(34319));
+    }
+
+    #[test]
     fn round_trips_through_json() {
         let fit = Fit {
             name: Some("Rifter".to_string()),
-            ship: Ship { type_id: 587 },
+            ship: Ship {
+                type_id: 587,
+                mode: None,
+            },
             items: vec![FitItem {
                 type_id: 47408,
                 slot: Slot::Medium(2),
@@ -192,6 +213,7 @@ mod tests {
         let parsed: Fit = serde_json::from_str(&json).unwrap();
 
         assert!(!json.contains("fighter_abilities"));
+        assert!(!json.contains("mode"));
         assert_eq!(parsed.items[0].slot, Slot::Medium(2));
         assert_eq!(parsed.items[0].state, State::Overload);
     }

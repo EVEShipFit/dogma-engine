@@ -53,9 +53,12 @@ impl Item {
 
 impl PassOne {
     pub fn pass(info: &impl Info, fit: &Fit) -> Objects {
-        let mut objects = Objects::new(fit.ship.type_id);
+        let mut objects = Objects::new(fit.ship.type_id, fit.ship.mode);
 
         objects.ship.set_attributes(info);
+        if let Some(mode) = objects.mode.as_mut() {
+            mode.set_attributes(info);
+        }
 
         /* These carry no attributes, but pass 2 still wants their category. */
         objects.char.set_type_ids(info);

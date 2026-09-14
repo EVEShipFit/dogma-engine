@@ -26,6 +26,7 @@ pub struct Options {
 #[derive(Debug)]
 pub(crate) struct Objects {
     pub ship: Item,
+    pub mode: Option<Item>,
     pub items: Vec<Item>,
     pub skills: Vec<Item>,
     pub char: Item,
@@ -37,6 +38,7 @@ impl Objects {
     fn get(&self, object: Object) -> Option<&Item> {
         match object {
             Object::Ship => Some(&self.ship),
+            Object::Mode => self.mode.as_ref(),
             Object::Char => Some(&self.char),
             Object::Target => Some(&self.target),
             Object::Item(index) => Some(&self.items[index]),
@@ -48,6 +50,7 @@ impl Objects {
     fn get_mut(&mut self, object: Object) -> Option<&mut Item> {
         match object {
             Object::Ship => Some(&mut self.ship),
+            Object::Mode => self.mode.as_mut(),
             Object::Char => Some(&mut self.char),
             Object::Target => Some(&mut self.target),
             Object::Item(index) => Some(&mut self.items[index]),
@@ -56,9 +59,10 @@ impl Objects {
         }
     }
 
-    pub fn new(ship_type_id: i32) -> Objects {
+    pub fn new(ship_type_id: i32, mode_type_id: Option<i32>) -> Objects {
         Objects {
             ship: Item::new_fake(ship_type_id),
+            mode: mode_type_id.map(Item::new_fake),
             items: Vec::new(),
             skills: Vec::new(),
             char: Item::new_fake(1373),

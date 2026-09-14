@@ -46,6 +46,7 @@ pub enum EffectOperator {
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Object {
     Ship,
+    Mode,
     Item(usize),
     Charge(usize),
     Skill(usize),

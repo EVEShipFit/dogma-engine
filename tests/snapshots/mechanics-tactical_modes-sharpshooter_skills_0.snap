@@ -1,0 +1,92 @@
+---
+source: tests/harness/case.rs
+expression: "calculate_fit(eft_fit, skills, edit)"
+---
+ship/type                                    = Confessor
+ship/scanStrength                            = 26.000000
+ship/passiveShieldEffectiveRechargeRate      = 3.000000
+ship/passiveShieldRechargeRate               = 1.875000
+ship/velocityBoost                           = 88.043478
+ship/ehp                                     = 3594.195869
+ship/shieldThermalDamageEffectiveResonance   = 0.200000
+ship/shieldKineticDamageEffectiveResonance   = 0.112500
+ship/shieldExplosiveDamageEffectiveResonance = 0.062500
+ship/shieldEmDamageEffectiveResonance        = 0.250000
+ship/hullThermalDamageEffectiveResonance     = 0.167500
+ship/hullKineticDamageEffectiveResonance     = 0.167500
+ship/hullExplosiveDamageEffectiveResonance   = 0.167500
+ship/hullEmDamageEffectiveResonance          = 0.167500
+ship/armorThermalDamageEffectiveResonance    = 0.162500
+ship/armorKineticDamageEffectiveResonance    = 0.140625
+ship/armorExplosiveDamageEffectiveResonance  = 0.100000
+ship/armorEmDamageEffectiveResonance         = 0.125000
+ship/shieldEhp                               = 960.000000
+ship/hullEhp                                 = 1119.402957
+ship/armorEhp                                = 1514.792912
+ship/shieldDamageEffectiveResonance          = 0.625000
+ship/hullDamageEffectiveResonance            = 0.670000
+ship/armorDamageEffectiveResonance           = 0.528125
+ship/powerFree                               = 37.000000
+ship/cpuFree                                 = 116.000000
+ship/capacitorDepletesIn                     = -1.000000
+ship/capacitorPeakDeltaPercentage            = 32.531844
+ship/capacitorPeakDelta                      = 2.033240
+ship/capacitorPeakLoad                       = 4.216760
+ship/capacitorPeakRecharge                   = 6.250000
+ship/alignTime                               = 9.565431
+ship/mass                                    = 2300000.000000
+ship/powerLoad                               = 25.000000
+ship/maxVelocity                             = 470.108696
+ship/cpuLoad                                 = 64.000000
+ship/maxTargetRange                          = 90000.000000
+ship/scanRadarStrength                       = 26.000000
+ship/shipBonus2AF                            = 0.000000
+ship/shipBonusGC                             = 0.000000
+ship/shipBonusCC                             = 0.000000
+ship/shipBonusMB                             = 0.000000
+ship/shipBonusCB                             = 0.000000
+ship/shipBonusAB                             = 0.000000
+ship/shipBonusMI                             = 0.000000
+ship/shipBonusAI                             = 0.000000
+ship/shipBonusCI                             = 0.000000
+ship/shipBonusGI                             = 0.000000
+ship/shipBonusTacticalDestroyerAmarr1        = 0.000000
+ship/shipBonusTacticalDestroyerAmarr2        = 0.000000
+ship/shipBonusTacticalDestroyerAmarr3        = 0.000000
+ship/sensorDampenerResistance                = 0.333333
+ship/weaponDisruptionResistance              = 0.333333
+ship/shipBonusUF1                            = 0.000000
+ship/shipBonusUF2                            = 0.000000
+ship/shipBonusUC1                            = 0.000000
+ship/shipBonusUC2                            = 0.000000
+ship/shipBonusUB1                            = 0.000000
+ship/shipBonusUB2                            = 0.000000
+ship/shipBonusOreDestroyer1                  = 0.000000
+ship/shipBonusOreDestroyer2                  = 0.000000
+ship/shipBonusOreDestroyer3                  = 0.000000
+ship/shipBonusSoEECS1                        = 0.000000
+ship/shipBonusSoEECS2                        = 0.000000
+ship/shipBonusSoEECS3                        = 0.000000
+ship/shipBonusSoEECS4                        = 0.000000
+ship/shipBonusSoEECS5                        = 0.000000
+ship/shipBonusAB3                            = 0.000000
+
+mode/type = Confessor Sharpshooter Mode
+
+low_1/type  = Heat Sink II
+low_1/state = online
+
+medium_1/type              = 1MN Afterburner II
+medium_1/state             = active
+medium_1/capacitorPeakLoad = 2.200000
+medium_1/cycleTime         = 10000.000000
+
+high_1/type              = Small Focused Beam Laser II
+high_1/state             = active
+high_1/speedWithReload   = 4475.009905
+high_1/speedOfReload     = 0.010000
+high_1/capacitorPeakLoad = 2.016760
+high_1/cycleTime         = 4474.999905
+high_1/speed             = 4474.999905
+high_1/maxRange          = 21999.999126
+high_1/damageMultiplier  = 10.533600

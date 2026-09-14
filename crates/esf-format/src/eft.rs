@@ -143,6 +143,7 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
         name: Some(name.to_string()),
         ship: Ship {
             type_id: type_name_to_id(info, ship_type_name)?,
+            mode: None,
         },
         items: Vec::new(),
         character: Character::default(),
