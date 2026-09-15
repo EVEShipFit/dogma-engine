@@ -4,7 +4,7 @@ use super::attribute_ids::{
 };
 use super::item::{Attribute, Item};
 use super::{Info, Objects};
-use crate::fit::{Fit, Mutation};
+use crate::fit::{Fit, Mutation, Spool};
 
 pub struct PassOne {}
 
@@ -88,6 +88,8 @@ impl PassOne {
             objects.skills.push(skill);
         }
 
+        let attr_spool_multiplier_bonus_id = info.attribute_name_to_id("spoolMultiplierBonus");
+
         for fit_item in &fit.items {
             let mut item = Item::new_fit(fit_item);
 
@@ -98,6 +100,14 @@ impl PassOne {
                 }
                 if let Some(charge) = item.charge.as_mut() {
                     charge.set_attributes(info)
+                }
+
+                /* Set as the final value, so it replaces the maximum dogma
+                 * would otherwise calculate. */
+                if let (Some(Spool::MultiplierBonus(bonus)), Some(attribute_id)) =
+                    (fit_item.spool, attr_spool_multiplier_bonus_id)
+                {
+                    item.add_attribute(attribute_id, bonus, bonus);
                 }
             }
 

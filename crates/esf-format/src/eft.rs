@@ -444,6 +444,7 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
                         mutation,
                         fighter_abilities: None,
                         booster_side_effects: BTreeSet::new(),
+                        spool: None,
                     });
                 }
             }
@@ -485,6 +486,7 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
                         mutation,
                         fighter_abilities: None,
                         booster_side_effects: BTreeSet::new(),
+                        spool: None,
                     });
                 }
             }

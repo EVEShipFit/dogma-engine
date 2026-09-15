@@ -55,6 +55,11 @@ pub struct FitItem {
     /// none.
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     pub booster_side_effects: BTreeSet<i32>,
+    /// How far a module whose bonus grows every cycle has spooled.
+    /// Only per-second stats use it; volley is always unspooled.
+    /// `None` is fully spooled.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub spool: Option<Spool>,
 }
 
 /// Where an item is. The number is the position in its rack, starting at 0;
@@ -119,6 +124,14 @@ pub struct Mutation {
     pub attributes: BTreeMap<i32, f64>,
 }
 
+/// How far a module has spooled.
+#[derive(Serialize, Deserialize, Debug, Copy, Clone, PartialEq)]
+#[serde(rename_all = "snake_case")]
+pub enum Spool {
+    /// The bonus reached so far: 0.0 is unspooled, 2.125 is +212.5%.
+    MultiplierBonus(f64),
+}
+
 /// The character flying the ship.
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct Character {
@@ -171,6 +184,7 @@ mod tests {
         assert_eq!(fit.items[0].slot, Slot::High(0));
         assert_eq!(fit.items[0].quantity, 1);
         assert_eq!(fit.items[0].fighter_abilities, None);
+        assert_eq!(fit.items[0].spool, None);
         assert_eq!(fit.items[1].slot, Slot::DroneBay);
         assert_eq!(fit.items[1].quantity, 5);
         assert_eq!(fit.character.skills[&3300], 5);
@@ -243,6 +257,21 @@ mod tests {
     }
 
     #[test]
+    fn reads_spool() {
+        let fit: Fit = serde_json::from_str(
+            r#"{
+                "ship": {"type_id": 52250},
+                "items": [
+                    {"type_id": 47914, "slot": {"type": "high", "index": 0}, "state": "active", "spool": {"multiplier_bonus": 0.7}}
+                ]
+            }"#,
+        )
+        .unwrap();
+
+        assert_eq!(fit.items[0].spool, Some(Spool::MultiplierBonus(0.7)));
+    }
+
+    #[test]
     fn reads_mode() {
         let fit: Fit = serde_json::from_str(
             r#"{
@@ -273,6 +302,7 @@ mod tests {
                 mutation: None,
                 fighter_abilities: None,
                 booster_side_effects: BTreeSet::new(),
+                spool: None,
             }],
             character: Character::default(),
         };
@@ -282,6 +312,7 @@ mod tests {
 
         assert!(!json.contains("fighter_abilities"));
         assert!(!json.contains("booster_side_effects"));
+        assert!(!json.contains("spool"));
         assert!(!json.contains("mutation"));
         assert!(!json.contains("mode"));
         assert_eq!(parsed.items[0].slot, Slot::Medium(2));
