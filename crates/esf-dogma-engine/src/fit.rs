@@ -139,6 +139,9 @@ pub struct Character {
     /// trained, and gives no bonus.
     #[serde(default, deserialize_with = "id_map")]
     pub skills: BTreeMap<i32, u8>,
+    /// -10.0 to 5.0. Only a few ships have a bonus that scales with it.
+    #[serde(default)]
+    pub security_status: f64,
 }
 
 fn one() -> u32 {
@@ -188,6 +191,7 @@ mod tests {
         assert_eq!(fit.items[1].slot, Slot::DroneBay);
         assert_eq!(fit.items[1].quantity, 5);
         assert_eq!(fit.character.skills[&3300], 5);
+        assert_eq!(fit.character.security_status, 0.0);
     }
 
     #[test]
@@ -269,6 +273,21 @@ mod tests {
         .unwrap();
 
         assert_eq!(fit.items[0].spool, Some(Spool::MultiplierBonus(0.7)));
+    }
+
+    #[test]
+    fn reads_security_status() {
+        let fit: Fit = serde_json::from_str(
+            r#"{
+                "ship": {"type_id": 44995},
+                "items": [],
+                "character": {"security_status": -2.5}
+            }"#,
+        )
+        .unwrap();
+
+        assert_eq!(fit.character.security_status, -2.5);
+        assert!(fit.character.skills.is_empty());
     }
 
     #[test]

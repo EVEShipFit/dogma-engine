@@ -52,6 +52,7 @@ All identifiers are those from the SDE.
     - `multiplier_bonus`: the bonus reached so far; 0.0 is unspooled, 2.125 is +212.5%.
 - `character` (optional):
   - `skills`: level (0 to 5) per skill type ID. A missing skill gives no bonuses.
+  - `security_status` (optional, default 0.0): the pilot's security status, -10.0 to 5.0.
 
 ### Options
 
