@@ -53,6 +53,8 @@ All identifiers are those from the SDE.
 - `character` (optional):
   - `skills`: level (0 to 5) per skill type ID. A missing skill gives no bonuses.
   - `security_status` (optional, default 0.0): the pilot's security status, -10.0 to 5.0.
+- `environment` (optional): where the fit is.
+  - `security` (optional, default `high_sec`): `high_sec`, `low_sec`, `null_sec` or `wormhole`.
 
 ### Options
 

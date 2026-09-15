@@ -4,7 +4,7 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fmt;
 
 use esf_data::{InfoName, eve};
-use esf_dogma_engine::{Character, Charge, Fit, FitItem, Mutation, Ship, Slot, State};
+use esf_dogma_engine::{Character, Charge, Environment, Fit, FitItem, Mutation, Ship, Slot, State};
 
 /// Why an EFT could not be loaded.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -353,6 +353,7 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
         },
         items: Vec::new(),
         character: Character::default(),
+        environment: Environment::default(),
     };
 
     /* An EFT has sections, which are seperated by a new line. */

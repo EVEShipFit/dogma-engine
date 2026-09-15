@@ -5,7 +5,7 @@ use std::path::PathBuf;
 use clap::{Parser, ValueEnum};
 
 use esf_data::{Info, InfoName, InfoNameSde, InfoSde, Names, Sde};
-use esf_dogma_engine::{Calculation, Fit, ItemResult, Options, Slot, SourceRef, State};
+use esf_dogma_engine::{Calculation, Fit, ItemResult, Options, Security, Slot, SourceRef, State};
 use esf_format::eft;
 
 const SKILL_CATEGORY_ID: i32 = 16;
@@ -56,6 +56,15 @@ struct Args {
     )]
     skills: Vec<(String, u8)>,
 
+    /// Security of the solar system; structure rigs are stronger outside high-sec.
+    #[clap(
+        long,
+        value_enum,
+        default_value = "high-sec",
+        help_heading = "Environment"
+    )]
+    security: SystemSecurity,
+
     /// Default: table when stdout is a terminal, json otherwise.
     #[clap(short, long, value_enum, help_heading = "Output")]
     output: Option<Output>,
@@ -82,6 +91,14 @@ struct Args {
 enum Output {
     Json,
     Table,
+}
+
+#[derive(Clone, Copy, ValueEnum)]
+enum SystemSecurity {
+    HighSec,
+    LowSec,
+    NullSec,
+    Wormhole,
 }
 
 fn parse_skill(value: &str) -> Result<(String, u8), String> {
@@ -370,6 +387,13 @@ pub fn main() {
     }
 
     apply_skills(&args, &sde, &info_name, &mut fit);
+
+    fit.environment.security = match args.security {
+        SystemSecurity::HighSec => Security::HighSec,
+        SystemSecurity::LowSec => Security::LowSec,
+        SystemSecurity::NullSec => Security::NullSec,
+        SystemSecurity::Wormhole => Security::Wormhole,
+    };
 
     let info = InfoSde::new(&sde);
     let options = Options {

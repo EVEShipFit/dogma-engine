@@ -16,6 +16,9 @@ pub struct Fit {
     /// The character flying the ship.
     #[serde(default)]
     pub character: Character,
+    /// Where the ship is.
+    #[serde(default)]
+    pub environment: Environment,
 }
 
 /// The ship of a fit.
@@ -144,6 +147,29 @@ pub struct Character {
     pub security_status: f64,
 }
 
+/// Where the ship is.
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
+pub struct Environment {
+    /// The security of the solar system.
+    #[serde(default)]
+    pub security: Security,
+}
+
+/// The security of a solar system.
+#[derive(Serialize, Deserialize, Debug, Copy, Clone, Default, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum Security {
+    /// High-sec.
+    #[default]
+    HighSec,
+    /// Low-sec.
+    LowSec,
+    /// Null-sec.
+    NullSec,
+    /// Wormhole space.
+    Wormhole,
+}
+
 fn one() -> u32 {
     1
 }
@@ -192,6 +218,21 @@ mod tests {
         assert_eq!(fit.items[1].quantity, 5);
         assert_eq!(fit.character.skills[&3300], 5);
         assert_eq!(fit.character.security_status, 0.0);
+        assert_eq!(fit.environment.security, Security::HighSec);
+    }
+
+    #[test]
+    fn reads_security() {
+        let fit: Fit = serde_json::from_str(
+            r#"{
+                "ship": {"type_id": 35832},
+                "items": [],
+                "environment": {"security": "null_sec"}
+            }"#,
+        )
+        .unwrap();
+
+        assert_eq!(fit.environment.security, Security::NullSec);
     }
 
     #[test]
@@ -324,6 +365,7 @@ mod tests {
                 spool: None,
             }],
             character: Character::default(),
+            environment: Environment::default(),
         };
 
         let json = serde_json::to_string(&fit).unwrap();
