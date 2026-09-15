@@ -112,6 +112,15 @@ flatc --rust --gen-onefile -o crates/esf-data/src/sde/ node_modules/@eveshipfit/
 cargo run --release -p esf-cli
 ```
 
+For example, some attributes of a fit with every skill at L0 except two:
+
+```bash
+printf '[Nergal, Spool]\nLight Entropic Disintegrator II, Occult S\n' \
+  | cargo run --release -p esf-cli -- -l 0 --skill "Gunnery=4" --skill "Rapid Firing=2" -a damage -a speed
+```
+
+It prints a table on a terminal and JSON otherwise; see `--help` for the rest.
+
 The regression suite reads the same paths; set `ESF_SDE` and `ESF_NAMES` to point it elsewhere.
 
 ## Regression
