@@ -56,17 +56,19 @@ struct Run {
     lines: Vec<(String, String)>,
 }
 
-/// Unindexed slots number every item in a stack, so five drones are `dronebay_1-5`.
-fn slot_name(slot: Slot) -> (&'static str, Option<u8>) {
+/// Numbered from 1. Unindexed slots number every item in a stack, so five drones are `dronebay_1-5`.
+fn slot_name(slot: Slot) -> (&'static str, Option<u16>) {
     match slot {
-        Slot::High(index) => ("high", Some(index)),
-        Slot::Medium(index) => ("medium", Some(index)),
-        Slot::Low(index) => ("low", Some(index)),
-        Slot::Rig(index) => ("rig", Some(index)),
-        Slot::Subsystem(index) => ("subsystem", Some(index)),
-        Slot::Service(index) => ("service", Some(index)),
-        Slot::FighterTube(index) => ("fightertube", Some(index)),
+        Slot::High(index) => ("high", Some(u16::from(index) + 1)),
+        Slot::Medium(index) => ("medium", Some(u16::from(index) + 1)),
+        Slot::Low(index) => ("low", Some(u16::from(index) + 1)),
+        Slot::Rig(index) => ("rig", Some(u16::from(index) + 1)),
+        Slot::Subsystem(index) => ("subsystem", Some(u16::from(index) + 1)),
+        Slot::Service(index) => ("service", Some(u16::from(index) + 1)),
+        Slot::FighterTube(index) => ("fightertube", Some(u16::from(index) + 1)),
         Slot::FighterBay => ("fighterbay", None),
+        Slot::Implant(index) => ("implant", Some(index.into())),
+        Slot::Booster(index) => ("booster", Some(index)),
         Slot::DroneBay => ("dronebay", None),
         Slot::Cargo => ("cargo", None),
     }
@@ -79,7 +81,7 @@ fn dump_items(info: &impl Info, fit: &Fit, calculation: &Calculation) -> Vec<Str
     for (item, result) in fit.items.iter().zip(&calculation.items) {
         let (slot, index) = slot_name(item.slot);
         let (first, last) = match index {
-            Some(index) => (index as u32 + 1, index as u32 + 1),
+            Some(number) => (number as u32, number as u32),
             None => {
                 let count = stacked.entry(slot).or_insert(0);
                 *count += item.quantity;

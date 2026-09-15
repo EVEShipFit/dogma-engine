@@ -28,8 +28,10 @@ pub trait Info {
 /// [`InfoNameSde`](crate::InfoNameSde) answers these from `sde.dat`, and
 /// optionally `names.dat`.
 pub trait InfoName {
-    /// The effects a type has; they tell which slot a module goes in.
+    /// The effects a type has.
     fn get_dogma_effects(&self, type_id: i32) -> Option<Vector<'_, eve::TypeDogmaEffect>>;
+    /// The attribute values a type starts with.
+    fn get_dogma_attributes(&self, type_id: i32) -> Option<Vector<'_, eve::TypeDogmaAttribute>>;
     /// A type by id.
     fn get_type(&self, type_id: i32) -> Option<eve::Type<'_>>;
     /// The id of the type with this name.

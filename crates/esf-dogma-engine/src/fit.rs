@@ -11,7 +11,7 @@ pub struct Fit {
     pub name: Option<String>,
     /// The ship.
     pub ship: Ship,
-    /// Modules, drones, fighters and cargo.
+    /// Modules, drones, fighters, implants, boosters and cargo.
     pub items: Vec<FitItem>,
     /// The character flying the ship.
     #[serde(default)]
@@ -28,7 +28,7 @@ pub struct Ship {
     pub mode: Option<i32>,
 }
 
-/// A module, drone, fighter squadron or item in cargo.
+/// A module, drone, fighter squadron, implant, booster or item in cargo.
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct FitItem {
     /// The type id of the item.
@@ -48,9 +48,14 @@ pub struct FitItem {
     /// abilities the fighter uses by default.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub fighter_abilities: Option<BTreeSet<i32>>,
+    /// Only for boosters: the side effects rolled, by effect id. Empty means
+    /// none.
+    #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
+    pub booster_side_effects: BTreeSet<i32>,
 }
 
-/// Where an item is. The number is the position in its rack, starting at 0.
+/// Where an item is. The number is the position in its rack, starting at 0;
+/// for implants and boosters, the slot as EVE numbers it, starting at 1.
 #[derive(Serialize, Deserialize, Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[serde(tag = "type", content = "index", rename_all = "snake_case")]
 pub enum Slot {
@@ -70,6 +75,10 @@ pub enum Slot {
     FighterTube(u8),
     /// The fighter bay; nothing in it is in space.
     FighterBay,
+    /// An implant; the number is its `implantness`.
+    Implant(u8),
+    /// A booster; the number is its `boosterness`.
+    Booster(u16),
     /// The drone bay; a drone that is not offline is in space.
     DroneBay,
     /// The cargo hold; nothing in it is calculated.
@@ -177,6 +186,30 @@ mod tests {
     }
 
     #[test]
+    fn reads_implants_and_boosters() {
+        let fit: Fit = serde_json::from_str(
+            r#"{
+                "ship": {"type_id": 587},
+                "items": [
+                    {"type_id": 20499, "slot": {"type": "implant", "index": 1}, "state": "online"},
+                    {"type_id": 9950, "slot": {"type": "booster", "index": 1}, "state": "online", "booster_side_effects": [2745, 2737]},
+                    {"type_id": 57285, "slot": {"type": "booster", "index": 504}, "state": "online"}
+                ]
+            }"#,
+        )
+        .unwrap();
+
+        assert_eq!(fit.items[0].slot, Slot::Implant(1));
+        assert_eq!(fit.items[1].slot, Slot::Booster(1));
+        assert_eq!(
+            fit.items[1].booster_side_effects,
+            BTreeSet::from([2737, 2745])
+        );
+        assert_eq!(fit.items[2].slot, Slot::Booster(504));
+        assert!(fit.items[2].booster_side_effects.is_empty());
+    }
+
+    #[test]
     fn reads_mode() {
         let fit: Fit = serde_json::from_str(
             r#"{
@@ -205,6 +238,7 @@ mod tests {
                 state: State::Overload,
                 charge: None,
                 fighter_abilities: None,
+                booster_side_effects: BTreeSet::new(),
             }],
             character: Character::default(),
         };
@@ -213,6 +247,7 @@ mod tests {
         let parsed: Fit = serde_json::from_str(&json).unwrap();
 
         assert!(!json.contains("fighter_abilities"));
+        assert!(!json.contains("booster_side_effects"));
         assert!(!json.contains("mode"));
         assert_eq!(parsed.items[0].slot, Slot::Medium(2));
         assert_eq!(parsed.items[0].state, State::Overload);

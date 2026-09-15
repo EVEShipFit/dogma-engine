@@ -47,6 +47,10 @@ impl InfoName for InfoNameSde<'_> {
         self.sde.get_type(type_id)?.dogma_effects()
     }
 
+    fn get_dogma_attributes(&self, type_id: i32) -> Option<Vector<'_, eve::TypeDogmaAttribute>> {
+        self.sde.get_type(type_id)?.dogma_attributes()
+    }
+
     fn get_type(&self, type_id: i32) -> Option<eve::Type<'_>> {
         self.sde.get_type(type_id)
     }
