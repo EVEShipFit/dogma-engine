@@ -47,6 +47,9 @@ All identifiers are those from the SDE.
     - `attributes`: the rolled value per attribute ID.
   - `fighter_abilities` (optional): the abilities a fighter uses, as effect IDs. Absent means the fighter's default abilities.
   - `booster_side_effects` (optional): the side effects a booster rolled, as effect IDs. Absent means none.
+  - `spool` (optional): for modules whose bonus grows every cycle, how far it has spooled.
+    Only per-second stats use it; volley is always unspooled. Absent means fully spooled.
+    - `multiplier_bonus`: the bonus reached so far; 0.0 is unspooled, 2.125 is +212.5%.
 - `character` (optional):
   - `skills`: level (0 to 5) per skill type ID. A missing skill gives no bonuses.
 
