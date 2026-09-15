@@ -44,6 +44,9 @@ pub struct FitItem {
     pub state: State,
     /// The charge loaded in the module, if any.
     pub charge: Option<Charge>,
+    /// Only for mutated modules and drones.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub mutation: Option<Mutation>,
     /// Only for fighters: the abilities used, by effect id. `None` uses the
     /// abilities the fighter uses by default.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -104,6 +107,16 @@ pub enum State {
 pub struct Charge {
     /// The type id of the charge.
     pub type_id: i32,
+}
+
+/// How a module or drone was mutated.
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Mutation {
+    /// The type id of the item before it was mutated.
+    pub base: i32,
+    /// The rolled value of each mutated attribute, by attribute id.
+    #[serde(default, deserialize_with = "id_map")]
+    pub attributes: BTreeMap<i32, f64>,
 }
 
 /// The character flying the ship.
@@ -210,6 +223,26 @@ mod tests {
     }
 
     #[test]
+    fn reads_mutation() {
+        let fit: Fit = serde_json::from_str(
+            r#"{
+                "ship": {"type_id": 587},
+                "items": [
+                    {"type_id": 47732, "slot": {"type": "medium", "index": 0}, "state": "active", "mutation": {"base": 448, "attributes": {"6": 7.5, "54": 10500}}}
+                ]
+            }"#,
+        )
+        .unwrap();
+
+        let mutation = fit.items[0].mutation.as_ref().unwrap();
+        assert_eq!(mutation.base, 448);
+        assert_eq!(
+            mutation.attributes,
+            BTreeMap::from([(6, 7.5), (54, 10500.0)])
+        );
+    }
+
+    #[test]
     fn reads_mode() {
         let fit: Fit = serde_json::from_str(
             r#"{
@@ -237,6 +270,7 @@ mod tests {
                 quantity: 1,
                 state: State::Overload,
                 charge: None,
+                mutation: None,
                 fighter_abilities: None,
                 booster_side_effects: BTreeSet::new(),
             }],
@@ -248,6 +282,7 @@ mod tests {
 
         assert!(!json.contains("fighter_abilities"));
         assert!(!json.contains("booster_side_effects"));
+        assert!(!json.contains("mutation"));
         assert!(!json.contains("mode"));
         assert_eq!(parsed.items[0].slot, Slot::Medium(2));
         assert_eq!(parsed.items[0].state, State::Overload);

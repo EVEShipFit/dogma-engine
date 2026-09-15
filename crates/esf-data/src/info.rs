@@ -36,4 +36,8 @@ pub trait InfoName {
     fn get_type(&self, type_id: i32) -> Option<eve::Type<'_>>;
     /// The id of the type with this name.
     fn type_name_to_id(&self, name: &str) -> Option<i32>;
+    /// The id of the attribute with exactly this name, like `"cycleTime"`.
+    fn attribute_name_to_id(&self, name: &str) -> Option<i32>;
+    /// A mutaplasmid by its type id.
+    fn get_mutaplasmid(&self, type_id: i32) -> Option<eve::Mutaplasmid<'_>>;
 }

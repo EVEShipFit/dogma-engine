@@ -1,0 +1,87 @@
+---
+source: tests/harness/case.rs
+expression: "calculate_fit(eft_fit, skills, edit)"
+---
+ship/type                                    = Tristan
+ship/scanStrength                            = 9.000000
+ship/passiveShieldEffectiveRechargeRate      = 1.931034
+ship/passiveShieldRechargeRate               = 1.400000
+ship/ehp                                     = 1970.320801
+ship/shieldThermalDamageEffectiveResonance   = 0.200000
+ship/shieldKineticDamageEffectiveResonance   = 0.150000
+ship/shieldExplosiveDamageEffectiveResonance = 0.125000
+ship/shieldEmDamageEffectiveResonance        = 0.250000
+ship/hullThermalDamageEffectiveResonance     = 0.167500
+ship/hullKineticDamageEffectiveResonance     = 0.167500
+ship/hullExplosiveDamageEffectiveResonance   = 0.167500
+ship/hullEmDamageEffectiveResonance          = 0.167500
+ship/armorThermalDamageEffectiveResonance    = 0.162500
+ship/armorKineticDamageEffectiveResonance    = 0.162500
+ship/armorExplosiveDamageEffectiveResonance  = 0.225000
+ship/armorEmDamageEffectiveResonance         = 0.125000
+ship/shieldEhp                               = 482.758615
+ship/hullEhp                                 = 820.895502
+ship/armorEhp                                = 666.666684
+ship/shieldDamageEffectiveResonance          = 0.725000
+ship/hullDamageEffectiveResonance            = 0.670000
+ship/armorDamageEffectiveResonance           = 0.675000
+ship/droneCapacityLoad                       = 15.000000
+ship/droneActive                             = 3.000000
+ship/droneDamagePerSecond                    = 30.200000
+ship/damagePerSecondWithReload               = 30.200000
+ship/damagePerSecondWithoutReload            = 30.200000
+ship/powerFree                               = 34.000000
+ship/cpuFree                                 = 100.000000
+ship/capacitorDepletesIn                     = -1.000000
+ship/capacitorPeakDeltaPercentage            = 70.000000
+ship/capacitorPeakDelta                      = 3.500000
+ship/capacitorPeakLoad                       = 1.500000
+ship/capacitorPeakRecharge                   = 5.000000
+ship/alignTime                               = 4.978682
+ship/powerLoad                               = 1.000000
+ship/cpuLoad                                 = 30.000000
+ship/shipBonusGF                             = 0.000000
+ship/shipBonus2AF                            = 0.000000
+ship/shipBonusGC                             = 0.000000
+ship/shipBonusCC                             = 0.000000
+ship/shipBonusMB                             = 0.000000
+ship/shipBonusCB                             = 0.000000
+ship/shipBonusAB                             = 0.000000
+ship/shipBonusMI                             = 0.000000
+ship/shipBonusAI                             = 0.000000
+ship/shipBonusCI                             = 0.000000
+ship/shipBonusGI                             = 0.000000
+ship/shipBonusGF2                            = 0.000000
+ship/droneBandwidthLoad                      = 15.000000
+ship/shipBonusUF1                            = 0.000000
+ship/shipBonusUF2                            = 0.000000
+ship/shipBonusUC1                            = 0.000000
+ship/shipBonusUC2                            = 0.000000
+ship/shipBonusUB1                            = 0.000000
+ship/shipBonusUB2                            = 0.000000
+ship/shipBonusOreDestroyer1                  = 0.000000
+ship/shipBonusOreDestroyer2                  = 0.000000
+ship/shipBonusOreDestroyer3                  = 0.000000
+ship/shipBonusSoEECS1                        = 0.000000
+ship/shipBonusSoEECS2                        = 0.000000
+ship/shipBonusSoEECS3                        = 0.000000
+ship/shipBonusSoEECS4                        = 0.000000
+ship/shipBonusSoEECS5                        = 0.000000
+ship/shipBonusAB3                            = 0.000000
+
+medium_1/type              = Abyssal Warp Scrambler
+medium_1/state             = active
+medium_1/capacitorPeakLoad = 1.500000
+medium_1/cycleTime         = 5000.000000
+
+dronebay_1/type                         = Light Mutated Drone
+dronebay_1/state                        = active
+dronebay_1/damageVolley                 = 44.000000
+dronebay_1/speedWithReload              = 4000.000000
+dronebay_1/damagePerSecondWithoutReload = 11.000000
+
+dronebay_2-3/type                         = Hobgoblin II
+dronebay_2-3/state                        = active
+dronebay_2-3/damageVolley                 = 38.399999
+dronebay_2-3/speedWithReload              = 4000.000000
+dronebay_2-3/damagePerSecondWithoutReload = 9.600000

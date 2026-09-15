@@ -55,6 +55,14 @@ impl InfoName for InfoNameSde<'_> {
         self.sde.get_type(type_id)
     }
 
+    fn attribute_name_to_id(&self, name: &str) -> Option<i32> {
+        self.sde.attribute_name_to_id(name)
+    }
+
+    fn get_mutaplasmid(&self, type_id: i32) -> Option<eve::Mutaplasmid<'_>> {
+        self.sde.get_mutaplasmid(type_id)
+    }
+
     /// An exact English name wins over a translation, even when unpublished;
     /// among translations, a published type wins.
     fn type_name_to_id(&self, name: &str) -> Option<i32> {

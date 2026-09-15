@@ -1,10 +1,10 @@
 //! EFT, the text format EVE copies a fit to the clipboard in.
 
-use std::collections::{BTreeSet, HashMap};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fmt;
 
-use esf_data::InfoName;
-use esf_dogma_engine::{Character, Charge, Fit, FitItem, Ship, Slot, State};
+use esf_data::{InfoName, eve};
+use esf_dogma_engine::{Character, Charge, Fit, FitItem, Mutation, Ship, Slot, State};
 
 /// Why an EFT could not be loaded.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -20,6 +20,28 @@ pub enum Error {
     UnknownType(String),
     /// The type exists, but is not a module, implant or booster.
     NoSlot(String),
+    /// A line refers to a mutation, like `[1]`, that no section describes.
+    UnknownMutation(u32),
+    /// A mutation is not `[<n>] <Base>`, `<Mutaplasmid>`, `<attribute> <value>, ...`;
+    /// or it describes another item than the line referring to it; or that
+    /// line is a stack of more than one.
+    InvalidMutation(String),
+    /// No attribute has this name.
+    UnknownAttribute(String),
+    /// A mutation leaves out an attribute its mutaplasmid rolls.
+    MissingRoll {
+        /// The first line of the mutation.
+        mutation: String,
+        /// The attribute left out.
+        attribute_id: i32,
+    },
+    /// The mutaplasmid cannot mutate the item.
+    NotMutable {
+        /// The name of the item.
+        item: String,
+        /// The name of the mutaplasmid.
+        mutaplasmid: String,
+    },
 }
 
 impl fmt::Display for Error {
@@ -30,6 +52,16 @@ impl fmt::Display for Error {
             Error::InvalidEmptySlot(line) => write!(f, "invalid empty slot {line}"),
             Error::UnknownType(name) => write!(f, "unknown type {name}"),
             Error::NoSlot(name) => write!(f, "{name} does not fit in any slot"),
+            Error::UnknownMutation(reference) => write!(f, "unknown mutation [{reference}]"),
+            Error::InvalidMutation(line) => write!(f, "invalid mutation {line}"),
+            Error::UnknownAttribute(name) => write!(f, "unknown attribute {name}"),
+            Error::MissingRoll {
+                mutation,
+                attribute_id,
+            } => write!(f, "{mutation} has no roll for attribute {attribute_id}"),
+            Error::NotMutable { item, mutaplasmid } => {
+                write!(f, "{mutaplasmid} does not apply to {item}")
+            }
         }
     }
 }
@@ -129,10 +161,158 @@ fn type_name_to_id(info: &impl InfoName, name: &str) -> Result<i32, Error> {
 }
 
 /* Split "<Type Name> x<Quantity>" on its last token, as type names can contain an "x" too. */
-fn parse_quantity(line: &str) -> Option<(&str, u32)> {
-    let (type_name, quantity) = line.trim().rsplit_once(char::is_whitespace)?;
+fn parse_quantity(line: &str) -> Option<(&str, u32, Option<u32>)> {
+    let (line, reference) = split_mutation_reference(line);
+    let (type_name, quantity) = line.rsplit_once(char::is_whitespace)?;
     let quantity = quantity.strip_prefix('x')?.parse().ok()?;
-    Some((type_name.trim(), quantity))
+    Some((type_name.trim(), quantity, reference))
+}
+
+/* A mutation section, as PyFa writes it, with its names looked up. */
+struct MutationSection<'a> {
+    header: &'a str,
+    base: i32,
+    mutaplasmid: i32,
+    mutaplasmid_name: &'a str,
+    attributes: BTreeMap<i32, f64>,
+}
+
+/* "[<n>] <Base Name>" */
+fn parse_mutation_header(line: &str) -> Option<(u32, &str)> {
+    let (reference, base_name) = line.trim().strip_prefix('[')?.split_once(']')?;
+    Some((reference.parse().ok()?, base_name.trim()))
+}
+
+/* Split "<line> [<n>]" into the line and the mutation it refers to. */
+fn split_mutation_reference(line: &str) -> (&str, Option<u32>) {
+    let line = line.trim();
+    let split = line
+        .strip_suffix(']')
+        .and_then(|rest| rest.rsplit_once('['))
+        .and_then(|(rest, reference)| Some((rest.trim_end(), reference.parse().ok()?)));
+
+    match split {
+        Some((rest, reference)) => (rest, Some(reference)),
+        None => (line, None),
+    }
+}
+
+/* "<attribute> <value>, <attribute> <value>, ..." */
+fn parse_mutation_attributes(
+    info: &impl InfoName,
+    line: &str,
+) -> Result<BTreeMap<i32, f64>, Error> {
+    let invalid = || Error::InvalidMutation(line.to_string());
+
+    line.split(',')
+        .map(|pair| {
+            let (name, value) = pair
+                .trim()
+                .split_once(char::is_whitespace)
+                .ok_or_else(invalid)?;
+            let value = value.trim().parse().map_err(|_| invalid())?;
+            let attribute_id = info
+                .attribute_name_to_id(name)
+                .ok_or_else(|| Error::UnknownAttribute(name.to_string()))?;
+            Ok((attribute_id, value))
+        })
+        .collect()
+}
+
+/* A section holds one or more mutations, each a header, a mutaplasmid and
+ * optionally the rolled attributes. */
+fn parse_mutations<'a>(
+    info: &impl InfoName,
+    section: &[&'a str],
+    mutations: &mut HashMap<u32, MutationSection<'a>>,
+) -> Result<(), Error> {
+    let mut lines = section.iter().copied().map(str::trim).peekable();
+
+    while let Some(header) = lines.next() {
+        let invalid = || Error::InvalidMutation(header.to_string());
+        let (reference, base_name) = parse_mutation_header(header).ok_or_else(invalid)?;
+
+        let mutaplasmid_name = lines
+            .next_if(|line| parse_mutation_header(line).is_none())
+            .ok_or_else(invalid)?;
+        let attributes = match lines.next_if(|line| parse_mutation_header(line).is_none()) {
+            Some(line) => parse_mutation_attributes(info, line)?,
+            None => BTreeMap::new(),
+        };
+
+        mutations.insert(
+            reference,
+            MutationSection {
+                header,
+                base: type_name_to_id(info, base_name)?,
+                mutaplasmid: type_name_to_id(info, mutaplasmid_name)?,
+                mutaplasmid_name,
+                attributes,
+            },
+        );
+    }
+
+    Ok(())
+}
+
+fn resulting_type_id(mutaplasmid: eve::Mutaplasmid, base: i32) -> Option<i32> {
+    mutaplasmid
+        .mappings()?
+        .iter()
+        .find(|mapping| {
+            mapping
+                .applicable_type_ids()
+                .is_some_and(|type_ids| type_ids.iter().any(|type_id| type_id == base))
+        })
+        .map(|mapping| mapping.resulting_type_id())
+}
+
+/* An item that refers to a mutation becomes the type the mutation results in. */
+fn mutate(
+    info: &impl InfoName,
+    mutations: &HashMap<u32, MutationSection>,
+    reference: Option<u32>,
+    type_name: &str,
+    type_id: i32,
+) -> Result<(i32, Option<Mutation>), Error> {
+    let Some(reference) = reference else {
+        return Ok((type_id, None));
+    };
+
+    let section = mutations
+        .get(&reference)
+        .ok_or(Error::UnknownMutation(reference))?;
+    if section.base != type_id {
+        return Err(Error::InvalidMutation(section.header.to_string()));
+    }
+
+    let mutaplasmid = info.get_mutaplasmid(section.mutaplasmid);
+    let result = mutaplasmid
+        .and_then(|mutaplasmid| resulting_type_id(mutaplasmid, type_id))
+        .ok_or_else(|| Error::NotMutable {
+            item: type_name.to_string(),
+            mutaplasmid: section.mutaplasmid_name.to_string(),
+        })?;
+
+    let missing = mutaplasmid
+        .and_then(|mutaplasmid| mutaplasmid.attributes())
+        .into_iter()
+        .flatten()
+        .find(|attribute| !section.attributes.contains_key(&attribute.attribute_id()));
+    if let Some(attribute) = missing {
+        return Err(Error::MissingRoll {
+            mutation: section.header.to_string(),
+            attribute_id: attribute.attribute_id(),
+        });
+    }
+
+    Ok((
+        result,
+        Some(Mutation {
+            base: type_id,
+            attributes: section.attributes.clone(),
+        }),
+    ))
 }
 
 /// Load a fit from EFT text. The fit has no skills.
@@ -143,6 +323,12 @@ fn parse_quantity(line: &str) -> Option<(&str, u32)> {
 /// every line ends in `x<quantity>` goes in the drone bay if it holds only
 /// drones, in the fighter bay if it holds only fighters, and in the cargo hold
 /// otherwise.
+///
+/// A mutated module or drone is written the way PyFa writes it: the line of
+/// its base type ends in `[<n>]`, and a section describes each mutation as
+/// `[<n>] <Base Type>`, then `<Mutaplasmid>`, then the rolled
+/// `<attribute> <value>, ...`. Every attribute the mutaplasmid rolls must be
+/// there.
 pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
     let eft_lines: Vec<&str> = eft.lines().collect();
 
@@ -170,7 +356,16 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
     };
 
     /* An EFT has sections, which are seperated by a new line. */
-    for section in section_iter(eft_lines) {
+    let (mutation_sections, item_sections): (Vec<_>, Vec<_>) =
+        section_iter(eft_lines).partition(|section| parse_mutation_header(section[0]).is_some());
+
+    /* PyFa writes the mutations after the items that refer to them. */
+    let mut mutations = HashMap::new();
+    for section in &mutation_sections {
+        parse_mutations(info, section, &mut mutations)?;
+    }
+
+    for section in item_sections {
         /* A quantity section only if every line ends with "x<quantity>". */
         let quantities: Option<Vec<_>> = section.iter().map(|line| parse_quantity(line)).collect();
 
@@ -179,7 +374,7 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
                 let mut rack_indexes: HashMap<i32, u8> = HashMap::new();
 
                 for line in section {
-                    let mut line = line.trim();
+                    let (mut line, reference) = split_mutation_reference(line);
                     let mut state = State::Active;
 
                     if line.starts_with("[Empty") {
@@ -230,20 +425,23 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
                     };
 
                     let module_type_id = type_name_to_id(info, module_name)?;
+                    let (type_id, mutation) =
+                        mutate(info, &mutations, reference, module_name, module_type_id)?;
                     let charge_type_id = charge_name
                         .map(|charge_name| type_name_to_id(info, charge_name))
                         .transpose()?;
 
-                    let Some(slot) = find_slot(info, module_type_id, &mut rack_indexes) else {
+                    let Some(slot) = find_slot(info, type_id, &mut rack_indexes) else {
                         return Err(Error::NoSlot(module_name.to_string()));
                     };
 
                     fit.items.push(FitItem {
-                        type_id: module_type_id,
+                        type_id,
                         slot,
                         quantity: 1,
                         state,
                         charge: charge_type_id.map(|type_id| Charge { type_id }),
+                        mutation,
                         fighter_abilities: None,
                         booster_side_effects: BTreeSet::new(),
                     });
@@ -255,14 +453,20 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
                 let mut are_drones = true;
                 let mut are_fighters = true;
 
-                for (type_name, quantity) in quantities {
-                    let type_id = type_name_to_id(info, type_name)?;
+                for (line, (type_name, quantity, reference)) in section.iter().zip(quantities) {
+                    if reference.is_some() && quantity != 1 {
+                        return Err(Error::InvalidMutation(line.trim().to_string()));
+                    }
+
+                    let base_type_id = type_name_to_id(info, type_name)?;
+                    let (type_id, mutation) =
+                        mutate(info, &mutations, reference, type_name, base_type_id)?;
 
                     let category_id = info.get_type(type_id).map(|r#type| r#type.category_id());
                     are_drones = are_drones && category_id == Some(CATEGORY_DRONE);
                     are_fighters = are_fighters && category_id == Some(CATEGORY_FIGHTER);
 
-                    items.push((type_id, quantity));
+                    items.push((type_id, quantity, mutation));
                 }
 
                 let (slot, state) = match (are_drones, are_fighters) {
@@ -271,13 +475,14 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
                     _ => (Slot::Cargo, State::Offline),
                 };
 
-                for (type_id, quantity) in items {
+                for (type_id, quantity, mutation) in items {
                     fit.items.push(FitItem {
                         type_id,
                         slot,
                         quantity,
                         state,
                         charge: None,
+                        mutation,
                         fighter_abilities: None,
                         booster_side_effects: BTreeSet::new(),
                     });
@@ -319,10 +524,28 @@ mod tests {
             match name {
                 "Rifter" => Some(587),
                 "200mm AutoCannon II" => Some(2881),
+                "Warp Scrambler II" => Some(448),
+                "Unstable Warp Scrambler Mutaplasmid" => Some(47730),
+                "Hobgoblin II" => Some(2456),
                 _ => None,
             }
         }
+
+        fn attribute_name_to_id(&self, name: &str) -> Option<i32> {
+            match name {
+                "cpu" => Some(50),
+                _ => None,
+            }
+        }
+
+        /* Without mutaplasmids, nothing is mutable. */
+        fn get_mutaplasmid(&self, _type_id: i32) -> Option<eve::Mutaplasmid<'_>> {
+            None
+        }
     }
+
+    const MUTATION: &str =
+        "[1] Warp Scrambler II\n  Unstable Warp Scrambler Mutaplasmid\n  cpu 30.5";
 
     fn error(eft: &str) -> Error {
         load_eft(&Names, eft).unwrap_err()
@@ -375,6 +598,85 @@ mod tests {
         assert_eq!(
             error("[Rifter, Test]\n\nNot A Drone x5"),
             Error::UnknownType("Not A Drone".to_string())
+        );
+    }
+
+    #[test]
+    fn splits_mutation_reference() {
+        assert_eq!(
+            split_mutation_reference("Warp Scrambler II /offline [1]"),
+            ("Warp Scrambler II /offline", Some(1))
+        );
+        assert_eq!(
+            split_mutation_reference("[Empty Med slot]"),
+            ("[Empty Med slot]", None)
+        );
+    }
+
+    #[test]
+    fn unknown_mutation() {
+        assert_eq!(
+            error("[Rifter, Test]\nWarp Scrambler II [2]"),
+            Error::UnknownMutation(2)
+        );
+    }
+
+    #[test]
+    fn mutation_without_mutaplasmid() {
+        assert_eq!(
+            error("[Rifter, Test]\n\n[1] Warp Scrambler II"),
+            Error::InvalidMutation("[1] Warp Scrambler II".to_string())
+        );
+    }
+
+    #[test]
+    fn mutation_with_invalid_value() {
+        assert_eq!(
+            error(
+                "[Rifter, Test]\n\n[1] Warp Scrambler II\nUnstable Warp Scrambler Mutaplasmid\ncpu fast"
+            ),
+            Error::InvalidMutation("cpu fast".to_string())
+        );
+    }
+
+    #[test]
+    fn mutation_with_unknown_attribute() {
+        assert_eq!(
+            error(
+                "[Rifter, Test]\n\n[1] Warp Scrambler II\nUnstable Warp Scrambler Mutaplasmid\nspeed 5"
+            ),
+            Error::UnknownAttribute("speed".to_string())
+        );
+    }
+
+    #[test]
+    fn mutation_of_another_item() {
+        assert_eq!(
+            error(&format!(
+                "[Rifter, Test]\n200mm AutoCannon II [1]\n\n{MUTATION}"
+            )),
+            Error::InvalidMutation("[1] Warp Scrambler II".to_string())
+        );
+    }
+
+    #[test]
+    fn mutaplasmid_not_applicable() {
+        assert_eq!(
+            error(&format!(
+                "[Rifter, Test]\nWarp Scrambler II [1]\n\n{MUTATION}"
+            )),
+            Error::NotMutable {
+                item: "Warp Scrambler II".to_string(),
+                mutaplasmid: "Unstable Warp Scrambler Mutaplasmid".to_string(),
+            }
+        );
+    }
+
+    #[test]
+    fn mutated_stack() {
+        assert_eq!(
+            error("[Rifter, Test]\n\nHobgoblin II x2 [1]"),
+            Error::InvalidMutation("Hobgoblin II x2 [1]".to_string())
         );
     }
 }

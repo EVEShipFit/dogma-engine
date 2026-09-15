@@ -197,7 +197,22 @@ impl Item {
         skip_ship_domain: bool,
         effects: &mut Vec<Pass2Effect>,
     ) {
-        for dogma_effect in info.get_dogma_effects(self.type_id).into_iter().flatten() {
+        let own_effects = info.get_dogma_effects(self.type_id);
+        /* Like its attributes, a mutated item has the effects of its base too. */
+        let base_effects = self
+            .mutation_base
+            .and_then(|base| info.get_dogma_effects(base))
+            .into_iter()
+            .flatten()
+            .filter(|base_effect| {
+                !own_effects.is_some_and(|own_effects| {
+                    own_effects
+                        .iter()
+                        .any(|effect| effect.effect_id() == base_effect.effect_id())
+                })
+            });
+
+        for dogma_effect in own_effects.into_iter().flatten().chain(base_effects) {
             let Some(type_dogma_effect) = info.get_dogma_effect(dogma_effect.effect_id()) else {
                 continue;
             };

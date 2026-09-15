@@ -4,7 +4,7 @@ use super::attribute_ids::{
 };
 use super::item::{Attribute, Item};
 use super::{Info, Objects};
-use crate::fit::Fit;
+use crate::fit::{Fit, Mutation};
 
 pub struct PassOne {}
 
@@ -22,8 +22,23 @@ impl Item {
 
     fn set_attributes(&mut self, info: &impl Info) {
         self.set_type_ids(info);
+        self.set_type_attributes(info, self.type_id);
+    }
 
-        if let Some(dogma_attributes) = info.get_dogma_attributes(self.type_id) {
+    /* The mutated type holds only what sets it apart from its bases, like its
+     * skill requirements; the rest comes from the base. */
+    fn set_mutated_attributes(&mut self, info: &impl Info, mutation: &Mutation) {
+        self.set_type_ids(info);
+        self.set_type_attributes(info, mutation.base);
+        self.set_type_attributes(info, self.type_id);
+
+        for (attribute_id, value) in &mutation.attributes {
+            self.set_attribute(*attribute_id, *value);
+        }
+    }
+
+    fn set_type_attributes(&mut self, info: &impl Info, type_id: i32) {
+        if let Some(dogma_attributes) = info.get_dogma_attributes(type_id) {
             for dogma_attribute in dogma_attributes {
                 self.set_attribute(
                     dogma_attribute.attribute_id(),
@@ -33,7 +48,7 @@ impl Item {
         }
 
         /* Some attributes of items come from the Type information. */
-        let Some(r#type) = info.get_type(self.type_id) else {
+        let Some(r#type) = info.get_type(type_id) else {
             return;
         };
         if let Some(mass) = r#type.mass() {
@@ -77,7 +92,10 @@ impl PassOne {
             let mut item = Item::new_fit(fit_item);
 
             if item.is_calculated() {
-                item.set_attributes(info);
+                match &fit_item.mutation {
+                    Some(mutation) => item.set_mutated_attributes(info, mutation),
+                    None => item.set_attributes(info),
+                }
                 if let Some(charge) = item.charge.as_mut() {
                     charge.set_attributes(info)
                 }
