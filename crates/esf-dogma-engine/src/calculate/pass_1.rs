@@ -4,7 +4,7 @@ use super::attribute_ids::{
 };
 use super::item::{Attribute, Item};
 use super::{Info, Objects};
-use crate::fit::{Fit, Mutation, Security, Spool};
+use crate::fit::{DamageProfile, Fit, Mutation, Security, Spool};
 
 pub struct PassOne {}
 
@@ -64,6 +64,27 @@ impl Item {
             self.set_attribute(ATTRIBUTE_RADIUS_ID, radius as f64);
         }
     }
+
+    fn set_damage_profile(&mut self, info: &impl Info, profile: DamageProfile) {
+        let total = profile.em + profile.explosive + profile.kinetic + profile.thermal;
+        /* Effective hitpoints are only right when the four add up to one. */
+        let (profile, total) = if total > 0.0 {
+            (profile, total)
+        } else {
+            (DamageProfile::default(), 1.0)
+        };
+
+        for (name, value) in [
+            ("damageProfileEm", profile.em),
+            ("damageProfileExplosive", profile.explosive),
+            ("damageProfileKinetic", profile.kinetic),
+            ("damageProfileThermal", profile.thermal),
+        ] {
+            if let Some(attribute_id) = info.attribute_name_to_id(name) {
+                self.set_attribute(attribute_id, value / total);
+            }
+        }
+    }
 }
 
 impl PassOne {
@@ -82,6 +103,9 @@ impl PassOne {
                 fit.character.security_status,
             );
         }
+        objects
+            .ship
+            .set_damage_profile(info, fit.environment.damage_profile);
         if let Some(mode) = objects.mode.as_mut() {
             mode.set_attributes(info);
         }

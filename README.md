@@ -54,6 +54,7 @@ All identifiers are those from the SDE.
   - `skills`: level (0 to 5) per skill type ID. A missing skill gives no bonuses.
   - `security_status` (optional, default 0.0): the pilot's security status, -10.0 to 5.0.
 - `environment` (optional): where the fit is.
+  - `damage_profile` (optional, default 0.25 each): incoming damage for effective hitpoints, as `em`, `explosive`, `kinetic` and `thermal` (relative to each other).
   - `security` (optional, default `high_sec`): `high_sec`, `low_sec`, `null_sec` or `wormhole`.
 
 ### Options

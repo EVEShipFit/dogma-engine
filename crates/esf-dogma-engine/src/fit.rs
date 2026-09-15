@@ -150,9 +150,41 @@ pub struct Character {
 /// Where the ship is.
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct Environment {
+    /// The damage the ship is assumed to take, for effective hitpoints.
+    #[serde(default)]
+    pub damage_profile: DamageProfile,
     /// The security of the solar system.
     #[serde(default)]
     pub security: Security,
+}
+
+/// How incoming damage is split over the four damage types. Only the ratio
+/// matters; the calculation scales the four to add up to one.
+#[derive(Serialize, Deserialize, Debug, Copy, Clone, PartialEq)]
+pub struct DamageProfile {
+    /// EM damage.
+    #[serde(default)]
+    pub em: f64,
+    /// Explosive damage.
+    #[serde(default)]
+    pub explosive: f64,
+    /// Kinetic damage.
+    #[serde(default)]
+    pub kinetic: f64,
+    /// Thermal damage.
+    #[serde(default)]
+    pub thermal: f64,
+}
+
+impl Default for DamageProfile {
+    fn default() -> Self {
+        Self {
+            em: 0.25,
+            explosive: 0.25,
+            kinetic: 0.25,
+            thermal: 0.25,
+        }
+    }
 }
 
 /// The security of a solar system.
@@ -218,6 +250,30 @@ mod tests {
         assert_eq!(fit.items[1].quantity, 5);
         assert_eq!(fit.character.skills[&3300], 5);
         assert_eq!(fit.character.security_status, 0.0);
+        assert_eq!(fit.environment.security, Security::HighSec);
+        assert_eq!(fit.environment.damage_profile, DamageProfile::default());
+    }
+
+    #[test]
+    fn reads_damage_profile() {
+        let fit: Fit = serde_json::from_str(
+            r#"{
+                "ship": {"type_id": 587},
+                "items": [],
+                "environment": {"damage_profile": {"kinetic": 3, "thermal": 1}}
+            }"#,
+        )
+        .unwrap();
+
+        assert_eq!(
+            fit.environment.damage_profile,
+            DamageProfile {
+                em: 0.0,
+                explosive: 0.0,
+                kinetic: 3.0,
+                thermal: 1.0,
+            }
+        );
         assert_eq!(fit.environment.security, Security::HighSec);
     }
 

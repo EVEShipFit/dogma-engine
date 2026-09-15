@@ -5,7 +5,9 @@ use std::path::PathBuf;
 use clap::{Parser, ValueEnum};
 
 use esf_data::{Info, InfoName, InfoNameSde, InfoSde, Names, Sde};
-use esf_dogma_engine::{Calculation, Fit, ItemResult, Options, Security, Slot, SourceRef, State};
+use esf_dogma_engine::{
+    Calculation, DamageProfile, Fit, ItemResult, Options, Security, Slot, SourceRef, State,
+};
 use esf_format::eft;
 
 const SKILL_CATEGORY_ID: i32 = 16;
@@ -65,6 +67,15 @@ struct Args {
     )]
     security: SystemSecurity,
 
+    /// Incoming damage, like "0,0,3,1"; only the ratio matters.
+    #[clap(
+        long,
+        value_name = "EM,EXPLOSIVE,KINETIC,THERMAL",
+        value_parser = parse_damage_profile,
+        help_heading = "Environment"
+    )]
+    damage_profile: Option<DamageProfile>,
+
     /// Default: table when stdout is a terminal, json otherwise.
     #[clap(short, long, value_enum, help_heading = "Output")]
     output: Option<Output>,
@@ -112,6 +123,28 @@ fn parse_skill(value: &str) -> Result<(String, u8), String> {
         .filter(|level| *level <= 5)
         .ok_or_else(|| format!("level should be 0-5, not \"{}\"", level.trim()))?;
     Ok((name.trim().to_string(), level))
+}
+
+fn parse_damage_profile(value: &str) -> Result<DamageProfile, String> {
+    let values = value
+        .split(',')
+        .map(|part| {
+            part.trim()
+                .parse::<f64>()
+                .ok()
+                .filter(|value| *value >= 0.0)
+                .ok_or_else(|| format!("expected a number of 0 or more, not \"{}\"", part.trim()))
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+    let [em, explosive, kinetic, thermal] = values[..] else {
+        return Err("expected EM,EXPLOSIVE,KINETIC,THERMAL".to_string());
+    };
+    Ok(DamageProfile {
+        em,
+        explosive,
+        kinetic,
+        thermal,
+    })
 }
 
 fn fail(message: String) -> ! {
@@ -394,6 +427,9 @@ pub fn main() {
         SystemSecurity::NullSec => Security::NullSec,
         SystemSecurity::Wormhole => Security::Wormhole,
     };
+    if let Some(damage_profile) = args.damage_profile {
+        fit.environment.damage_profile = damage_profile;
+    }
 
     let info = InfoSde::new(&sde);
     let options = Options {
