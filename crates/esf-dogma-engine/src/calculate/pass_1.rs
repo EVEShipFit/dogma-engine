@@ -1,6 +1,6 @@
 use super::attribute_ids::{
-    ATTRIBUTE_CAPACITY_ID, ATTRIBUTE_MASS_ID, ATTRIBUTE_RADIUS_ID, ATTRIBUTE_SKILL_LEVEL_ID,
-    ATTRIBUTE_VOLUME_ID,
+    ATTRIBUTE_CAPACITY_ID, ATTRIBUTE_MASS_ID, ATTRIBUTE_PILOT_SECURITY_STATUS_ID,
+    ATTRIBUTE_RADIUS_ID, ATTRIBUTE_SKILL_LEVEL_ID, ATTRIBUTE_VOLUME_ID,
 };
 use super::item::{Attribute, Item};
 use super::{Info, Objects};
@@ -71,6 +71,17 @@ impl PassOne {
         let mut objects = Objects::new(fit.ship.type_id, fit.ship.mode);
 
         objects.ship.set_attributes(info);
+        /* Only ships with a bonus that scales with it carry the attribute. */
+        if objects
+            .ship
+            .attributes
+            .contains_key(&ATTRIBUTE_PILOT_SECURITY_STATUS_ID)
+        {
+            objects.ship.set_attribute(
+                ATTRIBUTE_PILOT_SECURITY_STATUS_ID,
+                fit.character.security_status,
+            );
+        }
         if let Some(mode) = objects.mode.as_mut() {
             mode.set_attributes(info);
         }
