@@ -1,5 +1,7 @@
 //! Validate various of bonuses different configuration give to structures.
 
+use esf_dogma_engine::Security;
+
 use crate::harness::all;
 
 /* Powered (because of Cloning Center) should give more hp / cap. */
@@ -22,7 +24,7 @@ Standup Layered Armor Plating I
 Standup Cap Battery I
 "#;
 
-/* Rigs should apply bonuses to modules. */
+/* Rigs should apply bonuses to modules, more so outside high-sec. */
 const RIGGED: &str = r#"
 [Astrahus, Structure bonus rigged]
 
@@ -39,4 +41,7 @@ regression! {
     powered_skills_5 = POWERED, skills: all(5);
     unpowered_skills_5 = UNPOWERED, skills: all(5);
     rigged_skills_5 = RIGGED, skills: all(5);
+    rigged_low_sec = RIGGED, skills: all(5), edit: |fit| fit.environment.security = Security::LowSec;
+    rigged_null_sec = RIGGED, skills: all(5), edit: |fit| fit.environment.security = Security::NullSec;
+    rigged_wormhole = RIGGED, skills: all(5), edit: |fit| fit.environment.security = Security::Wormhole;
 }

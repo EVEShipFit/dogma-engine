@@ -4,7 +4,7 @@ use super::attribute_ids::{
 };
 use super::item::{Attribute, Item};
 use super::{Info, Objects};
-use crate::fit::{Fit, Mutation, Spool};
+use crate::fit::{Fit, Mutation, Security, Spool};
 
 pub struct PassOne {}
 
@@ -100,6 +100,12 @@ impl PassOne {
         }
 
         let attr_spool_multiplier_bonus_id = info.attribute_name_to_id("spoolMultiplierBonus");
+        let attr_security_modifier_id = info.attribute_name_to_id("securityModifier");
+        let attr_system_modifier_id = info.attribute_name_to_id(match fit.environment.security {
+            Security::HighSec => "hiSecModifier",
+            Security::LowSec => "lowSecModifier",
+            Security::NullSec | Security::Wormhole => "nullSecModifier",
+        });
 
         for fit_item in &fit.items {
             let mut item = Item::new_fit(fit_item);
@@ -119,6 +125,15 @@ impl PassOne {
                     (fit_item.spool, attr_spool_multiplier_bonus_id)
                 {
                     item.add_attribute(attribute_id, bonus, bonus);
+                }
+
+                let system_modifier = attr_system_modifier_id
+                    .and_then(|attribute_id| item.attributes.get(&attribute_id))
+                    .map(|attribute| attribute.base_value);
+                if let (Some(modifier), Some(attribute_id)) =
+                    (system_modifier, attr_security_modifier_id)
+                {
+                    item.set_attribute(attribute_id, modifier);
                 }
             }
 
