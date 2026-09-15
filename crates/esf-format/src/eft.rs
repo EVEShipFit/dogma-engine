@@ -1,6 +1,6 @@
 //! EFT, the text format EVE copies a fit to the clipboard in.
 
-use std::collections::HashMap;
+use std::collections::{BTreeSet, HashMap};
 use std::fmt;
 
 use esf_data::InfoName;
@@ -18,7 +18,7 @@ pub enum Error {
     InvalidEmptySlot(String),
     /// No type has this name.
     UnknownType(String),
-    /// The type exists, but is not a module that fits in any slot.
+    /// The type exists, but is not a module, implant or booster.
     NoSlot(String),
 }
 
@@ -29,7 +29,7 @@ impl fmt::Display for Error {
             Error::InvalidHeader => write!(f, "invalid EFT header"),
             Error::InvalidEmptySlot(line) => write!(f, "invalid empty slot {line}"),
             Error::UnknownType(name) => write!(f, "unknown type {name}"),
-            Error::NoSlot(name) => write!(f, "module {name} does not fit in any slot"),
+            Error::NoSlot(name) => write!(f, "{name} does not fit in any slot"),
         }
     }
 }
@@ -57,6 +57,10 @@ const RACKS: [(i32, Rack); 6] = [
 
 const CATEGORY_DRONE: i32 = 18;
 const CATEGORY_FIGHTER: i32 = 87;
+
+/* Implants and boosters have no rack; the slot they go in is an attribute. */
+const ATTRIBUTE_IMPLANTNESS: i32 = 331;
+const ATTRIBUTE_BOOSTERNESS: i32 = 1087;
 
 fn section_iter(eft_lines: Vec<&str>) -> impl Iterator<Item = Vec<&str>> {
     let mut section: Vec<&str> = Vec::new();
@@ -102,6 +106,21 @@ fn find_slot(
             let (rack, slot) = RACKS.iter().find(|(rack, _)| *rack == effect.effect_id())?;
             Some(slot(next_index(rack_indexes, *rack)))
         })
+        .or_else(|| find_character_slot(info, type_id))
+}
+
+fn find_character_slot(info: &impl InfoName, type_id: i32) -> Option<Slot> {
+    info.get_dogma_attributes(type_id)
+        .into_iter()
+        .flatten()
+        .find_map(|attribute| {
+            let index = attribute.value() as i64;
+            match attribute.attribute_id() {
+                ATTRIBUTE_IMPLANTNESS => Some(Slot::Implant(index.try_into().ok()?)),
+                ATTRIBUTE_BOOSTERNESS => Some(Slot::Booster(index.try_into().ok()?)),
+                _ => None,
+            }
+        })
 }
 
 fn type_name_to_id(info: &impl InfoName, name: &str) -> Result<i32, Error> {
@@ -119,7 +138,8 @@ fn parse_quantity(line: &str) -> Option<(&str, u32)> {
 /// Load a fit from EFT text. The fit has no skills.
 ///
 /// Modules are active, unless the line ends in `/offline`. As an EVEShip.fit
-/// extension, `/online`, `/active` and `/overload` work too. A section where
+/// extension, `/online`, `/active` and `/overload` work too. An implant or
+/// booster goes in the slot its type is made for. A section where
 /// every line ends in `x<quantity>` goes in the drone bay if it holds only
 /// drones, in the fighter bay if it holds only fighters, and in the cargo hold
 /// otherwise.
@@ -225,6 +245,7 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
                         state,
                         charge: charge_type_id.map(|type_id| Charge { type_id }),
                         fighter_abilities: None,
+                        booster_side_effects: BTreeSet::new(),
                     });
                 }
             }
@@ -258,6 +279,7 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
                         state,
                         charge: None,
                         fighter_abilities: None,
+                        booster_side_effects: BTreeSet::new(),
                     });
                 }
             }
@@ -279,6 +301,13 @@ mod tests {
 
     impl InfoName for Names {
         fn get_dogma_effects(&self, _type_id: i32) -> Option<Vector<'_, eve::TypeDogmaEffect>> {
+            None
+        }
+
+        fn get_dogma_attributes(
+            &self,
+            _type_id: i32,
+        ) -> Option<Vector<'_, eve::TypeDogmaAttribute>> {
             None
         }
 

@@ -36,13 +36,14 @@ All identifiers are those from the SDE.
 - `items`: everything fitted or carried. Each item has:
   - `type_id`: its type.
   - `slot`: where the item is.
-    - `type`: `high`, `medium`, `low`, `rig`, `subsystem`, `service`, `fighter_tube`, `fighter_bay`, `drone_bay` or `cargo`.
-      _`cargo` is carried, but not calculated._
-    - `index`: position within that slot type, starting at 0. Absent for `fighter_bay`, `drone_bay` and `cargo`.
+    - `type`: `high`, `medium`, `low`, `rig`, `subsystem`, `service`, `fighter_tube`, `fighter_bay`, `implant`, `booster`, `drone_bay` or `cargo`.
+    - `index`: position within that slot type, starting at 0 (`implant` and `booster` starting at 1).
+      Absent for `fighter_bay`, `drone_bay` and `cargo`.
   - `quantity` (optional, default 1): stack size for drones, fighters and cargo. For fighters in a tube, the squadron size.
   - `state`: requested state; `offline`, `online`, `active` or `overload`.
   - `charge` (optional): the loaded charge, as `type_id`.
   - `fighter_abilities` (optional): the abilities a fighter uses, as effect IDs. Absent means the fighter's default abilities.
+  - `booster_side_effects` (optional): the side effects a booster rolled, as effect IDs. Absent means none.
 - `character` (optional):
   - `skills`: level (0 to 5) per skill type ID. A missing skill gives no bonuses.
 

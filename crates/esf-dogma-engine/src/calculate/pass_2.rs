@@ -103,6 +103,11 @@ fn for_each_in_location(
             for (index, skill) in objects.skills.iter_mut().enumerate() {
                 apply(Object::Skill(index), skill);
             }
+            for (index, item) in objects.items.iter_mut().enumerate() {
+                if item.is_on_char() {
+                    apply(Object::Item(index), item);
+                }
+            }
         }
         Object::Mode | Object::Item(_) | Object::Charge(_) | Object::Skill(_) | Object::Target => {
             apply(location, objects.get_mut(location).unwrap())
@@ -214,6 +219,14 @@ impl Item {
                 }
             }
 
+            if type_dogma_effect.fitting_usage_chance_attribute_id() != 0
+                && !self
+                    .booster_side_effects
+                    .contains(&dogma_effect.effect_id())
+            {
+                continue;
+            }
+
             let modifiers = type_dogma_effect
                 .modifiers()
                 .filter(|modifiers| !modifiers.is_empty());
@@ -291,7 +304,16 @@ impl Pass for PassTwo {
         objects
             .char
             .collect_effects(info, Object::Char, false, &mut effects);
+
+        /* A structure is not the pilot's ship; only the structure skills, via
+         * the structure domain, reach it. Implants and boosters not at all. */
+        let structure_fit = objects.ship.category_id == STRUCTURE_CATEGORY_ID;
+
         for (index, item) in objects.items.iter_mut().enumerate() {
+            if structure_fit && item.is_on_char() {
+                item.state = EffectCategory::Passive;
+                continue;
+            }
             if !item.is_calculated() {
                 continue;
             }
@@ -301,8 +323,6 @@ impl Pass for PassTwo {
                 charge.collect_effects(info, Object::Charge(index), false, &mut effects);
             }
         }
-        /* A structure is not the pilot's ship; only the structure skills, via the structure domain, reach it. */
-        let structure_fit = objects.ship.category_id == STRUCTURE_CATEGORY_ID;
         for (index, skill) in objects.skills.iter_mut().enumerate() {
             skill.collect_effects(info, Object::Skill(index), structure_fit, &mut effects);
         }
@@ -369,8 +389,13 @@ impl Pass for PassTwo {
                     };
                     let location_only =
                         matches!(effect.modifier, Modifier::LocationRequiredSkillModifier(_));
+                    let char_location = location_only && effect.target == Object::Char;
+                    let in_location = |item: &Item| match char_location {
+                        true => item.is_on_char(),
+                        false => item.is_in_ship(),
+                    };
 
-                    if ship_skills.contains(&skill_type_id) {
+                    if !char_location && ship_skills.contains(&skill_type_id) {
                         objects.ship.add_effect(
                             info,
                             Object::Ship,
@@ -385,7 +410,7 @@ impl Pass for PassTwo {
                         .iter_mut()
                         .zip(&item_skills)
                         .enumerate()
-                        .filter(|(_, (item, _))| !location_only || item.is_in_ship())
+                        .filter(|(_, (item, _))| !location_only || in_location(item))
                     {
                         if skills.contains(&skill_type_id) {
                             item.add_effect(

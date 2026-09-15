@@ -1,0 +1,82 @@
+---
+source: tests/harness/case.rs
+expression: "calculate_fit(eft_fit, skills, edit)"
+---
+ship/type                                    = Astrahus
+ship/scanStrength                            = 500.000000
+ship/passiveShieldEffectiveRechargeRate      = 0.011250
+ship/passiveShieldRechargeRate               = 0.009000
+ship/ehp                                     = 8999999.865890
+ship/shieldThermalDamageEffectiveResonance   = 0.200000
+ship/shieldKineticDamageEffectiveResonance   = 0.200000
+ship/shieldExplosiveDamageEffectiveResonance = 0.200000
+ship/shieldEmDamageEffectiveResonance        = 0.200000
+ship/hullThermalDamageEffectiveResonance     = 0.200000
+ship/hullKineticDamageEffectiveResonance     = 0.200000
+ship/hullExplosiveDamageEffectiveResonance   = 0.200000
+ship/hullEmDamageEffectiveResonance          = 0.200000
+ship/armorThermalDamageEffectiveResonance    = 0.200000
+ship/armorKineticDamageEffectiveResonance    = 0.200000
+ship/armorExplosiveDamageEffectiveResonance  = 0.200000
+ship/armorEmDamageEffectiveResonance         = 0.200000
+ship/shieldEhp                               = 4499999.932945
+ship/hullEhp                                 = 2249999.966472
+ship/armorEhp                                = 2249999.966472
+ship/shieldDamageEffectiveResonance          = 0.800000
+ship/hullDamageEffectiveResonance            = 0.800000
+ship/armorDamageEffectiveResonance           = 0.800000
+ship/powerFree                               = 1500000.000000
+ship/cpuFree                                 = 24000.000000
+ship/capacitorDepletesIn                     = -1.000000
+ship/capacitorPeakDeltaPercentage            = 100.000000
+ship/capacitorPeakDelta                      = 138.888889
+ship/capacitorPeakRecharge                   = 138.888889
+
+character/corporationMemberLimit                   = 12600.000000
+character/maxLockedTargets                         = 25.000000
+character/manufactureSlotLimit                     = 15.000000
+character/manufactureTimeMultiplier                = 0.680000
+character/maxActiveDrones                          = 5.000000
+character/negotiationPercentage                    = 1.250000
+character/diplomacyBonus                           = 2.000000
+character/fastTalkPercentage                       = 125.000000
+character/connectionsBonus                         = 2.000000
+character/criminalConnectionsBonus                 = 2.000000
+character/amarrTechTimePercent                     = 75.000000
+character/manufacturingTimeResearchSpeed           = 0.637500
+character/copySpeedPercent                         = 0.637500
+character/reverseEngineeringChance                 = 100.000000
+character/mineralNeedResearchSpeed                 = 0.637500
+character/smugglingChance                          = 0.500000
+character/droneControlDistance                     = 60000.000000
+character/maxLaborotorySlots                       = 11.000000
+character/bountyBonus                              = 7500.000000
+character/contrabandDetectionChance                = -0.500000
+character/maxJumpClones                            = 15.000000
+character/posStructureControlAmount                = 5.000000
+character/moduleRepairRate                         = 20.000000
+character/shipBrokenModuleRepairCostMultiplier     = 0.375000
+character/baseDefenderAllyCost                     = 7500000.000000
+character/cloneJumpCoolDown                        = 19.000000
+character/piTaxReduction                           = 0.500000
+character/inventionReverseEngineeringResearchSpeed = 0.850000
+character/reactionTimeMultiplier                   = 0.800000
+character/reactionSlotLimit                        = 10.000000
+
+implant_1/type  = High-grade Amulet Alpha
+implant_1/state = offline
+
+implant_2/type  = High-grade Amulet Beta
+implant_2/state = offline
+
+implant_3/type  = High-grade Amulet Gamma
+implant_3/state = offline
+
+implant_4/type  = High-grade Amulet Delta
+implant_4/state = offline
+
+implant_5/type  = High-grade Amulet Epsilon
+implant_5/state = offline
+
+implant_6/type  = High-grade Amulet Omega
+implant_6/state = offline

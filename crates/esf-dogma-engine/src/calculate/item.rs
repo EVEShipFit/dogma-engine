@@ -88,6 +88,7 @@ pub struct Item {
     pub attributes: BTreeMap<i32, Attribute>,
     pub effects: Vec<i32>,
     pub fighter_abilities: Option<BTreeSet<i32>>,
+    pub booster_side_effects: BTreeSet<i32>,
 }
 
 impl Attribute {
@@ -149,8 +150,15 @@ impl Item {
         matches!(self.slot, Some(Slot::FighterTube(_) | Slot::FighterBay))
     }
 
+    pub fn is_on_char(&self) -> bool {
+        matches!(self.slot, Some(Slot::Implant(_) | Slot::Booster(_)))
+    }
+
     pub fn is_calculated(&self) -> bool {
-        self.is_in_ship() || self.is_fighter() || self.slot == Some(Slot::DroneBay)
+        self.is_in_ship()
+            || self.is_fighter()
+            || self.is_on_char()
+            || self.slot == Some(Slot::DroneBay)
     }
 
     pub fn new_charge(type_id: i32) -> Item {
@@ -166,6 +174,7 @@ impl Item {
             attributes: BTreeMap::new(),
             effects: Vec::new(),
             fighter_abilities: None,
+            booster_side_effects: BTreeSet::new(),
         }
     }
 
@@ -185,6 +194,7 @@ impl Item {
             attributes: BTreeMap::new(),
             effects: Vec::new(),
             fighter_abilities: fit_item.fighter_abilities.clone(),
+            booster_side_effects: fit_item.booster_side_effects.clone(),
         };
 
         match item.slot {
@@ -215,6 +225,7 @@ impl Item {
             attributes: BTreeMap::new(),
             effects: Vec::new(),
             fighter_abilities: None,
+            booster_side_effects: BTreeSet::new(),
         }
     }
 }
