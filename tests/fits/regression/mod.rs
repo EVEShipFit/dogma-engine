@@ -2,6 +2,7 @@
 
 mod boosters;
 mod burst_projector;
+mod damage_profile;
 mod drone_stack_state;
 mod fighters;
 mod implants;
