@@ -89,6 +89,7 @@ pub struct Item {
     pub effects: Vec<i32>,
     pub fighter_abilities: Option<BTreeSet<i32>>,
     pub booster_side_effects: BTreeSet<i32>,
+    pub mutation_base: Option<i32>,
 }
 
 impl Attribute {
@@ -175,6 +176,7 @@ impl Item {
             effects: Vec::new(),
             fighter_abilities: None,
             booster_side_effects: BTreeSet::new(),
+            mutation_base: None,
         }
     }
 
@@ -195,6 +197,7 @@ impl Item {
             effects: Vec::new(),
             fighter_abilities: fit_item.fighter_abilities.clone(),
             booster_side_effects: fit_item.booster_side_effects.clone(),
+            mutation_base: fit_item.mutation.as_ref().map(|mutation| mutation.base),
         };
 
         match item.slot {
@@ -226,6 +229,7 @@ impl Item {
             effects: Vec::new(),
             fighter_abilities: None,
             booster_side_effects: BTreeSet::new(),
+            mutation_base: None,
         }
     }
 }

@@ -30,4 +30,4 @@ mod fit;
 pub use calculate::{
     AttributeValue, Calculation, EffectOperator, ItemResult, Options, Source, SourceRef, calculate,
 };
-pub use fit::{Character, Charge, Fit, FitItem, Ship, Slot, State};
+pub use fit::{Character, Charge, Fit, FitItem, Mutation, Ship, Slot, State};

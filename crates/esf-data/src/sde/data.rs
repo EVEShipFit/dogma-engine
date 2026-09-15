@@ -75,6 +75,13 @@ impl<'a> Sde<'a> {
             .lookup_by_key(effect_id, |entry, key| entry.key_compare_with_value(*key))
     }
 
+    /// A mutaplasmid by its type id.
+    pub fn get_mutaplasmid(&self, type_id: i32) -> Option<eve::Mutaplasmid<'a>> {
+        self.sde
+            .mutaplasmids()?
+            .lookup_by_key(type_id, |entry, key| entry.key_compare_with_value(*key))
+    }
+
     /// The id of the attribute with exactly this name, like `"cycleTime"`.
     pub fn attribute_name_to_id(&self, name: &str) -> Option<i32> {
         self.attribute_ids.get(name).copied()

@@ -23,6 +23,11 @@ pub fn snapshot(module_path: &str, name: &str, eft_fit: &str, skills: Skills, ed
     });
 }
 
+pub fn load(eft_fit: &str) -> Result<Fit, eft::Error> {
+    let info_name = InfoNameSde::new(&SDE, Some(&NAMES)).unwrap();
+    eft::load_eft(&info_name, eft_fit.trim())
+}
+
 /* EFT cannot express everything a fit can, so a case may edit the loaded fit. */
 pub fn calculate(
     eft_fit: &str,
@@ -30,8 +35,7 @@ pub fn calculate(
     edit: fn(&mut Fit),
     options: &Options,
 ) -> (Fit, Calculation) {
-    let info_name = InfoNameSde::new(&SDE, Some(&NAMES)).unwrap();
-    let mut fit = eft::load_eft(&info_name, eft_fit.trim()).unwrap();
+    let mut fit = load(eft_fit).unwrap();
     fit.character.skills = skills.levels;
     edit(&mut fit);
 

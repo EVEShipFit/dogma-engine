@@ -42,6 +42,9 @@ All identifiers are those from the SDE.
   - `quantity` (optional, default 1): stack size for drones, fighters and cargo. For fighters in a tube, the squadron size.
   - `state`: requested state; `offline`, `online`, `active` or `overload`.
   - `charge` (optional): the loaded charge, as `type_id`.
+  - `mutation` (optional): for mutated items (Abyssal modules, mutated drones, ...).
+    - `base`: type ID of the item before it was mutated.
+    - `attributes`: the rolled value per attribute ID.
   - `fighter_abilities` (optional): the abilities a fighter uses, as effect IDs. Absent means the fighter's default abilities.
   - `booster_side_effects` (optional): the side effects a booster rolled, as effect IDs. Absent means none.
 - `character` (optional):

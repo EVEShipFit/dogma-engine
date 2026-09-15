@@ -1071,7 +1071,6 @@ impl<'a> TypeFighterAbility {
     s
   }
 
-  /// The position in the fighter's ability bar, starting at 0.
   pub fn slot(&self) -> i8 {
     let mut mem = core::mem::MaybeUninit::<<i8 as EndianScalar>::Scalar>::uninit();
     // Safety:
@@ -1130,7 +1129,6 @@ impl<'a> TypeFighterAbility {
     }
   }
 
-  /// 0 when the ability has no cooldown.
   pub fn cooldown_seconds(&self) -> f32 {
     let mut mem = core::mem::MaybeUninit::<<f32 as EndianScalar>::Scalar>::uninit();
     // Safety:
@@ -1160,7 +1158,6 @@ impl<'a> TypeFighterAbility {
     }
   }
 
-  /// 0 when the ability does not run out of charges.
   pub fn charge_count(&self) -> i32 {
     let mut mem = core::mem::MaybeUninit::<<i32 as EndianScalar>::Scalar>::uninit();
     // Safety:
@@ -1214,6 +1211,166 @@ impl<'a> TypeFighterAbility {
       core::ptr::copy_nonoverlapping(
         &x_le as *const _ as *const u8,
         self.0[16..].as_mut_ptr(),
+        core::mem::size_of::<<f32 as EndianScalar>::Scalar>(),
+      );
+    }
+  }
+
+}
+
+// struct MutaplasmidAttribute, aligned to 4
+#[repr(transparent)]
+#[derive(Clone, Copy, PartialEq)]
+pub struct MutaplasmidAttribute(pub [u8; 12]);
+impl Default for MutaplasmidAttribute { 
+  fn default() -> Self { 
+    Self([0; 12])
+  }
+}
+impl core::fmt::Debug for MutaplasmidAttribute {
+  fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+    f.debug_struct("MutaplasmidAttribute")
+      .field("attribute_id", &self.attribute_id())
+      .field("min", &self.min())
+      .field("max", &self.max())
+      .finish()
+  }
+}
+
+impl flatbuffers::SimpleToVerifyInSlice for MutaplasmidAttribute {}
+impl<'a> flatbuffers::Follow<'a> for MutaplasmidAttribute {
+  type Inner = &'a MutaplasmidAttribute;
+  #[inline]
+  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+    <&'a MutaplasmidAttribute>::follow(buf, loc)
+  }
+}
+impl<'a> flatbuffers::Follow<'a> for &'a MutaplasmidAttribute {
+  type Inner = &'a MutaplasmidAttribute;
+  #[inline]
+  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+    flatbuffers::follow_cast_ref::<MutaplasmidAttribute>(buf, loc)
+  }
+}
+impl<'b> flatbuffers::Push for MutaplasmidAttribute {
+    type Output = MutaplasmidAttribute;
+    #[inline]
+    unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
+        let src = ::core::slice::from_raw_parts(self as *const MutaplasmidAttribute as *const u8, <Self as flatbuffers::Push>::size());
+        dst.copy_from_slice(src);
+    }
+    #[inline]
+    fn alignment() -> flatbuffers::PushAlignment {
+        flatbuffers::PushAlignment::new(4)
+    }
+}
+
+impl<'a> flatbuffers::Verifiable for MutaplasmidAttribute {
+  #[inline]
+  fn run_verifier(
+    v: &mut flatbuffers::Verifier, pos: usize
+  ) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+    use self::flatbuffers::Verifiable;
+    v.in_buffer::<Self>(pos)
+  }
+}
+
+impl<'a> MutaplasmidAttribute {
+  #[allow(clippy::too_many_arguments)]
+  pub fn new(
+    attribute_id: i32,
+    min: f32,
+    max: f32,
+  ) -> Self {
+    let mut s = Self([0; 12]);
+    s.set_attribute_id(attribute_id);
+    s.set_min(min);
+    s.set_max(max);
+    s
+  }
+
+  pub fn attribute_id(&self) -> i32 {
+    let mut mem = core::mem::MaybeUninit::<<i32 as EndianScalar>::Scalar>::uninit();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    EndianScalar::from_little_endian(unsafe {
+      core::ptr::copy_nonoverlapping(
+        self.0[0..].as_ptr(),
+        mem.as_mut_ptr() as *mut u8,
+        core::mem::size_of::<<i32 as EndianScalar>::Scalar>(),
+      );
+      mem.assume_init()
+    })
+  }
+
+  pub fn set_attribute_id(&mut self, x: i32) {
+    let x_le = x.to_little_endian();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    unsafe {
+      core::ptr::copy_nonoverlapping(
+        &x_le as *const _ as *const u8,
+        self.0[0..].as_mut_ptr(),
+        core::mem::size_of::<<i32 as EndianScalar>::Scalar>(),
+      );
+    }
+  }
+
+  pub fn min(&self) -> f32 {
+    let mut mem = core::mem::MaybeUninit::<<f32 as EndianScalar>::Scalar>::uninit();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    EndianScalar::from_little_endian(unsafe {
+      core::ptr::copy_nonoverlapping(
+        self.0[4..].as_ptr(),
+        mem.as_mut_ptr() as *mut u8,
+        core::mem::size_of::<<f32 as EndianScalar>::Scalar>(),
+      );
+      mem.assume_init()
+    })
+  }
+
+  pub fn set_min(&mut self, x: f32) {
+    let x_le = x.to_little_endian();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    unsafe {
+      core::ptr::copy_nonoverlapping(
+        &x_le as *const _ as *const u8,
+        self.0[4..].as_mut_ptr(),
+        core::mem::size_of::<<f32 as EndianScalar>::Scalar>(),
+      );
+    }
+  }
+
+  pub fn max(&self) -> f32 {
+    let mut mem = core::mem::MaybeUninit::<<f32 as EndianScalar>::Scalar>::uninit();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    EndianScalar::from_little_endian(unsafe {
+      core::ptr::copy_nonoverlapping(
+        self.0[8..].as_ptr(),
+        mem.as_mut_ptr() as *mut u8,
+        core::mem::size_of::<<f32 as EndianScalar>::Scalar>(),
+      );
+      mem.assume_init()
+    })
+  }
+
+  pub fn set_max(&mut self, x: f32) {
+    let x_le = x.to_little_endian();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    unsafe {
+      core::ptr::copy_nonoverlapping(
+        &x_le as *const _ as *const u8,
+        self.0[8..].as_mut_ptr(),
         core::mem::size_of::<<f32 as EndianScalar>::Scalar>(),
       );
     }
@@ -2544,6 +2701,261 @@ impl core::fmt::Debug for DogmaEffect<'_> {
       ds.finish()
   }
 }
+pub enum MutaplasmidMappingOffset {}
+#[derive(Copy, Clone, PartialEq)]
+
+pub struct MutaplasmidMapping<'a> {
+  pub _tab: flatbuffers::Table<'a>,
+}
+
+impl<'a> flatbuffers::Follow<'a> for MutaplasmidMapping<'a> {
+  type Inner = MutaplasmidMapping<'a>;
+  #[inline]
+  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+    Self { _tab: flatbuffers::Table::new(buf, loc) }
+  }
+}
+
+impl<'a> MutaplasmidMapping<'a> {
+  pub const VT_APPLICABLE_TYPE_IDS: flatbuffers::VOffsetT = 4;
+  pub const VT_RESULTING_TYPE_ID: flatbuffers::VOffsetT = 6;
+
+  #[inline]
+  pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+    MutaplasmidMapping { _tab: table }
+  }
+  #[allow(unused_mut)]
+  pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+    _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
+    args: &'args MutaplasmidMappingArgs<'args>
+  ) -> flatbuffers::WIPOffset<MutaplasmidMapping<'bldr>> {
+    let mut builder = MutaplasmidMappingBuilder::new(_fbb);
+    builder.add_resulting_type_id(args.resulting_type_id);
+    if let Some(x) = args.applicable_type_ids { builder.add_applicable_type_ids(x); }
+    builder.finish()
+  }
+
+
+  #[inline]
+  pub fn applicable_type_ids(&self) -> Option<flatbuffers::Vector<'a, i32>> {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, i32>>>(MutaplasmidMapping::VT_APPLICABLE_TYPE_IDS, None)}
+  }
+  #[inline]
+  pub fn resulting_type_id(&self) -> i32 {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<i32>(MutaplasmidMapping::VT_RESULTING_TYPE_ID, Some(0)).unwrap()}
+  }
+}
+
+impl flatbuffers::Verifiable for MutaplasmidMapping<'_> {
+  #[inline]
+  fn run_verifier(
+    v: &mut flatbuffers::Verifier, pos: usize
+  ) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+    use self::flatbuffers::Verifiable;
+    v.visit_table(pos)?
+     .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, i32>>>("applicable_type_ids", Self::VT_APPLICABLE_TYPE_IDS, false)?
+     .visit_field::<i32>("resulting_type_id", Self::VT_RESULTING_TYPE_ID, false)?
+     .finish();
+    Ok(())
+  }
+}
+pub struct MutaplasmidMappingArgs<'a> {
+    pub applicable_type_ids: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, i32>>>,
+    pub resulting_type_id: i32,
+}
+impl<'a> Default for MutaplasmidMappingArgs<'a> {
+  #[inline]
+  fn default() -> Self {
+    MutaplasmidMappingArgs {
+      applicable_type_ids: None,
+      resulting_type_id: 0,
+    }
+  }
+}
+
+pub struct MutaplasmidMappingBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+  fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+  start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+}
+impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> MutaplasmidMappingBuilder<'a, 'b, A> {
+  #[inline]
+  pub fn add_applicable_type_ids(&mut self, applicable_type_ids: flatbuffers::WIPOffset<flatbuffers::Vector<'b , i32>>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(MutaplasmidMapping::VT_APPLICABLE_TYPE_IDS, applicable_type_ids);
+  }
+  #[inline]
+  pub fn add_resulting_type_id(&mut self, resulting_type_id: i32) {
+    self.fbb_.push_slot::<i32>(MutaplasmidMapping::VT_RESULTING_TYPE_ID, resulting_type_id, 0);
+  }
+  #[inline]
+  pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> MutaplasmidMappingBuilder<'a, 'b, A> {
+    let start = _fbb.start_table();
+    MutaplasmidMappingBuilder {
+      fbb_: _fbb,
+      start_: start,
+    }
+  }
+  #[inline]
+  pub fn finish(self) -> flatbuffers::WIPOffset<MutaplasmidMapping<'a>> {
+    let o = self.fbb_.end_table(self.start_);
+    flatbuffers::WIPOffset::new(o.value())
+  }
+}
+
+impl core::fmt::Debug for MutaplasmidMapping<'_> {
+  fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+    let mut ds = f.debug_struct("MutaplasmidMapping");
+      ds.field("applicable_type_ids", &self.applicable_type_ids());
+      ds.field("resulting_type_id", &self.resulting_type_id());
+      ds.finish()
+  }
+}
+pub enum MutaplasmidOffset {}
+#[derive(Copy, Clone, PartialEq)]
+
+pub struct Mutaplasmid<'a> {
+  pub _tab: flatbuffers::Table<'a>,
+}
+
+impl<'a> flatbuffers::Follow<'a> for Mutaplasmid<'a> {
+  type Inner = Mutaplasmid<'a>;
+  #[inline]
+  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+    Self { _tab: flatbuffers::Table::new(buf, loc) }
+  }
+}
+
+impl<'a> Mutaplasmid<'a> {
+  pub const VT_ID: flatbuffers::VOffsetT = 4;
+  pub const VT_ATTRIBUTES: flatbuffers::VOffsetT = 6;
+  pub const VT_MAPPINGS: flatbuffers::VOffsetT = 8;
+
+  #[inline]
+  pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+    Mutaplasmid { _tab: table }
+  }
+  #[allow(unused_mut)]
+  pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+    _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
+    args: &'args MutaplasmidArgs<'args>
+  ) -> flatbuffers::WIPOffset<Mutaplasmid<'bldr>> {
+    let mut builder = MutaplasmidBuilder::new(_fbb);
+    if let Some(x) = args.mappings { builder.add_mappings(x); }
+    if let Some(x) = args.attributes { builder.add_attributes(x); }
+    builder.add_id(args.id);
+    builder.finish()
+  }
+
+
+  #[inline]
+  pub fn id(&self) -> i32 {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<i32>(Mutaplasmid::VT_ID, Some(0)).unwrap()}
+  }
+  #[inline]
+  pub fn key_compare_less_than(&self, o: &Mutaplasmid) -> bool {
+    self.id() < o.id()
+  }
+
+  #[inline]
+  pub fn key_compare_with_value(&self, val: i32) -> ::core::cmp::Ordering {
+    let key = self.id();
+    key.cmp(&val)
+  }
+  #[inline]
+  pub fn attributes(&self) -> Option<flatbuffers::Vector<'a, MutaplasmidAttribute>> {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, MutaplasmidAttribute>>>(Mutaplasmid::VT_ATTRIBUTES, None)}
+  }
+  #[inline]
+  pub fn mappings(&self) -> Option<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<MutaplasmidMapping<'a>>>> {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<MutaplasmidMapping>>>>(Mutaplasmid::VT_MAPPINGS, None)}
+  }
+}
+
+impl flatbuffers::Verifiable for Mutaplasmid<'_> {
+  #[inline]
+  fn run_verifier(
+    v: &mut flatbuffers::Verifier, pos: usize
+  ) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+    use self::flatbuffers::Verifiable;
+    v.visit_table(pos)?
+     .visit_field::<i32>("id", Self::VT_ID, false)?
+     .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, MutaplasmidAttribute>>>("attributes", Self::VT_ATTRIBUTES, false)?
+     .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<MutaplasmidMapping>>>>("mappings", Self::VT_MAPPINGS, false)?
+     .finish();
+    Ok(())
+  }
+}
+pub struct MutaplasmidArgs<'a> {
+    pub id: i32,
+    pub attributes: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, MutaplasmidAttribute>>>,
+    pub mappings: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<MutaplasmidMapping<'a>>>>>,
+}
+impl<'a> Default for MutaplasmidArgs<'a> {
+  #[inline]
+  fn default() -> Self {
+    MutaplasmidArgs {
+      id: 0,
+      attributes: None,
+      mappings: None,
+    }
+  }
+}
+
+pub struct MutaplasmidBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+  fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+  start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+}
+impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> MutaplasmidBuilder<'a, 'b, A> {
+  #[inline]
+  pub fn add_id(&mut self, id: i32) {
+    self.fbb_.push_slot::<i32>(Mutaplasmid::VT_ID, id, 0);
+  }
+  #[inline]
+  pub fn add_attributes(&mut self, attributes: flatbuffers::WIPOffset<flatbuffers::Vector<'b , MutaplasmidAttribute>>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Mutaplasmid::VT_ATTRIBUTES, attributes);
+  }
+  #[inline]
+  pub fn add_mappings(&mut self, mappings: flatbuffers::WIPOffset<flatbuffers::Vector<'b , flatbuffers::ForwardsUOffset<MutaplasmidMapping<'b >>>>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Mutaplasmid::VT_MAPPINGS, mappings);
+  }
+  #[inline]
+  pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> MutaplasmidBuilder<'a, 'b, A> {
+    let start = _fbb.start_table();
+    MutaplasmidBuilder {
+      fbb_: _fbb,
+      start_: start,
+    }
+  }
+  #[inline]
+  pub fn finish(self) -> flatbuffers::WIPOffset<Mutaplasmid<'a>> {
+    let o = self.fbb_.end_table(self.start_);
+    flatbuffers::WIPOffset::new(o.value())
+  }
+}
+
+impl core::fmt::Debug for Mutaplasmid<'_> {
+  fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+    let mut ds = f.debug_struct("Mutaplasmid");
+      ds.field("id", &self.id());
+      ds.field("attributes", &self.attributes());
+      ds.field("mappings", &self.mappings());
+      ds.finish()
+  }
+}
 pub enum SdeOffset {}
 #[derive(Copy, Clone, PartialEq)]
 
@@ -2566,6 +2978,7 @@ impl<'a> Sde<'a> {
   pub const VT_CATEGORIES: flatbuffers::VOffsetT = 10;
   pub const VT_DOGMA_ATTRIBUTES: flatbuffers::VOffsetT = 12;
   pub const VT_DOGMA_EFFECTS: flatbuffers::VOffsetT = 14;
+  pub const VT_MUTAPLASMIDS: flatbuffers::VOffsetT = 16;
 
   #[inline]
   pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -2577,6 +2990,7 @@ impl<'a> Sde<'a> {
     args: &'args SdeArgs<'args>
   ) -> flatbuffers::WIPOffset<Sde<'bldr>> {
     let mut builder = SdeBuilder::new(_fbb);
+    if let Some(x) = args.mutaplasmids { builder.add_mutaplasmids(x); }
     if let Some(x) = args.dogma_effects { builder.add_dogma_effects(x); }
     if let Some(x) = args.dogma_attributes { builder.add_dogma_attributes(x); }
     if let Some(x) = args.categories { builder.add_categories(x); }
@@ -2587,7 +3001,6 @@ impl<'a> Sde<'a> {
   }
 
 
-  /// Build number of the SDE this was generated from.
   #[inline]
   pub fn build_number(&self) -> i32 {
     // Safety:
@@ -2630,6 +3043,13 @@ impl<'a> Sde<'a> {
     // which contains a valid value in this slot
     unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DogmaEffect>>>>(Sde::VT_DOGMA_EFFECTS, None)}
   }
+  #[inline]
+  pub fn mutaplasmids(&self) -> Option<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<Mutaplasmid<'a>>>> {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<Mutaplasmid>>>>(Sde::VT_MUTAPLASMIDS, None)}
+  }
 }
 
 impl flatbuffers::Verifiable for Sde<'_> {
@@ -2645,6 +3065,7 @@ impl flatbuffers::Verifiable for Sde<'_> {
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<Category>>>>("categories", Self::VT_CATEGORIES, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<DogmaAttribute>>>>("dogma_attributes", Self::VT_DOGMA_ATTRIBUTES, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<DogmaEffect>>>>("dogma_effects", Self::VT_DOGMA_EFFECTS, false)?
+     .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<Mutaplasmid>>>>("mutaplasmids", Self::VT_MUTAPLASMIDS, false)?
      .finish();
     Ok(())
   }
@@ -2656,6 +3077,7 @@ pub struct SdeArgs<'a> {
     pub categories: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<Category<'a>>>>>,
     pub dogma_attributes: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DogmaAttribute<'a>>>>>,
     pub dogma_effects: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DogmaEffect<'a>>>>>,
+    pub mutaplasmids: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<Mutaplasmid<'a>>>>>,
 }
 impl<'a> Default for SdeArgs<'a> {
   #[inline]
@@ -2667,6 +3089,7 @@ impl<'a> Default for SdeArgs<'a> {
       categories: None,
       dogma_attributes: None,
       dogma_effects: None,
+      mutaplasmids: None,
     }
   }
 }
@@ -2701,6 +3124,10 @@ impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> SdeBuilder<'a, 'b, A> {
     self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Sde::VT_DOGMA_EFFECTS, dogma_effects);
   }
   #[inline]
+  pub fn add_mutaplasmids(&mut self, mutaplasmids: flatbuffers::WIPOffset<flatbuffers::Vector<'b , flatbuffers::ForwardsUOffset<Mutaplasmid<'b >>>>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Sde::VT_MUTAPLASMIDS, mutaplasmids);
+  }
+  #[inline]
   pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> SdeBuilder<'a, 'b, A> {
     let start = _fbb.start_table();
     SdeBuilder {
@@ -2724,6 +3151,7 @@ impl core::fmt::Debug for Sde<'_> {
       ds.field("categories", &self.categories());
       ds.field("dogma_attributes", &self.dogma_attributes());
       ds.field("dogma_effects", &self.dogma_effects());
+      ds.field("mutaplasmids", &self.mutaplasmids());
       ds.finish()
   }
 }
