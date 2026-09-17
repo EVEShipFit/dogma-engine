@@ -6,7 +6,7 @@
 use std::path::PathBuf;
 use std::sync::LazyLock;
 
-use esf_data::{Names, Sde};
+use esf_data::{InfoName, InfoNameSde, Names, Sde};
 
 mod case;
 mod dump;
@@ -14,6 +14,14 @@ mod skills;
 
 pub use case::{calculate, load, snapshot};
 pub use skills::{Skills, all, none};
+
+/// The type id of an effect beacon, so a case can name the system it is in.
+pub fn system_effect(name: &str) -> i32 {
+    InfoNameSde::new(&SDE, Some(&NAMES))
+        .unwrap()
+        .type_name_to_id(name)
+        .unwrap_or_else(|| panic!("no such system effect: {name}"))
+}
 
 /// Override with ESF_SDE and ESF_NAMES when the flatbuffers live elsewhere.
 fn read(variable: &str, default: &str) -> Vec<u8> {

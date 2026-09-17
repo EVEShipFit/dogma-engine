@@ -11,6 +11,7 @@ use esf_dogma_engine::{
 use esf_format::eft;
 
 const SKILL_CATEGORY_ID: i32 = 16;
+const EFFECT_BEACON_GROUP_ID: i32 = 920;
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
@@ -66,6 +67,14 @@ struct Args {
         help_heading = "Environment"
     )]
     security: SystemSecurity,
+
+    /// An effect beacon by name, like "Class 6 Black Hole Effects".
+    #[clap(
+        long = "system-effect",
+        value_name = "NAME",
+        help_heading = "Environment"
+    )]
+    system_effects: Vec<String>,
 
     /// Incoming damage, like "0,0,3,1"; only the ratio matters.
     #[clap(
@@ -302,7 +311,7 @@ fn source_label(info: &InfoSde, fit: &Fit, from: SourceRef) -> String {
             || "charge".to_string(),
             |charge| type_name(info, charge.type_id),
         ),
-        SourceRef::Skill { type_id } => type_name(info, type_id),
+        SourceRef::Skill { type_id } | SourceRef::System { type_id } => type_name(info, type_id),
     }
 }
 
@@ -429,6 +438,16 @@ pub fn main() {
     };
     if let Some(damage_profile) = args.damage_profile {
         fit.environment.damage_profile = damage_profile;
+    }
+    for name in &args.system_effects {
+        let type_id = info_name
+            .type_name_to_id(name)
+            .filter(|type_id| {
+                sde.get_type(*type_id)
+                    .is_some_and(|r#type| r#type.group_id() == EFFECT_BEACON_GROUP_ID)
+            })
+            .unwrap_or_else(|| fail(format!("no such system effect: {name}")));
+        fit.environment.system_effects.insert(type_id);
     }
 
     let info = InfoSde::new(&sde);

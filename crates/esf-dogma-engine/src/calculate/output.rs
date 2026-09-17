@@ -66,7 +66,7 @@ pub struct Source {
     pub applied: bool,
 }
 
-/// `Item` and `Charge` index into `Fit::items`. Skills are not in the result, so they carry their type.
+/// `Item` and `Charge` index into `Fit::items`. Skills and beacons are not in the result, so they carry their type.
 #[derive(Serialize, Debug, Clone, Copy, PartialEq)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum SourceRef {
@@ -91,6 +91,11 @@ pub enum SourceRef {
         /// The type id of the skill.
         type_id: i32,
     },
+    /// An effect beacon of the solar system.
+    System {
+        /// The type id of the beacon.
+        type_id: i32,
+    },
 }
 
 impl SourceRef {
@@ -102,6 +107,7 @@ impl SourceRef {
             Object::Item(index) => SourceRef::Item { index },
             Object::Charge(index) => SourceRef::Charge { index },
             Object::Skill(_) => SourceRef::Skill { type_id },
+            Object::System(_) => SourceRef::System { type_id },
             Object::Target => {
                 unreachable!("{object:?} is never the source of an effect")
             }
