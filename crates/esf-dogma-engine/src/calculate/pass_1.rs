@@ -114,12 +114,12 @@ impl PassOne {
         objects.char.set_type_ids(info);
         objects.target.set_type_ids(info);
 
-        for type_id in &fit.environment.system_effects {
-            let mut beacon = Item::new_system(*type_id);
+        for type_id in &fit.environment.beacons {
+            let mut beacon = Item::new_beacon(*type_id);
 
             beacon.set_attributes(info);
 
-            objects.system.push(beacon);
+            objects.beacons.push(beacon);
         }
 
         for (skill_id, skill_level) in &fit.character.skills {

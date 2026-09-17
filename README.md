@@ -56,7 +56,7 @@ All identifiers are those from the SDE.
 - `environment` (optional): where the fit is.
   - `damage_profile` (optional, default 0.25 each): incoming damage for effective hitpoints, as `em`, `explosive`, `kinetic` and `thermal` (relative to each other).
   - `security` (optional, default `high_sec`): `high_sec`, `low_sec`, `null_sec` or `wormhole`.
-  - `system_effects` (optional, default none): the effect beacons of the solar system, as type IDs.
+  - `beacons` (optional, default none): the beacons in space with the ship, as type IDs.
 
 ### Options
 
@@ -74,7 +74,7 @@ Each result has:
 
 - `attributes`: per attribute ID, its `base` value before effects and its final `value`.
   With the `sources` option, also `sources`: every modifier on it, in the order they were applied. Each has:
-  - `from`: where it comes from; `type` is `ship`, `mode`, `character`, `item` or `charge` (with the `index` into `items`), or `skill` or `system` (with its `type_id`).
+  - `from`: where it comes from; `type` is `ship`, `mode`, `character`, `item` or `charge` (with the `index` into `items`), or `skill` or `beacon` (with its `type_id`).
   - `effect_id`: the effect that modifies.
   - `source_attribute_id`: the attribute on the source that holds `value`.
   - `operator`: `pre_assign`, `pre_mul`, `pre_div`, `mod_add`, `mod_sub`, `post_mul`, `post_div`, `post_percent` or `post_assign`.

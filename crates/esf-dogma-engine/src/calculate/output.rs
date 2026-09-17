@@ -91,8 +91,8 @@ pub enum SourceRef {
         /// The type id of the skill.
         type_id: i32,
     },
-    /// An effect beacon of the solar system.
-    System {
+    /// A beacon in space with the ship.
+    Beacon {
         /// The type id of the beacon.
         type_id: i32,
     },
@@ -107,7 +107,7 @@ impl SourceRef {
             Object::Item(index) => SourceRef::Item { index },
             Object::Charge(index) => SourceRef::Charge { index },
             Object::Skill(_) => SourceRef::Skill { type_id },
-            Object::System(_) => SourceRef::System { type_id },
+            Object::Beacon(_) => SourceRef::Beacon { type_id },
             Object::Target => {
                 unreachable!("{object:?} is never the source of an effect")
             }

@@ -114,7 +114,7 @@ fn for_each_in_location(
         | Object::Charge(_)
         | Object::Skill(_)
         | Object::Target
-        | Object::System(_) => apply(location, objects.get_mut(location).unwrap()),
+        | Object::Beacon(_) => apply(location, objects.get_mut(location).unwrap()),
     }
 }
 
@@ -322,8 +322,8 @@ impl Pass for PassTwo {
         objects
             .char
             .collect_effects(info, Object::Char, false, &mut effects);
-        for (index, beacon) in objects.system.iter_mut().enumerate() {
-            beacon.collect_effects(info, Object::System(index), false, &mut effects);
+        for (index, beacon) in objects.beacons.iter_mut().enumerate() {
+            beacon.collect_effects(info, Object::Beacon(index), false, &mut effects);
         }
 
         /* A structure is not the pilot's ship; only the structure skills, via
