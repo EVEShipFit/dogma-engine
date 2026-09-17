@@ -17,4 +17,5 @@ mod spool;
 mod stacking_per_operator;
 mod structure_bonus;
 mod structure_stats;
+mod system_effects;
 mod tactical_modes;

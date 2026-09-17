@@ -31,6 +31,7 @@ pub(crate) struct Objects {
     pub skills: Vec<Item>,
     pub char: Item,
     pub target: Item,
+    pub system: Vec<Item>,
     pub sources: bool,
 }
 
@@ -44,6 +45,7 @@ impl Objects {
             Object::Item(index) => Some(&self.items[index]),
             Object::Charge(index) => self.items[index].charge.as_deref(),
             Object::Skill(index) => Some(&self.skills[index]),
+            Object::System(index) => Some(&self.system[index]),
         }
     }
 
@@ -56,6 +58,7 @@ impl Objects {
             Object::Item(index) => Some(&mut self.items[index]),
             Object::Charge(index) => self.items[index].charge.as_deref_mut(),
             Object::Skill(index) => Some(&mut self.skills[index]),
+            Object::System(index) => Some(&mut self.system[index]),
         }
     }
 
@@ -67,6 +70,7 @@ impl Objects {
             skills: Vec::new(),
             char: Item::new_fake(1373),
             target: Item::new_fake(0),
+            system: Vec::new(),
             sources: false,
         }
     }
