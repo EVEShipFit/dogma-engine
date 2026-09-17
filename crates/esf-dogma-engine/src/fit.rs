@@ -156,9 +156,9 @@ pub struct Environment {
     /// The security of the solar system.
     #[serde(default)]
     pub security: Security,
-    /// The effect beacons of the solar system.
+    /// The beacons in space with the ship, by type id.
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
-    pub system_effects: BTreeSet<i32>,
+    pub beacons: BTreeSet<i32>,
 }
 
 /// How incoming damage is split over the four damage types. Only the ratio
@@ -255,7 +255,7 @@ mod tests {
         assert_eq!(fit.character.security_status, 0.0);
         assert_eq!(fit.environment.security, Security::HighSec);
         assert_eq!(fit.environment.damage_profile, DamageProfile::default());
-        assert!(fit.environment.system_effects.is_empty());
+        assert!(fit.environment.beacons.is_empty());
     }
 
     #[test]
@@ -296,20 +296,17 @@ mod tests {
     }
 
     #[test]
-    fn reads_system_effects() {
+    fn reads_beacons() {
         let fit: Fit = serde_json::from_str(
             r#"{
                 "ship": {"type_id": 587},
                 "items": [],
-                "environment": {"system_effects": [30854, 30845]}
+                "environment": {"beacons": [30854, 30845]}
             }"#,
         )
         .unwrap();
 
-        assert_eq!(
-            fit.environment.system_effects,
-            BTreeSet::from([30845, 30854])
-        );
+        assert_eq!(fit.environment.beacons, BTreeSet::from([30845, 30854]));
     }
 
     #[test]
@@ -453,7 +450,7 @@ mod tests {
         assert!(!json.contains("spool"));
         assert!(!json.contains("mutation"));
         assert!(!json.contains("mode"));
-        assert!(!json.contains("system_effects"));
+        assert!(!json.contains("beacons"));
         assert_eq!(parsed.items[0].slot, Slot::Medium(2));
         assert_eq!(parsed.items[0].state, State::Overload);
     }

@@ -15,12 +15,12 @@ mod skills;
 pub use case::{calculate, load, snapshot};
 pub use skills::{Skills, all, none};
 
-/// The type id of an effect beacon, so a case can name the system it is in.
-pub fn system_effect(name: &str) -> i32 {
+/// The type id of a beacon, so a case can name the space it is in.
+pub fn beacon(name: &str) -> i32 {
     InfoNameSde::new(&SDE, Some(&NAMES))
         .unwrap()
         .type_name_to_id(name)
-        .unwrap_or_else(|| panic!("no such system effect: {name}"))
+        .unwrap_or_else(|| panic!("no such beacon: {name}"))
 }
 
 /// Override with ESF_SDE and ESF_NAMES when the flatbuffers live elsewhere.

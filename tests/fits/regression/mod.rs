@@ -1,5 +1,6 @@
 //! Regression cases that each reproduce a fixed bug or pin down one engine rule.
 
+mod beacons;
 mod boosters;
 mod burst_projector;
 mod damage_profile;
@@ -17,5 +18,4 @@ mod spool;
 mod stacking_per_operator;
 mod structure_bonus;
 mod structure_stats;
-mod system_effects;
 mod tactical_modes;

@@ -52,7 +52,7 @@ pub enum Object {
     Skill(usize),
     Char,
     Target,
-    System(usize),
+    Beacon(usize),
 }
 
 #[derive(Debug)]
@@ -217,7 +217,7 @@ impl Item {
     }
 
     /* A beacon is always there, so its state is above every effect category. */
-    pub fn new_system(type_id: i32) -> Item {
+    pub fn new_beacon(type_id: i32) -> Item {
         Item {
             state: EffectCategory::System,
             max_state: EffectCategory::System,
