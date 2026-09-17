@@ -19,6 +19,8 @@ pub trait Info {
     fn get_dogma_effect(&self, effect_id: i32) -> Option<eve::DogmaEffect<'_>>;
     /// A type by id.
     fn get_type(&self, type_id: i32) -> Option<eve::Type<'_>>;
+    /// A buff by id.
+    fn get_dbuff_collection(&self, buff_id: i32) -> Option<eve::DbuffCollection<'_>>;
     /// The id of the attribute with exactly this name, like `"cycleTime"`.
     fn attribute_name_to_id(&self, name: &str) -> Option<i32>;
 }

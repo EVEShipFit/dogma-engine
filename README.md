@@ -69,16 +69,21 @@ All identifiers are those from the SDE.
 - `mode`: result for the mode; absent when the fit has no mode.
 - `items`: one result per item of the fit, in the same order.
 - `character`: result for the character.
+- `buffs`: every buff handed to the fit.
+  - `id`: which buff, as `dbuffCollections` in the SDE numbers them.
+  - `value`: how strong it is, in whatever the buff's operation reads.
+  - `from`: what handed it over; `type` is `beacon` (with its `type_id`).
+  - `applied`: false when another source of the same buff won.
 
 Each result has:
 
 - `attributes`: per attribute ID, its `base` value before effects and its final `value`.
   With the `sources` option, also `sources`: every modifier on it, in the order they were applied. Each has:
-  - `from`: where it comes from; `type` is `ship`, `mode`, `character`, `item` or `charge` (with the `index` into `items`), or `skill` or `beacon` (with its `type_id`).
-  - `effect_id`: the effect that modifies.
-  - `source_attribute_id`: the attribute on the source that holds `value`.
+  - `from`: where it comes from; `type` is `ship`, `mode`, `character`, `item` or `charge` (with the `index` into `items`), `skill` or `beacon` (with its `type_id`), or `buff` (with its `id`).
+  - `effect_id`: the effect that holds the modifier; `null` for a buff, which has none.
+  - `source_attribute_id`: the attribute on the source that holds `value`; `null` for a buff, which carries its own strength.
   - `operator`: `pre_assign`, `pre_mul`, `pre_div`, `mod_add`, `mod_sub`, `post_mul`, `post_div`, `post_percent` or `post_assign`.
-  - `value`: the value of the modifying attribute.
+  - `value`: the value of the modifying attribute, or the strength of the buff.
   - `quantity`: how many times it counts. A stacking penalised stack is listed once per item instead.
   - `penalty`: the stacking penalty factor it got, or `null` if not penalised.
   - `applied`: false when the source's state is too low for the effect.

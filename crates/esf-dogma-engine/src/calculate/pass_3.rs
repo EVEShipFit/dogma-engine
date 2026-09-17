@@ -1,6 +1,6 @@
 use strum::IntoEnumIterator;
 
-use super::item::{Attribute, EffectOperator, Item};
+use super::item::{Attribute, EffectOperator, Item, Origin};
 use super::output::{Source, SourceRef};
 use super::{Info, Objects, Pass};
 
@@ -63,30 +63,46 @@ impl Attribute {
                     continue;
                 }
 
-                let Some(source) = objects.get(effect.source) else {
-                    continue;
-                };
-
-                let applied = effect.source_category <= source.state;
-                if !applied && !objects.sources {
-                    continue;
-                }
-
-                let source_value = match source.attributes.get(&effect.source_attribute_id) {
-                    Some(attribute) => {
-                        attribute.calculate_value(info, objects, effect.source_attribute_id)
+                /* A buff has already won, so it always applies, and it carries
+                 * its own strength rather than reading one off an object. */
+                let (from, source_value, applied) = match effect.origin {
+                    Origin::Buff { buff_id, value } => {
+                        (SourceRef::Buff { id: buff_id }, value, true)
                     }
-                    None => info
-                        .get_dogma_attribute(effect.source_attribute_id)
-                        .map_or(0.0, |dogma_attribute| {
-                            dogma_attribute.default_value() as f64
-                        }),
+                    Origin::Effect {
+                        source,
+                        source_category,
+                        attribute_id,
+                        ..
+                    } => {
+                        let Some(item) = objects.get(source) else {
+                            continue;
+                        };
+
+                        let applied = source_category <= item.state;
+                        if !applied && !objects.sources {
+                            continue;
+                        }
+
+                        let value = match item.attributes.get(&attribute_id) {
+                            Some(attribute) => {
+                                attribute.calculate_value(info, objects, attribute_id)
+                            }
+                            None => info
+                                .get_dogma_attribute(attribute_id)
+                                .map_or(0.0, |dogma_attribute| {
+                                    dogma_attribute.default_value() as f64
+                                }),
+                        };
+
+                        (SourceRef::new(source, item.type_id), value, applied)
+                    }
                 };
 
                 let to_source = |quantity, penalty| Source {
-                    from: SourceRef::new(effect.source, source.type_id),
-                    effect_id: effect.effect_id,
-                    source_attribute_id: effect.source_attribute_id,
+                    from,
+                    effect_id: effect.origin.effect_id(),
+                    source_attribute_id: effect.origin.source_attribute_id(),
                     operator,
                     value: source_value,
                     quantity,

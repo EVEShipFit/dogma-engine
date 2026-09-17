@@ -13,7 +13,9 @@ use esf_data::Info;
 use item::{Item, Object};
 
 pub use item::EffectOperator;
-pub use output::{AttributeValue, Calculation, ItemResult, Source, SourceRef};
+pub use output::{
+    AttributeValue, BuffResult, BuffSource, Calculation, ItemResult, Source, SourceRef,
+};
 
 /// What [`calculate()`] reports on top of the values.
 #[derive(Deserialize, Debug, Default, Clone)]
@@ -32,6 +34,7 @@ pub(crate) struct Objects {
     pub char: Item,
     pub target: Item,
     pub beacons: Vec<Item>,
+    pub buffs: Vec<BuffResult>,
     pub sources: bool,
 }
 
@@ -71,6 +74,7 @@ impl Objects {
             char: Item::new_fake(1373),
             target: Item::new_fake(0),
             beacons: Vec::new(),
+            buffs: Vec::new(),
             sources: false,
         }
     }

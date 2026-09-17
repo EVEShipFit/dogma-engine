@@ -277,6 +277,13 @@ fn type_name(info: &InfoSde, type_id: i32) -> String {
         .map_or_else(|| type_id.to_string(), |r#type| r#type.name().to_string())
 }
 
+fn buff_name(info: &InfoSde, buff_id: i32) -> String {
+    info.get_dbuff_collection(buff_id)
+        .and_then(|buff| buff.display_name())
+        .filter(|name| !name.is_empty())
+        .map_or_else(|| format!("buff {buff_id}"), str::to_string)
+}
+
 fn slot_label(slot: Slot) -> String {
     match slot {
         Slot::High(index) => format!("high {index}"),
@@ -308,6 +315,7 @@ fn source_label(info: &InfoSde, fit: &Fit, from: SourceRef) -> String {
             |charge| type_name(info, charge.type_id),
         ),
         SourceRef::Skill { type_id } | SourceRef::Beacon { type_id } => type_name(info, type_id),
+        SourceRef::Buff { id } => buff_name(info, id),
     }
 }
 
@@ -352,6 +360,20 @@ fn print_table(info: &InfoSde, fit: &Fit, calculation: &Calculation, hide_empty:
         .map(|attribute_id| attribute_name(info, *attribute_id).len())
         .max()
         .unwrap_or(0);
+
+    /* Above the ship, as they are why some of its numbers moved. */
+    for buff in &calculation.buffs {
+        let applied = match buff.applied {
+            true => "",
+            false => "  (not applied)",
+        };
+        println!(
+            "== buff: {} ({:.4}){}",
+            buff_name(info, buff.id),
+            buff.value,
+            applied
+        );
+    }
 
     for (header, result) in groups {
         if hide_empty && result.attributes.is_empty() {
