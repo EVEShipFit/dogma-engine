@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills)"
+expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Omen
 ship/scanStrength                            = 15.000000
@@ -88,6 +88,11 @@ ship/shipBonusSoEECS3                        = 0.000000
 ship/shipBonusSoEECS4                        = 0.000000
 ship/shipBonusSoEECS5                        = 0.000000
 ship/shipBonusAB3                            = 0.000000
+
+outgoing_effect_1/type                 = Warp Disruptor II
+outgoing_effect_1/effect               = warpDisrupt
+outgoing_effect_1/maxRange             = 24000.000000
+outgoing_effect_1/warpScrambleStrength = 1.000000
 
 low_1/type  = 800mm Crystalline Carbonide Restrained Plates
 low_1/state = online

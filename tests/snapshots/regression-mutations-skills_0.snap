@@ -69,6 +69,13 @@ ship/shipBonusSoEECS4                        = 0.000000
 ship/shipBonusSoEECS5                        = 0.000000
 ship/shipBonusAB3                            = 0.000000
 
+outgoing_effect_1/type                      = Abyssal Warp Scrambler
+outgoing_effect_1/effect                    = warpScrambleBlockMWDWithNPCEffect
+outgoing_effect_1/maxRange                  = 10500.000000
+outgoing_effect_1/warpScrambleStrength      = 2.000000
+outgoing_effect_1/activationBlockedStrenght = 1.000000
+outgoing_effect_1/maxVelocityMultiplier     = 1.000000
+
 medium_1/type              = Abyssal Warp Scrambler
 medium_1/state             = active
 medium_1/capacitorPeakLoad = 1.500000

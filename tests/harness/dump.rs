@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use esf_data::Info;
-use esf_dogma_engine::{BuffSource, Calculation, Fit, ItemResult, Slot, State};
+use esf_dogma_engine::{BuffSource, Calculation, Fit, ItemResult, Projection, Slot, State};
 
 /// Only attributes an effect moved away from their base value; the rest is SDE data.
 pub fn dump(info: &impl Info, fit: &Fit, calculation: &Calculation) -> String {
@@ -49,6 +49,11 @@ pub fn dump(info: &impl Info, fit: &Fit, calculation: &Calculation) -> String {
         blocks.push(align(&buffs));
     }
 
+    let outgoing = dump_projection(info, &calculation.outgoing, "outgoing");
+    if !outgoing.is_empty() {
+        blocks.push(align(&outgoing));
+    }
+
     blocks.extend(dump_items(info, fit, calculation));
     blocks.join("\n")
 }
@@ -79,6 +84,49 @@ fn dump_buffs(info: &impl Info, calculation: &Calculation) -> Vec<(String, Strin
     }
 
     lines
+}
+
+/// A projection, numbered from 1 in the order it is held.
+fn dump_projection(info: &impl Info, projection: &Projection, what: &str) -> Vec<(String, String)> {
+    let mut lines = Vec::new();
+
+    for (index, buff) in projection.buffs.iter().enumerate() {
+        let name = format!("{what}_buff_{}", index + 1);
+        lines.push((format!("{name}/id"), buff.id.to_string()));
+        lines.push((format!("{name}/value"), format!("{:.6}", buff.value + 0.0)));
+    }
+
+    for (index, effect) in projection.effects.iter().enumerate() {
+        let name = format!("{what}_effect_{}", index + 1);
+        lines.push((format!("{name}/type"), type_name(info, effect.type_id)));
+        lines.push((
+            format!("{name}/effect"),
+            info.get_dogma_effect(effect.effect_id).map_or_else(
+                || effect.effect_id.to_string(),
+                |effect| effect.name().to_string(),
+            ),
+        ));
+        for (attribute_id, value) in &effect.attributes {
+            lines.push((
+                format!("{name}/{}", attribute_name(info, *attribute_id)),
+                format!("{:.6}", value + 0.0),
+            ));
+        }
+    }
+
+    lines
+}
+
+fn type_name(info: &impl Info, type_id: i32) -> String {
+    info.get_type(type_id)
+        .map_or_else(|| type_id.to_string(), |r#type| r#type.name().to_string())
+}
+
+fn attribute_name(info: &impl Info, attribute_id: i32) -> String {
+    info.get_dogma_attribute(attribute_id).map_or_else(
+        || attribute_id.to_string(),
+        |attribute| attribute.name().to_string(),
+    )
 }
 
 /// Adjacent identical items in the same rack collapse into one block, like `high_1-4`.
