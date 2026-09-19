@@ -73,6 +73,29 @@ Shield Command Burst II
 Skirmish Command Burst II
 "#;
 
+/* Logistics repairs the ship it is aimed at, which is a rate on that ship
+ * rather than an attribute of its own. */
+const REMOTE_ARMOR: &str = r#"
+[Oneiros, Remote Armor]
+Large Remote Armor Repairer II
+"#;
+
+const REMOTE_SHIELD: &str = r#"
+[Basilisk, Remote Shield]
+Large Remote Shield Booster II
+"#;
+
+const REMOTE_HULL: &str = r#"
+[Osprey, Remote Hull]
+Large Remote Hull Repairer II
+"#;
+
+const REMOTE_ARMOR_DRONES: &str = r#"
+[Vexor, Repair Drones]
+
+Heavy Armor Maintenance Bot I x5
+"#;
+
 /* A Marauder in bastion shrugs off remote assistance, and a dreadnought in
  * siege shrugs off dampening and weapon disruption. */
 const BASTION: &str = r#"
@@ -120,6 +143,13 @@ regression! {
     sensor_booster_on_bastion = BASTION, skills: all(5), edit: |fit| { fit.incoming.extend(outgoing(SENSOR_BOOSTER, all(5))); };
     dampener_on_siege = SIEGE, skills: all(5), edit: |fit| { fit.incoming.extend(outgoing(DAMPENER, all(5))); };
     tracking_disruptor_on_siege = SIEGE, skills: all(5), edit: |fit| { fit.incoming.extend(outgoing(TRACKING_DISRUPTOR, all(5))); };
+    /* Logistics adds to the repair rate of the ship it is aimed at, and
+     * bastion leaves almost none of it. */
+    remote_armor_rep = TARGET, skills: all(5), edit: |fit| { fit.incoming.extend(outgoing(REMOTE_ARMOR, all(5))); };
+    remote_shield_boost = TARGET, skills: all(5), edit: |fit| { fit.incoming.extend(outgoing(REMOTE_SHIELD, all(5))); };
+    remote_hull_rep = TARGET, skills: all(5), edit: |fit| { fit.incoming.extend(outgoing(REMOTE_HULL, all(5))); };
+    remote_armor_rep_drones = TARGET, skills: all(5), edit: |fit| { fit.incoming.extend(outgoing(REMOTE_ARMOR_DRONES, all(5))); };
+    remote_armor_rep_on_bastion = BASTION, skills: all(5), edit: |fit| { fit.incoming.extend(outgoing(REMOTE_ARMOR, all(5))); };
     /* Everything at once, to lock how they pile up. */
     all_of_it = TARGET, skills: all(5), edit: |fit| {
         fit.incoming.extend(outgoing(WEB, all(5)));
