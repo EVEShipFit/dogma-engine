@@ -91,7 +91,21 @@ pub fn attribute_capacitor_depletes_in(info: &impl Info, objects: &mut Objects) 
             });
         }
 
-        if !modules.is_empty() {
+        /* What is aimed at the fit drains it without a cycle of its own, so
+         * it is whatever the fit's own modules do not account for. */
+        let module_load: f64 = modules
+            .iter()
+            .map(|module| module.capacitor_need / module.duration * 1000.0)
+            .sum();
+        let projected_load = objects
+            .ship
+            .attributes
+            .get(&attr_capacitor_peak_load_id)
+            .and_then(|attribute| attribute.value.get())
+            .unwrap_or(0.0)
+            - module_load;
+
+        if !modules.is_empty() || projected_load > 0.0 {
             let capacitor_capacity = attr_capacitor_capacity.value.get().unwrap();
             let recharge_rate = attr_recharge_rate.value.get().unwrap();
 
@@ -106,6 +120,7 @@ pub fn attribute_capacitor_depletes_in(info: &impl Info, objects: &mut Objects) 
                         * f64::exp(5.0 * (time_last - time_next) / recharge_rate))
                 .powi(2)
                     * capacitor_capacity;
+                capacitor -= projected_load * (time_next - time_last) / 1000.0;
 
                 time_last = time_next;
                 time_next = f64::INFINITY;
@@ -118,6 +133,12 @@ pub fn attribute_capacitor_depletes_in(info: &impl Info, objects: &mut Objects) 
 
                     /* Find the next module that would use capacitor. */
                     time_next = f64::min(time_next, module.time_next);
+                }
+
+                /* Without a module to tick the clock, step a second at a
+                 * time so a drain from outside still gets simulated. */
+                if !time_next.is_finite() {
+                    time_next = time_last + 1000.0;
                 }
 
                 /* Clamped after the whole step, so module order does not matter. */
