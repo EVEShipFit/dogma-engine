@@ -10,13 +10,13 @@ mod pass_4;
 use serde::Deserialize;
 
 use crate::fit::Fit;
+use crate::projection::ProjectedBuff;
 use esf_data::Info;
 use item::{Item, Object};
 
 pub use item::EffectOperator;
-pub use output::{
-    AttributeValue, BuffResult, BuffSource, Calculation, ItemResult, Source, SourceRef,
-};
+pub use outgoing::beacon;
+pub use output::{AttributeValue, Calculation, ItemResult, Source, SourceRef};
 
 /// What [`calculate()`] reports on top of the values.
 #[derive(Deserialize, Debug, Default, Clone)]
@@ -34,8 +34,7 @@ pub(crate) struct Objects {
     pub skills: Vec<Item>,
     pub char: Item,
     pub projected: Vec<Projected>,
-    pub beacons: Vec<Item>,
-    pub buffs: Vec<BuffResult>,
+    pub buffs: Vec<ProjectedBuff>,
     pub sources: bool,
 }
 
@@ -49,7 +48,6 @@ impl Objects {
             Object::Item(index) => Some(&self.items[index]),
             Object::Charge(index) => self.items[index].charge.as_deref(),
             Object::Skill(index) => Some(&self.skills[index]),
-            Object::Beacon(index) => Some(&self.beacons[index]),
         }
     }
 
@@ -62,7 +60,6 @@ impl Objects {
             Object::Item(index) => Some(&mut self.items[index]),
             Object::Charge(index) => self.items[index].charge.as_deref_mut(),
             Object::Skill(index) => Some(&mut self.skills[index]),
-            Object::Beacon(index) => Some(&mut self.beacons[index]),
         }
     }
 
@@ -74,7 +71,6 @@ impl Objects {
             skills: Vec::new(),
             char: Item::new_fake(1373),
             projected: Vec::new(),
-            beacons: Vec::new(),
             buffs: Vec::new(),
             sources: false,
         }

@@ -314,7 +314,7 @@ fn source_label(info: &InfoSde, fit: &Fit, from: SourceRef) -> String {
             || "charge".to_string(),
             |charge| type_name(info, charge.type_id),
         ),
-        SourceRef::Skill { type_id } | SourceRef::Beacon { type_id } => type_name(info, type_id),
+        SourceRef::Skill { type_id } => type_name(info, type_id),
         SourceRef::Projected { index } => type_name(info, fit.incoming.effects[index].type_id),
         SourceRef::Buff { id } => buff_name(info, id),
     }
@@ -364,16 +364,7 @@ fn print_table(info: &InfoSde, fit: &Fit, calculation: &Calculation, hide_empty:
 
     /* Above the ship, as they are why some of its numbers moved. */
     for buff in &calculation.buffs {
-        let applied = match buff.applied {
-            true => "",
-            false => "  (not applied)",
-        };
-        println!(
-            "== buff: {} ({:.4}){}",
-            buff_name(info, buff.id),
-            buff.value,
-            applied
-        );
+        println!("== buff: {} ({:.4})", buff_name(info, buff.id), buff.value);
     }
 
     for (header, result) in groups {
@@ -458,6 +449,7 @@ pub fn main() {
     if let Some(damage_profile) = args.damage_profile {
         fit.environment.damage_profile = damage_profile;
     }
+    let mut beacons = Vec::new();
     for name in &args.beacons {
         /* Beacons are spread over several groups, but never leave Celestial. */
         let type_id = info_name
@@ -467,10 +459,14 @@ pub fn main() {
                     .is_some_and(|r#type| r#type.category_id() == CELESTIAL_CATEGORY_ID)
             })
             .unwrap_or_else(|| fail(format!("no such beacon: {name}")));
-        fit.environment.beacons.insert(type_id);
+        beacons.push(type_id);
     }
 
     let info = InfoSde::new(&sde);
+    for type_id in beacons {
+        fit.incoming
+            .extend(esf_dogma_engine::beacon(&info, type_id));
+    }
     let options = Options {
         sources: args.sources,
     };

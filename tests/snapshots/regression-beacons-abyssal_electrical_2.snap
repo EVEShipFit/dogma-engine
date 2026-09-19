@@ -137,12 +137,18 @@ character/inventionReverseEngineeringResearchSpeed = 0.850000
 character/reactionTimeMultiplier                   = 0.800000
 character/reactionSlotLimit                        = 10.000000
 
+incoming_buff_1/id         = 90
+incoming_buff_1/value      = 50.000000
+incoming_buff_2/id         = 92
+incoming_buff_2/value      = -50.000000
+incoming_effect_1/type     = electric_storm_weather_2
+incoming_effect_1/effect   = weather_electric_storm
+incoming_effect_1/maxRange = 2000000.000000
+
 buff_1/type  = EM Resistance penalty
 buff_1/value = 50.000000
-buff_1/from  = electric_storm_weather_2
 buff_2/type  = Capacitor Recharge bonus
 buff_2/value = -50.000000
-buff_2/from  = electric_storm_weather_2
 
 low_1/type  = Damage Control II
 low_1/state = online

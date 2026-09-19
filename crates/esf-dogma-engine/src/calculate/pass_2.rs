@@ -6,8 +6,8 @@ use super::attribute_ids::{ATTRIBUTE_CAPACITOR_NEED_ID, ATTRIBUTE_SKILLS};
 use super::item::{
     Attribute, Effect, EffectCategory, EffectOperator, Item, ItemState, Object, Origin,
 };
-use super::output::BuffResult;
 use super::{Info, Objects, Pass};
+use crate::projection::ProjectedBuff;
 
 /** Categories of the effect source which are exempt of stacking penalty.
  * Ship (6), Charge (8), Skill (16), Implant (20), Subsystem (32) and Structure (65) */
@@ -167,8 +167,7 @@ fn for_each_in_location(
         | Object::Item(_)
         | Object::Charge(_)
         | Object::Skill(_)
-        | Object::Projected(_)
-        | Object::Beacon(_) => apply(location, objects.get_mut(location).unwrap()),
+        | Object::Projected(_) => apply(location, objects.get_mut(location).unwrap()),
     }
 }
 
@@ -207,10 +206,9 @@ fn get_effect_operator(operation: eve::ModifierOperation) -> Option<EffectOperat
 
 /* A buff carries no effects: its collection names the attributes it changes,
  * on whom and with what operation, and the buff itself holds the strength. It
- * lands on the ship, the same as a modifier with the ship domain. A buff that
- * lost hands over nothing. */
-fn collect_buff_effects(info: &impl Info, buffs: &[BuffResult], effects: &mut Vec<Pass2Effect>) {
-    for buff in buffs.iter().filter(|buff| buff.applied) {
+ * lands on the ship, the same as a modifier with the ship domain. */
+fn collect_buff_effects(info: &impl Info, buffs: &[ProjectedBuff], effects: &mut Vec<Pass2Effect>) {
+    for buff in buffs {
         let Some(collection) = info.get_dbuff_collection(buff.id) else {
             continue;
         };
@@ -414,9 +412,6 @@ impl Pass for PassTwo {
         objects
             .char
             .collect_effects(info, Object::Char, false, &mut effects);
-        for (index, beacon) in objects.beacons.iter_mut().enumerate() {
-            beacon.collect_effects(info, Object::Beacon(index), false, &mut effects);
-        }
         for index in 0..objects.projected.len() {
             let effect_id = objects.projected[index].effect_id;
             collect_projected_effects(info, Object::Projected(index), effect_id, &mut effects);

@@ -6,7 +6,8 @@
 use std::path::PathBuf;
 use std::sync::LazyLock;
 
-use esf_data::{InfoName, InfoNameSde, Names, Sde};
+use esf_data::{InfoName, InfoNameSde, InfoSde, Names, Sde};
+use esf_dogma_engine::Projection;
 
 mod case;
 mod dump;
@@ -15,12 +16,14 @@ mod skills;
 pub use case::{calculate, load, outgoing, snapshot};
 pub use skills::{Skills, all, none};
 
-/// The type id of a beacon, so a case can name the space it is in.
-pub fn beacon(name: &str) -> i32 {
-    InfoNameSde::new(&SDE, Some(&NAMES))
+/// What a beacon hands out, by name.
+pub fn beacon(name: &str) -> Projection {
+    let type_id = InfoNameSde::new(&SDE, Some(&NAMES))
         .unwrap()
         .type_name_to_id(name)
-        .unwrap_or_else(|| panic!("no such beacon: {name}"))
+        .unwrap_or_else(|| panic!("no such beacon: {name}"));
+
+    esf_dogma_engine::beacon(&InfoSde::new(&SDE), type_id)
 }
 
 /// Override with ESF_SDE and ESF_NAMES when the flatbuffers live elsewhere.

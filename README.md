@@ -56,8 +56,11 @@ All identifiers are those from the SDE.
 - `environment` (optional): where the fit is.
   - `damage_profile` (optional, default 0.25 each): incoming damage for effective hitpoints, as `em`, `explosive`, `kinetic` and `thermal` (relative to each other).
   - `security` (optional, default `high_sec`): `high_sec`, `low_sec`, `null_sec` or `wormhole`.
-  - `beacons` (optional, default none): the beacons in space with the ship, as type IDs.
-- `incoming` (optional): what other fits aim at this one, in the shape `outgoing` reports.
+- `incoming` (optional): what effects and buffs to apply that come from outside the ship.
+  A calculation reports the same shape as `outgoing`: feed one fit's result into another's `incoming` links them up.
+  - `buffs` (optional, default none): buffs to apply, like the ones a command burst hands out.
+    - `id`: which buff, as `dbuffCollections` in the SDE numbers them.
+    - `value`: how strong it is, in whatever the buff's operation reads.
   - `effects` (optional, default none): effects aimed at the fit, like a stasis webifier.
     - `type_id`: the type the effect belongs to; its category decides the stacking penalty.
     - `effect_id`: which effect, as `dogmaEffects` in the SDE numbers them.
@@ -74,25 +77,16 @@ All identifiers are those from the SDE.
 - `mode`: result for the mode; absent when the fit has no mode.
 - `items`: one result per item of the fit, in the same order.
 - `character`: result for the character.
-- `buffs`: every buff handed to the fit.
+- `buffs`: the buffs of `incoming` that landed, ordered by id. What is missing lost to another source of the same buff, or the SDE has no such buff.
   - `id`: which buff, as `dbuffCollections` in the SDE numbers them.
   - `value`: how strong it is, in whatever the buff's operation reads.
-  - `from`: what handed it over; `type` is `beacon` (with its `type_id`).
-  - `applied`: false when another source of the same buff won.
-- `outgoing`: what the fit hands to other fits.
-  - `buffs`: buffs on offer, like the ones a command burst hands out.
-    - `id`: which buff, as `dbuffCollections` in the SDE numbers them.
-    - `value`: how strong it is, in whatever the buff's operation reads.
-  - `effects`: effects the fit aims at another, like a stasis webifier.
-    - `type_id`: the type the effect belongs to; its category decides the stacking penalty.
-    - `effect_id`: which effect, as `dogmaEffects` in the SDE numbers them.
-    - `attributes`: the value per attribute ID the effect reads, as this fit worked them out.
+- `outgoing`: what the fit hands to other fits, in the shape `incoming` takes.
 
 Each result has:
 
 - `attributes`: per attribute ID, its `base` value before effects and its final `value`.
   With the `sources` option, also `sources`: every modifier on it, in the order they were applied. Each has:
-  - `from`: where it comes from; `type` is `ship`, `mode`, `character`, `item` or `charge` (with the `index` into `items`), `projected` (with the `index` into `incoming.effects`), `skill` or `beacon` (with its `type_id`), or `buff` (with its `id`).
+  - `from`: where it comes from; `type` is `ship`, `mode`, `character`, `item` or `charge` (with the `index` into `items`), `projected` (with the `index` into `incoming.effects`), `skill` (with its `type_id`) or `buff` (with its `id`).
   - `effect_id`: the effect that holds the modifier; `null` for a buff, which has none.
   - `source_attribute_id`: the attribute on the source that holds `value`; `null` for a buff, which carries its own strength.
   - `operator`: `pre_assign`, `pre_mul`, `pre_div`, `mod_add`, `mod_sub`, `post_mul`, `post_div`, `post_percent` or `post_assign`.

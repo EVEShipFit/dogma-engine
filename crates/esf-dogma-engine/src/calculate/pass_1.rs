@@ -1,5 +1,3 @@
-use std::collections::BTreeSet;
-
 use esf_data::eve;
 
 use super::attribute_ids::{
@@ -7,19 +5,11 @@ use super::attribute_ids::{
     ATTRIBUTE_RADIUS_ID, ATTRIBUTE_SKILL_LEVEL_ID, ATTRIBUTE_VOLUME_ID,
 };
 use super::item::{Attribute, Item};
-use super::outgoing::warfare_buffs;
-use super::output::{BuffResult, BuffSource};
 use super::{Info, Objects, Projected};
 use crate::fit::{DamageProfile, Fit, Mutation, Security, Spool};
+use crate::projection::ProjectedBuff;
 
 pub struct PassOne {}
-
-/// A buff on offer, before it is known whether it wins.
-struct Candidate {
-    id: i32,
-    value: f64,
-    from: BuffSource,
-}
 
 impl Item {
     pub fn set_attribute(&mut self, attribute_id: i32, value: f64) {
@@ -149,20 +139,7 @@ impl PassOne {
             });
         }
 
-        let mut candidates = Vec::new();
-        for type_id in &fit.environment.beacons {
-            let mut beacon = Item::new_projected(*type_id);
-
-            beacon.set_attributes(info);
-            candidates.extend(warfare_buffs(&beacon).map(|buff| Candidate {
-                id: buff.id,
-                value: buff.value,
-                from: BuffSource::Beacon { type_id: *type_id },
-            }));
-
-            objects.beacons.push(beacon);
-        }
-        objects.buffs = resolve(info, candidates);
+        objects.buffs = resolve(info, &fit.incoming.buffs);
 
         for (skill_id, skill_level) in &fit.character.skills {
             let mut skill = Item::new_fake(*skill_id);
@@ -219,33 +196,29 @@ impl PassOne {
 }
 
 /* Two sources of the same buff do not add up; the buff says whether the
- * highest or the lowest of them wins. The rest are kept all the same, so that
- * a result shows what was on offer. */
-fn resolve(info: &impl Info, mut candidates: Vec<Candidate>) -> Vec<BuffResult> {
-    candidates.retain(|candidate| info.get_dbuff_collection(candidate.id).is_some());
-
-    let strongest = |candidate: &Candidate| match info
-        .get_dbuff_collection(candidate.id)
+ * highest or the lowest of them wins. Only the winner is kept: what lost is
+ * still in `Fit::incoming` for whoever wants to know. */
+fn resolve(info: &impl Info, buffs: &[ProjectedBuff]) -> Vec<ProjectedBuff> {
+    let strongest = |buff: &ProjectedBuff| match info
+        .get_dbuff_collection(buff.id)
         .map(|collection| collection.aggregate_mode())
     {
-        Some(eve::DbuffAggregateMode::Minimum) => candidate.value,
-        _ => -candidate.value,
+        Some(eve::DbuffAggregateMode::Minimum) => buff.value,
+        _ => -buff.value,
     };
-    candidates.sort_by(|left, right| {
+
+    let mut buffs: Vec<ProjectedBuff> = buffs
+        .iter()
+        .filter(|buff| info.get_dbuff_collection(buff.id).is_some())
+        .copied()
+        .collect();
+    buffs.sort_by(|left, right| {
         left.id
             .cmp(&right.id)
             .then(strongest(left).total_cmp(&strongest(right)))
     });
 
-    let mut won = BTreeSet::new();
-    candidates
-        .into_iter()
-        .map(|candidate| BuffResult {
-            id: candidate.id,
-            value: candidate.value,
-            from: candidate.from,
-            /* Sorted, so the first of an id is the one that wins. */
-            applied: won.insert(candidate.id),
-        })
-        .collect()
+    /* Sorted, so the first of an id is the one that wins. */
+    buffs.dedup_by_key(|buff| buff.id);
+    buffs
 }

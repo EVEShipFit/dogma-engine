@@ -96,6 +96,10 @@ regression! {
         fit.incoming.extend(outgoing(WEB, all(5)));
         fit.incoming.extend(outgoing(WEB, all(5)));
     };
+    /* Command bursts reach a fleet mate as buffs, and an empty burst says
+     * nothing at all. */
+    bursts = TARGET, skills: all(5), edit: |fit| { fit.incoming.extend(outgoing(BURSTS, all(5))); };
+    bursts_without_charges = TARGET, skills: all(5), edit: |fit| { fit.incoming.extend(outgoing(BURSTS_WITHOUT_CHARGES, all(5))); };
     /* Everything at once, to lock how they pile up. */
     all_of_it = TARGET, skills: all(5), edit: |fit| {
         fit.incoming.extend(outgoing(WEB, all(5)));
