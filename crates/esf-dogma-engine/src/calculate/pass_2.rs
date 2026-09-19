@@ -2,7 +2,9 @@ use std::collections::BTreeSet;
 
 use esf_data::eve;
 
-use super::attribute_ids::{ATTRIBUTE_CAPACITOR_NEED_ID, ATTRIBUTE_SKILLS};
+use super::attribute_ids::{
+    ATTRIBUTE_CAPACITOR_NEED_ID, ATTRIBUTE_REMOTE_RESISTANCE_ID, ATTRIBUTE_SKILLS,
+};
 use super::item::{
     Attribute, Effect, EffectCategory, EffectOperator, Item, ItemState, Object, Origin,
 };
@@ -34,6 +36,7 @@ struct Pass2Effect {
     source_quantity: u32,
     target: Object,
     target_attribute_id: i32,
+    resistance: Option<i32>,
 }
 
 fn get_modifier_func(
@@ -90,6 +93,7 @@ fn get_projected_object(domain: eve::ModifierDomain) -> Option<Object> {
 
 fn collect_projected_effects(
     info: &impl Info,
+    item: &Item,
     origin: Object,
     effect_id: i32,
     effects: &mut Vec<Pass2Effect>,
@@ -98,6 +102,7 @@ fn collect_projected_effects(
         return;
     };
     let category = get_effect_category(effect.effect_category());
+    let resistance = get_resistance(item, &effect);
 
     for modifier in effect.modifiers().into_iter().flatten() {
         let Some(target) = get_projected_object(modifier.domain()) else {
@@ -127,7 +132,21 @@ fn collect_projected_effects(
             source_quantity: 1,
             target,
             target_attribute_id: modifier.modified_attribute_id(),
+            resistance,
         });
+    }
+}
+
+fn get_resistance(item: &Item, effect: &eve::DogmaEffect) -> Option<i32> {
+    let named = item
+        .attributes
+        .get(&ATTRIBUTE_REMOTE_RESISTANCE_ID)
+        .map_or(0, |attribute| attribute.base_value as i32);
+
+    match (named, effect.resistance_attribute_id()) {
+        (0, 0) => None,
+        (0, from_effect) => Some(from_effect),
+        (named, _) => Some(named),
     }
 }
 
@@ -236,6 +255,7 @@ fn collect_buff_effects(info: &impl Info, buffs: &[ProjectedBuff], effects: &mut
                 source_quantity: 1,
                 target: Object::Ship,
                 target_attribute_id: modifier.modified_attribute_id(),
+                resistance: None,
             });
         }
     }
@@ -276,6 +296,7 @@ impl Item {
                 Origin::Effect { source, .. } if source == target => 1,
                 _ => effect.source_quantity,
             },
+            resistance: effect.resistance,
         });
     }
 
@@ -381,6 +402,7 @@ impl Item {
                     source_quantity: self.quantity,
                     target,
                     target_attribute_id: modifier.modified_attribute_id(),
+                    resistance: None,
                 });
             }
         }
@@ -413,8 +435,14 @@ impl Pass for PassTwo {
             .char
             .collect_effects(info, Object::Char, false, &mut effects);
         for index in 0..objects.projected.len() {
-            let effect_id = objects.projected[index].effect_id;
-            collect_projected_effects(info, Object::Projected(index), effect_id, &mut effects);
+            let projected = &objects.projected[index];
+            collect_projected_effects(
+                info,
+                &projected.item,
+                Object::Projected(index),
+                projected.effect_id,
+                &mut effects,
+            );
         }
         collect_buff_effects(info, &objects.buffs, &mut effects);
 

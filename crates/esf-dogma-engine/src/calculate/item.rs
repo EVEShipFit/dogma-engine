@@ -84,6 +84,7 @@ pub struct Effect {
     pub operator: EffectOperator,
     pub penalty: bool,
     pub quantity: u32,
+    pub resistance: Option<i32>,
 }
 
 impl Origin {

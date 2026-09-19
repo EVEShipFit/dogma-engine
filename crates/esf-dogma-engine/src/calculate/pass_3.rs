@@ -84,15 +84,12 @@ impl Attribute {
                             continue;
                         }
 
-                        let value = match item.attributes.get(&attribute_id) {
-                            Some(attribute) => {
-                                attribute.calculate_value(info, objects, attribute_id)
+                        let value = item.calculated_value(info, objects, attribute_id);
+                        let value = match effect.resistance {
+                            Some(resistance_id) => {
+                                value * objects.ship.calculated_value(info, objects, resistance_id)
                             }
-                            None => info
-                                .get_dogma_attribute(attribute_id)
-                                .map_or(0.0, |dogma_attribute| {
-                                    dogma_attribute.default_value() as f64
-                                }),
+                            None => value,
                         };
 
                         (SourceRef::new(source, item.type_id), value, applied)
@@ -220,6 +217,19 @@ impl Attribute {
 }
 
 impl Item {
+    /* Force an attribute, calculating it when pass 3 has not reached it yet,
+     * and fall back to what the SDE says an attribute starts at. */
+    fn calculated_value(&self, info: &impl Info, objects: &Objects, attribute_id: i32) -> f64 {
+        match self.attributes.get(&attribute_id) {
+            Some(attribute) => attribute.calculate_value(info, objects, attribute_id),
+            None => info
+                .get_dogma_attribute(attribute_id)
+                .map_or(0.0, |dogma_attribute| {
+                    dogma_attribute.default_value() as f64
+                }),
+        }
+    }
+
     fn calculate_values(&self, info: &impl Info, objects: &Objects) {
         for (attribute_id, attribute) in &self.attributes {
             attribute.calculate_value(info, objects, *attribute_id);
@@ -230,13 +240,13 @@ impl Item {
 impl Pass for PassThree {
     fn pass(info: &impl Info, objects: &mut Objects) {
         objects.ship.calculate_values(info, objects);
+        for projected in &objects.projected {
+            projected.item.calculate_values(info, objects);
+        }
         if let Some(mode) = &objects.mode {
             mode.calculate_values(info, objects);
         }
         objects.char.calculate_values(info, objects);
-        for projected in &objects.projected {
-            projected.item.calculate_values(info, objects);
-        }
         for item in &objects.items {
             item.calculate_values(info, objects);
             if let Some(charge) = &item.charge {

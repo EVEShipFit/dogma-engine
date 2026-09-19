@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills)"
+expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Tristan
 ship/scanStrength                            = 10.800000
