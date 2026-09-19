@@ -18,6 +18,33 @@ pub struct Calculation {
     pub items: Vec<ItemResult>,
     /// The character.
     pub character: ItemResult,
+    /// Every buff handed to the fit.
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub buffs: Vec<BuffResult>,
+}
+
+/// A buff handed to the fit: an id naming what it changes, and how strong.
+#[derive(Serialize, Debug, Clone, Copy, PartialEq)]
+pub struct BuffResult {
+    /// Which buff, as `dbuffCollections` in the SDE numbers them.
+    pub id: i32,
+    /// How strong it is, in whatever the buff's operation reads.
+    pub value: f64,
+    /// What handed it over.
+    pub from: BuffSource,
+    /// False when another source of the same buff won.
+    pub applied: bool,
+}
+
+/// What handed a buff to the fit.
+#[derive(Serialize, Debug, Clone, Copy, PartialEq)]
+#[serde(tag = "type", rename_all = "snake_case")]
+pub enum BuffSource {
+    /// A beacon in space with the ship.
+    Beacon {
+        /// The type id of the beacon.
+        type_id: i32,
+    },
 }
 
 /// The calculated attributes of the ship, its mode, the character, or one item.
@@ -50,10 +77,11 @@ pub struct AttributeValue {
 pub struct Source {
     /// The object the effect belongs to.
     pub from: SourceRef,
-    /// The effect that holds the modifier.
-    pub effect_id: i32,
-    /// The attribute on the source that holds `value`.
-    pub source_attribute_id: i32,
+    /// The effect that holds the modifier; `None` for a buff, which has none.
+    pub effect_id: Option<i32>,
+    /// The attribute on the source that holds `value`; `None` for a buff,
+    /// which carries its own strength.
+    pub source_attribute_id: Option<i32>,
     /// How `value` changes the attribute.
     pub operator: EffectOperator,
     /// The source attribute's value, as pass 3 used it.
@@ -66,7 +94,7 @@ pub struct Source {
     pub applied: bool,
 }
 
-/// `Item` and `Charge` index into `Fit::items`. Skills and beacons are not in the result, so they carry their type.
+/// `Item` and `Charge` index into `Fit::items`. Skills, beacons and buffs are not in the result, so they carry their own id.
 #[derive(Serialize, Debug, Clone, Copy, PartialEq)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum SourceRef {
@@ -95,6 +123,11 @@ pub enum SourceRef {
     Beacon {
         /// The type id of the beacon.
         type_id: i32,
+    },
+    /// A buff handed to the fit.
+    Buff {
+        /// The id of the buff.
+        id: i32,
     },
 }
 
@@ -147,6 +180,7 @@ impl Calculation {
             mode: objects.mode.as_ref().map(ItemResult::new),
             items: objects.items.iter().map(ItemResult::new).collect(),
             character: ItemResult::new(&objects.char),
+            buffs: objects.buffs.clone(),
         }
     }
 }

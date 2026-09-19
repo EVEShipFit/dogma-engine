@@ -55,15 +55,44 @@ pub enum Object {
     Beacon(usize),
 }
 
+/// Where a modifier comes from, and where its strength is read.
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub enum Origin {
+    /// A dogma effect on an object, reading its strength off an attribute there.
+    Effect {
+        effect_id: i32,
+        source: Object,
+        source_category: EffectCategory,
+        attribute_id: i32,
+    },
+    /// A buff, which carries its own strength and has already won.
+    Buff { buff_id: i32, value: f64 },
+}
+
 #[derive(Debug)]
 pub struct Effect {
-    pub effect_id: i32,
+    pub origin: Origin,
     pub operator: EffectOperator,
     pub penalty: bool,
-    pub source: Object,
-    pub source_category: EffectCategory,
-    pub source_attribute_id: i32,
     pub quantity: u32,
+}
+
+impl Origin {
+    /// The effect that holds the modifier; `None` for a buff, which has none.
+    pub fn effect_id(self) -> Option<i32> {
+        match self {
+            Origin::Effect { effect_id, .. } => Some(effect_id),
+            Origin::Buff { .. } => None,
+        }
+    }
+
+    /// The attribute the strength is read off; `None` for a buff, which carries it.
+    pub fn source_attribute_id(self) -> Option<i32> {
+        match self {
+            Origin::Effect { attribute_id, .. } => Some(attribute_id),
+            Origin::Buff { .. } => None,
+        }
+    }
 }
 
 #[derive(Debug)]

@@ -37,6 +37,10 @@ impl Info for InfoSde<'_> {
         self.sde.get_type(type_id)
     }
 
+    fn get_dbuff_collection(&self, buff_id: i32) -> Option<eve::DbuffCollection<'_>> {
+        self.sde.get_dbuff_collection(buff_id)
+    }
+
     fn attribute_name_to_id(&self, name: &str) -> Option<i32> {
         self.sde.attribute_name_to_id(name)
     }

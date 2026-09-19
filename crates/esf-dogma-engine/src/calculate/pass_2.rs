@@ -3,7 +3,8 @@ use std::collections::BTreeSet;
 use esf_data::eve;
 
 use super::attribute_ids::{ATTRIBUTE_CAPACITOR_NEED_ID, ATTRIBUTE_SKILLS};
-use super::item::{Attribute, Effect, EffectCategory, EffectOperator, Item, Object};
+use super::item::{Attribute, Effect, EffectCategory, EffectOperator, Item, Object, Origin};
+use super::output::BuffResult;
 use super::{Info, Objects, Pass};
 
 /** Categories of the effect source which are exempt of stacking penalty.
@@ -25,12 +26,9 @@ enum Modifier {
 
 #[derive(Debug)]
 struct Pass2Effect {
-    effect_id: i32,
+    origin: Origin,
     modifier: Modifier,
     operator: EffectOperator,
-    source: Object,
-    source_category: EffectCategory,
-    source_attribute_id: i32,
     source_quantity: u32,
     target: Object,
     target_attribute_id: i32,
@@ -151,6 +149,44 @@ fn get_effect_operator(operation: eve::ModifierOperation) -> Option<EffectOperat
     }
 }
 
+/* A buff carries no effects: its collection names the attributes it changes,
+ * on whom and with what operation, and the buff itself holds the strength. It
+ * lands on the ship, the same as a modifier with the ship domain. A buff that
+ * lost hands over nothing. */
+fn collect_buff_effects(info: &impl Info, buffs: &[BuffResult], effects: &mut Vec<Pass2Effect>) {
+    for buff in buffs.iter().filter(|buff| buff.applied) {
+        let Some(collection) = info.get_dbuff_collection(buff.id) else {
+            continue;
+        };
+        let Some(operator) = get_effect_operator(collection.operation()) else {
+            continue;
+        };
+
+        for modifier in collection.modifiers().into_iter().flatten() {
+            let effect_modifier = get_modifier_func(
+                modifier.func(),
+                modifier.skill_type_id(),
+                modifier.group_id(),
+            );
+            let Some(effect_modifier) = effect_modifier else {
+                continue;
+            };
+
+            effects.push(Pass2Effect {
+                origin: Origin::Buff {
+                    buff_id: buff.id,
+                    value: buff.value,
+                },
+                modifier: effect_modifier,
+                operator,
+                source_quantity: 1,
+                target: Object::Ship,
+                target_attribute_id: modifier.modified_attribute_id(),
+            });
+        }
+    }
+}
+
 impl Item {
     fn required_skills(&self) -> BTreeSet<i32> {
         ATTRIBUTE_SKILLS
@@ -178,17 +214,13 @@ impl Item {
             Attribute::new(attr.map_or(0.0, |attr| attr.default_value() as f64))
         });
         attribute.effects.push(Effect {
-            effect_id: effect.effect_id,
+            origin: effect.origin,
             operator: effect.operator,
             penalty,
-            source: effect.source,
-            source_category: effect.source_category,
-            source_attribute_id: effect.source_attribute_id,
             /* A stack bonuses others once per item, but itself only once. */
-            quantity: if target == effect.source {
-                1
-            } else {
-                effect.source_quantity
+            quantity: match effect.origin {
+                Origin::Effect { source, .. } if source == target => 1,
+                _ => effect.source_quantity,
             },
         });
     }
@@ -282,12 +314,14 @@ impl Item {
 
                 let target = get_target_object(modifier.domain(), origin);
                 effects.push(Pass2Effect {
-                    effect_id: dogma_effect.effect_id(),
+                    origin: Origin::Effect {
+                        effect_id: dogma_effect.effect_id(),
+                        source: origin,
+                        source_category: category,
+                        attribute_id: modifier.modifying_attribute_id(),
+                    },
                     modifier: effect_modifier,
                     operator,
-                    source: origin,
-                    source_category: category,
-                    source_attribute_id: modifier.modifying_attribute_id(),
                     source_quantity: self.quantity,
                     target,
                     target_attribute_id: modifier.modified_attribute_id(),
@@ -325,6 +359,7 @@ impl Pass for PassTwo {
         for (index, beacon) in objects.beacons.iter_mut().enumerate() {
             beacon.collect_effects(info, Object::Beacon(index), false, &mut effects);
         }
+        collect_buff_effects(info, &objects.buffs, &mut effects);
 
         /* A structure is not the pilot's ship; only the structure skills, via
          * the structure domain, reach it. Implants and boosters not at all. */
@@ -360,9 +395,15 @@ impl Pass for PassTwo {
 
         /* Depending on the modifier, move the effects to the correct attribute. */
         for effect in effects {
-            let source = objects.get(effect.source).unwrap();
-            let source_type_id = source.type_id;
-            let category_id = source.category_id;
+            let (source_type_id, category_id) = match effect.origin {
+                Origin::Effect { source, .. } => {
+                    let source = objects.get(source).unwrap();
+                    (source.type_id, source.category_id)
+                }
+                /* A buff has no object behind it: it is never a skill, and
+                 * never exempt from the stacking penalty. */
+                Origin::Buff { .. } => (0, 0),
+            };
 
             match effect.modifier {
                 Modifier::ItemModifier() => {

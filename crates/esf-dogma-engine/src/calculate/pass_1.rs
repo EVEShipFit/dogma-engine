@@ -1,16 +1,54 @@
+use std::collections::BTreeSet;
+
+use esf_data::eve;
+
 use super::attribute_ids::{
     ATTRIBUTE_CAPACITY_ID, ATTRIBUTE_MASS_ID, ATTRIBUTE_PILOT_SECURITY_STATUS_ID,
     ATTRIBUTE_RADIUS_ID, ATTRIBUTE_SKILL_LEVEL_ID, ATTRIBUTE_VOLUME_ID,
 };
 use super::item::{Attribute, Item};
+use super::output::{BuffResult, BuffSource};
 use super::{Info, Objects};
 use crate::fit::{DamageProfile, Fit, Mutation, Security, Spool};
 
+/* warfareBuff1 to warfareBuff4, as their (id, value) attribute pair. */
+const WARFARE_BUFF_ATTRIBUTE_IDS: [(i32, i32); 4] =
+    [(2468, 2469), (2470, 2471), (2472, 2473), (2536, 2537)];
+
 pub struct PassOne {}
+
+/// A buff on offer, before it is known whether it wins.
+struct Candidate {
+    id: i32,
+    value: f64,
+    from: BuffSource,
+}
 
 impl Item {
     pub fn set_attribute(&mut self, attribute_id: i32, value: f64) {
         self.attributes.insert(attribute_id, Attribute::new(value));
+    }
+
+    /// The buffs this item offers, read off its four `warfareBuff` pairs.
+    fn warfare_buffs(&self, from: BuffSource) -> impl Iterator<Item = Candidate> {
+        WARFARE_BUFF_ATTRIBUTE_IDS.into_iter().filter_map(
+            move |(id_attribute_id, value_attribute_id)| match self.value_of(id_attribute_id) as i32
+            {
+                0 => None,
+                id => Some(Candidate {
+                    id,
+                    value: self.value_of(value_attribute_id),
+                    from,
+                }),
+            },
+        )
+    }
+
+    /* What pass 3 worked out, or the base value until it has run. */
+    fn value_of(&self, attribute_id: i32) -> f64 {
+        self.attributes.get(&attribute_id).map_or(0.0, |attribute| {
+            attribute.value.get().unwrap_or(attribute.base_value)
+        })
     }
 
     fn set_type_ids(&mut self, info: &impl Info) {
@@ -114,13 +152,16 @@ impl PassOne {
         objects.char.set_type_ids(info);
         objects.target.set_type_ids(info);
 
+        let mut candidates = Vec::new();
         for type_id in &fit.environment.beacons {
             let mut beacon = Item::new_beacon(*type_id);
 
             beacon.set_attributes(info);
+            candidates.extend(beacon.warfare_buffs(BuffSource::Beacon { type_id: *type_id }));
 
             objects.beacons.push(beacon);
         }
+        objects.buffs = resolve(info, candidates);
 
         for (skill_id, skill_level) in &fit.character.skills {
             let mut skill = Item::new_fake(*skill_id);
@@ -174,4 +215,36 @@ impl PassOne {
 
         objects
     }
+}
+
+/* Two sources of the same buff do not add up; the buff says whether the
+ * highest or the lowest of them wins. The rest are kept all the same, so that
+ * a result shows what was on offer. */
+fn resolve(info: &impl Info, mut candidates: Vec<Candidate>) -> Vec<BuffResult> {
+    candidates.retain(|candidate| info.get_dbuff_collection(candidate.id).is_some());
+
+    let strongest = |candidate: &Candidate| match info
+        .get_dbuff_collection(candidate.id)
+        .map(|collection| collection.aggregate_mode())
+    {
+        Some(eve::DbuffAggregateMode::Minimum) => candidate.value,
+        _ => -candidate.value,
+    };
+    candidates.sort_by(|left, right| {
+        left.id
+            .cmp(&right.id)
+            .then(strongest(left).total_cmp(&strongest(right)))
+    });
+
+    let mut won = BTreeSet::new();
+    candidates
+        .into_iter()
+        .map(|candidate| BuffResult {
+            id: candidate.id,
+            value: candidate.value,
+            from: candidate.from,
+            /* Sorted, so the first of an id is the one that wins. */
+            applied: won.insert(candidate.id),
+        })
+        .collect()
 }

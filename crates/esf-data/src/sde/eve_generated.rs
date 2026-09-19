@@ -342,6 +342,182 @@ impl<'a> flatbuffers::Verifiable for ModifierOperation {
 
 impl flatbuffers::SimpleToVerifyInSlice for ModifierOperation {}
 #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
+pub const ENUM_MIN_DBUFF_AGGREGATE_MODE: i8 = 0;
+#[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
+pub const ENUM_MAX_DBUFF_AGGREGATE_MODE: i8 = 1;
+#[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
+#[allow(non_camel_case_types)]
+pub const ENUM_VALUES_DBUFF_AGGREGATE_MODE: [DbuffAggregateMode; 2] = [
+  DbuffAggregateMode::Maximum,
+  DbuffAggregateMode::Minimum,
+];
+
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
+#[repr(transparent)]
+pub struct DbuffAggregateMode(pub i8);
+#[allow(non_upper_case_globals)]
+impl DbuffAggregateMode {
+  pub const Maximum: Self = Self(0);
+  pub const Minimum: Self = Self(1);
+
+  pub const ENUM_MIN: i8 = 0;
+  pub const ENUM_MAX: i8 = 1;
+  pub const ENUM_VALUES: &'static [Self] = &[
+    Self::Maximum,
+    Self::Minimum,
+  ];
+  /// Returns the variant's name or "" if unknown.
+  pub fn variant_name(self) -> Option<&'static str> {
+    match self {
+      Self::Maximum => Some("Maximum"),
+      Self::Minimum => Some("Minimum"),
+      _ => None,
+    }
+  }
+}
+impl core::fmt::Debug for DbuffAggregateMode {
+  fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+    if let Some(name) = self.variant_name() {
+      f.write_str(name)
+    } else {
+      f.write_fmt(format_args!("<UNKNOWN {:?}>", self.0))
+    }
+  }
+}
+impl<'a> flatbuffers::Follow<'a> for DbuffAggregateMode {
+  type Inner = Self;
+  #[inline]
+  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+    let b = flatbuffers::read_scalar_at::<i8>(buf, loc);
+    Self(b)
+  }
+}
+
+impl flatbuffers::Push for DbuffAggregateMode {
+    type Output = DbuffAggregateMode;
+    #[inline]
+    unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
+        flatbuffers::emplace_scalar::<i8>(dst, self.0);
+    }
+}
+
+impl flatbuffers::EndianScalar for DbuffAggregateMode {
+  type Scalar = i8;
+  #[inline]
+  fn to_little_endian(self) -> i8 {
+    self.0.to_le()
+  }
+  #[inline]
+  #[allow(clippy::wrong_self_convention)]
+  fn from_little_endian(v: i8) -> Self {
+    let b = i8::from_le(v);
+    Self(b)
+  }
+}
+
+impl<'a> flatbuffers::Verifiable for DbuffAggregateMode {
+  #[inline]
+  fn run_verifier(
+    v: &mut flatbuffers::Verifier, pos: usize
+  ) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+    use self::flatbuffers::Verifiable;
+    i8::run_verifier(v, pos)
+  }
+}
+
+impl flatbuffers::SimpleToVerifyInSlice for DbuffAggregateMode {}
+#[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
+pub const ENUM_MIN_DBUFF_DISPLAY: i8 = 0;
+#[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
+pub const ENUM_MAX_DBUFF_DISPLAY: i8 = 2;
+#[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
+#[allow(non_camel_case_types)]
+pub const ENUM_VALUES_DBUFF_DISPLAY: [DbuffDisplay; 3] = [
+  DbuffDisplay::Normal,
+  DbuffDisplay::Inverted,
+  DbuffDisplay::Hidden,
+];
+
+/// How a UI is meant to show a buff's value; `showOutputValueInUI` in the SDE.
+/// A resistance buff reads as -20% and shows as +20%, hence Inverted.
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
+#[repr(transparent)]
+pub struct DbuffDisplay(pub i8);
+#[allow(non_upper_case_globals)]
+impl DbuffDisplay {
+  pub const Normal: Self = Self(0);
+  pub const Inverted: Self = Self(1);
+  pub const Hidden: Self = Self(2);
+
+  pub const ENUM_MIN: i8 = 0;
+  pub const ENUM_MAX: i8 = 2;
+  pub const ENUM_VALUES: &'static [Self] = &[
+    Self::Normal,
+    Self::Inverted,
+    Self::Hidden,
+  ];
+  /// Returns the variant's name or "" if unknown.
+  pub fn variant_name(self) -> Option<&'static str> {
+    match self {
+      Self::Normal => Some("Normal"),
+      Self::Inverted => Some("Inverted"),
+      Self::Hidden => Some("Hidden"),
+      _ => None,
+    }
+  }
+}
+impl core::fmt::Debug for DbuffDisplay {
+  fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+    if let Some(name) = self.variant_name() {
+      f.write_str(name)
+    } else {
+      f.write_fmt(format_args!("<UNKNOWN {:?}>", self.0))
+    }
+  }
+}
+impl<'a> flatbuffers::Follow<'a> for DbuffDisplay {
+  type Inner = Self;
+  #[inline]
+  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+    let b = flatbuffers::read_scalar_at::<i8>(buf, loc);
+    Self(b)
+  }
+}
+
+impl flatbuffers::Push for DbuffDisplay {
+    type Output = DbuffDisplay;
+    #[inline]
+    unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
+        flatbuffers::emplace_scalar::<i8>(dst, self.0);
+    }
+}
+
+impl flatbuffers::EndianScalar for DbuffDisplay {
+  type Scalar = i8;
+  #[inline]
+  fn to_little_endian(self) -> i8 {
+    self.0.to_le()
+  }
+  #[inline]
+  #[allow(clippy::wrong_self_convention)]
+  fn from_little_endian(v: i8) -> Self {
+    let b = i8::from_le(v);
+    Self(b)
+  }
+}
+
+impl<'a> flatbuffers::Verifiable for DbuffDisplay {
+  #[inline]
+  fn run_verifier(
+    v: &mut flatbuffers::Verifier, pos: usize
+  ) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+    use self::flatbuffers::Verifiable;
+    i8::run_verifier(v, pos)
+  }
+}
+
+impl flatbuffers::SimpleToVerifyInSlice for DbuffDisplay {}
+#[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
 pub const ENUM_MIN_EFFECT_CATEGORY: i8 = 0;
 #[deprecated(since = "2.0.0", note = "Use associated constants instead. This will no longer be generated in 2021.")]
 pub const ENUM_MAX_EFFECT_CATEGORY: i8 = 7;
@@ -1212,6 +1388,198 @@ impl<'a> TypeFighterAbility {
         &x_le as *const _ as *const u8,
         self.0[16..].as_mut_ptr(),
         core::mem::size_of::<<f32 as EndianScalar>::Scalar>(),
+      );
+    }
+  }
+
+}
+
+// struct DbuffModifier, aligned to 4
+#[repr(transparent)]
+#[derive(Clone, Copy, PartialEq)]
+pub struct DbuffModifier(pub [u8; 16]);
+impl Default for DbuffModifier { 
+  fn default() -> Self { 
+    Self([0; 16])
+  }
+}
+impl core::fmt::Debug for DbuffModifier {
+  fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+    f.debug_struct("DbuffModifier")
+      .field("func", &self.func())
+      .field("modified_attribute_id", &self.modified_attribute_id())
+      .field("group_id", &self.group_id())
+      .field("skill_type_id", &self.skill_type_id())
+      .finish()
+  }
+}
+
+impl flatbuffers::SimpleToVerifyInSlice for DbuffModifier {}
+impl<'a> flatbuffers::Follow<'a> for DbuffModifier {
+  type Inner = &'a DbuffModifier;
+  #[inline]
+  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+    <&'a DbuffModifier>::follow(buf, loc)
+  }
+}
+impl<'a> flatbuffers::Follow<'a> for &'a DbuffModifier {
+  type Inner = &'a DbuffModifier;
+  #[inline]
+  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+    flatbuffers::follow_cast_ref::<DbuffModifier>(buf, loc)
+  }
+}
+impl<'b> flatbuffers::Push for DbuffModifier {
+    type Output = DbuffModifier;
+    #[inline]
+    unsafe fn push(&self, dst: &mut [u8], _written_len: usize) {
+        let src = ::core::slice::from_raw_parts(self as *const DbuffModifier as *const u8, <Self as flatbuffers::Push>::size());
+        dst.copy_from_slice(src);
+    }
+    #[inline]
+    fn alignment() -> flatbuffers::PushAlignment {
+        flatbuffers::PushAlignment::new(4)
+    }
+}
+
+impl<'a> flatbuffers::Verifiable for DbuffModifier {
+  #[inline]
+  fn run_verifier(
+    v: &mut flatbuffers::Verifier, pos: usize
+  ) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+    use self::flatbuffers::Verifiable;
+    v.in_buffer::<Self>(pos)
+  }
+}
+
+impl<'a> DbuffModifier {
+  #[allow(clippy::too_many_arguments)]
+  pub fn new(
+    func: ModifierFunc,
+    modified_attribute_id: i32,
+    group_id: i32,
+    skill_type_id: i32,
+  ) -> Self {
+    let mut s = Self([0; 16]);
+    s.set_func(func);
+    s.set_modified_attribute_id(modified_attribute_id);
+    s.set_group_id(group_id);
+    s.set_skill_type_id(skill_type_id);
+    s
+  }
+
+  pub fn func(&self) -> ModifierFunc {
+    let mut mem = core::mem::MaybeUninit::<<ModifierFunc as EndianScalar>::Scalar>::uninit();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    EndianScalar::from_little_endian(unsafe {
+      core::ptr::copy_nonoverlapping(
+        self.0[0..].as_ptr(),
+        mem.as_mut_ptr() as *mut u8,
+        core::mem::size_of::<<ModifierFunc as EndianScalar>::Scalar>(),
+      );
+      mem.assume_init()
+    })
+  }
+
+  pub fn set_func(&mut self, x: ModifierFunc) {
+    let x_le = x.to_little_endian();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    unsafe {
+      core::ptr::copy_nonoverlapping(
+        &x_le as *const _ as *const u8,
+        self.0[0..].as_mut_ptr(),
+        core::mem::size_of::<<ModifierFunc as EndianScalar>::Scalar>(),
+      );
+    }
+  }
+
+  pub fn modified_attribute_id(&self) -> i32 {
+    let mut mem = core::mem::MaybeUninit::<<i32 as EndianScalar>::Scalar>::uninit();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    EndianScalar::from_little_endian(unsafe {
+      core::ptr::copy_nonoverlapping(
+        self.0[4..].as_ptr(),
+        mem.as_mut_ptr() as *mut u8,
+        core::mem::size_of::<<i32 as EndianScalar>::Scalar>(),
+      );
+      mem.assume_init()
+    })
+  }
+
+  pub fn set_modified_attribute_id(&mut self, x: i32) {
+    let x_le = x.to_little_endian();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    unsafe {
+      core::ptr::copy_nonoverlapping(
+        &x_le as *const _ as *const u8,
+        self.0[4..].as_mut_ptr(),
+        core::mem::size_of::<<i32 as EndianScalar>::Scalar>(),
+      );
+    }
+  }
+
+  pub fn group_id(&self) -> i32 {
+    let mut mem = core::mem::MaybeUninit::<<i32 as EndianScalar>::Scalar>::uninit();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    EndianScalar::from_little_endian(unsafe {
+      core::ptr::copy_nonoverlapping(
+        self.0[8..].as_ptr(),
+        mem.as_mut_ptr() as *mut u8,
+        core::mem::size_of::<<i32 as EndianScalar>::Scalar>(),
+      );
+      mem.assume_init()
+    })
+  }
+
+  pub fn set_group_id(&mut self, x: i32) {
+    let x_le = x.to_little_endian();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    unsafe {
+      core::ptr::copy_nonoverlapping(
+        &x_le as *const _ as *const u8,
+        self.0[8..].as_mut_ptr(),
+        core::mem::size_of::<<i32 as EndianScalar>::Scalar>(),
+      );
+    }
+  }
+
+  pub fn skill_type_id(&self) -> i32 {
+    let mut mem = core::mem::MaybeUninit::<<i32 as EndianScalar>::Scalar>::uninit();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    EndianScalar::from_little_endian(unsafe {
+      core::ptr::copy_nonoverlapping(
+        self.0[12..].as_ptr(),
+        mem.as_mut_ptr() as *mut u8,
+        core::mem::size_of::<<i32 as EndianScalar>::Scalar>(),
+      );
+      mem.assume_init()
+    })
+  }
+
+  pub fn set_skill_type_id(&mut self, x: i32) {
+    let x_le = x.to_little_endian();
+    // Safety:
+    // Created from a valid Table for this object
+    // Which contains a valid value in this slot
+    unsafe {
+      core::ptr::copy_nonoverlapping(
+        &x_le as *const _ as *const u8,
+        self.0[12..].as_mut_ptr(),
+        core::mem::size_of::<<i32 as EndianScalar>::Scalar>(),
       );
     }
   }
@@ -2701,6 +3069,198 @@ impl core::fmt::Debug for DogmaEffect<'_> {
       ds.finish()
   }
 }
+pub enum DbuffCollectionOffset {}
+#[derive(Copy, Clone, PartialEq)]
+
+pub struct DbuffCollection<'a> {
+  pub _tab: flatbuffers::Table<'a>,
+}
+
+impl<'a> flatbuffers::Follow<'a> for DbuffCollection<'a> {
+  type Inner = DbuffCollection<'a>;
+  #[inline]
+  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+    Self { _tab: flatbuffers::Table::new(buf, loc) }
+  }
+}
+
+impl<'a> DbuffCollection<'a> {
+  pub const VT_ID: flatbuffers::VOffsetT = 4;
+  pub const VT_DISPLAY_NAME: flatbuffers::VOffsetT = 6;
+  pub const VT_AGGREGATE_MODE: flatbuffers::VOffsetT = 8;
+  pub const VT_OPERATION: flatbuffers::VOffsetT = 10;
+  pub const VT_DISPLAY: flatbuffers::VOffsetT = 12;
+  pub const VT_MODIFIERS: flatbuffers::VOffsetT = 14;
+
+  #[inline]
+  pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+    DbuffCollection { _tab: table }
+  }
+  #[allow(unused_mut)]
+  pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+    _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
+    args: &'args DbuffCollectionArgs<'args>
+  ) -> flatbuffers::WIPOffset<DbuffCollection<'bldr>> {
+    let mut builder = DbuffCollectionBuilder::new(_fbb);
+    if let Some(x) = args.modifiers { builder.add_modifiers(x); }
+    if let Some(x) = args.display_name { builder.add_display_name(x); }
+    builder.add_id(args.id);
+    builder.add_display(args.display);
+    builder.add_operation(args.operation);
+    builder.add_aggregate_mode(args.aggregate_mode);
+    builder.finish()
+  }
+
+
+  #[inline]
+  pub fn id(&self) -> i32 {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<i32>(DbuffCollection::VT_ID, Some(0)).unwrap()}
+  }
+  #[inline]
+  pub fn key_compare_less_than(&self, o: &DbuffCollection) -> bool {
+    self.id() < o.id()
+  }
+
+  #[inline]
+  pub fn key_compare_with_value(&self, val: i32) -> ::core::cmp::Ordering {
+    let key = self.id();
+    key.cmp(&val)
+  }
+  #[inline]
+  pub fn display_name(&self) -> Option<&'a str> {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(DbuffCollection::VT_DISPLAY_NAME, None)}
+  }
+  #[inline]
+  pub fn aggregate_mode(&self) -> DbuffAggregateMode {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<DbuffAggregateMode>(DbuffCollection::VT_AGGREGATE_MODE, Some(DbuffAggregateMode::Maximum)).unwrap()}
+  }
+  #[inline]
+  pub fn operation(&self) -> ModifierOperation {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<ModifierOperation>(DbuffCollection::VT_OPERATION, Some(ModifierOperation::PreMul)).unwrap()}
+  }
+  #[inline]
+  pub fn display(&self) -> DbuffDisplay {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<DbuffDisplay>(DbuffCollection::VT_DISPLAY, Some(DbuffDisplay::Normal)).unwrap()}
+  }
+  #[inline]
+  pub fn modifiers(&self) -> Option<flatbuffers::Vector<'a, DbuffModifier>> {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, DbuffModifier>>>(DbuffCollection::VT_MODIFIERS, None)}
+  }
+}
+
+impl flatbuffers::Verifiable for DbuffCollection<'_> {
+  #[inline]
+  fn run_verifier(
+    v: &mut flatbuffers::Verifier, pos: usize
+  ) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+    use self::flatbuffers::Verifiable;
+    v.visit_table(pos)?
+     .visit_field::<i32>("id", Self::VT_ID, false)?
+     .visit_field::<flatbuffers::ForwardsUOffset<&str>>("display_name", Self::VT_DISPLAY_NAME, false)?
+     .visit_field::<DbuffAggregateMode>("aggregate_mode", Self::VT_AGGREGATE_MODE, false)?
+     .visit_field::<ModifierOperation>("operation", Self::VT_OPERATION, false)?
+     .visit_field::<DbuffDisplay>("display", Self::VT_DISPLAY, false)?
+     .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, DbuffModifier>>>("modifiers", Self::VT_MODIFIERS, false)?
+     .finish();
+    Ok(())
+  }
+}
+pub struct DbuffCollectionArgs<'a> {
+    pub id: i32,
+    pub display_name: Option<flatbuffers::WIPOffset<&'a str>>,
+    pub aggregate_mode: DbuffAggregateMode,
+    pub operation: ModifierOperation,
+    pub display: DbuffDisplay,
+    pub modifiers: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, DbuffModifier>>>,
+}
+impl<'a> Default for DbuffCollectionArgs<'a> {
+  #[inline]
+  fn default() -> Self {
+    DbuffCollectionArgs {
+      id: 0,
+      display_name: None,
+      aggregate_mode: DbuffAggregateMode::Maximum,
+      operation: ModifierOperation::PreMul,
+      display: DbuffDisplay::Normal,
+      modifiers: None,
+    }
+  }
+}
+
+pub struct DbuffCollectionBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+  fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+  start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+}
+impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> DbuffCollectionBuilder<'a, 'b, A> {
+  #[inline]
+  pub fn add_id(&mut self, id: i32) {
+    self.fbb_.push_slot::<i32>(DbuffCollection::VT_ID, id, 0);
+  }
+  #[inline]
+  pub fn add_display_name(&mut self, display_name: flatbuffers::WIPOffset<&'b  str>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(DbuffCollection::VT_DISPLAY_NAME, display_name);
+  }
+  #[inline]
+  pub fn add_aggregate_mode(&mut self, aggregate_mode: DbuffAggregateMode) {
+    self.fbb_.push_slot::<DbuffAggregateMode>(DbuffCollection::VT_AGGREGATE_MODE, aggregate_mode, DbuffAggregateMode::Maximum);
+  }
+  #[inline]
+  pub fn add_operation(&mut self, operation: ModifierOperation) {
+    self.fbb_.push_slot::<ModifierOperation>(DbuffCollection::VT_OPERATION, operation, ModifierOperation::PreMul);
+  }
+  #[inline]
+  pub fn add_display(&mut self, display: DbuffDisplay) {
+    self.fbb_.push_slot::<DbuffDisplay>(DbuffCollection::VT_DISPLAY, display, DbuffDisplay::Normal);
+  }
+  #[inline]
+  pub fn add_modifiers(&mut self, modifiers: flatbuffers::WIPOffset<flatbuffers::Vector<'b , DbuffModifier>>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(DbuffCollection::VT_MODIFIERS, modifiers);
+  }
+  #[inline]
+  pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> DbuffCollectionBuilder<'a, 'b, A> {
+    let start = _fbb.start_table();
+    DbuffCollectionBuilder {
+      fbb_: _fbb,
+      start_: start,
+    }
+  }
+  #[inline]
+  pub fn finish(self) -> flatbuffers::WIPOffset<DbuffCollection<'a>> {
+    let o = self.fbb_.end_table(self.start_);
+    flatbuffers::WIPOffset::new(o.value())
+  }
+}
+
+impl core::fmt::Debug for DbuffCollection<'_> {
+  fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+    let mut ds = f.debug_struct("DbuffCollection");
+      ds.field("id", &self.id());
+      ds.field("display_name", &self.display_name());
+      ds.field("aggregate_mode", &self.aggregate_mode());
+      ds.field("operation", &self.operation());
+      ds.field("display", &self.display());
+      ds.field("modifiers", &self.modifiers());
+      ds.finish()
+  }
+}
 pub enum MutaplasmidMappingOffset {}
 #[derive(Copy, Clone, PartialEq)]
 
@@ -2979,6 +3539,7 @@ impl<'a> Sde<'a> {
   pub const VT_DOGMA_ATTRIBUTES: flatbuffers::VOffsetT = 12;
   pub const VT_DOGMA_EFFECTS: flatbuffers::VOffsetT = 14;
   pub const VT_MUTAPLASMIDS: flatbuffers::VOffsetT = 16;
+  pub const VT_DBUFF_COLLECTIONS: flatbuffers::VOffsetT = 18;
 
   #[inline]
   pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -2990,6 +3551,7 @@ impl<'a> Sde<'a> {
     args: &'args SdeArgs<'args>
   ) -> flatbuffers::WIPOffset<Sde<'bldr>> {
     let mut builder = SdeBuilder::new(_fbb);
+    if let Some(x) = args.dbuff_collections { builder.add_dbuff_collections(x); }
     if let Some(x) = args.mutaplasmids { builder.add_mutaplasmids(x); }
     if let Some(x) = args.dogma_effects { builder.add_dogma_effects(x); }
     if let Some(x) = args.dogma_attributes { builder.add_dogma_attributes(x); }
@@ -3050,6 +3612,13 @@ impl<'a> Sde<'a> {
     // which contains a valid value in this slot
     unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<Mutaplasmid>>>>(Sde::VT_MUTAPLASMIDS, None)}
   }
+  #[inline]
+  pub fn dbuff_collections(&self) -> Option<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DbuffCollection<'a>>>> {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DbuffCollection>>>>(Sde::VT_DBUFF_COLLECTIONS, None)}
+  }
 }
 
 impl flatbuffers::Verifiable for Sde<'_> {
@@ -3066,6 +3635,7 @@ impl flatbuffers::Verifiable for Sde<'_> {
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<DogmaAttribute>>>>("dogma_attributes", Self::VT_DOGMA_ATTRIBUTES, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<DogmaEffect>>>>("dogma_effects", Self::VT_DOGMA_EFFECTS, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<Mutaplasmid>>>>("mutaplasmids", Self::VT_MUTAPLASMIDS, false)?
+     .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<DbuffCollection>>>>("dbuff_collections", Self::VT_DBUFF_COLLECTIONS, false)?
      .finish();
     Ok(())
   }
@@ -3078,6 +3648,7 @@ pub struct SdeArgs<'a> {
     pub dogma_attributes: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DogmaAttribute<'a>>>>>,
     pub dogma_effects: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DogmaEffect<'a>>>>>,
     pub mutaplasmids: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<Mutaplasmid<'a>>>>>,
+    pub dbuff_collections: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DbuffCollection<'a>>>>>,
 }
 impl<'a> Default for SdeArgs<'a> {
   #[inline]
@@ -3090,6 +3661,7 @@ impl<'a> Default for SdeArgs<'a> {
       dogma_attributes: None,
       dogma_effects: None,
       mutaplasmids: None,
+      dbuff_collections: None,
     }
   }
 }
@@ -3128,6 +3700,10 @@ impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> SdeBuilder<'a, 'b, A> {
     self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Sde::VT_MUTAPLASMIDS, mutaplasmids);
   }
   #[inline]
+  pub fn add_dbuff_collections(&mut self, dbuff_collections: flatbuffers::WIPOffset<flatbuffers::Vector<'b , flatbuffers::ForwardsUOffset<DbuffCollection<'b >>>>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Sde::VT_DBUFF_COLLECTIONS, dbuff_collections);
+  }
+  #[inline]
   pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> SdeBuilder<'a, 'b, A> {
     let start = _fbb.start_table();
     SdeBuilder {
@@ -3152,6 +3728,7 @@ impl core::fmt::Debug for Sde<'_> {
       ds.field("dogma_attributes", &self.dogma_attributes());
       ds.field("dogma_effects", &self.dogma_effects());
       ds.field("mutaplasmids", &self.mutaplasmids());
+      ds.field("dbuff_collections", &self.dbuff_collections());
       ds.finish()
   }
 }

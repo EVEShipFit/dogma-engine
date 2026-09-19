@@ -75,6 +75,13 @@ impl<'a> Sde<'a> {
             .lookup_by_key(effect_id, |entry, key| entry.key_compare_with_value(*key))
     }
 
+    /// A buff by id.
+    pub fn get_dbuff_collection(&self, buff_id: i32) -> Option<eve::DbuffCollection<'a>> {
+        self.sde
+            .dbuff_collections()?
+            .lookup_by_key(buff_id, |entry, key| entry.key_compare_with_value(*key))
+    }
+
     /// A mutaplasmid by its type id.
     pub fn get_mutaplasmid(&self, type_id: i32) -> Option<eve::Mutaplasmid<'a>> {
         self.sde
