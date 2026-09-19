@@ -57,6 +57,11 @@ All identifiers are those from the SDE.
   - `damage_profile` (optional, default 0.25 each): incoming damage for effective hitpoints, as `em`, `explosive`, `kinetic` and `thermal` (relative to each other).
   - `security` (optional, default `high_sec`): `high_sec`, `low_sec`, `null_sec` or `wormhole`.
   - `beacons` (optional, default none): the beacons in space with the ship, as type IDs.
+- `incoming` (optional): what other fits aim at this one, in the shape `outgoing` reports.
+  - `effects` (optional, default none): effects aimed at the fit, like a stasis webifier.
+    - `type_id`: the type the effect belongs to; its category decides the stacking penalty.
+    - `effect_id`: which effect, as `dogmaEffects` in the SDE numbers them.
+    - `attributes`: the value per attribute ID the effect reads, worked out by the fit that aimed it.
 
 ### Options
 
@@ -87,7 +92,7 @@ Each result has:
 
 - `attributes`: per attribute ID, its `base` value before effects and its final `value`.
   With the `sources` option, also `sources`: every modifier on it, in the order they were applied. Each has:
-  - `from`: where it comes from; `type` is `ship`, `mode`, `character`, `item` or `charge` (with the `index` into `items`), `skill` or `beacon` (with its `type_id`), or `buff` (with its `id`).
+  - `from`: where it comes from; `type` is `ship`, `mode`, `character`, `item` or `charge` (with the `index` into `items`), `projected` (with the `index` into `incoming.effects`), `skill` or `beacon` (with its `type_id`), or `buff` (with its `id`).
   - `effect_id`: the effect that holds the modifier; `null` for a buff, which has none.
   - `source_attribute_id`: the attribute on the source that holds `value`; `null` for a buff, which carries its own strength.
   - `operator`: `pre_assign`, `pre_mul`, `pre_div`, `mod_add`, `mod_sub`, `post_mul`, `post_div`, `post_percent` or `post_assign`.

@@ -234,7 +234,9 @@ impl Pass for PassThree {
             mode.calculate_values(info, objects);
         }
         objects.char.calculate_values(info, objects);
-        objects.target.calculate_values(info, objects);
+        for projected in &objects.projected {
+            projected.item.calculate_values(info, objects);
+        }
         for item in &objects.items {
             item.calculate_values(info, objects);
             if let Some(charge) = &item.charge {

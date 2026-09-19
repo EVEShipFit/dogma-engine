@@ -9,7 +9,7 @@ use super::attribute_ids::{
 use super::item::{Attribute, Item};
 use super::outgoing::warfare_buffs;
 use super::output::{BuffResult, BuffSource};
-use super::{Info, Objects};
+use super::{Info, Objects, Projected};
 use crate::fit::{DamageProfile, Fit, Mutation, Security, Spool};
 
 pub struct PassOne {}
@@ -130,13 +130,28 @@ impl PassOne {
             mode.set_attributes(info);
         }
 
-        /* These carry no attributes, but pass 2 still wants their category. */
+        /* This carries no attributes, but pass 2 still wants its category. */
         objects.char.set_type_ids(info);
-        objects.target.set_type_ids(info);
+
+        /* What is aimed at the fit brings its own values; the type behind it
+         * is only read for the category the stacking penalty needs. */
+        for projected in &fit.incoming.effects {
+            let mut item = Item::new_projected(projected.type_id);
+
+            item.set_type_ids(info);
+            for (attribute_id, value) in &projected.attributes {
+                item.set_attribute(*attribute_id, *value);
+            }
+
+            objects.projected.push(Projected {
+                effect_id: projected.effect_id,
+                item,
+            });
+        }
 
         let mut candidates = Vec::new();
         for type_id in &fit.environment.beacons {
-            let mut beacon = Item::new_beacon(*type_id);
+            let mut beacon = Item::new_projected(*type_id);
 
             beacon.set_attributes(info);
             candidates.extend(warfare_buffs(&beacon).map(|buff| Candidate {

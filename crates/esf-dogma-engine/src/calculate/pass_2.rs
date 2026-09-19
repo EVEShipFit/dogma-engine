@@ -59,21 +59,75 @@ fn get_modifier_func(
 
 const STRUCTURE_CATEGORY_ID: i32 = 65;
 
-fn get_target_object(domain: eve::ModifierDomain, origin: Object) -> Object {
+fn get_target_object(domain: eve::ModifierDomain, origin: Object) -> Option<Object> {
     match domain {
-        eve::ModifierDomain::ShipID => Object::Ship,
-        eve::ModifierDomain::CharID => Object::Char,
+        eve::ModifierDomain::ShipID => Some(Object::Ship),
+        eve::ModifierDomain::CharID => Some(Object::Char),
         eve::ModifierDomain::OtherID => match origin {
-            Object::Item(index) => Object::Charge(index),
-            Object::Charge(index) => Object::Item(index),
+            Object::Item(index) => Some(Object::Charge(index)),
+            Object::Charge(index) => Some(Object::Item(index)),
             _ => panic!("Invalid origin for OtherID domain"),
         },
         /* On a structure fit the hull is the structure. */
-        eve::ModifierDomain::StructureID => Object::Ship,
-        eve::ModifierDomain::ItemID => origin,
-        eve::ModifierDomain::TargetID => Object::Target,
-        eve::ModifierDomain::Target => Object::Target,
+        eve::ModifierDomain::StructureID => Some(Object::Ship),
+        eve::ModifierDomain::ItemID => Some(origin),
+        eve::ModifierDomain::TargetID | eve::ModifierDomain::Target => None,
         domain => panic!("Unknown modifier domain: {:?}", domain),
+    }
+}
+
+fn get_projected_object(domain: eve::ModifierDomain) -> Option<Object> {
+    match domain {
+        eve::ModifierDomain::ShipID
+        | eve::ModifierDomain::StructureID
+        | eve::ModifierDomain::TargetID
+        | eve::ModifierDomain::Target => Some(Object::Ship),
+        eve::ModifierDomain::CharID => Some(Object::Char),
+        eve::ModifierDomain::ItemID | eve::ModifierDomain::OtherID => None,
+        domain => panic!("Unknown modifier domain: {:?}", domain),
+    }
+}
+
+fn collect_projected_effects(
+    info: &impl Info,
+    origin: Object,
+    effect_id: i32,
+    effects: &mut Vec<Pass2Effect>,
+) {
+    let Some(effect) = info.get_dogma_effect(effect_id) else {
+        return;
+    };
+    let category = get_effect_category(effect.effect_category());
+
+    for modifier in effect.modifiers().into_iter().flatten() {
+        let Some(target) = get_projected_object(modifier.domain()) else {
+            continue;
+        };
+        let modifier_func = get_modifier_func(
+            modifier.func(),
+            modifier.skill_type_id(),
+            modifier.group_id(),
+        );
+        let Some(effect_modifier) = modifier_func else {
+            continue;
+        };
+        let Some(operator) = get_effect_operator(modifier.operation()) else {
+            continue;
+        };
+
+        effects.push(Pass2Effect {
+            origin: Origin::Effect {
+                effect_id,
+                source: origin,
+                source_category: category,
+                attribute_id: modifier.modifying_attribute_id(),
+            },
+            modifier: effect_modifier,
+            operator,
+            source_quantity: 1,
+            target,
+            target_attribute_id: modifier.modified_attribute_id(),
+        });
     }
 }
 
@@ -113,7 +167,7 @@ fn for_each_in_location(
         | Object::Item(_)
         | Object::Charge(_)
         | Object::Skill(_)
-        | Object::Target
+        | Object::Projected(_)
         | Object::Beacon(_) => apply(location, objects.get_mut(location).unwrap()),
     }
 }
@@ -314,7 +368,9 @@ impl Item {
                     continue;
                 }
 
-                let target = get_target_object(modifier.domain(), origin);
+                let Some(target) = get_target_object(modifier.domain(), origin) else {
+                    continue;
+                };
                 effects.push(Pass2Effect {
                     origin: Origin::Effect {
                         effect_id: dogma_effect.effect_id(),
@@ -360,6 +416,10 @@ impl Pass for PassTwo {
             .collect_effects(info, Object::Char, false, &mut effects);
         for (index, beacon) in objects.beacons.iter_mut().enumerate() {
             beacon.collect_effects(info, Object::Beacon(index), false, &mut effects);
+        }
+        for index in 0..objects.projected.len() {
+            let effect_id = objects.projected[index].effect_id;
+            collect_projected_effects(info, Object::Projected(index), effect_id, &mut effects);
         }
         collect_buff_effects(info, &objects.buffs, &mut effects);
 

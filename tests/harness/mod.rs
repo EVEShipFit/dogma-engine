@@ -12,7 +12,7 @@ mod case;
 mod dump;
 mod skills;
 
-pub use case::{calculate, load, snapshot};
+pub use case::{calculate, load, outgoing, snapshot};
 pub use skills::{Skills, all, none};
 
 /// The type id of a beacon, so a case can name the space it is in.
