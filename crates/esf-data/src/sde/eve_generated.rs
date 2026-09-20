@@ -2435,6 +2435,8 @@ impl<'a> DogmaAttribute<'a> {
   pub const VT_STACKABLE: flatbuffers::VOffsetT = 14;
   pub const VT_PUBLISHED: flatbuffers::VOffsetT = 16;
   pub const VT_UNIT_ID: flatbuffers::VOffsetT = 18;
+  pub const VT_MIN_ATTRIBUTE_ID: flatbuffers::VOffsetT = 20;
+  pub const VT_MAX_ATTRIBUTE_ID: flatbuffers::VOffsetT = 22;
 
   #[inline]
   pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -2446,6 +2448,8 @@ impl<'a> DogmaAttribute<'a> {
     args: &'args DogmaAttributeArgs<'args>
   ) -> flatbuffers::WIPOffset<DogmaAttribute<'bldr>> {
     let mut builder = DogmaAttributeBuilder::new(_fbb);
+    builder.add_max_attribute_id(args.max_attribute_id);
+    builder.add_min_attribute_id(args.min_attribute_id);
     builder.add_unit_id(args.unit_id);
     builder.add_default_value(args.default_value);
     if let Some(x) = args.display_name { builder.add_display_name(x); }
@@ -2524,6 +2528,20 @@ impl<'a> DogmaAttribute<'a> {
     // which contains a valid value in this slot
     unsafe { self._tab.get::<i32>(DogmaAttribute::VT_UNIT_ID, Some(0)).unwrap()}
   }
+  #[inline]
+  pub fn min_attribute_id(&self) -> i32 {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<i32>(DogmaAttribute::VT_MIN_ATTRIBUTE_ID, Some(0)).unwrap()}
+  }
+  #[inline]
+  pub fn max_attribute_id(&self) -> i32 {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<i32>(DogmaAttribute::VT_MAX_ATTRIBUTE_ID, Some(0)).unwrap()}
+  }
 }
 
 impl flatbuffers::Verifiable for DogmaAttribute<'_> {
@@ -2541,6 +2559,8 @@ impl flatbuffers::Verifiable for DogmaAttribute<'_> {
      .visit_field::<bool>("stackable", Self::VT_STACKABLE, false)?
      .visit_field::<bool>("published", Self::VT_PUBLISHED, false)?
      .visit_field::<i32>("unit_id", Self::VT_UNIT_ID, false)?
+     .visit_field::<i32>("min_attribute_id", Self::VT_MIN_ATTRIBUTE_ID, false)?
+     .visit_field::<i32>("max_attribute_id", Self::VT_MAX_ATTRIBUTE_ID, false)?
      .finish();
     Ok(())
   }
@@ -2554,6 +2574,8 @@ pub struct DogmaAttributeArgs<'a> {
     pub stackable: bool,
     pub published: bool,
     pub unit_id: i32,
+    pub min_attribute_id: i32,
+    pub max_attribute_id: i32,
 }
 impl<'a> Default for DogmaAttributeArgs<'a> {
   #[inline]
@@ -2567,6 +2589,8 @@ impl<'a> Default for DogmaAttributeArgs<'a> {
       stackable: false,
       published: false,
       unit_id: 0,
+      min_attribute_id: 0,
+      max_attribute_id: 0,
     }
   }
 }
@@ -2609,6 +2633,14 @@ impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> DogmaAttributeBuilder<'a, 'b, A
     self.fbb_.push_slot::<i32>(DogmaAttribute::VT_UNIT_ID, unit_id, 0);
   }
   #[inline]
+  pub fn add_min_attribute_id(&mut self, min_attribute_id: i32) {
+    self.fbb_.push_slot::<i32>(DogmaAttribute::VT_MIN_ATTRIBUTE_ID, min_attribute_id, 0);
+  }
+  #[inline]
+  pub fn add_max_attribute_id(&mut self, max_attribute_id: i32) {
+    self.fbb_.push_slot::<i32>(DogmaAttribute::VT_MAX_ATTRIBUTE_ID, max_attribute_id, 0);
+  }
+  #[inline]
   pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> DogmaAttributeBuilder<'a, 'b, A> {
     let start = _fbb.start_table();
     DogmaAttributeBuilder {
@@ -2635,6 +2667,8 @@ impl core::fmt::Debug for DogmaAttribute<'_> {
       ds.field("stackable", &self.stackable());
       ds.field("published", &self.published());
       ds.field("unit_id", &self.unit_id());
+      ds.field("min_attribute_id", &self.min_attribute_id());
+      ds.field("max_attribute_id", &self.max_attribute_id());
       ds.finish()
   }
 }

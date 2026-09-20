@@ -48,7 +48,13 @@ fn apply_penalized(
 }
 
 impl Attribute {
-    fn calculate_value(&self, info: &impl Info, objects: &Objects, attribute_id: i32) -> f64 {
+    fn calculate_value(
+        &self,
+        info: &impl Info,
+        objects: &Objects,
+        owner: &Item,
+        attribute_id: i32,
+    ) -> f64 {
         if let Some(value) = self.value.get() {
             return value;
         }
@@ -210,6 +216,19 @@ impl Attribute {
             }
         }
 
+        /* An attribute can name two others as its floor and its cap, both read
+         * off the same item. */
+        if let Some(dogma_attribute) = info.get_dogma_attribute(attribute_id) {
+            if dogma_attribute.min_attribute_id() != 0 {
+                let min = owner.calculated_value(info, objects, dogma_attribute.min_attribute_id());
+                current_value = current_value.max(min);
+            }
+            if dogma_attribute.max_attribute_id() != 0 {
+                let max = owner.calculated_value(info, objects, dogma_attribute.max_attribute_id());
+                current_value = current_value.min(max);
+            }
+        }
+
         self.value.set(Some(current_value));
         if objects.sources {
             self.sources.replace(sources);
@@ -223,7 +242,7 @@ impl Item {
      * and fall back to what the SDE says an attribute starts at. */
     fn calculated_value(&self, info: &impl Info, objects: &Objects, attribute_id: i32) -> f64 {
         match self.attributes.get(&attribute_id) {
-            Some(attribute) => attribute.calculate_value(info, objects, attribute_id),
+            Some(attribute) => attribute.calculate_value(info, objects, self, attribute_id),
             None => info
                 .get_dogma_attribute(attribute_id)
                 .map_or(0.0, |dogma_attribute| {
@@ -234,7 +253,7 @@ impl Item {
 
     fn calculate_values(&self, info: &impl Info, objects: &Objects) {
         for (attribute_id, attribute) in &self.attributes {
-            attribute.calculate_value(info, objects, *attribute_id);
+            attribute.calculate_value(info, objects, self, *attribute_id);
         }
     }
 }
