@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Rifter
+ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 8.000000
 ship/passiveShieldEffectiveRechargeRate      = 2.837438
 ship/passiveShieldRechargeRate               = 1.800000
@@ -86,3 +87,7 @@ low_1/armorThermalDamageResonance   = 0.925000
 
 low_2/type  = Damage Control II
 low_2/state = online
+
+ship                          = skill Minmatar Frigate needs 1 has 0
+low_1/Reactive Armor Hardener = skill Hull Upgrades needs 3 has 0
+low_2/Damage Control II       = skill Hull Upgrades needs 4 has 0

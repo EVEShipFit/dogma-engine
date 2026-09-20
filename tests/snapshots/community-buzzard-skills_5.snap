@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Buzzard
+ship/upgradeFree                             = 150.000000
 ship/scanStrength                            = 28.800000
 ship/passiveShieldEffectiveRechargeRate      = 5.028571
 ship/passiveShieldRechargeRate               = 3.520000
@@ -75,6 +76,7 @@ ship/advancedAgility                         = 0.750000
 ship/jumpDriveConsumptionAmount              = 1000.000000
 ship/advancedCapitalAgility                  = 0.750000
 ship/jumpDriveCapacitorNeed                  = 0.750000
+ship/upgradeLoad                             = 250.000000
 ship/warpBubbleImmune                        = 1.000000
 ship/eliteBonusCovertOps3                    = -50.000000
 ship/shipBonusUF1                            = 5.000000

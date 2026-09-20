@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                         = Venture
+ship/upgradeFree                                  = 400.000000
 ship/scanStrength                                 = 4.800000
 ship/passiveShieldEffectiveRechargeRate           = 2.068965
 ship/passiveShieldRechargeRate                    = 1.500000

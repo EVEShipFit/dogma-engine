@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Confessor
+ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 13.000000
 ship/passiveShieldEffectiveRechargeRate      = 3.000000
 ship/passiveShieldRechargeRate               = 1.875000
@@ -90,3 +91,10 @@ high_1/capacitorPeakLoad = 2.016760
 high_1/cycleTime         = 4474.999905
 high_1/speed             = 4474.999905
 high_1/damageMultiplier  = 7.900200
+
+ship                               = skill Amarr Tactical Destroyer needs 1 has 0
+low_1/Heat Sink II                 = skill Weapon Upgrades needs 4 has 0
+medium_1/1MN Afterburner II        = skill Afterburner needs 4 has 0
+high_1/Small Focused Beam Laser II = skill Small Energy Turret needs 5 has 0
+high_1/Small Focused Beam Laser II = skill Gunnery needs 1 has 0
+high_1/Small Focused Beam Laser II = skill Small Beam Laser Specialization needs 1 has 0

@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Wreathe
+ship/upgradeFree                             = 250.000000
 ship/scanStrength                            = 7.000000
 ship/passiveShieldEffectiveRechargeRate      = 44.504383
 ship/passiveShieldRechargeRate               = 19.760000
@@ -57,6 +58,7 @@ ship/shipBonusGI                             = 0.000000
 ship/signatureRadius                         = 273.858356
 ship/warpSpeedMultiplier                     = 7.140462
 ship/shipBonusMI2                            = 0.000000
+ship/upgradeLoad                             = 150.000000
 ship/shipBonusUF1                            = 0.000000
 ship/shipBonusUF2                            = 0.000000
 ship/shipBonusUC1                            = 0.000000
@@ -95,3 +97,16 @@ medium_5/state = online
 
 rig_1-3/type  = Medium Hyperspatial Velocity Optimizer I
 rig_1-3/state = online
+
+ship                                     = resource Powergrid 303.000000 of 200.000000
+ship                                     = skill Minmatar Hauler needs 1 has 0
+low_1/Expanded Cargohold II              = skill Hull Upgrades needs 2 has 0
+low_2/Expanded Cargohold II              = skill Hull Upgrades needs 2 has 0
+low_3/Expanded Cargohold II              = skill Hull Upgrades needs 2 has 0
+low_4/Inertial Stabilizers II            = skill Hull Upgrades needs 2 has 0
+low_5/Inertial Stabilizers II            = skill Hull Upgrades needs 2 has 0
+medium_1/Large Shield Extender I         = skill Shield Upgrades needs 1 has 0
+medium_2/Large Shield Extender I         = skill Shield Upgrades needs 1 has 0
+medium_3/Multispectrum Shield Hardener I = skill Tactical Shield Manipulation needs 1 has 0
+medium_4/Thermal Shield Amplifier I      = skill Shield Upgrades needs 1 has 0
+medium_5/EM Shield Amplifier I           = skill Shield Upgrades needs 1 has 0

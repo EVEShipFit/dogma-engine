@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Nyx
+ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 194.400000
 ship/passiveShieldEffectiveRechargeRate      = 68.965516
 ship/passiveShieldRechargeRate               = 50.000000

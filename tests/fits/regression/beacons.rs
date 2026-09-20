@@ -10,7 +10,7 @@ Damage Control II
 Small Armor Repairer II
 Overdrive Injector System II
 
-Medium Shield Extender II
+Small Shield Extender II
 1MN Afterburner II
 Small Capacitor Booster II, Navy Cap Booster 400
 

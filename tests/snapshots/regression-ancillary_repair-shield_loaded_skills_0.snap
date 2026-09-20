@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Caracal
+ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 16.000000
 ship/passiveShieldEffectiveRechargeRate      = 4.689655
 ship/passiveShieldRechargeRate               = 3.400000
@@ -71,3 +72,6 @@ medium_1/chargeAmount             = 3.500000
 medium_1/cycleTime                = 3000.000000
 medium_1/capacitorNeed            = 0.000000
 medium_1/charge/type              = Cap Booster 100
+
+ship                                     = skill Caldari Cruiser needs 1 has 0
+medium_1/Medium Ancillary Shield Booster = skill Shield Operation needs 2 has 0

@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Vexor
+ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 16.000000
 ship/passiveShieldEffectiveRechargeRate      = 3.034483
 ship/passiveShieldRechargeRate               = 2.200000
@@ -73,3 +74,7 @@ low_1/cycleTime                      = 12000.000000
 low_1/armorDamageAmount              = 621.000000
 low_1/charge/type                    = Nanite Repair Paste
 low_1/charge/chargedRepairMultiplier = 3.000000
+
+ship                                  = skill Gallente Cruiser needs 1 has 0
+low_1/Medium Ancillary Armor Repairer = skill Repair Systems needs 1 has 0
+low_1/Medium Ancillary Armor Repairer = skill Mechanics needs 2 has 0

@@ -27,6 +27,7 @@
 mod calculate;
 mod fit;
 mod projection;
+mod validate;
 
 pub use calculate::{
     AttributeValue, Calculation, EffectOperator, ItemResult, Options, Source, SourceRef, beacon,
@@ -37,3 +38,4 @@ pub use fit::{
     Ship, Slot, Spool, State,
 };
 pub use projection::{ProjectedBuff, ProjectedEffect, Projection};
+pub use validate::{GroupLimit, Resource, Rule, SlotKind, Target, Violation, validate};

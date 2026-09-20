@@ -16,20 +16,26 @@ __all__ = [
     "Environment",
     "Fit",
     "FitItem",
+    "GroupLimit",
     "ItemResult",
     "Mutation",
     "Options",
     "ProjectedBuff",
     "ProjectedEffect",
-    "ReactiveArmor",
     "Projection",
+    "ReactiveArmor",
+    "Resource",
+    "Rule",
     "Security",
     "Ship",
     "Slot",
+    "SlotKind",
     "Source",
     "SourceRef",
     "Spool",
     "State",
+    "Target",
+    "Violation",
 ]
 
 State = Literal["offline", "online", "active", "overload"]
@@ -272,3 +278,143 @@ class Calculation(_CalculationRequired, total=False):
     mode: ItemResult
     buffs: list[ProjectedBuff]
     outgoing: Projection
+
+
+Resource = Literal[
+    "cpu",
+    "powergrid",
+    "calibration",
+    "drone_bay",
+    "drone_bandwidth",
+    "launched_drones",
+    "fighter_bay",
+    "fighter_tubes",
+    "light_fighter_tubes",
+    "support_fighter_tubes",
+    "heavy_fighter_tubes",
+    "cargo_bay",
+    "charge_capacity",
+]
+
+SlotKind = Literal[
+    "high",
+    "medium",
+    "low",
+    "rig",
+    "subsystem",
+    "service",
+    "turret",
+    "launcher",
+]
+
+GroupLimit = Literal["fitted", "online", "active"]
+
+
+class _ShipTarget(TypedDict):
+    type: Literal["ship"]
+
+
+class _IndexedTarget(TypedDict):
+    """An item of the fit, or the charge in it, by its place in `items`."""
+
+    type: Literal["item", "charge"]
+    index: int
+
+
+Target = _ShipTarget | _IndexedTarget
+
+
+class _PlainRule(TypedDict):
+    """A rule that is broken or not, with nothing to say about by how much."""
+
+    type: Literal[
+        "slot_taken",
+        "subsystem_taken",
+        "ship_restricted",
+        "capital_item",
+        "charge_group",
+    ]
+
+
+class _ResourceRule(TypedDict):
+    type: Literal["resource"]
+    resource: Resource
+    used: float
+    available: float
+
+
+class _SlotsRule(TypedDict):
+    type: Literal["slots"]
+    slot: SlotKind
+    used: int
+    available: int
+
+
+class _WrongSlotRule(TypedDict):
+    type: Literal["wrong_slot"]
+    expected: SlotKind
+
+
+class _WrongSlotIndexRule(TypedDict):
+    type: Literal["wrong_slot_index"]
+    expected: int
+
+
+class _SkillRule(TypedDict):
+    type: Literal["skill"]
+    type_id: int
+    required: int
+    level: int
+
+
+class _RigSizeRule(TypedDict):
+    type: Literal["rig_size"]
+    ship: int
+    item: int
+
+
+class _MaxGroupRule(TypedDict):
+    type: Literal["max_group"]
+    group_id: int
+    limit: GroupLimit
+    used: int
+    allowed: int
+
+
+class _MaxTypeRule(TypedDict):
+    type: Literal["max_type"]
+    type_id: int
+    used: int
+    allowed: int
+
+
+class _ChargeSizeRule(TypedDict):
+    type: Literal["charge_size"]
+    module: int
+    charge: int
+
+
+Rule = (
+    _PlainRule
+    | _ResourceRule
+    | _SlotsRule
+    | _WrongSlotRule
+    | _WrongSlotIndexRule
+    | _SkillRule
+    | _RigSizeRule
+    | _MaxGroupRule
+    | _MaxTypeRule
+    | _ChargeSizeRule
+)
+"""A rule of EVE's, and the values that failed it.
+
+What an item would accept instead is not repeated here; it is on the item
+itself, as `chargeGroup1`, `canFitShipType1` and the like.
+"""
+
+
+class Violation(TypedDict):
+    """One rule the fit breaks, and what breaks it."""
+
+    target: Target
+    rule: Rule

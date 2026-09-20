@@ -1,0 +1,6 @@
+---
+source: tests/harness/case.rs
+expression: "validate_fit(eft_fit, skills, edit)"
+---
+ship = resource Cpu 167.000000 of 162.500000
+ship = resource Powergrid 553.000000 of 51.250000

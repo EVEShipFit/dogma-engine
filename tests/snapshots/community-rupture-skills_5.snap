@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Rupture
+ship/upgradeFree                             = 50.000000
 ship/scanStrength                            = 18.000000
 ship/passiveShieldEffectiveRechargeRate      = 11.867241
 ship/passiveShieldRechargeRate               = 5.000000
@@ -91,6 +92,7 @@ ship/advancedAgility                         = 0.750000
 ship/jumpDriveConsumptionAmount              = 1000.000000
 ship/advancedCapitalAgility                  = 0.750000
 ship/jumpDriveCapacitorNeed                  = 0.750000
+ship/upgradeLoad                             = 350.000000
 ship/droneBandwidthLoad                      = 25.000000
 ship/energyWarfareResistance                 = 0.780000
 ship/shipBonusUF1                            = 5.000000

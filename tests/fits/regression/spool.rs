@@ -13,6 +13,12 @@ Light Entropic Disintegrator II, Occult S
 const LESHAK: &str = r#"
 [Leshak, Spool]
 Supratidal Entropic Disintegrator II, Occult L
+"#;
+
+/* A repairer spools too, and only the two Triglavian logistics cruisers take
+ * the one that does. */
+const ZARMAZD: &str = r#"
+[Zarmazd, Spool]
 Heavy Mutadaptive Remote Armor Repairer II
 "#;
 
@@ -30,4 +36,5 @@ regression! {
     nergal_unspooled = NERGAL, skills: in_game(), edit: |fit| fit.items[0].spool = Some(Spool::MultiplierBonus(0.0));
     nergal_ten_cycles = NERGAL, skills: in_game(), edit: |fit| fit.items[0].spool = Some(Spool::MultiplierBonus(0.7));
     leshak_skills_5 = LESHAK, skills: all(5);
+    zarmazd_skills_5 = ZARMAZD, skills: all(5);
 }

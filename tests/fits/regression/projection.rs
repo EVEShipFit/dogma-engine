@@ -93,7 +93,7 @@ Large Remote Hull Repairer II
 const REMOTE_ARMOR_DRONES: &str = r#"
 [Vexor, Repair Drones]
 
-Heavy Armor Maintenance Bot I x5
+Heavy Armor Maintenance Bot I x3
 "#;
 
 /* Capacitor warfare: one gives capacitor away, the other two take it. */
@@ -104,12 +104,12 @@ Large Remote Capacitor Transmitter II
 
 const NEUTRALIZER: &str = r#"
 [Curse, Neutralizer]
-Heavy Energy Neutralizer II
+Medium Energy Neutralizer II
 "#;
 
 const NOSFERATU: &str = r#"
 [Curse, Nosferatu]
-Heavy Energy Nosferatu II
+Medium Energy Nosferatu II
 "#;
 
 /* A Marauder in bastion shrugs off remote assistance, and a dreadnought in
@@ -122,7 +122,7 @@ Bastion Module I
 const SIEGE: &str = r#"
 [Revelation, Siege]
 Siege Module II
-Dual Giga Pulse Laser II, Conflagration L
+Dual Giga Pulse Laser II, Conflagration XL
 "#;
 
 regression! {

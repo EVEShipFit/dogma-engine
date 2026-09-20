@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Machariel
+ship/upgradeFree                             = 125.000000
 ship/scanStrength                            = 31.200000
 ship/passiveShieldEffectiveRechargeRate      = 55.314047
 ship/passiveShieldRechargeRate               = 17.086667
@@ -83,6 +84,7 @@ ship/advancedAgility                         = 0.750000
 ship/jumpDriveConsumptionAmount              = 1000.000000
 ship/advancedCapitalAgility                  = 0.750000
 ship/jumpDriveCapacitorNeed                  = 0.750000
+ship/upgradeLoad                             = 225.000000
 ship/droneBandwidthLoad                      = 25.000000
 ship/shipBonusUF1                            = 5.000000
 ship/shipBonusUF2                            = 5.000000

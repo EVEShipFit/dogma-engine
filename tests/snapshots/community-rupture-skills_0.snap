@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Rupture
+ship/upgradeFree                             = 50.000000
 ship/scanStrength                            = 15.000000
 ship/passiveShieldEffectiveRechargeRate      = 7.120344
 ship/passiveShieldRechargeRate               = 3.000000
@@ -72,6 +73,7 @@ ship/shipBonusCI                             = 0.000000
 ship/shipBonusGI                             = 0.000000
 ship/signatureRadius                         = 137.500000
 ship/shipBonusMC2                            = 0.000000
+ship/upgradeLoad                             = 350.000000
 ship/droneBandwidthLoad                      = 25.000000
 ship/energyWarfareResistance                 = 0.780000
 ship/shipBonusUF1                            = 0.000000
@@ -152,3 +154,26 @@ dronebay_1-5/state                        = active
 dronebay_1-5/damageVolley                 = 28.000000
 dronebay_1-5/speedWithReload              = 4000.000000
 dronebay_1-5/damagePerSecondWithoutReload = 7.000000
+
+ship                                           = resource Powergrid 995.000000 of 860.000000
+ship                                           = resource LaunchedDrones 5.000000 of 0.000000
+ship                                           = skill Minmatar Cruiser needs 1 has 0
+low_1/Counterbalanced Compact Gyrostabilizer   = skill Weapon Upgrades needs 1 has 0
+low_2/Counterbalanced Compact Gyrostabilizer   = skill Weapon Upgrades needs 1 has 0
+low_3/Counterbalanced Compact Gyrostabilizer   = skill Weapon Upgrades needs 1 has 0
+low_4/Fourier Compact Tracking Enhancer        = skill Weapon Upgrades needs 1 has 0
+low_5/IFFA Compact Damage Control              = skill Hull Upgrades needs 1 has 0
+medium_1/Large C5-L Compact Shield Booster     = skill Shield Operation needs 2 has 0
+medium_2/Compact Multispectrum Shield Hardener = skill Tactical Shield Manipulation needs 1 has 0
+medium_3/10MN Y-S8 Compact Afterburner         = skill Afterburner needs 1 has 0
+medium_4/Large Compact Pb-Acid Cap Battery     = skill Energy Grid Upgrades needs 2 has 0
+high_1/220mm Medium Prototype Automatic Cannon = skill Medium Projectile Turret needs 1 has 0
+high_1/220mm Medium Prototype Automatic Cannon = skill Gunnery needs 3 has 0
+high_2/220mm Medium Prototype Automatic Cannon = skill Medium Projectile Turret needs 1 has 0
+high_2/220mm Medium Prototype Automatic Cannon = skill Gunnery needs 3 has 0
+high_3/220mm Medium Prototype Automatic Cannon = skill Medium Projectile Turret needs 1 has 0
+high_3/220mm Medium Prototype Automatic Cannon = skill Gunnery needs 3 has 0
+high_4/220mm Medium Prototype Automatic Cannon = skill Medium Projectile Turret needs 1 has 0
+high_4/220mm Medium Prototype Automatic Cannon = skill Gunnery needs 3 has 0
+dronebay/Acolyte I                             = skill Light Drone Operation needs 1 has 0
+dronebay/Acolyte I                             = skill Drones needs 1 has 0

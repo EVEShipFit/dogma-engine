@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                  = Rifter
+ship/upgradeFree                           = 400.000000
 ship/scanStrength                          = 9.600000
 ship/passiveShieldEffectiveRechargeRate    = 4.285714
 ship/passiveShieldRechargeRate             = 3.000000

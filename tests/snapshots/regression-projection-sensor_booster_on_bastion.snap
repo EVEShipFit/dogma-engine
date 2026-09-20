@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Paladin
+ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 50.400000
 ship/passiveShieldEffectiveRechargeRate      = 26.781057
 ship/passiveShieldRechargeRate               = 12.654049

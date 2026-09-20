@@ -1,0 +1,6 @@
+---
+source: tests/harness/case.rs
+expression: "validate_fit(eft_fit, skills, edit)"
+---
+ship                  = resource LaunchedDrones 5.000000 of 0.000000
+dronebay/Hobgoblin II = skill Drones needs 5 has 0

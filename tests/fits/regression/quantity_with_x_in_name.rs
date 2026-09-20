@@ -4,7 +4,7 @@
 use crate::harness::all;
 
 const FIT: &str = r#"
-[Venture, Quantity with x in name]
+[Rorqual, Quantity with x in name]
 
 'Excavator' Mining Drone x2
 

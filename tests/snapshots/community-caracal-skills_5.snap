@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Caracal
+ship/upgradeFree                             = 100.000000
 ship/scanStrength                            = 19.200000
 ship/passiveShieldEffectiveRechargeRate      = 10.227486
 ship/passiveShieldRechargeRate               = 5.666667
@@ -89,6 +90,7 @@ ship/advancedAgility                         = 0.750000
 ship/jumpDriveConsumptionAmount              = 1000.000000
 ship/advancedCapitalAgility                  = 0.750000
 ship/jumpDriveCapacitorNeed                  = 0.750000
+ship/upgradeLoad                             = 300.000000
 ship/droneBandwidthLoad                      = 10.000000
 ship/energyWarfareResistance                 = 0.780000
 ship/shipBonusUF1                            = 5.000000

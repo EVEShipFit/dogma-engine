@@ -1,0 +1,5 @@
+---
+source: tests/harness/case.rs
+expression: "validate_fit(eft_fit, skills, edit)"
+---
+high_1/Bomb Launcher II = ship_restricted

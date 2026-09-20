@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Punisher
+ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 10.000000
 ship/passiveShieldEffectiveRechargeRate      = 1.931034
 ship/passiveShieldRechargeRate               = 1.400000
@@ -88,3 +89,11 @@ implant_5/armorHpBonus = 15.085177
 
 implant_6/type  = High-grade Amulet Omega
 implant_6/state = offline
+
+ship                                = skill Amarr Frigate needs 1 has 0
+implant_1/High-grade Amulet Alpha   = skill Cybernetics needs 2 has 0
+implant_2/High-grade Amulet Beta    = skill Cybernetics needs 2 has 0
+implant_3/High-grade Amulet Gamma   = skill Cybernetics needs 3 has 0
+implant_4/High-grade Amulet Delta   = skill Cybernetics needs 3 has 0
+implant_5/High-grade Amulet Epsilon = skill Cybernetics needs 4 has 0
+implant_6/High-grade Amulet Omega   = skill Cybernetics needs 5 has 0

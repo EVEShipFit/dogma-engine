@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Thanatos
+ship/upgradeFree                             = 400.000000
 ship/fighterTubesUsed                        = 2.000000
 ship/fighterSupportSlotsUsed                 = 1.000000
 ship/fighterLightSlotsUsed                   = 1.000000
@@ -91,3 +92,12 @@ fightertube_2/state              = active
 fightertube_2/maxVelocity        = 788.639957
 fightertube_2/shieldCapacity     = 7949.999571
 fightertube_2/shieldRechargeRate = 2067999.994755
+
+ship                           = skill Capital Ships needs 1 has 0
+ship                           = skill Gallente Carrier needs 1 has 0
+high_1/Fighter Support Unit II = skill Fighter Hangar Management needs 4 has 0
+fightertube_1/Templar II       = skill Light Fighters needs 4 has 0
+fightertube_1/Templar II       = skill Fighters needs 5 has 0
+fightertube_1/Templar II       = skill Amarr Fighter Specialization needs 1 has 0
+fightertube_2/Dromi II         = skill Support Fighters needs 4 has 0
+fightertube_2/Dromi II         = skill Fighters needs 5 has 0

@@ -11,8 +11,6 @@ Polarized Mega Pulse Laser
 Polarized Mega Pulse Laser
 Polarized Mega Pulse Laser
 Polarized Mega Pulse Laser
-Polarized Mega Pulse Laser
-Polarized Mega Pulse Laser
 "#;
 
 /* One gun zeroes the resistances the same as a full rack. */

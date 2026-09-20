@@ -104,7 +104,7 @@ pub enum Slot {
 }
 
 /// The state of an item, lowest first.
-#[derive(Serialize, Deserialize, Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "snake_case")]
 pub enum State {
     /// Only passive effects apply.
