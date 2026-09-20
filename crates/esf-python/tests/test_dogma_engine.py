@@ -7,9 +7,12 @@ import esf_dogma_engine as dogma
 from esf_dogma_engine.types import Character, Environment, FitItem
 
 SDE = Path(os.environ.get("ESF_SDE", Path(__file__).parents[3] / "node_modules/@eveshipfit/sde/dist/sde.dat"))
+NAMES = Path(os.environ.get("ESF_NAMES", Path(__file__).parents[3] / "node_modules/@eveshipfit/sde/dist/names.dat"))
 
 RIFTER = 587
 AUTOCANNON = 2873
+AUTOCANNON_200MM = 486
+EMP_S = 185
 REACTIVE_ARMOR_HARDENER = 4403
 GUNNERY = 3300
 STRUCTURE_HP = 9
@@ -21,6 +24,7 @@ ARMOR_KINETIC_RESONANCE = 269
 @pytest.fixture(scope="session", autouse=True)
 def sde() -> None:
     dogma.load_sde_from_file(SDE)
+    dogma.load_names_from_file(NAMES)
 
 
 def fit(
@@ -145,3 +149,39 @@ def test_bad_fit_raises_value_error() -> None:
 def test_loading_the_sde_twice_raises() -> None:
     with pytest.raises(RuntimeError):
         dogma.load_sde(b"")
+
+
+def test_loads_an_eft() -> None:
+    fit = dogma.load_eft("[Rifter, My Rifter]\n200mm AutoCannon I, EMP S\n")
+
+    assert fit["ship"]["type_id"] == RIFTER
+    assert fit["items"][0]["type_id"] == AUTOCANNON_200MM
+    assert fit["items"][0]["slot"] == {"type": "high", "index": 0}
+    assert fit["items"][0]["charge"] == {"type_id": EMP_S}
+
+
+def test_an_eft_calculates() -> None:
+    fit = dogma.load_eft("[Rifter, My Rifter]\n200mm AutoCannon I\n")
+    fit["character"] = {"skills": {GUNNERY: 5}}
+
+    calculation = dogma.calculate(fit)
+
+    assert calculation["ship"]["attributes"][STRUCTURE_HP]["value"] > 0
+    assert len(calculation["items"]) == 1
+
+
+def test_an_eft_matches_names_in_another_language() -> None:
+    """Only `names.dat` knows these; `sde.dat` holds English alone."""
+    fit = dogma.load_eft("[Rifter, Mon Rifter]\nCanon Automatique 200mm I\n")
+
+    assert fit["items"][0]["type_id"] == AUTOCANNON_200MM
+
+
+def test_a_bad_eft_raises_value_error() -> None:
+    with pytest.raises(ValueError):
+        dogma.load_eft("not a fit")
+
+
+def test_loading_the_names_twice_raises() -> None:
+    with pytest.raises(RuntimeError):
+        dogma.load_names(b"")
