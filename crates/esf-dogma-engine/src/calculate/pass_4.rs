@@ -18,6 +18,7 @@ impl Item {
 impl Pass for PassFour {
     fn pass(info: &impl Info, objects: &mut Objects) {
         capacitor::attribute_capacitor_depletes_in(info, objects);
+        capacitor::attribute_capacitor_stable_percentage(info, objects);
         fighter::attribute_fighter_tubes_used(info, objects);
     }
 }

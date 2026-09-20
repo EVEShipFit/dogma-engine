@@ -3,6 +3,9 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Zarmazd
+ship/capacitorStablePercentage               = 57.835284
+ship/maxTargetsCharacter                     = 25.000000
+ship/maxTargets                              = 10.000000
 ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 26.400000
 ship/passiveShieldEffectiveRechargeRate      = 3.895131

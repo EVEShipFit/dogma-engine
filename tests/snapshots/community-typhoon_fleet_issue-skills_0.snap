@@ -3,6 +3,8 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Typhoon Fleet Issue
+ship/capacitorStablePercentage               = 0.000000
+ship/maxTargetsCharacter                     = 0.000000
 ship/upgradeFree                             = 125.000000
 ship/scanStrength                            = 23.000000
 ship/passiveShieldEffectiveRechargeRate      = 12.088611

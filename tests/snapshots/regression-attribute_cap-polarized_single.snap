@@ -3,6 +3,9 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Armageddon
+ship/capacitorStablePercentage               = 90.245136
+ship/maxTargetsCharacter                     = 25.000000
+ship/maxTargets                              = 7.000000
 ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 25.200000
 ship/passiveShieldEffectiveRechargeRate      = 12.466667

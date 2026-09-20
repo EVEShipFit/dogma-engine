@@ -3,6 +3,8 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Jackdaw
+ship/maxTargetsCharacter                     = 25.000000
+ship/maxTargets                              = 7.000000
 ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 18.000000
 ship/passiveShieldEffectiveRechargeRate      = 7.978723

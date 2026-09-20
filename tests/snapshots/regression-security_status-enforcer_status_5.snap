@@ -3,6 +3,9 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Enforcer
+ship/capacitorStablePercentage               = 0.000000
+ship/maxTargetsCharacter                     = 25.000000
+ship/maxTargets                              = 10.000000
 ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 42.000000
 ship/passiveShieldEffectiveRechargeRate      = 8.955224

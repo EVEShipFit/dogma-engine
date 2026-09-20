@@ -3,6 +3,9 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Vexor
+ship/capacitorStablePercentage               = 71.560240
+ship/maxTargetsCharacter                     = 25.000000
+ship/maxTargets                              = 6.000000
 ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 19.200000
 ship/passiveShieldEffectiveRechargeRate      = 5.057471
