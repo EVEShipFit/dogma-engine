@@ -96,6 +96,22 @@ const REMOTE_ARMOR_DRONES: &str = r#"
 Heavy Armor Maintenance Bot I x5
 "#;
 
+/* Capacitor warfare: one gives capacitor away, the other two take it. */
+const REMOTE_CAP: &str = r#"
+[Basilisk, Remote Cap]
+Large Remote Capacitor Transmitter II
+"#;
+
+const NEUTRALIZER: &str = r#"
+[Curse, Neutralizer]
+Heavy Energy Neutralizer II
+"#;
+
+const NOSFERATU: &str = r#"
+[Curse, Nosferatu]
+Heavy Energy Nosferatu II
+"#;
+
 /* A Marauder in bastion shrugs off remote assistance, and a dreadnought in
  * siege shrugs off dampening and weapon disruption. */
 const BASTION: &str = r#"
@@ -150,6 +166,11 @@ regression! {
     remote_hull_rep = TARGET, skills: all(5), edit: |fit| { fit.incoming.extend(outgoing(REMOTE_HULL, all(5))); };
     remote_armor_rep_drones = TARGET, skills: all(5), edit: |fit| { fit.incoming.extend(outgoing(REMOTE_ARMOR_DRONES, all(5))); };
     remote_armor_rep_on_bastion = BASTION, skills: all(5), edit: |fit| { fit.incoming.extend(outgoing(REMOTE_ARMOR, all(5))); };
+    /* Capacitor moved onto or off the fit lands on its peak load, which is
+     * what decides how long the capacitor lasts. */
+    remote_cap = TARGET, skills: all(5), edit: |fit| { fit.incoming.extend(outgoing(REMOTE_CAP, all(5))); };
+    neutralizer = TARGET, skills: all(5), edit: |fit| { fit.incoming.extend(outgoing(NEUTRALIZER, all(5))); };
+    nosferatu = TARGET, skills: all(5), edit: |fit| { fit.incoming.extend(outgoing(NOSFERATU, all(5))); };
     /* Everything at once, to lock how they pile up. */
     all_of_it = TARGET, skills: all(5), edit: |fit| {
         fit.incoming.extend(outgoing(WEB, all(5)));
