@@ -8,8 +8,6 @@ use super::super::item::Item;
  * where they settle is done here. */
 const EFFECT_ADAPTIVE_ARMOR_HARDENER_ID: i32 = 4928;
 
-/* Each armor resonance, in the order EVE falls back on when two damage types
- * took the same amount. `Objects::reactive_armor` is in that order too. */
 const RESONANCES: [&str; 4] = [
     "armorEmDamageResonance",
     "armorExplosiveDamageResonance",
