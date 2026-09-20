@@ -90,6 +90,22 @@ trait Pass {
 
 /// Calculate every attribute of the ship, its items and the character.
 pub fn calculate(info: &impl Info, fit: &Fit, options: &Options) -> Calculation {
+    let calculation = calculate_once(info, fit, options);
+
+    /* A burst reaches the whole fleet, and the ship running it is part of that
+     * fleet. How strong it is only shows once calculated, so the fit is done
+     * over with its own buffs handed back to it. */
+    if calculation.outgoing.buffs.is_empty() {
+        return calculation;
+    }
+
+    let mut fit = fit.clone();
+    fit.incoming.buffs.extend(calculation.outgoing.buffs);
+
+    calculate_once(info, &fit, options)
+}
+
+fn calculate_once(info: &impl Info, fit: &Fit, options: &Options) -> Calculation {
     let mut objects = pass_1::PassOne::pass(info, fit);
     objects.sources = options.sources;
 

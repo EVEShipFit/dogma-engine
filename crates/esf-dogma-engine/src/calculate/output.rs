@@ -22,9 +22,9 @@ pub struct Calculation {
     pub items: Vec<ItemResult>,
     /// The character.
     pub character: ItemResult,
-    /// The buffs of `Fit::incoming` that landed, ordered by id. What is
-    /// missing lost to another source of the same buff, or the SDE has no such
-    /// buff.
+    /// The buffs that landed, ordered by id: those of `Fit::incoming`, plus
+    /// the ones the fit's own bursts hand out. What is missing lost to another
+    /// source of the same buff, or the SDE has no such buff.
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub buffs: Vec<ProjectedBuff>,
     /// All outgoing projections (effects and buffs).

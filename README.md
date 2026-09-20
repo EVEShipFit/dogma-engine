@@ -77,7 +77,7 @@ All identifiers are those from the SDE.
 - `mode`: result for the mode; absent when the fit has no mode.
 - `items`: one result per item of the fit, in the same order.
 - `character`: result for the character.
-- `buffs`: the buffs of `incoming` that landed, ordered by id. What is missing lost to another source of the same buff, or the SDE has no such buff.
+- `buffs`: the buffs that landed, ordered by id. Those of `incoming`, plus the ones the fit's own bursts hand out: a fleet boost reaches the ship running it. What is missing lost to another source of the same buff, or the SDE has no such buff.
   - `id`: which buff, as `dbuffCollections` in the SDE numbers them.
   - `value`: how strong it is, in whatever the buff's operation reads.
 - `outgoing`: what the fit hands to other fits, in the shape `incoming` takes.
