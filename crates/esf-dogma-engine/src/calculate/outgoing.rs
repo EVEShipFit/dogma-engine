@@ -8,6 +8,19 @@ use super::item::Item;
 use super::pass_2::get_effect_category;
 use crate::projection::{ProjectedBuff, ProjectedEffect, Projection};
 
+/// What a beacon in space hands to every fit in there with it.
+///
+/// A beacon has no fit of its own, so nothing about it is calculated; it is
+/// the type as the SDE has it. Put the result in
+/// [`Fit::incoming`](crate::Fit::incoming).
+pub fn beacon(info: &impl Info, type_id: i32) -> Projection {
+    let mut item = Item::new_projected(type_id);
+    item.set_attributes(info);
+
+    /* A beacon aims everything it has: there is no ship under it to keep. */
+    collect(info, &item, |_| true)
+}
+
 /* What the fit hands to others: the effects with a target domain, and the
  * buffs its modules offer. Both only count while the item is running. */
 pub(super) fn outgoing(info: &impl Info, objects: &Objects) -> Projection {
@@ -29,8 +42,8 @@ pub(super) fn outgoing(info: &impl Info, objects: &Objects) -> Projection {
     projection
 }
 
-/// The buffs an item offers, read off its four `warfareBuff` pairs.
-pub(super) fn warfare_buffs(item: &Item) -> impl Iterator<Item = ProjectedBuff> {
+/* The buffs an item offers, read off its four `warfareBuff` pairs. */
+fn warfare_buffs(item: &Item) -> impl Iterator<Item = ProjectedBuff> {
     ATTRIBUTE_WARFARE_BUFFS
         .map(|(id, value)| (item.value_of(id) as i32, item.value_of(value)))
         .into_iter()

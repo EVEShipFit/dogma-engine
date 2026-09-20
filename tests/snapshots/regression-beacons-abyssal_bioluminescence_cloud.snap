@@ -137,9 +137,14 @@ character/inventionReverseEngineeringResearchSpeed = 0.850000
 character/reactionTimeMultiplier                   = 0.800000
 character/reactionSlotLimit                        = 10.000000
 
+incoming_buff_1/id         = 79
+incoming_buff_1/value      = 300.000000
+incoming_effect_1/type     = Large Bioluminescence Cloud
+incoming_effect_1/effect   = aoe_beacon_bioluminescence_cloud
+incoming_effect_1/maxRange = 40000.000000
+
 buff_1/type  = Signature Radius penalty
 buff_1/value = 300.000000
-buff_1/from  = Large Bioluminescence Cloud
 
 low_1/type  = Damage Control II
 low_1/state = online

@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use esf_data::Info;
-use esf_dogma_engine::{BuffSource, Calculation, Fit, ItemResult, Projection, Slot, State};
+use esf_dogma_engine::{Calculation, Fit, ItemResult, Projection, Slot, State};
 
 /// Only attributes an effect moved away from their base value; the rest is SDE data.
 pub fn dump(info: &impl Info, fit: &Fit, calculation: &Calculation) -> String {
@@ -63,7 +63,7 @@ pub fn dump(info: &impl Info, fit: &Fit, calculation: &Calculation) -> String {
     blocks.join("\n")
 }
 
-/// Numbered from 1, in the order the calculation reports them.
+/// The buffs that landed, numbered from 1 in the order the calculation reports them.
 fn dump_buffs(info: &impl Info, calculation: &Calculation) -> Vec<(String, String)> {
     let mut lines = Vec::new();
 
@@ -74,18 +74,8 @@ fn dump_buffs(info: &impl Info, calculation: &Calculation) -> Vec<(String, Strin
             .and_then(|collection| collection.display_name())
             .filter(|display_name| !display_name.is_empty())
             .map_or_else(|| buff.id.to_string(), str::to_string);
-        let from = match buff.from {
-            BuffSource::Beacon { type_id } => info
-                .get_type(type_id)
-                .map_or_else(|| type_id.to_string(), |r#type| r#type.name().to_string()),
-        };
-
         lines.push((format!("{name}/type"), display_name));
         lines.push((format!("{name}/value"), format!("{:.6}", buff.value + 0.0)));
-        lines.push((format!("{name}/from"), from));
-        if !buff.applied {
-            lines.push((format!("{name}/applied"), "false".to_string()));
-        }
     }
 
     lines

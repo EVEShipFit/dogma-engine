@@ -62,7 +62,6 @@ pub enum Object {
     Skill(usize),
     Char,
     Projected(usize),
-    Beacon(usize),
 }
 
 /// Where a modifier comes from, and where its strength is read.

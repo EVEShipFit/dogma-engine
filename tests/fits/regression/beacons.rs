@@ -29,25 +29,25 @@ Hobgoblin II x5
 "#;
 
 regression! {
-    black_hole_class_1 = RIFTER, skills: all(5), edit: |fit| { fit.environment.beacons.insert(beacon("Class 1 Black Hole Effects")); };
-    black_hole_class_6 = RIFTER, skills: all(5), edit: |fit| { fit.environment.beacons.insert(beacon("Class 6 Black Hole Effects")); };
-    cataclysmic_variable_class_6 = RIFTER, skills: all(5), edit: |fit| { fit.environment.beacons.insert(beacon("Class 6 Cataclysmic Variable Effects")); };
-    magnetar_class_6 = RIFTER, skills: all(5), edit: |fit| { fit.environment.beacons.insert(beacon("Class 6 Magnetar Effects")); };
-    pulsar_class_6 = RIFTER, skills: all(5), edit: |fit| { fit.environment.beacons.insert(beacon("Class 6 Pulsar Effects")); };
-    red_giant_class_6 = RIFTER, skills: all(5), edit: |fit| { fit.environment.beacons.insert(beacon("Class 6 Red Giant Effects")); };
-    wolf_rayet_class_6 = RIFTER, skills: all(5), edit: |fit| { fit.environment.beacons.insert(beacon("Class 6 Wolf Rayet Effects")); };
+    black_hole_class_1 = RIFTER, skills: all(5), edit: |fit| { fit.incoming.extend(beacon("Class 1 Black Hole Effects")); };
+    black_hole_class_6 = RIFTER, skills: all(5), edit: |fit| { fit.incoming.extend(beacon("Class 6 Black Hole Effects")); };
+    cataclysmic_variable_class_6 = RIFTER, skills: all(5), edit: |fit| { fit.incoming.extend(beacon("Class 6 Cataclysmic Variable Effects")); };
+    magnetar_class_6 = RIFTER, skills: all(5), edit: |fit| { fit.incoming.extend(beacon("Class 6 Magnetar Effects")); };
+    pulsar_class_6 = RIFTER, skills: all(5), edit: |fit| { fit.incoming.extend(beacon("Class 6 Pulsar Effects")); };
+    red_giant_class_6 = RIFTER, skills: all(5), edit: |fit| { fit.incoming.extend(beacon("Class 6 Red Giant Effects")); };
+    wolf_rayet_class_6 = RIFTER, skills: all(5), edit: |fit| { fit.incoming.extend(beacon("Class 6 Wolf Rayet Effects")); };
     /* Abyssal weather: an EM resistance penalty and a capacitor bonus, both as buffs. */
-    abyssal_electrical_2 = RIFTER, skills: all(5), edit: |fit| { fit.environment.beacons.insert(beacon("electric_storm_weather_2")); };
-    abyssal_electrical_3 = RIFTER, skills: all(5), edit: |fit| { fit.environment.beacons.insert(beacon("electric_storm_weather_3")); };
+    abyssal_electrical_2 = RIFTER, skills: all(5), edit: |fit| { fit.incoming.extend(beacon("electric_storm_weather_2")); };
+    abyssal_electrical_3 = RIFTER, skills: all(5), edit: |fit| { fit.incoming.extend(beacon("electric_storm_weather_3")); };
     /* A cloud bloats the signature radius, and nothing else. */
-    abyssal_bioluminescence_cloud = RIFTER, skills: all(5), edit: |fit| { fit.environment.beacons.insert(beacon("Large Bioluminescence Cloud")); };
+    abyssal_bioluminescence_cloud = RIFTER, skills: all(5), edit: |fit| { fit.incoming.extend(beacon("Large Bioluminescence Cloud")); };
     /* Triglavian applies effects selectively. */
     triglavian_invasion_strong = DRONE_BOAT, skills: all(5), edit: |fit| {
-        fit.environment.beacons.insert(beacon("Triglavian Invasion Strong System Effects"));
+        fit.incoming.extend(beacon("Triglavian Invasion Strong System Effects"));
     };
     /* Two of the same buff do not add up; the stronger weather wins. */
     abyssal_electrical_2_and_3 = RIFTER, skills: all(5), edit: |fit| {
-        fit.environment.beacons.insert(beacon("electric_storm_weather_2"));
-        fit.environment.beacons.insert(beacon("electric_storm_weather_3"));
+        fit.incoming.extend(beacon("electric_storm_weather_2"));
+        fit.incoming.extend(beacon("electric_storm_weather_3"));
     };
 }

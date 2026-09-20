@@ -246,8 +246,5 @@ impl Pass for PassThree {
         for skill in &objects.skills {
             skill.calculate_values(info, objects);
         }
-        for beacon in &objects.beacons {
-            beacon.calculate_values(info, objects);
-        }
     }
 }

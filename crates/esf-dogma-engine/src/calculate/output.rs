@@ -8,7 +8,7 @@ use super::Objects;
 use super::item::{EffectOperator, Item, Object};
 use super::outgoing::outgoing;
 use crate::fit::State;
-use crate::projection::Projection;
+use crate::projection::{ProjectedBuff, Projection};
 
 /// The result of [`calculate()`](crate::calculate).
 #[derive(Serialize, Debug)]
@@ -22,36 +22,14 @@ pub struct Calculation {
     pub items: Vec<ItemResult>,
     /// The character.
     pub character: ItemResult,
-    /// Every buff handed to the fit.
+    /// The buffs of `Fit::incoming` that landed, ordered by id. What is
+    /// missing lost to another source of the same buff, or the SDE has no such
+    /// buff.
     #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub buffs: Vec<BuffResult>,
+    pub buffs: Vec<ProjectedBuff>,
     /// All outgoing projections (effects and buffs).
     #[serde(skip_serializing_if = "Projection::is_empty")]
     pub outgoing: Projection,
-}
-
-/// A buff handed to the fit: an id naming what it changes, and how strong.
-#[derive(Serialize, Debug, Clone, Copy, PartialEq)]
-pub struct BuffResult {
-    /// Which buff, as `dbuffCollections` in the SDE numbers them.
-    pub id: i32,
-    /// How strong it is, in whatever the buff's operation reads.
-    pub value: f64,
-    /// What handed it over.
-    pub from: BuffSource,
-    /// False when another source of the same buff won.
-    pub applied: bool,
-}
-
-/// What handed a buff to the fit.
-#[derive(Serialize, Debug, Clone, Copy, PartialEq)]
-#[serde(tag = "type", rename_all = "snake_case")]
-pub enum BuffSource {
-    /// A beacon in space with the ship.
-    Beacon {
-        /// The type id of the beacon.
-        type_id: i32,
-    },
 }
 
 /// The calculated attributes of the ship, its mode, the character, or one item.
@@ -101,7 +79,9 @@ pub struct Source {
     pub applied: bool,
 }
 
-/// `Item` and `Charge` index into `Fit::items`. Skills, beacons and buffs are not in the result, so they carry their own id.
+/// `Item` and `Charge` index into `Fit::items`, `Projected` into
+/// `Fit::incoming.effects`. A skill and a buff are not in the result, so they
+/// carry their own id.
 #[derive(Serialize, Debug, Clone, Copy, PartialEq)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum SourceRef {
@@ -126,11 +106,6 @@ pub enum SourceRef {
         /// The type id of the skill.
         type_id: i32,
     },
-    /// A beacon in space with the ship.
-    Beacon {
-        /// The type id of the beacon.
-        type_id: i32,
-    },
     /// An effect aimed at the fit.
     Projected {
         /// The position in `Fit::incoming.effects`.
@@ -152,7 +127,6 @@ impl SourceRef {
             Object::Item(index) => SourceRef::Item { index },
             Object::Charge(index) => SourceRef::Charge { index },
             Object::Skill(_) => SourceRef::Skill { type_id },
-            Object::Beacon(_) => SourceRef::Beacon { type_id },
             Object::Projected(index) => SourceRef::Projected { index },
         }
     }

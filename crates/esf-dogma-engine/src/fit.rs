@@ -161,9 +161,6 @@ pub struct Environment {
     /// The security of the solar system.
     #[serde(default)]
     pub security: Security,
-    /// The beacons in space with the ship, by type id.
-    #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
-    pub beacons: BTreeSet<i32>,
 }
 
 /// How incoming damage is split over the four damage types. Only the ratio
@@ -234,6 +231,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::projection::ProjectedBuff;
 
     #[test]
     fn minimal_fit_fills_defaults() {
@@ -260,7 +258,7 @@ mod tests {
         assert_eq!(fit.character.security_status, 0.0);
         assert_eq!(fit.environment.security, Security::HighSec);
         assert_eq!(fit.environment.damage_profile, DamageProfile::default());
-        assert!(fit.environment.beacons.is_empty());
+        assert!(fit.incoming.is_empty());
     }
 
     #[test]
@@ -301,17 +299,32 @@ mod tests {
     }
 
     #[test]
-    fn reads_beacons() {
+    fn reads_incoming() {
         let fit: Fit = serde_json::from_str(
             r#"{
                 "ship": {"type_id": 587},
                 "items": [],
-                "environment": {"beacons": [30854, 30845]}
+                "incoming": {
+                    "buffs": [{"id": 10, "value": -8.0}],
+                    "effects": [{"type_id": 527, "effect_id": 6426, "attributes": {"20": -60.0}}]
+                }
             }"#,
         )
         .unwrap();
 
-        assert_eq!(fit.environment.beacons, BTreeSet::from([30845, 30854]));
+        assert_eq!(
+            fit.incoming.buffs,
+            [ProjectedBuff {
+                id: 10,
+                value: -8.0
+            }]
+        );
+        assert_eq!(fit.incoming.effects[0].type_id, 527);
+        assert_eq!(fit.incoming.effects[0].effect_id, 6426);
+        assert_eq!(
+            fit.incoming.effects[0].attributes,
+            BTreeMap::from([(20, -60.0)])
+        );
     }
 
     #[test]
@@ -456,7 +469,7 @@ mod tests {
         assert!(!json.contains("spool"));
         assert!(!json.contains("mutation"));
         assert!(!json.contains("mode"));
-        assert!(!json.contains("beacons"));
+        assert!(!json.contains("incoming"));
         assert_eq!(parsed.items[0].slot, Slot::Medium(2));
         assert_eq!(parsed.items[0].state, State::Overload);
     }

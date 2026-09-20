@@ -137,6 +137,28 @@ character/inventionReverseEngineeringResearchSpeed = 0.850000
 character/reactionTimeMultiplier                   = 0.800000
 character/reactionSlotLimit                        = 10.000000
 
+incoming_effect_1/type                        = Class 6 Black Hole Effects
+incoming_effect_1/effect                      = systemTargetingRange
+incoming_effect_1/maxTargetRangeMultiplier    = 2.000000
+incoming_effect_2/type                        = Class 6 Black Hole Effects
+incoming_effect_2/effect                      = systemMissileVelocity
+incoming_effect_2/missileVelocityMultiplier   = 1.500000
+incoming_effect_3/type                        = Class 6 Black Hole Effects
+incoming_effect_3/effect                      = systemMaxVelocity
+incoming_effect_3/maxVelocityMultiplier       = 2.000000
+incoming_effect_4/type                        = Class 6 Black Hole Effects
+incoming_effect_4/effect                      = systemAoeVelocity
+incoming_effect_4/aoeVelocityMultiplier       = 2.000000
+incoming_effect_5/type                        = Class 6 Black Hole Effects
+incoming_effect_5/effect                      = systemAgility
+incoming_effect_5/agilityMultiplier           = 1.500000
+incoming_effect_6/type                        = Class 6 Black Hole Effects
+incoming_effect_6/effect                      = systemWebifierStrengthMultiplier
+incoming_effect_6/stasisWebStrengthMultiplier = 0.500000
+incoming_effect_7/type                        = Class 6 Black Hole Effects
+incoming_effect_7/effect                      = systemUpwellAoeVelocity
+incoming_effect_7/aoeVelocityMultiplier       = 2.000000
+
 low_1/type  = Damage Control II
 low_1/state = online
 
