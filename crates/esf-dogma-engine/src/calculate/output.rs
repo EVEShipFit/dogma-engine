@@ -131,6 +131,11 @@ pub enum SourceRef {
         /// The type id of the beacon.
         type_id: i32,
     },
+    /// An effect aimed at the fit.
+    Projected {
+        /// The position in `Fit::incoming.effects`.
+        index: usize,
+    },
     /// A buff handed to the fit.
     Buff {
         /// The id of the buff.
@@ -148,9 +153,7 @@ impl SourceRef {
             Object::Charge(index) => SourceRef::Charge { index },
             Object::Skill(_) => SourceRef::Skill { type_id },
             Object::Beacon(_) => SourceRef::Beacon { type_id },
-            Object::Target => {
-                unreachable!("{object:?} is never the source of an effect")
-            }
+            Object::Projected(index) => SourceRef::Projected { index },
         }
     }
 }

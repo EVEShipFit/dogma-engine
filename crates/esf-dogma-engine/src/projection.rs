@@ -7,6 +7,9 @@ use serde::{Deserialize, Serialize};
 use crate::fit::id_map;
 
 /// The external buffs and effects that can be applied to another ship.
+///
+/// A calculation reports what the fit hands out; put that in
+/// [`Fit::incoming`](crate::Fit::incoming) of another fit to have it applied.
 #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
 pub struct Projection {
     /// Buffs, like command burst hands.

@@ -44,6 +44,11 @@ pub fn dump(info: &impl Info, fit: &Fit, calculation: &Calculation) -> String {
         blocks.push(align(&character));
     }
 
+    let incoming = dump_projection(info, &fit.incoming, "incoming");
+    if !incoming.is_empty() {
+        blocks.push(align(&incoming));
+    }
+
     let buffs = dump_buffs(info, calculation);
     if !buffs.is_empty() {
         blocks.push(align(&buffs));

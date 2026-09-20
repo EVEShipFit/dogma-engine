@@ -1,5 +1,5 @@
 use esf_data::{InfoNameSde, InfoSde};
-use esf_dogma_engine::{Calculation, Fit, Options};
+use esf_dogma_engine::{Calculation, Fit, Options, Projection};
 use esf_format::eft;
 
 use super::dump::dump;
@@ -42,6 +42,12 @@ pub fn calculate(
     let info = InfoSde::new(&SDE);
     let calculation = esf_dogma_engine::calculate(&info, &fit, options);
     (fit, calculation)
+}
+
+/// What another EFT fit hands out, to put in the `incoming` of this one.
+pub fn outgoing(eft_fit: &str, skills: Skills) -> Projection {
+    let (_, calculation) = calculate(eft_fit, skills, |_| {}, &Options::default());
+    calculation.outgoing
 }
 
 fn calculate_fit(eft_fit: &str, skills: Skills, edit: fn(&mut Fit)) -> String {

@@ -61,7 +61,7 @@ pub enum Object {
     Charge(usize),
     Skill(usize),
     Char,
-    Target,
+    Projected(usize),
     Beacon(usize),
 }
 
@@ -280,7 +280,7 @@ impl Item {
         item
     }
 
-    pub fn new_beacon(type_id: i32) -> Item {
+    pub fn new_projected(type_id: i32) -> Item {
         Item {
             state: ItemState::AlwaysOn,
             max_state: ItemState::AlwaysOn,

@@ -4,6 +4,8 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use serde::{Deserialize, Deserializer, Serialize};
 
+use crate::projection::Projection;
+
 /// A ship, what is fitted to it, and the character flying it.
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Fit {
@@ -19,6 +21,9 @@ pub struct Fit {
     /// Where the ship is.
     #[serde(default)]
     pub environment: Environment,
+    /// What projections to apply on this fit.
+    #[serde(default, skip_serializing_if = "Projection::is_empty")]
+    pub incoming: Projection,
 }
 
 /// The ship of a fit.
@@ -440,6 +445,7 @@ mod tests {
             }],
             character: Character::default(),
             environment: Environment::default(),
+            incoming: Projection::default(),
         };
 
         let json = serde_json::to_string(&fit).unwrap();

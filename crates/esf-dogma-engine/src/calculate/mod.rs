@@ -33,7 +33,7 @@ pub(crate) struct Objects {
     pub items: Vec<Item>,
     pub skills: Vec<Item>,
     pub char: Item,
-    pub target: Item,
+    pub projected: Vec<Projected>,
     pub beacons: Vec<Item>,
     pub buffs: Vec<BuffResult>,
     pub sources: bool,
@@ -45,7 +45,7 @@ impl Objects {
             Object::Ship => Some(&self.ship),
             Object::Mode => self.mode.as_ref(),
             Object::Char => Some(&self.char),
-            Object::Target => Some(&self.target),
+            Object::Projected(index) => Some(&self.projected[index].item),
             Object::Item(index) => Some(&self.items[index]),
             Object::Charge(index) => self.items[index].charge.as_deref(),
             Object::Skill(index) => Some(&self.skills[index]),
@@ -58,7 +58,7 @@ impl Objects {
             Object::Ship => Some(&mut self.ship),
             Object::Mode => self.mode.as_mut(),
             Object::Char => Some(&mut self.char),
-            Object::Target => Some(&mut self.target),
+            Object::Projected(index) => Some(&mut self.projected[index].item),
             Object::Item(index) => Some(&mut self.items[index]),
             Object::Charge(index) => self.items[index].charge.as_deref_mut(),
             Object::Skill(index) => Some(&mut self.skills[index]),
@@ -73,12 +73,19 @@ impl Objects {
             items: Vec::new(),
             skills: Vec::new(),
             char: Item::new_fake(1373),
-            target: Item::new_fake(0),
+            projected: Vec::new(),
             beacons: Vec::new(),
             buffs: Vec::new(),
             sources: false,
         }
     }
+}
+
+/// One effect aimed at the fit, and the source it reads its strength off.
+#[derive(Debug)]
+pub(crate) struct Projected {
+    pub effect_id: i32,
+    pub item: Item,
 }
 
 trait Pass {

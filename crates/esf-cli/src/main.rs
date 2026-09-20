@@ -315,6 +315,7 @@ fn source_label(info: &InfoSde, fit: &Fit, from: SourceRef) -> String {
             |charge| type_name(info, charge.type_id),
         ),
         SourceRef::Skill { type_id } | SourceRef::Beacon { type_id } => type_name(info, type_id),
+        SourceRef::Projected { index } => type_name(info, fit.incoming.effects[index].type_id),
         SourceRef::Buff { id } => buff_name(info, id),
     }
 }
