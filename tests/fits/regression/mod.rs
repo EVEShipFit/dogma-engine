@@ -6,6 +6,7 @@ mod beacons;
 mod boosters;
 mod burst_projector;
 mod capacitor_booster;
+mod charged_repair;
 mod damage_profile;
 mod drone_stack_state;
 mod fighters;
