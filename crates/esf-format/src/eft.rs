@@ -389,6 +389,7 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
                             "[Empty Low slot]" => EFFECT_LO_POWER,
                             "[Empty Rig slot]" => EFFECT_RIG_SLOT,
                             "[Empty Subsystem slot]" => EFFECT_SUBSYSTEM,
+                            "[Empty Service slot]" => EFFECT_SERVICE_SLOT,
                             _ => return Err(Error::InvalidEmptySlot(line.to_string())),
                         };
 
