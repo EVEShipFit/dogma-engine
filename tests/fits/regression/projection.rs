@@ -128,7 +128,8 @@ Dual Giga Pulse Laser II, Conflagration L
 regression! {
     /* What a fit hands out is what lands on another. An effect carries the
      * attributes the receiver reads; a burst carries buffs instead, and
-     * without a charge to name one it carries nothing. */
+     * without a charge to name one it carries nothing. A burst also reaches
+     * the ship running it, so `bursts_boat` buffs itself. */
     web_boat = WEB, skills: all(5);
     bursts_boat = BURSTS, skills: all(5);
     bursts_boat_without_charges = BURSTS_WITHOUT_CHARGES, skills: all(5);

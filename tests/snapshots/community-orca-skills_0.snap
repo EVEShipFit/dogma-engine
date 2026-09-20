@@ -4,9 +4,9 @@ expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                                      = Orca
 ship/scanStrength                                              = 30.000000
-ship/passiveShieldEffectiveRechargeRate                        = 41.433060
-ship/passiveShieldRechargeRate                                 = 12.500000
-ship/ehp                                                       = 251565.144616
+ship/passiveShieldEffectiveRechargeRate                        = 45.576366
+ship/passiveShieldRechargeRate                                 = 13.750000
+ship/ehp                                                       = 261509.079097
 ship/shieldThermalDamageEffectiveResonance                     = 0.045833
 ship/shieldKineticDamageEffectiveResonance                     = 0.034374
 ship/shieldExplosiveDamageEffectiveResonance                   = 0.073828
@@ -19,7 +19,7 @@ ship/armorThermalDamageEffectiveResonance                      = 0.138125
 ship/armorKineticDamageEffectiveResonance                      = 0.138125
 ship/armorExplosiveDamageEffectiveResonance                    = 0.191250
 ship/armorEmDamageEffectiveResonance                           = 0.106250
-ship/shieldEhp                                                 = 99439.344816
+ship/shieldEhp                                                 = 109383.279298
 ship/hullEhp                                                   = 139925.364089
 ship/armorEhp                                                  = 12200.435711
 ship/shieldDamageEffectiveResonance                            = 0.301691
@@ -48,6 +48,7 @@ ship/kineticDamageResonance                                    = 0.402000
 ship/thermalDamageResonance                                    = 0.402000
 ship/explosiveDamageResonance                                  = 0.402000
 ship/emDamageResonance                                         = 0.402000
+ship/shieldCapacity                                            = 33000.000000
 ship/armorEmDamageResonance                                    = 0.425000
 ship/armorExplosiveDamageResonance                             = 0.765000
 ship/armorKineticDamageResonance                               = 0.552500
@@ -99,6 +100,16 @@ ship/shipBonusSoEECS3                                          = 0.000000
 ship/shipBonusSoEECS4                                          = 0.000000
 ship/shipBonusSoEECS5                                          = 0.000000
 ship/shipBonusAB3                                              = 0.000000
+ship/miningScannerUpgrade                                      = 2.875000
+
+buff_1/type  = Shield HP Bonus
+buff_1/value = 10.000000
+buff_2/type  = Mining module range bonus
+buff_2/value = 57.500000
+buff_3/type  = Mining Modules: Duration & Capacitor-use bonus
+buff_3/value = -21.562500
+buff_4/type  = Enhanced Mining Surveyor
+buff_4/value = 2.875000
 
 outgoing_buff_1/id    = 23
 outgoing_buff_1/value = 57.500000
