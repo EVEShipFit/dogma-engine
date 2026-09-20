@@ -110,6 +110,23 @@ fn calculate<'py>(
     Ok(pythonize(py, &calculation)?)
 }
 
+/// Report the fitting rules the fit breaks. Calculates the fit itself, as
+/// every rule reads the values after skills and modules changed them.
+#[pyfunction]
+fn validate<'py>(py: Python<'py>, fit: &Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
+    let sde = sde()?;
+
+    let fit: Fit = depythonize(fit).map_err(|error| PyValueError::new_err(error.to_string()))?;
+
+    let violations = py.detach(|| {
+        let info = InfoSde::new(sde);
+        let calculation = esf_dogma_engine::calculate(&info, &fit, &Options::default());
+        esf_dogma_engine::validate(&info, &fit, &calculation)
+    });
+
+    Ok(pythonize(py, &violations)?)
+}
+
 /// What a beacon in space hands to every fit in there with it. Put the result
 /// in `incoming` of a fit to have it applied.
 #[pyfunction]
@@ -130,6 +147,7 @@ fn _esf_dogma_engine(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(load_names, module)?)?;
     module.add_function(wrap_pyfunction!(load_eft, module)?)?;
     module.add_function(wrap_pyfunction!(calculate, module)?)?;
+    module.add_function(wrap_pyfunction!(validate, module)?)?;
     module.add_function(wrap_pyfunction!(beacon, module)?)?;
     Ok(())
 }

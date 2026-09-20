@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Scorpion
+ship/upgradeFree                             = 100.000000
 ship/scanStrength                            = 28.800000
 ship/passiveShieldEffectiveRechargeRate      = 16.816092
 ship/passiveShieldRechargeRate               = 12.191667
@@ -66,6 +67,7 @@ ship/advancedAgility                         = 0.750000
 ship/jumpDriveConsumptionAmount              = 1000.000000
 ship/advancedCapitalAgility                  = 0.750000
 ship/jumpDriveCapacitorNeed                  = 0.750000
+ship/upgradeLoad                             = 300.000000
 ship/droneBandwidthLoad                      = 25.000000
 ship/shipBonusUF1                            = 5.000000
 ship/shipBonusUF2                            = 5.000000

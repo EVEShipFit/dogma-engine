@@ -15,6 +15,7 @@ AUTOCANNON_200MM = 486
 EMP_S = 185
 REACTIVE_ARMOR_HARDENER = 4403
 GUNNERY = 3300
+MINMATAR_FRIGATE = 3329
 STRUCTURE_HP = 9
 RATE_OF_FIRE = 51
 MAX_VELOCITY = 37
@@ -133,6 +134,28 @@ def test_reactive_armor_takes_a_profile_of_its_own() -> None:
         adapting["ship"]["attributes"][ARMOR_KINETIC_RESONANCE]["value"]
         < inert["ship"]["attributes"][ARMOR_KINETIC_RESONANCE]["value"]
     )
+
+
+def test_validate_reports_a_full_rack() -> None:
+    extra: list[FitItem] = [
+        {"type_id": AUTOCANNON, "slot": {"type": "high", "index": index}, "state": "active"}
+        for index in range(1, 4)
+    ]
+    violations = dogma.validate(fit(items=extra, character={"skills": {}}))
+
+    assert {
+        "target": {"type": "ship"},
+        "rule": {"type": "slots", "slot": "high", "used": 4, "available": 3},
+    } in violations
+
+
+def test_validate_reports_a_missing_skill() -> None:
+    violations = dogma.validate(fit(character={"skills": {}}))
+
+    assert {
+        "target": {"type": "ship"},
+        "rule": {"type": "skill", "type_id": MINMATAR_FRIGATE, "required": 1, "level": 0},
+    } in violations
 
 
 def test_beacon_returns_a_projection() -> None:

@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Vexor
+ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 16.000000
 ship/passiveShieldEffectiveRechargeRate      = 3.034483
 ship/passiveShieldRechargeRate               = 2.200000
@@ -82,3 +83,14 @@ dronebay_4-5/type             = Hammerhead II
 dronebay_4-5/state            = offline
 dronebay_4-5/damageVolley     = 74.035198
 dronebay_4-5/damageMultiplier = 2.313600
+
+ship                            = resource LaunchedDrones 3.000000 of 0.000000
+ship                            = skill Gallente Cruiser needs 1 has 0
+low_1/Drone Damage Amplifier II = skill Weapon Upgrades needs 4 has 0
+low_1/Drone Damage Amplifier II = skill Drones needs 4 has 0
+dronebay/Hammerhead II          = skill Medium Drone Operation needs 5 has 0
+dronebay/Hammerhead II          = skill Gallente Drone Specialization needs 1 has 0
+dronebay/Hammerhead II          = skill Drones needs 5 has 0
+dronebay/Hammerhead II          = skill Medium Drone Operation needs 5 has 0
+dronebay/Hammerhead II          = skill Gallente Drone Specialization needs 1 has 0
+dronebay/Hammerhead II          = skill Drones needs 5 has 0

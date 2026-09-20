@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Typhoon Fleet Issue
+ship/upgradeFree                             = 125.000000
 ship/scanStrength                            = 27.600000
 ship/passiveShieldEffectiveRechargeRate      = 20.147685
 ship/passiveShieldRechargeRate               = 12.844149
@@ -80,6 +81,7 @@ ship/advancedAgility                         = 0.750000
 ship/jumpDriveConsumptionAmount              = 1000.000000
 ship/advancedCapitalAgility                  = 0.750000
 ship/jumpDriveCapacitorNeed                  = 0.750000
+ship/upgradeLoad                             = 275.000000
 ship/droneBandwidthLoad                      = 125.000000
 ship/shipBonusUF1                            = 5.000000
 ship/shipBonusUF2                            = 5.000000

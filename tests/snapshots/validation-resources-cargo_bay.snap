@@ -1,0 +1,5 @@
+---
+source: tests/harness/case.rs
+expression: "validate_fit(eft_fit, skills, edit)"
+---
+ship = resource CargoBay 249.999994 of 140.000000

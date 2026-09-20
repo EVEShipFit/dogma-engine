@@ -1,0 +1,9 @@
+---
+source: tests/harness/case.rs
+expression: "validate_fit(eft_fit, skills, edit)"
+---
+ship                       = skill Minmatar Frigate needs 1 has 0
+high_1/200mm AutoCannon II = skill Small Projectile Turret needs 5 has 0
+high_1/200mm AutoCannon II = skill Gunnery needs 2 has 0
+high_1/200mm AutoCannon II = skill Small Autocannon Specialization needs 1 has 0
+high_1/charge/Barrage S    = skill Small Autocannon Specialization needs 1 has 0

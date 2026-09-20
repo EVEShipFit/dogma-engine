@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Omen
+ship/upgradeFree                             = 150.000000
 ship/scanStrength                            = 15.000000
 ship/passiveShieldEffectiveRechargeRate      = 3.310345
 ship/passiveShieldRechargeRate               = 2.400000
@@ -64,6 +65,7 @@ ship/shipBonusAI                             = 0.000000
 ship/shipBonusCI                             = 0.000000
 ship/shipBonusGI                             = 0.000000
 ship/shipBonusAC2                            = 0.000000
+ship/upgradeLoad                             = 250.000000
 ship/droneBandwidthLoad                      = 25.000000
 ship/energyWarfareResistance                 = 0.780000
 ship/shipBonusUF1                            = 0.000000
@@ -142,3 +144,30 @@ dronebay_1-5/state                        = active
 dronebay_1-5/damageVolley                 = 28.000000
 dronebay_1-5/speedWithReload              = 4000.000000
 dronebay_1-5/damagePerSecondWithoutReload = 7.000000
+
+ship                                           = resource Cpu 359.000000 of 330.000000
+ship                                           = resource Powergrid 1071.680000 of 1000.000000
+ship                                           = resource LaunchedDrones 5.000000 of 0.000000
+ship                                           = skill Amarr Cruiser needs 1 has 0
+low_1/Extruded Compact Heat Sink               = skill Weapon Upgrades needs 1 has 0
+low_2/Extruded Compact Heat Sink               = skill Weapon Upgrades needs 1 has 0
+low_3/Extruded Compact Heat Sink               = skill Weapon Upgrades needs 1 has 0
+low_4/Compact Multispectrum Energized Membrane = skill Hull Upgrades needs 3 has 0
+low_5/Compact Multispectrum Energized Membrane = skill Hull Upgrades needs 3 has 0
+low_6/Medium ACM Compact Armor Repairer        = skill Repair Systems needs 1 has 0
+low_6/Medium ACM Compact Armor Repairer        = skill Mechanics needs 2 has 0
+medium_1/10MN Y-S8 Compact Afterburner         = skill Afterburner needs 1 has 0
+medium_2/Large Compact Pb-Acid Cap Battery     = skill Energy Grid Upgrades needs 2 has 0
+medium_3/X5 Enduring Stasis Webifier           = skill Propulsion Jamming needs 1 has 0
+high_1/Focused Anode Pulse Particle Stream I   = skill Medium Energy Turret needs 1 has 0
+high_1/Focused Anode Pulse Particle Stream I   = skill Gunnery needs 3 has 0
+high_2/Focused Anode Pulse Particle Stream I   = skill Medium Energy Turret needs 1 has 0
+high_2/Focused Anode Pulse Particle Stream I   = skill Gunnery needs 3 has 0
+high_3/Focused Anode Pulse Particle Stream I   = skill Medium Energy Turret needs 1 has 0
+high_3/Focused Anode Pulse Particle Stream I   = skill Gunnery needs 3 has 0
+high_4/Focused Anode Pulse Particle Stream I   = skill Medium Energy Turret needs 1 has 0
+high_4/Focused Anode Pulse Particle Stream I   = skill Gunnery needs 3 has 0
+high_5/Focused Anode Pulse Particle Stream I   = skill Medium Energy Turret needs 1 has 0
+high_5/Focused Anode Pulse Particle Stream I   = skill Gunnery needs 3 has 0
+dronebay/Acolyte I                             = skill Light Drone Operation needs 1 has 0
+dronebay/Acolyte I                             = skill Drones needs 1 has 0

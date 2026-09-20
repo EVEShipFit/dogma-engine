@@ -1,0 +1,6 @@
+---
+source: tests/harness/case.rs
+expression: "validate_fit(eft_fit, skills, edit)"
+---
+high_1/charge/Multifrequency S = charge_group
+high_1/charge/Multifrequency S = resource ChargeCapacity 1.000000 of 0.300000

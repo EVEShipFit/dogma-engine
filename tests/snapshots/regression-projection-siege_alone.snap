@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Revelation
+ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 49.200000
 ship/passiveShieldEffectiveRechargeRate      = 29.923371
 ship/passiveShieldRechargeRate               = 21.694444
@@ -25,9 +26,9 @@ ship/armorEhp                                = 261574.075229
 ship/shieldDamageEffectiveResonance          = 0.725000
 ship/hullDamageEffectiveResonance            = 0.670000
 ship/armorDamageEffectiveResonance           = 0.540000
-ship/damagePerSecondWithReload               = 1281.184143
-ship/damagePerSecondWithoutReload            = 1281.185626
-ship/damageAlpha                             = 11069.443805
+ship/damagePerSecondWithReload               = 2562.368285
+ship/damagePerSecondWithoutReload            = 2562.371251
+ship/damageAlpha                             = 22138.887610
 ship/powerFree                               = 646250.000000
 ship/cpuFree                                 = 636.500000
 ship/capacitorDepletesIn                     = -1.000000
@@ -141,11 +142,11 @@ high_1/consumptionQuantity = 125.000000
 
 high_2/type                         = Dual Giga Pulse Laser II
 high_2/state                        = active
-high_2/damageVolley                 = 11069.443805
+high_2/damageVolley                 = 22138.887610
 high_2/speedWithReload              = 8640.010000
 high_2/speedOfReload                = 0.010000
-high_2/damagePerSecondWithReload    = 1281.184143
-high_2/damagePerSecondWithoutReload = 1281.185626
+high_2/damagePerSecondWithReload    = 2562.368285
+high_2/damagePerSecondWithoutReload = 2562.371251
 high_2/capacitorPeakLoad            = 17.361111
 high_2/cycleTime                    = 8640.000000
 high_2/capacitorNeed                = 150.000000
@@ -158,5 +159,5 @@ high_2/falloff                      = 25000.000000
 high_2/trackingSpeed                = 0.033676
 high_2/entityFlyRange               = 250.000000
 high_2/heatDamage                   = 1.800000
-high_2/charge/type                  = Conflagration L
+high_2/charge/type                  = Conflagration XL
 high_2/charge/damageMultiplier      = 1.100000

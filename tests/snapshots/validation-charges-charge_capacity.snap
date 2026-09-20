@@ -1,0 +1,5 @@
+---
+source: tests/harness/case.rs
+expression: "validate_fit(eft_fit, skills, edit)"
+---
+medium_1/charge/Cap Booster 800 = resource ChargeCapacity 32.000000 of 15.000000

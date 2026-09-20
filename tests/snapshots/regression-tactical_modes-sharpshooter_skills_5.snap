@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Confessor
+ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 31.200000
 ship/passiveShieldEffectiveRechargeRate      = 5.000000
 ship/passiveShieldRechargeRate               = 3.125000

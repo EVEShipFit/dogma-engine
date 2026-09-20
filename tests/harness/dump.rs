@@ -1,10 +1,19 @@
 use std::collections::HashMap;
 
 use esf_data::Info;
-use esf_dogma_engine::{Calculation, Fit, ItemResult, Projection, Slot, State};
+use esf_dogma_engine::{
+    Calculation, Fit, ItemResult, Projection, Rule, Slot, State, Target, Violation,
+};
 
-/// Only attributes an effect moved away from their base value; the rest is SDE data.
-pub fn dump(info: &impl Info, fit: &Fit, calculation: &Calculation) -> String {
+/// Only attributes an effect moved away from their base value; the rest is SDE
+/// data. The rules the fit breaks come last, so a case shows what validation
+/// makes of the very calculation above it.
+pub fn dump(
+    info: &impl Info,
+    fit: &Fit,
+    calculation: &Calculation,
+    violations: &[Violation],
+) -> String {
     let mut blocks = Vec::new();
 
     let mut ship = Vec::new();
@@ -60,7 +69,94 @@ pub fn dump(info: &impl Info, fit: &Fit, calculation: &Calculation) -> String {
     }
 
     blocks.extend(dump_items(info, fit, calculation));
+
+    let broken = dump_violations(info, fit, violations);
+    if !broken.is_empty() {
+        blocks.push(broken);
+    }
+
     blocks.join("\n")
+}
+
+/// One line per violation: what it is about, and what it broke.
+pub fn dump_violations(info: &impl Info, fit: &Fit, violations: &[Violation]) -> String {
+    let lines: Vec<(String, String)> = violations
+        .iter()
+        .map(|violation| {
+            (
+                dump_target(info, fit, violation.target),
+                dump_rule(info, violation.rule),
+            )
+        })
+        .collect();
+
+    align(&lines)
+}
+
+fn dump_target(info: &impl Info, fit: &Fit, target: Target) -> String {
+    let (index, suffix) = match target {
+        Target::Ship => return "ship".to_string(),
+        Target::Item { index } => (index, ""),
+        Target::Charge { index } => (index, "/charge"),
+    };
+
+    let item = &fit.items[index];
+    let (slot, number) = slot_name(item.slot);
+    let place = number.map_or_else(|| slot.to_string(), |number| format!("{slot}_{number}"));
+
+    let type_id = match target {
+        Target::Charge { .. } => item.charge.as_ref().map(|charge| charge.type_id),
+        _ => Some(item.type_id),
+    };
+    let name = type_id.map_or_else(|| "charge".to_string(), |type_id| type_name(info, type_id));
+
+    format!("{place}{suffix}/{name}")
+}
+
+fn dump_rule(info: &impl Info, rule: Rule) -> String {
+    match rule {
+        Rule::Resource {
+            resource,
+            used,
+            available,
+        } => format!("resource {resource:?} {used:.6} of {available:.6}"),
+        Rule::Slots {
+            slot,
+            used,
+            available,
+        } => format!("slots {slot:?} {used} of {available}"),
+        Rule::WrongSlot { expected } => format!("wrong_slot {expected:?}"),
+        Rule::SlotTaken => "slot_taken".to_string(),
+        Rule::WrongSlotIndex { expected } => format!("wrong_slot_index {expected}"),
+        Rule::SubsystemTaken => "subsystem_taken".to_string(),
+        Rule::Skill {
+            type_id,
+            required,
+            level,
+        } => format!(
+            "skill {} needs {required} has {level}",
+            type_name(info, type_id)
+        ),
+        Rule::RigSize { ship, item } => format!("rig_size {item} ship takes {ship}"),
+        Rule::ShipRestricted => "ship_restricted".to_string(),
+        Rule::CapitalItem => "capital_item".to_string(),
+        Rule::MaxGroup {
+            group_id,
+            limit,
+            used,
+            allowed,
+        } => format!("max_group {group_id} {limit:?} {used} of {allowed}"),
+        Rule::MaxType {
+            type_id,
+            used,
+            allowed,
+        } => format!("max_type {} {used} of {allowed}", type_name(info, type_id)),
+        Rule::ChargeGroup => "charge_group".to_string(),
+        Rule::ChargeSize { module, charge } => {
+            format!("charge_size {charge} module takes {module}")
+        }
+        rule => format!("{rule:?}"),
+    }
 }
 
 /// The buffs that landed, numbered from 1 in the order the calculation reports them.

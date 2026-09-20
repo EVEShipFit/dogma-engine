@@ -83,6 +83,7 @@ ship/advancedAgility                         = 0.750000
 ship/jumpDriveConsumptionAmount              = 1000.000000
 ship/advancedCapitalAgility                  = 0.750000
 ship/jumpDriveCapacitorNeed                  = 0.750000
+ship/upgradeLoad                             = 350.000000
 ship/droneBandwidthLoad                      = 20.000000
 ship/energyWarfareResistance                 = 0.730000
 ship/shipBonusUF1                            = 5.000000

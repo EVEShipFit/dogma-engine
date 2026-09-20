@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Rupture
+ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 18.000000
 ship/passiveShieldEffectiveRechargeRate      = 21.543514
 ship/passiveShieldRechargeRate               = 13.666667
@@ -31,10 +32,10 @@ ship/damagePerSecondWithoutReload            = 104.420056
 ship/damageAlpha                             = 525.890088
 ship/powerFree                               = 664.900000
 ship/cpuFree                                 = 247.500000
-ship/capacitorDepletesIn                     = 90.000000
-ship/capacitorPeakDeltaPercentage            = -116.000000
-ship/capacitorPeakDelta                      = -14.500000
-ship/capacitorPeakLoad                       = 27.000000
+ship/capacitorDepletesIn                     = 207.434933
+ship/capacitorPeakDeltaPercentage            = -39.200000
+ship/capacitorPeakDelta                      = -4.900000
+ship/capacitorPeakLoad                       = 17.400000
 ship/capacitorPeakRecharge                   = 12.500000
 ship/alignTime                               = 8.047439
 ship/mass                                    = 17200000.000000
@@ -134,11 +135,11 @@ character/inventionReverseEngineeringResearchSpeed = 0.850000
 character/reactionTimeMultiplier                   = 0.800000
 character/reactionSlotLimit                        = 10.000000
 
-incoming_effect_1/type                  = Heavy Energy Nosferatu II
+incoming_effect_1/type                  = Medium Energy Nosferatu II
 incoming_effect_1/effect                = capacitorPeakLoadTaken
-incoming_effect_1/capacitorTransferRate = 24.000000
-incoming_effect_1/maxRange              = 60000.000000
-incoming_effect_1/falloffEffectiveness  = 20000.000000
+incoming_effect_1/capacitorTransferRate = 14.400000
+incoming_effect_1/maxRange              = 30000.000000
+incoming_effect_1/falloffEffectiveness  = 10000.000000
 incoming_effect_1/remoteResistanceID    = 2045.000000
 
 low_1/type  = Damage Control II

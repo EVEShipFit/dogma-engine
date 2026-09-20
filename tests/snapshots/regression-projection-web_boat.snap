@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Celestis
+ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 21.600000
 ship/passiveShieldEffectiveRechargeRate      = 5.517241
 ship/passiveShieldRechargeRate               = 4.000000

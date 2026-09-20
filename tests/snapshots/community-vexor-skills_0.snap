@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Vexor
+ship/upgradeFree                             = 150.000000
 ship/scanStrength                            = 16.000000
 ship/passiveShieldEffectiveRechargeRate      = 3.467980
 ship/passiveShieldRechargeRate               = 2.200000
@@ -68,6 +69,7 @@ ship/shipBonusAI                             = 0.000000
 ship/shipBonusCI                             = 0.000000
 ship/shipBonusGI                             = 0.000000
 ship/shipBonusGC2                            = 0.000000
+ship/upgradeLoad                             = 250.000000
 ship/energyWarfareResistance                 = 0.780000
 ship/shipBonusUF1                            = 0.000000
 ship/shipBonusUF2                            = 0.000000
@@ -152,3 +154,31 @@ rig_1-2/state = online
 
 rig_3/type  = Medium Explosive Armor Reinforcer I
 rig_3/state = online
+
+ship                                       = resource Cpu 388.000000 of 300.000000
+ship                                       = resource Powergrid 905.980000 of 700.000000
+ship                                       = skill Gallente Cruiser needs 1 has 0
+low_1/Drone Damage Amplifier II            = skill Weapon Upgrades needs 4 has 0
+low_1/Drone Damage Amplifier II            = skill Drones needs 4 has 0
+low_2/Drone Damage Amplifier II            = skill Weapon Upgrades needs 4 has 0
+low_2/Drone Damage Amplifier II            = skill Drones needs 4 has 0
+low_3/Medium Armor Repairer II             = skill Repair Systems needs 4 has 0
+low_3/Medium Armor Repairer II             = skill Mechanics needs 4 has 0
+low_4/Multispectrum Energized Membrane II  = skill Hull Upgrades needs 5 has 0
+low_5/Damage Control II                    = skill Hull Upgrades needs 4 has 0
+medium_1/Large Compact Pb-Acid Cap Battery = skill Energy Grid Upgrades needs 2 has 0
+medium_2/Stasis Webifier II                = skill Propulsion Jamming needs 4 has 0
+medium_3/Omnidirectional Tracking Link II  = skill Drone Sharpshooting needs 5 has 0
+medium_4/10MN Y-S8 Compact Afterburner     = skill Afterburner needs 1 has 0
+high_1/Heavy Electron Blaster II           = skill Medium Hybrid Turret needs 5 has 0
+high_1/Heavy Electron Blaster II           = skill Gunnery needs 3 has 0
+high_1/Heavy Electron Blaster II           = skill Medium Blaster Specialization needs 1 has 0
+high_2/Heavy Electron Blaster II           = skill Medium Hybrid Turret needs 5 has 0
+high_2/Heavy Electron Blaster II           = skill Gunnery needs 3 has 0
+high_2/Heavy Electron Blaster II           = skill Medium Blaster Specialization needs 1 has 0
+high_3/Heavy Electron Blaster II           = skill Medium Hybrid Turret needs 5 has 0
+high_3/Heavy Electron Blaster II           = skill Gunnery needs 3 has 0
+high_3/Heavy Electron Blaster II           = skill Medium Blaster Specialization needs 1 has 0
+high_4/Heavy Electron Blaster II           = skill Medium Hybrid Turret needs 5 has 0
+high_4/Heavy Electron Blaster II           = skill Gunnery needs 3 has 0
+high_4/Heavy Electron Blaster II           = skill Medium Blaster Specialization needs 1 has 0

@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                      = Astrahus
+ship/upgradeFree                               = 400.000000
 ship/scanStrength                              = 500.000000
 ship/passiveShieldEffectiveRechargeRate        = 0.044999
 ship/passiveShieldRechargeRate                 = 0.035999

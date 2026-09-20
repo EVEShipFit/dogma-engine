@@ -180,6 +180,7 @@ dependencies = [
  "esf-data",
  "esf-dogma-engine",
  "esf-format",
+ "serde",
  "serde_json",
 ]
 

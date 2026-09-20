@@ -34,14 +34,15 @@ supports, load `names.dat` as well::
 
 import os
 
-from ._esf_dogma_engine import beacon, calculate, load_eft, load_names, load_sde
-from .types import Calculation, Fit, Options, Projection
+from ._esf_dogma_engine import beacon, calculate, load_eft, load_names, load_sde, validate
+from .types import Calculation, Fit, Options, Projection, Violation
 
 __all__ = [
     "Calculation",
     "Fit",
     "Options",
     "Projection",
+    "Violation",
     "beacon",
     "calculate",
     "load_eft",
@@ -49,6 +50,7 @@ __all__ = [
     "load_names_from_file",
     "load_sde",
     "load_sde_from_file",
+    "validate",
 ]
 
 

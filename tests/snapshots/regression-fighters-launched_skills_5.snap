@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Thanatos
+ship/upgradeFree                             = 400.000000
 ship/fighterTubesUsed                        = 2.000000
 ship/fighterSupportSlotsUsed                 = 1.000000
 ship/fighterLightSlotsUsed                   = 1.000000

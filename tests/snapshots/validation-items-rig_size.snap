@@ -1,0 +1,5 @@
+---
+source: tests/harness/case.rs
+expression: "validate_fit(eft_fit, skills, edit)"
+---
+rig_1/Medium Ancillary Current Router I = rig_size 2 ship takes 1

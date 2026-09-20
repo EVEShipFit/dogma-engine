@@ -1,0 +1,6 @@
+---
+source: tests/harness/case.rs
+expression: "validate_fit(eft_fit, skills, edit)"
+---
+ship = slots High 4 of 3
+ship = slots Turret 4 of 3

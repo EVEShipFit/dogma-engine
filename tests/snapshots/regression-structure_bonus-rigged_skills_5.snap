@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Astrahus
+ship/upgradeFree                             = 100.000000
 ship/scanStrength                            = 500.000000
 ship/passiveShieldEffectiveRechargeRate      = 0.011250
 ship/passiveShieldRechargeRate               = 0.009000
@@ -38,6 +39,7 @@ ship/powerLoad                               = 100000.000000
 ship/cpuLoad                                 = 1000.000000
 ship/maxTargetRange                          = 385000.000000
 ship/scanResolution                          = 90.000000
+ship/upgradeLoad                             = 300.000000
 
 character/corporationMemberLimit                   = 12600.000000
 character/maxLockedTargets                         = 25.000000

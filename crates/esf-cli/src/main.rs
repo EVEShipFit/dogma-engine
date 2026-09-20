@@ -6,8 +6,8 @@ use clap::{Parser, ValueEnum};
 
 use esf_data::{Info, InfoName, InfoNameSde, InfoSde, Names, Sde};
 use esf_dogma_engine::{
-    Calculation, DamageProfile, Fit, ItemResult, Options, ReactiveArmor, Security, Slot, SourceRef,
-    State,
+    Calculation, DamageProfile, Fit, ItemResult, Options, ReactiveArmor, Rule, Security, Slot,
+    SourceRef, State, Target, Violation,
 };
 use esf_format::eft;
 
@@ -113,6 +113,10 @@ struct Args {
     /// Report per attribute the modifiers its value was calculated from.
     #[clap(long, help_heading = "Output")]
     sources: bool,
+
+    /// Report the fitting rules the fit breaks, instead of its attributes.
+    #[clap(long, help_heading = "Output")]
+    validate: bool,
 }
 
 #[derive(Clone, Copy, ValueEnum)]
@@ -340,6 +344,97 @@ fn source_label(info: &InfoSde, fit: &Fit, from: SourceRef) -> String {
     }
 }
 
+fn violation_target(info: &InfoSde, fit: &Fit, target: Target) -> String {
+    match target {
+        Target::Ship => format!("ship: {}", type_name(info, fit.ship.type_id)),
+        Target::Item { index } => format!(
+            "{}: {}",
+            slot_label(fit.items[index].slot),
+            type_name(info, fit.items[index].type_id)
+        ),
+        Target::Charge { index } => format!(
+            "{} charge: {}",
+            slot_label(fit.items[index].slot),
+            fit.items[index].charge.as_ref().map_or_else(
+                || "charge".to_string(),
+                |charge| type_name(info, charge.type_id),
+            )
+        ),
+    }
+}
+
+/// The name serde gives a value, which is the one the JSON output shows.
+fn label(value: impl serde::Serialize) -> String {
+    serde_json::to_value(value)
+        .ok()
+        .and_then(|value| value.as_str().map(str::to_string))
+        .unwrap_or_default()
+}
+
+fn violation_rule(info: &InfoSde, rule: Rule) -> String {
+    match rule {
+        Rule::Resource {
+            resource,
+            used,
+            available,
+        } => format!("{} used {used:.2} of {available:.2}", label(resource)),
+        Rule::Slots {
+            slot,
+            used,
+            available,
+        } => format!("{} slots used {used} of {available}", label(slot)),
+        Rule::WrongSlot { expected } => format!("belongs in a {} slot", label(expected)),
+        Rule::SlotTaken => "another item is in this slot".to_string(),
+        Rule::WrongSlotIndex { expected } => format!("belongs in slot {expected}"),
+        Rule::SubsystemTaken => "another subsystem covers the same part".to_string(),
+        Rule::Skill {
+            type_id,
+            required,
+            level,
+        } => format!(
+            "{} at {required}, trained to {level}",
+            type_name(info, type_id)
+        ),
+        Rule::RigSize { ship, item } => format!("rig size {item}, ship takes {ship}"),
+        Rule::ShipRestricted => "cannot go on this ship".to_string(),
+        Rule::CapitalItem => "a capital item on a ship that is not one".to_string(),
+        Rule::MaxGroup {
+            group_id,
+            limit,
+            used,
+            allowed,
+        } => format!(
+            "{used} of group {group_id} {}, {allowed} allowed",
+            label(limit)
+        ),
+        Rule::MaxType {
+            type_id,
+            used,
+            allowed,
+        } => format!("{used} of {}, {allowed} allowed", type_name(info, type_id)),
+        Rule::ChargeGroup => "a charge the module does not take".to_string(),
+        Rule::ChargeSize { module, charge } => {
+            format!("charge size {charge}, module takes {module}")
+        }
+        rule => format!("{rule:?}"),
+    }
+}
+
+fn print_violations(info: &InfoSde, fit: &Fit, violations: &[Violation]) {
+    let targets: Vec<String> = violations
+        .iter()
+        .map(|violation| violation_target(info, fit, violation.target))
+        .collect();
+    let width = targets.iter().map(String::len).max().unwrap_or(0);
+
+    for (target, violation) in targets.iter().zip(violations) {
+        println!(
+            "  {target:width$}  {}",
+            violation_rule(info, violation.rule)
+        );
+    }
+}
+
 fn print_table(info: &InfoSde, fit: &Fit, calculation: &Calculation, hide_empty: bool) {
     let mut groups: Vec<(String, &ItemResult)> = Vec::new();
 
@@ -495,6 +590,23 @@ pub fn main() {
     };
     let mut calculation = esf_dogma_engine::calculate(&info, &fit, &options);
 
+    let output = args
+        .output
+        .unwrap_or(match std::io::stdout().is_terminal() {
+            true => Output::Table,
+            false => Output::Json,
+        });
+
+    if args.validate {
+        /* Before the filter, which throws away the attributes a rule reads. */
+        let violations = esf_dogma_engine::validate(&info, &fit, &calculation);
+        match output {
+            Output::Json => println!("{}", serde_json::to_string(&violations).unwrap()),
+            Output::Table => print_violations(&info, &fit, &violations),
+        }
+        return;
+    }
+
     let filter = Filter {
         info: &info,
         attributes: &args.attributes,
@@ -502,12 +614,6 @@ pub fn main() {
     };
     filter.apply_all(&mut calculation);
 
-    let output = args
-        .output
-        .unwrap_or(match std::io::stdout().is_terminal() {
-            true => Output::Table,
-            false => Output::Json,
-        });
     match output {
         Output::Json => println!("{}", serde_json::to_string(&calculation).unwrap()),
         Output::Table => print_table(&info, &fit, &calculation, filter.is_active()),

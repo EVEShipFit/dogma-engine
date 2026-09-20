@@ -100,6 +100,20 @@ pub fn calculate(js_fit: JsValue, js_options: JsValue) -> Result<JsValue, JsErro
     Ok(serde_wasm_bindgen::to_value(&calculation)?)
 }
 
+/// Report the fitting rules the fit breaks. Calculates the fit itself, as
+/// every rule reads the values after skills and modules changed them.
+#[wasm_bindgen]
+pub fn validate(js_fit: JsValue) -> Result<JsValue, JsError> {
+    let sde = sde()?;
+
+    let fit: Fit = serde_wasm_bindgen::from_value(js_fit)?;
+    let info = InfoSde::new(sde);
+
+    let calculation = esf_dogma_engine::calculate(&info, &fit, &Options::default());
+    let violations = esf_dogma_engine::validate(&info, &fit, &calculation);
+    Ok(serde_wasm_bindgen::to_value(&violations)?)
+}
+
 /// What a beacon in space hands to every fit in there with it. Put the result
 /// in `incoming` of a fit to have it applied.
 #[wasm_bindgen]

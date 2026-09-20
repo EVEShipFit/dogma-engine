@@ -1,0 +1,7 @@
+---
+source: tests/harness/case.rs
+expression: "validate_fit(eft_fit, skills, edit)"
+---
+ship = resource DroneBay 130.000000 of 125.000000
+ship = resource DroneBandwidth 130.000000 of 75.000000
+ship = resource LaunchedDrones 13.000000 of 5.000000

@@ -13,7 +13,7 @@ mod case;
 mod dump;
 mod skills;
 
-pub use case::{calculate, load, outgoing, snapshot};
+pub use case::{calculate, load, outgoing, snapshot, snapshot_violations};
 pub use skills::{Skills, all, none};
 
 /// What a beacon hands out, by name.
@@ -56,6 +56,20 @@ static NAMES_BYTES: LazyLock<Vec<u8>> = LazyLock::new(|| {
 
 static SDE: LazyLock<Sde<'static>> = LazyLock::new(|| Sde::new(&SDE_BYTES).unwrap());
 static NAMES: LazyLock<Names<'static>> = LazyLock::new(|| Names::new(&NAMES_BYTES).unwrap());
+
+macro_rules! validation {
+    ($($name:ident = $fit:ident, skills: $skills:expr $(, edit: $edit:expr)?;)*) => {
+        $(
+            #[test]
+            fn $name() {
+                #[allow(unused_variables)]
+                let edit: fn(&mut esf_dogma_engine::Fit) = |_| {};
+                $(let edit: fn(&mut esf_dogma_engine::Fit) = $edit;)?
+                crate::harness::snapshot_violations(module_path!(), stringify!($name), $fit, $skills, edit);
+            }
+        )*
+    };
+}
 
 macro_rules! regression {
     ($($name:ident = $fit:ident, skills: $skills:expr $(, edit: $edit:expr)?;)*) => {

@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Punisher
+ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 10.000000
 ship/passiveShieldEffectiveRechargeRate      = 1.931034
 ship/passiveShieldRechargeRate               = 1.400000
@@ -105,3 +106,11 @@ high_1-2/state                 = active
 high_1-2/capacitorTransferRate = 4.000000
 high_1-2/capacitorPeakLoad     = -4.000000
 high_1-2/cycleTime             = 2500.000000
+
+ship                             = skill Amarr Frigate needs 1 has 0
+low_1/Small Armor Repairer II    = skill Repair Systems needs 3 has 0
+low_1/Small Armor Repairer II    = skill Mechanics needs 3 has 0
+medium_1/1MN Afterburner II      = skill Afterburner needs 4 has 0
+medium_2/Warp Disruptor II       = skill Propulsion Jamming needs 2 has 0
+high_1/Small Energy Nosferatu II = skill Capacitor Emission Systems needs 3 has 0
+high_2/Small Energy Nosferatu II = skill Capacitor Emission Systems needs 3 has 0

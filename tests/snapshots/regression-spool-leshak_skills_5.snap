@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Leshak
+ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 33.600000
 ship/passiveShieldEffectiveRechargeRate      = 8.850575
 ship/passiveShieldRechargeRate               = 6.416667
@@ -28,20 +29,20 @@ ship/armorDamageEffectiveResonance           = 0.675000
 ship/damagePerSecondWithReload               = 1479.676609
 ship/damagePerSecondWithoutReload            = 1479.676616
 ship/damageAlpha                             = 2045.504954
-ship/powerFree                               = 5194.000000
-ship/cpuFree                                 = 452.750000
-ship/capacitorDepletesIn                     = 384.000000
-ship/capacitorPeakDeltaPercentage            = -52.954544
-ship/capacitorPeakDelta                      = -14.562500
-ship/capacitorPeakLoad                       = 42.062500
+ship/powerFree                               = 5590.000000
+ship/cpuFree                                 = 524.750000
+ship/capacitorDepletesIn                     = -1.000000
+ship/capacitorPeakDeltaPercentage            = 63.636365
+ship/capacitorPeakDelta                      = 17.500000
+ship/capacitorPeakLoad                       = 10.000000
 ship/capacitorPeakRecharge                   = 27.500000
 ship/alignTime                               = 11.897109
 ship/hp                                      = 11000.000000
 ship/powerOutput                             = 21250.000000
-ship/powerLoad                               = 16056.000000
+ship/powerLoad                               = 15660.000000
 ship/maxVelocity                             = 156.250000
 ship/cpuOutput                               = 781.250000
-ship/cpuLoad                                 = 328.500000
+ship/cpuLoad                                 = 256.500000
 ship/rechargeRate                            = 750000.000000
 ship/agility                                 = 0.110025
 ship/maxTargetRange                          = 108750.000000
@@ -119,15 +120,6 @@ character/inventionReverseEngineeringResearchSpeed = 0.850000
 character/reactionTimeMultiplier                   = 0.800000
 character/reactionSlotLimit                        = 10.000000
 
-outgoing_effect_1/type                 = Heavy Mutadaptive Remote Armor Repairer II
-outgoing_effect_1/effect               = remoteArmorRepairRate
-outgoing_effect_1/spoolMultiplier      = 2.500000
-outgoing_effect_1/armorRepairRate      = 213.333333
-outgoing_effect_1/maxRange             = 24000.000000
-outgoing_effect_1/duration             = 6000.000000
-outgoing_effect_1/armorDamageAmount    = 512.000000
-outgoing_effect_1/falloffEffectiveness = 0.000000
-
 high_1/type                         = Supratidal Entropic Disintegrator II
 high_1/state                        = active
 high_1/spoolMultiplierBonus         = 2.125000
@@ -152,14 +144,3 @@ high_1/entityFlyRange               = 250.000000
 high_1/heatDamage                   = 3.000000
 high_1/charge/type                  = Occult L
 high_1/charge/damageMultiplier      = 1.100000
-
-high_2/type                 = Heavy Mutadaptive Remote Armor Repairer II
-high_2/state                = active
-high_2/spoolMultiplierBonus = 1.500000
-high_2/spoolMultiplier      = 2.500000
-high_2/armorRepairRate      = 213.333333
-high_2/capacitorPeakLoad    = 32.062500
-high_2/cycleTime            = 6000.000000
-high_2/capacitorNeed        = 192.375000
-high_2/maxRange             = 24000.000000
-high_2/heatDamage           = 1.500000

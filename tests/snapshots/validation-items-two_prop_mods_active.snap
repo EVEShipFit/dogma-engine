@@ -1,0 +1,6 @@
+---
+source: tests/harness/case.rs
+expression: "validate_fit(eft_fit, skills, edit)"
+---
+medium_1/5MN Microwarpdrive II = max_group 46 Active 2 of 1
+medium_2/1MN Afterburner II    = max_group 46 Active 2 of 1

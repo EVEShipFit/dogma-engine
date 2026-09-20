@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Nergal
+ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 14.000000
 ship/passiveShieldEffectiveRechargeRate      = 1.600000
 ship/passiveShieldRechargeRate               = 0.900000
@@ -86,3 +87,8 @@ high_1/trackingSpeed                = 307.500000
 high_1/entityFlyRange               = 250.000000
 high_1/damageMultiplierBonusMax     = 2.550000
 high_1/charge/type                  = Occult S
+
+ship                                   = skill Precursor Frigate needs 5 has 1
+high_1/Light Entropic Disintegrator II = skill Small Precursor Weapon needs 5 has 0
+high_1/Light Entropic Disintegrator II = skill Small Disintegrator Specialization needs 1 has 0
+high_1/charge/Occult S                 = skill Small Disintegrator Specialization needs 1 has 0

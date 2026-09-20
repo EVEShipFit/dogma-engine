@@ -112,6 +112,37 @@ To make rendering a fit easier, these are calculated by this library, and presen
 Their identifier is always a negative value, to visually separate them.
 What additional attributes exist are defined in [EVEShipFit/sde-patched](https://github.com/EVEShipFit/sde-patched) repository.
 
+## Validation
+
+`validate()` checks if the fit violates any rules that would prevent you from flying it in-game.
+It returns the violations, grouped by the kind of rule and, within a kind, in the order of `items`.
+An empty list means the fit breaks no rules.
+
+Each violation has:
+
+- `target`: what the rule is about.
+  - `ship`, for what the ship carries as a whole.
+  - `item`, with the `index` into `items`.
+  - `charge`, with the `index` into `items` of the item holding it.
+- `rule`: the rule, and the values that failed it. `type` says which:
+  - `resource`: `resource` ran out, `used` of `available`.
+    One of `cpu`, `powergrid`, `calibration`, `drone_bay`, `drone_bandwidth`, `launched_drones`, `fighter_bay`, `fighter_tubes`, `light_fighter_tubes`, `support_fighter_tubes`, `heavy_fighter_tubes`, `cargo_bay` or `charge_capacity`.
+  - `slots`: more items in the `slot` rack than the ship has, `used` of `available`.
+    One of `high`, `medium`, `low`, `rig`, `subsystem`, `service`, `turret` or `launcher`; the last two are hardpoints a weapon takes on top of its slot.
+  - `wrong_slot`: the item belongs in the `expected` rack.
+  - `slot_taken`: another item of the fit is in this slot too.
+  - `wrong_slot_index`: an implant or booster outside the slot it occupies, which is `expected`.
+  - `subsystem_taken`: another subsystem covers the same part of the ship.
+  - `skill`: the character is missing `type_id`, or has it at `level` where the item asks for `required`.
+  - `rig_size`: a rig of size `item` where the `ship` takes another.
+  - `ship_restricted`: the item cannot go on this ship at all.
+  - `capital_item`: a capital item on a ship that is not a capital.
+  - `max_group`: `used` of `group_id` are `limit` (`fitted`, `online` or `active`), where `allowed` may be.
+    This is what keeps a second propulsion module from running: an afterburner and a microwarpdrive share a group.
+  - `max_type`: `used` of `type_id` are fitted, where `allowed` may be.
+  - `charge_group`: a charge of a group the module does not take.
+  - `charge_size`: a charge of size `charge` where the `module` takes another.
+
 ## Usage
 
 The engine is published for Rust, Javascript and Python; all three calculate the same way.
@@ -131,7 +162,7 @@ cargo add esf-dogma-engine esf-data
 
 ```rust
 use esf_data::{InfoSde, Sde};
-use esf_dogma_engine::{Fit, Options, beacon, calculate};
+use esf_dogma_engine::{Fit, Options, beacon, calculate, validate};
 
 let bytes = std::fs::read("sde.dat")?;
 let sde = Sde::new(&bytes)?;
@@ -157,6 +188,9 @@ let calculation = calculate(&info, &fit, &Options::default());
 let with_sources = calculate(&info, &fit, &Options { sources: true, ..Default::default() });
 // Or if you have a beacon in space (like wormhole effects):
 let with_beacon = calculate(&info, &Fit { incoming: beacon(&info, beacon_type_id), ..fit }, &Options::default());
+
+// What EVE would not let you fly:
+let violations = validate(&info, &fit, &calculation);
 ```
 
 ### Javascript (WebAssembly)
@@ -170,7 +204,7 @@ npm install @eveshipfit/dogma-engine @eveshipfit/sde
 ```
 
 ```js
-import init, { init as initPanicHook, load_sde, load_eft, calculate, beacon } from "@eveshipfit/dogma-engine";
+import init, { init as initPanicHook, load_sde, load_eft, calculate, validate, beacon } from "@eveshipfit/dogma-engine";
 
 await init();
 initPanicHook();
@@ -190,6 +224,9 @@ const withSources = calculate(fit, { sources: true });
 const withBeacon = calculate({ ...fit, incoming: beacon(beaconTypeId) });
 /* Or if you have an EFT, the text format EVE copies a fit to the clipboard in: */
 const imported = calculate(load_eft("[Rifter, My Rifter]\n200mm AutoCannon I"));
+
+/* What EVE would not let you fly; it calculates the fit itself: */
+const violations = validate(fit);
 ```
 
 ### Python
@@ -228,6 +265,9 @@ with_sources = dogma.calculate(fit, {"sources": True})
 with_beacon = dogma.calculate({**fit, "incoming": dogma.beacon(beacon_type_id)})
 # Or if you have an EFT, the text format EVE copies a fit to the clipboard in:
 imported = dogma.calculate(dogma.load_eft("[Rifter, My Rifter]\n200mm AutoCannon I"))
+
+# What EVE would not let you fly; it calculates the fit itself:
+violations = dogma.validate(fit)
 ```
 
 Fits and calculations are plain dicts, typed with `TypedDict` in `esf_dogma_engine.types`.

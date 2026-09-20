@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Scorpion
+ship/upgradeFree                             = 100.000000
 ship/scanStrength                            = 24.000000
 ship/passiveShieldEffectiveRechargeRate      = 9.558621
 ship/passiveShieldRechargeRate               = 6.930000
@@ -46,6 +47,7 @@ ship/shipBonusAI                             = 0.000000
 ship/shipBonusCI                             = 0.000000
 ship/shipBonusGI                             = 0.000000
 ship/shipBonusCB3                            = 0.000000
+ship/upgradeLoad                             = 300.000000
 ship/droneBandwidthLoad                      = 25.000000
 ship/shipBonusUF1                            = 0.000000
 ship/shipBonusUF2                            = 0.000000
@@ -68,3 +70,9 @@ rig_1/state = online
 
 dronebay_1-5/type  = Hornet EC-300
 dronebay_1-5/state = active
+
+ship                   = resource LaunchedDrones 5.000000 of 0.000000
+ship                   = skill Caldari Battleship needs 1 has 0
+dronebay/Hornet EC-300 = skill Advanced Drone Avionics needs 1 has 0
+dronebay/Hornet EC-300 = skill Electronic Warfare needs 4 has 0
+dronebay/Hornet EC-300 = skill Drones needs 5 has 0

@@ -1,0 +1,6 @@
+---
+source: tests/harness/case.rs
+expression: "validate_fit(eft_fit, skills, edit)"
+---
+low_1/Damage Control II = max_group 60 Fitted 2 of 1
+low_2/Damage Control II = max_group 60 Fitted 2 of 1
