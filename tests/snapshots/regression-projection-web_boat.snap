@@ -3,6 +3,9 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Celestis
+ship/capacitorStablePercentage               = 96.115055
+ship/maxTargetsCharacter                     = 25.000000
+ship/maxTargets                              = 8.000000
 ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 21.600000
 ship/passiveShieldEffectiveRechargeRate      = 5.517241

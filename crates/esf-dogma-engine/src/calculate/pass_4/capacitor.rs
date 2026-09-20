@@ -153,3 +153,39 @@ pub fn attribute_capacitor_depletes_in(info: &impl Info, objects: &mut Objects) 
         .ship
         .add_attribute(attr_capacitor_depletes_in_id, 0.0, depletes_in / 1000.0);
 }
+
+pub fn attribute_capacitor_stable_percentage(info: &impl Info, objects: &mut Objects) {
+    /* The capacitor level a stable fit settles at; zero when it is not stable. */
+
+    let (Some(attr_capacitor_peak_delta_percentage_id), Some(attr_capacitor_stable_percentage_id)) = (
+        info.attribute_name_to_id("capacitorPeakDeltaPercentage"),
+        info.attribute_name_to_id("capacitorStablePercentage"),
+    ) else {
+        return;
+    };
+
+    let Some(peak_delta_percentage) = objects
+        .ship
+        .attributes
+        .get(&attr_capacitor_peak_delta_percentage_id)
+        .and_then(|attribute| attribute.value.get())
+    else {
+        return;
+    };
+
+    /* Recharge is fastest at a quarter full, so a fit with no headroom left
+     * settles exactly there; solving recharge against drain gives the rest.
+     * More capacitor comes in than goes out above 100%, so it stays full. */
+    let stable_percentage = if peak_delta_percentage < 0.0 {
+        0.0
+    } else {
+        let level = (1.0 + f64::sqrt(peak_delta_percentage / 100.0)) / 2.0;
+        f64::min(100.0, level * level * 100.0)
+    };
+
+    objects.ship.add_attribute(
+        attr_capacitor_stable_percentage_id,
+        100.0,
+        stable_percentage,
+    );
+}

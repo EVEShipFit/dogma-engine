@@ -3,6 +3,9 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Dominix
+ship/capacitorStablePercentage               = 0.000000
+ship/maxTargetsCharacter                     = 25.000000
+ship/maxTargets                              = 7.000000
 ship/scanStrength                            = 39.072000
 ship/passiveShieldEffectiveRechargeRate      = 34.096507
 ship/passiveShieldRechargeRate               = 11.972790

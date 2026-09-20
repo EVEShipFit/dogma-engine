@@ -3,6 +3,9 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Nyx
+ship/capacitorStablePercentage               = 57.513135
+ship/maxTargetsCharacter                     = 25.000000
+ship/maxTargets                              = 14.000000
 ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 194.400000
 ship/passiveShieldEffectiveRechargeRate      = 68.965516

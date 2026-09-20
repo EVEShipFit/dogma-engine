@@ -3,6 +3,7 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Scorpion
+ship/maxTargetsCharacter                     = 0.000000
 ship/upgradeFree                             = 100.000000
 ship/scanStrength                            = 24.000000
 ship/passiveShieldEffectiveRechargeRate      = 9.558621

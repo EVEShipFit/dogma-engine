@@ -3,6 +3,9 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Punisher
+ship/capacitorStablePercentage               = 74.848171
+ship/maxTargetsCharacter                     = 25.000000
+ship/maxTargets                              = 4.000000
 ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 12.000000
 ship/passiveShieldEffectiveRechargeRate      = 3.218391

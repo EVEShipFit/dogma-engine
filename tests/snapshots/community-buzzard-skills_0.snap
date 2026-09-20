@@ -3,6 +3,8 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Buzzard
+ship/capacitorStablePercentage               = 0.000000
+ship/maxTargetsCharacter                     = 0.000000
 ship/upgradeFree                             = 150.000000
 ship/scanStrength                            = 24.000000
 ship/passiveShieldEffectiveRechargeRate      = 3.017143

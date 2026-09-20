@@ -3,6 +3,9 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                                      = Orca
+ship/capacitorStablePercentage                                 = 76.638308
+ship/maxTargetsCharacter                                       = 25.000000
+ship/maxTargets                                                = 7.000000
 ship/scanStrength                                              = 36.000000
 ship/passiveShieldEffectiveRechargeRate                        = 79.931279
 ship/passiveShieldRechargeRate                                 = 24.114583

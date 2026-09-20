@@ -3,6 +3,8 @@ source: tests/harness/case.rs
 expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Gila
+ship/capacitorStablePercentage               = 0.000000
+ship/maxTargetsCharacter                     = 0.000000
 ship/scanStrength                            = 22.000000
 ship/passiveShieldEffectiveRechargeRate      = 18.226131
 ship/passiveShieldRechargeRate               = 6.400000
