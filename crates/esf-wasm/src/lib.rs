@@ -50,3 +50,17 @@ pub fn calculate(js_fit: JsValue, js_options: JsValue) -> Result<JsValue, JsErro
     let calculation = esf_dogma_engine::calculate(&info, &fit, &options);
     Ok(serde_wasm_bindgen::to_value(&calculation)?)
 }
+
+/// What a beacon in space hands to every fit in there with it. Put the result
+/// in `incoming` of a fit to have it applied.
+#[wasm_bindgen]
+pub fn beacon(type_id: i32) -> Result<JsValue, JsError> {
+    let Some(sde) = SDE.get() else {
+        return Err(JsError::new("SDE is not loaded; call load_sde() first"));
+    };
+
+    let info = InfoSde::new(sde);
+
+    let projection = esf_dogma_engine::beacon(&info, type_id);
+    Ok(serde_wasm_bindgen::to_value(&projection)?)
+}
