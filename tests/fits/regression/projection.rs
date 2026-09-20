@@ -73,6 +73,19 @@ Shield Command Burst II
 Skirmish Command Burst II
 "#;
 
+/* A Marauder in bastion shrugs off remote assistance, and a dreadnought in
+ * siege shrugs off dampening and weapon disruption. */
+const BASTION: &str = r#"
+[Paladin, Bastion]
+Bastion Module I
+"#;
+
+const SIEGE: &str = r#"
+[Revelation, Siege]
+Siege Module II
+Dual Giga Pulse Laser II, Conflagration L
+"#;
+
 regression! {
     /* What a fit hands out is what lands on another. An effect carries the
      * attributes the receiver reads; a burst carries buffs instead, and
@@ -100,6 +113,13 @@ regression! {
      * nothing at all. */
     bursts = TARGET, skills: all(5), edit: |fit| { fit.incoming.extend(outgoing(BURSTS, all(5))); };
     bursts_without_charges = TARGET, skills: all(5), edit: |fit| { fit.incoming.extend(outgoing(BURSTS_WITHOUT_CHARGES, all(5))); };
+    /* Bastion drops remote assistance to a twentieth, and siege takes
+     * seventy percent off dampening and weapon disruption. */
+    bastion_alone = BASTION, skills: all(5);
+    siege_alone = SIEGE, skills: all(5);
+    sensor_booster_on_bastion = BASTION, skills: all(5), edit: |fit| { fit.incoming.extend(outgoing(SENSOR_BOOSTER, all(5))); };
+    dampener_on_siege = SIEGE, skills: all(5), edit: |fit| { fit.incoming.extend(outgoing(DAMPENER, all(5))); };
+    tracking_disruptor_on_siege = SIEGE, skills: all(5), edit: |fit| { fit.incoming.extend(outgoing(TRACKING_DISRUPTOR, all(5))); };
     /* Everything at once, to lock how they pile up. */
     all_of_it = TARGET, skills: all(5), edit: |fit| {
         fit.incoming.extend(outgoing(WEB, all(5)));

@@ -42,16 +42,6 @@ pub(super) fn outgoing(info: &impl Info, objects: &Objects) -> Projection {
     projection
 }
 
-/* The buffs an item offers, read off its four `warfareBuff` pairs. */
-fn warfare_buffs(item: &Item) -> impl Iterator<Item = ProjectedBuff> {
-    ATTRIBUTE_WARFARE_BUFFS
-        .map(|(id, value)| (item.value_of(id) as i32, item.value_of(value)))
-        .into_iter()
-        /* An empty pair, or a burst without a charge to name a buff. */
-        .filter(|(id, value)| *id != 0 && *value != 0.0)
-        .map(|(id, value)| ProjectedBuff { id, value })
-}
-
 fn aims_at_target(effect: &eve::DogmaEffect) -> bool {
     effect.modifiers().into_iter().flatten().any(|modifier| {
         matches!(
@@ -64,7 +54,13 @@ fn aims_at_target(effect: &eve::DogmaEffect) -> bool {
 fn collect(info: &impl Info, item: &Item, aims: impl Fn(&eve::DogmaEffect) -> bool) -> Projection {
     let mut projection = Projection::default();
 
-    projection.buffs.extend(warfare_buffs(item));
+    for (id, value) in
+        ATTRIBUTE_WARFARE_BUFFS.map(|(id, value)| (item.value_of(id) as i32, item.value_of(value)))
+    {
+        if id != 0 && value != 0.0 {
+            projection.buffs.push(ProjectedBuff { id, value });
+        }
+    }
 
     for type_dogma_effect in info.get_dogma_effects(item.type_id).into_iter().flatten() {
         let effect_id = type_dogma_effect.effect_id();
