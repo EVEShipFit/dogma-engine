@@ -179,7 +179,7 @@ Javascript hands over `sde.dat` once, and every lookup after that happens inside
 The file is a Flatbuffer, so nothing is parsed: the bytes are used where they land.
 
 ```js
-import init, { init as initPanicHook, load_sde, calculate } from "@eveshipfit/dogma-engine";
+import init, { init as initPanicHook, load_sde, calculate, beacon } from "@eveshipfit/dogma-engine";
 
 await init();
 initPanicHook();
@@ -195,4 +195,6 @@ const fit = {
 const calculation = calculate(fit);
 /* Or if you want to know the source of the effects: */
 const withSources = calculate(fit, { sources: true });
+/* Or if you have a beacon in space (like wormhole effects): */
+const withBeacon = calculate({ ...fit, incoming: beacon(beaconTypeId) });
 ```
