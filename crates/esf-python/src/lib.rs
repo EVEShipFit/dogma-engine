@@ -4,13 +4,18 @@ use pyo3::exceptions::{PyRuntimeError, PyValueError};
 use pyo3::prelude::*;
 use pythonize::{depythonize, pythonize};
 
-use esf_data::{InfoSde, Sde};
+use esf_data::{Error, InfoNameSde, InfoSde, Names, Sde};
 use esf_dogma_engine::{Fit, Options};
 
 /// The SDE is handed over once and then read straight out of Rust memory, so
 /// no lookup crosses back into Python.
 static SDE_BYTES: OnceLock<Vec<u8>> = OnceLock::new();
 static SDE: OnceLock<Sde<'static>> = OnceLock::new();
+
+/// `names.dat` is only read for a name `sde.dat` does not know, so it stays
+/// optional.
+static NAMES_BYTES: OnceLock<Vec<u8>> = OnceLock::new();
+static NAMES: OnceLock<Names<'static>> = OnceLock::new();
 
 fn sde() -> PyResult<&'static Sde<'static>> {
     SDE.get()
@@ -32,6 +37,50 @@ fn load_sde(bytes: Vec<u8>) -> PyResult<i32> {
     let _ = SDE.set(sde);
 
     Ok(build_number)
+}
+
+/// Load `names.dat`, so an EFT written in another language than English also
+/// imports. Optional; without it only English names match.
+#[pyfunction]
+fn load_names(bytes: Vec<u8>) -> PyResult<i32> {
+    let sde = sde()?;
+
+    if NAMES.get().is_some() {
+        return Err(PyRuntimeError::new_err("names are already loaded"));
+    }
+
+    let bytes = NAMES_BYTES.get_or_init(|| bytes);
+    let names = Names::new(bytes).map_err(|error| PyValueError::new_err(error.to_string()))?;
+
+    /* Reject a mismatched pair here, rather than on every load_eft(). */
+    let build_number = names.build_number();
+    if sde.build_number() != build_number {
+        let error = Error::BuildMismatch {
+            sde: sde.build_number(),
+            names: build_number,
+        };
+        return Err(PyValueError::new_err(error.to_string()));
+    }
+
+    let _ = NAMES.set(names);
+
+    Ok(build_number)
+}
+
+/// Load a fit from EFT, the text format EVE copies a fit to the clipboard in.
+#[pyfunction]
+fn load_eft(py: Python<'_>, eft: String) -> PyResult<Bound<'_, PyAny>> {
+    let sde = sde()?;
+    let names = NAMES.get();
+
+    let fit = py.detach(|| {
+        let info = InfoNameSde::new(sde, names)
+            .map_err(|error| PyRuntimeError::new_err(error.to_string()))?;
+        esf_format::eft::load_eft(&info, &eft)
+            .map_err(|error| PyValueError::new_err(error.to_string()))
+    })?;
+
+    Ok(pythonize(py, &fit)?)
 }
 
 /// Calculate every attribute of the ship, its items and the character.
@@ -78,6 +127,8 @@ fn beacon(py: Python<'_>, type_id: i32) -> PyResult<Bound<'_, PyAny>> {
 #[pymodule]
 fn _esf_dogma_engine(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(load_sde, module)?)?;
+    module.add_function(wrap_pyfunction!(load_names, module)?)?;
+    module.add_function(wrap_pyfunction!(load_eft, module)?)?;
     module.add_function(wrap_pyfunction!(calculate, module)?)?;
     module.add_function(wrap_pyfunction!(beacon, module)?)?;
     Ok(())

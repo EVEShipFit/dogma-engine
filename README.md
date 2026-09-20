@@ -116,6 +116,7 @@ What additional attributes exist are defined in [EVEShipFit/sde-patched](https:/
 
 The engine is published for Rust, Javascript and Python; all three calculate the same way.
 Each hands over `sde.dat` once, and every lookup after that happens inside Rust.
+An EFT import matches the English names in `sde.dat`; hand over `names.dat` too to also match the other languages EVE supports.
 
 How each package is built is explained under [Integration](#integration).
 
@@ -169,7 +170,7 @@ npm install @eveshipfit/dogma-engine @eveshipfit/sde
 ```
 
 ```js
-import init, { init as initPanicHook, load_sde, calculate, beacon } from "@eveshipfit/dogma-engine";
+import init, { init as initPanicHook, load_sde, load_eft, calculate, beacon } from "@eveshipfit/dogma-engine";
 
 await init();
 initPanicHook();
@@ -187,6 +188,8 @@ const calculation = calculate(fit);
 const withSources = calculate(fit, { sources: true });
 /* Or if you have a beacon in space (like wormhole effects): */
 const withBeacon = calculate({ ...fit, incoming: beacon(beaconTypeId) });
+/* Or if you have an EFT, the text format EVE copies a fit to the clipboard in: */
+const imported = calculate(load_eft("[Rifter, My Rifter]\n200mm AutoCannon I"));
 ```
 
 ### Python
@@ -223,11 +226,13 @@ calculation = dogma.calculate(fit)
 with_sources = dogma.calculate(fit, {"sources": True})
 # Or if you have a beacon in space (like wormhole effects):
 with_beacon = dogma.calculate({**fit, "incoming": dogma.beacon(beacon_type_id)})
+# Or if you have an EFT, the text format EVE copies a fit to the clipboard in:
+imported = dogma.calculate(dogma.load_eft("[Rifter, My Rifter]\n200mm AutoCannon I"))
 ```
 
 Fits and calculations are plain dicts, typed with `TypedDict` in `esf_dogma_engine.types`.
 
-`calculate` and `beacon` release the GIL while they work, so a thread pool calculates fits in parallel.
+`load_eft`, `calculate` and `beacon` release the GIL while they work, so a thread pool calculates fits in parallel.
 
 ## Development
 

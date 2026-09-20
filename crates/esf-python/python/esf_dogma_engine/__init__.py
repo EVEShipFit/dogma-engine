@@ -19,11 +19,22 @@ Load `sde.dat` once, then calculate as many fits as you like::
     from eveshipfit_sde import sde_path
 
     dogma.load_sde_from_file(sde_path())
+
+An EFT-fit imports into a fit `calculate` reads::
+
+    fit = dogma.load_eft("[Rifter, My Rifter]\n200mm AutoCannon I")
+
+That matches English names. To also match the other seven languages EVE
+supports, load `names.dat` as well::
+
+    from eveshipfit_sde import names_path
+
+    dogma.load_names_from_file(names_path())
 """
 
 import os
 
-from ._esf_dogma_engine import beacon, calculate, load_sde
+from ._esf_dogma_engine import beacon, calculate, load_eft, load_names, load_sde
 from .types import Calculation, Fit, Options, Projection
 
 __all__ = [
@@ -33,6 +44,9 @@ __all__ = [
     "Projection",
     "beacon",
     "calculate",
+    "load_eft",
+    "load_names",
+    "load_names_from_file",
     "load_sde",
     "load_sde_from_file",
 ]
@@ -45,3 +59,12 @@ def load_sde_from_file(path: str | os.PathLike[str]) -> int:
     """
     with open(path, "rb") as handle:
         return load_sde(handle.read())
+
+
+def load_names_from_file(path: str | os.PathLike[str]) -> int:
+    """Load `names.dat` from disk. Returns its build number.
+
+    Like `load_names`, this may only be called once per process.
+    """
+    with open(path, "rb") as handle:
+        return load_names(handle.read())
