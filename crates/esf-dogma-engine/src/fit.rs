@@ -1,7 +1,9 @@
 //! The fit to calculate.
 
 use std::collections::{BTreeMap, BTreeSet};
+use std::fmt;
 
+use serde::de::{self, Visitor};
 use serde::{Deserialize, Deserializer, Serialize};
 
 use crate::projection::Projection;
@@ -230,21 +232,55 @@ fn one() -> u32 {
     1
 }
 
-/* JSON and JavaScript objects only have string keys. */
+/* JSON and JavaScript objects only have string keys, Python dicts have real
+ * ones. */
 pub(crate) fn id_map<'de, D, V>(deserializer: D) -> Result<BTreeMap<i32, V>, D::Error>
 where
     D: Deserializer<'de>,
     V: Deserialize<'de>,
 {
-    BTreeMap::<String, V>::deserialize(deserializer)?
+    Ok(BTreeMap::<Id, V>::deserialize(deserializer)?
         .into_iter()
-        .map(|(key, value)| {
-            let key = key.parse().map_err(|_| {
-                serde::de::Error::custom(format!("expected an identifier, found {key:?}"))
-            })?;
-            Ok((key, value))
-        })
-        .collect()
+        .map(|(Id(key), value)| (key, value))
+        .collect())
+}
+
+#[derive(PartialEq, Eq, PartialOrd, Ord)]
+struct Id(i32);
+
+impl<'de> Deserialize<'de> for Id {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Id, D::Error> {
+        struct IdVisitor;
+
+        impl Visitor<'_> for IdVisitor {
+            type Value = Id;
+
+            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+                formatter.write_str("an identifier")
+            }
+
+            fn visit_str<E: de::Error>(self, value: &str) -> Result<Id, E> {
+                value
+                    .parse()
+                    .map(Id)
+                    .map_err(|_| E::custom(format!("expected an identifier, found {value:?}")))
+            }
+
+            fn visit_i64<E: de::Error>(self, value: i64) -> Result<Id, E> {
+                i32::try_from(value)
+                    .map(Id)
+                    .map_err(|_| E::custom(format!("expected an identifier, found {value}")))
+            }
+
+            fn visit_u64<E: de::Error>(self, value: u64) -> Result<Id, E> {
+                i32::try_from(value)
+                    .map(Id)
+                    .map_err(|_| E::custom(format!("expected an identifier, found {value}")))
+            }
+        }
+
+        deserializer.deserialize_any(IdVisitor)
+    }
 }
 
 #[cfg(test)]

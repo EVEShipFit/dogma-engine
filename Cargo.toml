@@ -20,6 +20,8 @@ clap = { version = "4.5", features = ["derive"] }
 console_error_panic_hook = "0.1"
 flatbuffers = "25.2.10"
 insta = { version = "1.48.0", features = ["glob"] }
+pyo3 = { version = "0.29", features = ["abi3-py310"] }
+pythonize = "0.29"
 serde = { version = "1.0", features = ["derive"] }
 serde-wasm-bindgen = "0.6"
 serde_json = "1.0"
@@ -27,5 +29,7 @@ strum = "0.28"
 strum_macros = "0.28"
 wasm-bindgen = "0.2"
 
-[profile.release]
+# WASM is shipped over the wire, so it trades speed for size.
+[profile.wasm]
+inherits = "release"
 opt-level = "s"

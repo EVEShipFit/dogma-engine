@@ -2,6 +2,7 @@
 
 [![crates.io](https://img.shields.io/crates/v/esf-dogma-engine.svg)](https://crates.io/crates/esf-dogma-engine)
 [![npm](https://img.shields.io/npm/v/%40eveshipfit%2Fdogma-engine.svg)](https://www.npmjs.com/package/@eveshipfit/dogma-engine)
+[![PyPI](https://img.shields.io/pypi/v/eveshipfit-dogma-engine.svg)](https://pypi.org/project/eveshipfit-dogma-engine/)
 [![CI](https://github.com/EVEShipFit/dogma-engine/actions/workflows/testing.yml/badge.svg)](https://github.com/EVEShipFit/dogma-engine/actions/workflows/testing.yml)
 [![docs.rs](https://img.shields.io/docsrs/esf-dogma-engine)](https://docs.rs/esf-dogma-engine)
 
@@ -111,6 +112,123 @@ To make rendering a fit easier, these are calculated by this library, and presen
 Their identifier is always a negative value, to visually separate them.
 What additional attributes exist are defined in [EVEShipFit/sde-patched](https://github.com/EVEShipFit/sde-patched) repository.
 
+## Usage
+
+The engine is published for Rust, Javascript and Python; all three calculate the same way.
+Each hands over `sde.dat` once, and every lookup after that happens inside Rust.
+
+How each package is built is explained under [Integration](#integration).
+
+### Rust
+
+The crate is published on crates.io as [`esf-dogma-engine`](https://crates.io/crates/esf-dogma-engine).
+`esf-data` reads `sde.dat`.
+
+```bash
+cargo add esf-dogma-engine esf-data
+```
+
+```rust
+use esf_data::{InfoSde, Sde};
+use esf_dogma_engine::{Fit, Options, beacon, calculate};
+
+let bytes = std::fs::read("sde.dat")?;
+let sde = Sde::new(&bytes)?;
+let info = InfoSde::new(&sde);
+
+let fit: Fit = serde_json::from_str(
+    r#"{
+        "ship": {"type_id": 587},
+        "items": [
+            {
+                "type_id": 2873,
+                "slot": {"type": "high", "index": 0},
+                "state": "active",
+                "charge": {"type_id": 185}
+            }
+        ],
+        "character": {"skills": {"3300": 5}}
+    }"#,
+)?;
+
+let calculation = calculate(&info, &fit, &Options::default());
+// Or if you want to know the source of the effects:
+let with_sources = calculate(&info, &fit, &Options { sources: true, ..Default::default() });
+// Or if you have a beacon in space (like wormhole effects):
+let with_beacon = calculate(&info, &Fit { incoming: beacon(&info, beacon_type_id), ..fit }, &Options::default());
+```
+
+### Javascript (WebAssembly)
+
+The WebAssembly variant is published on npm as
+[`@eveshipfit/dogma-engine`](https://www.npmjs.com/package/@eveshipfit/dogma-engine).
+[`@eveshipfit/sde`](https://www.npmjs.com/package/@eveshipfit/sde) ships `sde.dat` in its `dist` folder; serve or bundle that file.
+
+```bash
+npm install @eveshipfit/dogma-engine @eveshipfit/sde
+```
+
+```js
+import init, { init as initPanicHook, load_sde, calculate, beacon } from "@eveshipfit/dogma-engine";
+
+await init();
+initPanicHook();
+
+const sde = await fetch("/sde.dat").then((response) => response.arrayBuffer());
+const buildNumber = load_sde(new Uint8Array(sde));
+const fit = {
+  ship: { type_id: 587 },
+  items: [{ type_id: 2873, slot: { type: "high", index: 0 }, state: "active", charge: { type_id: 185 } }],
+  character: { skills: { 3300: 5 } },
+};
+
+const calculation = calculate(fit);
+/* Or if you want to know the source of the effects: */
+const withSources = calculate(fit, { sources: true });
+/* Or if you have a beacon in space (like wormhole effects): */
+const withBeacon = calculate({ ...fit, incoming: beacon(beaconTypeId) });
+```
+
+### Python
+
+The Python variant is published on PyPI as
+[`eveshipfit-dogma-engine`](https://pypi.org/project/eveshipfit-dogma-engine/).
+The `sde` extra brings in [`eveshipfit-sde`](https://pypi.org/project/eveshipfit-sde/), which ships `sde.dat`.
+
+```bash
+pip install eveshipfit-dogma-engine[sde]
+```
+
+```python
+import esf_dogma_engine as dogma
+from eveshipfit_sde import sde_path
+
+build_number = dogma.load_sde_from_file(sde_path())
+
+fit = {
+    "ship": {"type_id": 587},
+    "items": [
+        {
+            "type_id": 2873,
+            "slot": {"type": "high", "index": 0},
+            "state": "active",
+            "charge": {"type_id": 185},
+        }
+    ],
+    "character": {"skills": {3300: 5}},
+}
+
+calculation = dogma.calculate(fit)
+# Or if you want to know the source of the effects:
+with_sources = dogma.calculate(fit, {"sources": True})
+# Or if you have a beacon in space (like wormhole effects):
+with_beacon = dogma.calculate({**fit, "incoming": dogma.beacon(beacon_type_id)})
+```
+
+Fits and calculations are plain dicts, typed with `TypedDict` in `esf_dogma_engine.types`.
+
+`calculate` and `beacon` release the GIL while they work, so a thread pool calculates fits in parallel.
+
 ## Development
 
 Make sure you have [Rust installed](https://www.rust-lang.org/tools/install).
@@ -164,6 +282,16 @@ cargo insta review
 
 ## Integration
 
+Every variant is built from the same Rust crates; the `flatc` step from [Development](#development) comes first.
+
+### Rust
+
+The engine itself is a plain crate; [`esf-cli`](./crates/esf-cli) is an example of using it.
+
+```bash
+cargo build --release -p esf-dogma-engine
+```
+
 ### Javascript (WebAssembly)
 
 The primary goal of this library is to build a WebAssembly variant that can easily be used in the browser.
@@ -178,26 +306,13 @@ wasm-pack build crates/esf-wasm --release --out-dir ../../pkg
 
 In the `pkg` folder is now a NPM module to use.
 
-Javascript hands over `sde.dat` once, and every lookup after that happens inside WebAssembly.
-The file is a Flatbuffer, so nothing is parsed: the bytes are used where they land.
+### Python
 
-```js
-import init, { init as initPanicHook, load_sde, calculate, beacon } from "@eveshipfit/dogma-engine";
+This is done with [maturin](https://www.maturin.rs/):
 
-await init();
-initPanicHook();
-
-const sde = await fetch("/sde.dat").then((response) => response.arrayBuffer());
-const buildNumber = load_sde(new Uint8Array(sde));
-const fit = {
-  ship: { type_id: 587 },
-  items: [{ type_id: 2873, slot: { type: "high", index: 0 }, state: "active", charge: { type_id: 185 } }],
-  character: { skills: { 3300: 5 } },
-};
-
-const calculation = calculate(fit);
-/* Or if you want to know the source of the effects: */
-const withSources = calculate(fit, { sources: true });
-/* Or if you have a beacon in space (like wormhole effects): */
-const withBeacon = calculate({ ...fit, incoming: beacon(beaconTypeId) });
+```bash
+cargo install maturin
+maturin build --release
 ```
+
+In the `target/wheels` folder is now a wheel to install.

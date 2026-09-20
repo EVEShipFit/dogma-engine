@@ -38,6 +38,11 @@ jobs:
         node-version: lts/*
         cache: npm
 
+    - name: Install Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: "3.10"
+
     - name: Install wasm-pack
       uses: taiki-e/install-action@v2
       with:
@@ -61,11 +66,21 @@ jobs:
 
     - name: Build WASM library
       run: |
-        wasm-pack build crates/esf-wasm --release --target web -- --locked
+        wasm-pack build crates/esf-wasm --profile wasm --target web -- --locked
 
     - name: Build Rust binary
       run: |
         cargo build --release --locked -p esf-cli
+
+    - name: Build Python library
+      run: |
+        pip install --upgrade pip
+        pip install -e . pytest mypy
+
+    - name: Run Python tests
+      run: |
+        pytest crates/esf-python/tests
+        mypy
 
     - name: Run tests
       run: |
