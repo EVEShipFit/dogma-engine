@@ -6,7 +6,7 @@ use strum_macros::EnumIter;
 use super::output::Source;
 use crate::fit::{FitItem, Slot, State};
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum EffectCategory {
     Passive,
     Online,
@@ -16,6 +16,16 @@ pub enum EffectCategory {
     Area,
     Dungeon,
     System,
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub enum ItemState {
+    Passive,
+    Online,
+    Active,
+    Overload,
+    /// Not a state an item is put in; whatever holds it always runs.
+    AlwaysOn,
 }
 
 /* Declaration order is the order pass 3 applies operators in; do not reorder. */
@@ -113,8 +123,8 @@ pub struct Item {
     pub slot: Option<Slot>,
     pub quantity: u32,
     pub charge: Option<Box<Item>>,
-    pub state: EffectCategory,
-    pub max_state: EffectCategory,
+    pub state: ItemState,
+    pub max_state: ItemState,
     pub attributes: BTreeMap<i32, Attribute>,
     pub effects: Vec<i32>,
     pub fighter_abilities: Option<BTreeSet<i32>>,
@@ -133,31 +143,56 @@ impl Attribute {
     }
 }
 
-impl EffectCategory {
-    pub fn is_active(&self) -> bool {
-        matches!(self, EffectCategory::Active | EffectCategory::Overload)
+impl ItemState {
+    pub fn is_active(self) -> bool {
+        self >= ItemState::Active
     }
 }
 
-impl From<State> for EffectCategory {
-    fn from(state: State) -> EffectCategory {
-        match state {
-            State::Offline => EffectCategory::Passive,
-            State::Online => EffectCategory::Online,
-            State::Active => EffectCategory::Active,
-            State::Overload => EffectCategory::Overload,
+impl EffectCategory {
+    pub fn required_state(self) -> Option<ItemState> {
+        match self {
+            EffectCategory::Passive => Some(ItemState::Passive),
+            EffectCategory::Online => Some(ItemState::Online),
+            EffectCategory::Active => Some(ItemState::Active),
+            EffectCategory::Overload => Some(ItemState::Overload),
+            EffectCategory::Target
+            | EffectCategory::Area
+            | EffectCategory::Dungeon
+            | EffectCategory::System => None,
+        }
+    }
+
+    /// Whether an effect of this category runs on an item in `state`.
+    pub fn runs_at(self, state: ItemState) -> bool {
+        match self.required_state() {
+            Some(required) => state >= required,
+            /* Asks for no state, so only something always-on runs it. */
+            None => state == ItemState::AlwaysOn,
         }
     }
 }
 
-impl From<EffectCategory> for State {
-    fn from(category: EffectCategory) -> State {
-        match category {
-            EffectCategory::Passive => State::Offline,
-            EffectCategory::Online => State::Online,
-            EffectCategory::Active => State::Active,
-            EffectCategory::Overload => State::Overload,
-            category => unreachable!("{category:?} is not an item state"),
+impl From<State> for ItemState {
+    fn from(state: State) -> ItemState {
+        match state {
+            State::Offline => ItemState::Passive,
+            State::Online => ItemState::Online,
+            State::Active => ItemState::Active,
+            State::Overload => ItemState::Overload,
+        }
+    }
+}
+
+impl From<ItemState> for State {
+    fn from(state: ItemState) -> State {
+        match state {
+            ItemState::Passive => State::Offline,
+            ItemState::Online => State::Online,
+            ItemState::Active => State::Active,
+            ItemState::Overload => State::Overload,
+            /* Only a beacon is always-on, and beacons are not in the result. */
+            ItemState::AlwaysOn => unreachable!("an always-on item has no fit state"),
         }
     }
 }
@@ -200,8 +235,8 @@ impl Item {
             slot: None,
             quantity: 1,
             charge: None,
-            state: EffectCategory::Active,
-            max_state: EffectCategory::Active,
+            state: ItemState::Active,
+            max_state: ItemState::Active,
             attributes: BTreeMap::new(),
             effects: Vec::new(),
             fighter_abilities: None,
@@ -222,7 +257,7 @@ impl Item {
                 .as_ref()
                 .map(|charge| Box::new(Item::new_charge(charge.type_id))),
             state: fit_item.state.into(),
-            max_state: EffectCategory::Passive,
+            max_state: ItemState::Passive,
             attributes: BTreeMap::new(),
             effects: Vec::new(),
             fighter_abilities: fit_item.fighter_abilities.clone(),
@@ -232,24 +267,23 @@ impl Item {
 
         match item.slot {
             Some(Slot::DroneBay | Slot::FighterTube(_)) => {
-                if item.state != EffectCategory::Passive {
-                    item.state = EffectCategory::Active;
+                if item.state != ItemState::Passive {
+                    item.state = ItemState::Active;
                 }
-                item.max_state = EffectCategory::Active;
+                item.max_state = ItemState::Active;
             }
-            Some(Slot::FighterBay) => item.state = EffectCategory::Passive,
-            _ if !item.is_calculated() => item.state = EffectCategory::Passive,
+            Some(Slot::FighterBay) => item.state = ItemState::Passive,
+            _ if !item.is_calculated() => item.state = ItemState::Passive,
             _ => {}
         }
 
         item
     }
 
-    /* A beacon is always there, so its state is above every effect category. */
     pub fn new_beacon(type_id: i32) -> Item {
         Item {
-            state: EffectCategory::System,
-            max_state: EffectCategory::System,
+            state: ItemState::AlwaysOn,
+            max_state: ItemState::AlwaysOn,
             ..Item::new_fake(type_id)
         }
     }
@@ -262,8 +296,8 @@ impl Item {
             slot: None,
             quantity: 1,
             charge: None,
-            state: EffectCategory::Active,
-            max_state: EffectCategory::Active,
+            state: ItemState::Active,
+            max_state: ItemState::Active,
             attributes: BTreeMap::new(),
             effects: Vec::new(),
             fighter_abilities: None,

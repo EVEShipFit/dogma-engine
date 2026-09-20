@@ -3,7 +3,9 @@ use std::collections::BTreeSet;
 use esf_data::eve;
 
 use super::attribute_ids::{ATTRIBUTE_CAPACITOR_NEED_ID, ATTRIBUTE_SKILLS};
-use super::item::{Attribute, Effect, EffectCategory, EffectOperator, Item, Object, Origin};
+use super::item::{
+    Attribute, Effect, EffectCategory, EffectOperator, Item, ItemState, Object, Origin,
+};
 use super::output::BuffResult;
 use super::{Info, Objects, Pass};
 
@@ -254,8 +256,8 @@ impl Item {
             let category = get_effect_category(type_dogma_effect.effect_category());
 
             /* Find the highest state an item can be in. */
-            if category > self.max_state && category <= EffectCategory::Overload {
-                self.max_state = category;
+            if let Some(state) = category.required_state() {
+                self.max_state = self.max_state.max(state);
             }
 
             /* Every non-passive effect of a fighter is an ability, and the fit picks which run. */
@@ -331,9 +333,9 @@ impl Item {
 
         /* Any module that has a capacitorNeed, can be activated. */
         if self.attributes.contains_key(&ATTRIBUTE_CAPACITOR_NEED_ID)
-            && self.max_state < EffectCategory::Active
+            && self.max_state < ItemState::Active
         {
-            self.max_state = EffectCategory::Active;
+            self.max_state = ItemState::Active;
         }
 
         if self.state > self.max_state {
@@ -367,7 +369,7 @@ impl Pass for PassTwo {
 
         for (index, item) in objects.items.iter_mut().enumerate() {
             if structure_fit && item.is_on_char() {
-                item.state = EffectCategory::Passive;
+                item.state = ItemState::Passive;
                 continue;
             }
             if !item.is_calculated() {
