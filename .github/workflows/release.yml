@@ -97,9 +97,8 @@ jobs:
         VERSION=$(echo ${{ github.ref_name }} | cut -b2-)
         echo "Version: ${VERSION}"
 
-        sed -i.bak 's/version = "0.0.0-git"/version = "'${VERSION}'"/' Cargo.toml
-        sed -i.bak 's/^version = "0.0.0"$/version = "'${VERSION}'"/' crates/esf-python/Cargo.toml
-        rm -f Cargo.toml.bak crates/esf-python/Cargo.toml.bak
+        sed -i.bak 's/^version = "0.0.0"$/version = "'${VERSION}'"/' pyproject.toml
+        rm -f pyproject.toml.bak
 
     - name: Build wheel
       uses: PyO3/maturin-action@v1
@@ -129,8 +128,7 @@ jobs:
         VERSION=$(echo ${{ github.ref_name }} | cut -b2-)
         echo "Version: ${VERSION}"
 
-        sed -i 's/version = "0.0.0-git"/version = "'${VERSION}'"/' Cargo.toml
-        sed -i 's/^version = "0.0.0"$/version = "'${VERSION}'"/' crates/esf-python/Cargo.toml
+        sed -i 's/^version = "0.0.0"$/version = "'${VERSION}'"/' pyproject.toml
 
     - name: Build sdist
       uses: PyO3/maturin-action@v1
