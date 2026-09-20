@@ -3,8 +3,8 @@ name = "esf-python"
 # Published to PyPI instead.
 publish = false
 description = "Library to calculate statistics for EVE Online ship fits"
-# Not the workspace version: maturin reads this one, and "0.0.0-git" is not a
-# PEP 440 version.
+# Not the workspace version: the wheel takes its version from pyproject.toml, and
+# a fixed value here keeps Cargo.lock stable across releases.
 version = "0.0.0"
 authors.workspace = true
 edition.workspace = true
