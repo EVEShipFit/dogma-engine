@@ -89,5 +89,8 @@ low_2/type  = Damage Control II
 low_2/state = online
 
 ship                          = skill Minmatar Frigate needs 1 has 0
+ship                          = skill Spaceship Command needs 1 has 0
 low_1/Reactive Armor Hardener = skill Hull Upgrades needs 3 has 0
+low_1/Reactive Armor Hardener = skill Mechanics needs 1 has 0
 low_2/Damage Control II       = skill Hull Upgrades needs 4 has 0
+low_2/Damage Control II       = skill Mechanics needs 1 has 0

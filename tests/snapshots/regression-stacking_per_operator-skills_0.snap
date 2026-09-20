@@ -82,6 +82,10 @@ low_2-3/type  = EM Energized Membrane II
 low_2-3/state = online
 
 ship                           = skill Minmatar Frigate needs 1 has 0
+ship                           = skill Spaceship Command needs 1 has 0
 low_1/Damage Control II        = skill Hull Upgrades needs 4 has 0
+low_1/Damage Control II        = skill Mechanics needs 1 has 0
 low_2/EM Energized Membrane II = skill Hull Upgrades needs 5 has 0
+low_2/EM Energized Membrane II = skill Mechanics needs 1 has 0
 low_3/EM Energized Membrane II = skill Hull Upgrades needs 5 has 0
+low_3/EM Energized Membrane II = skill Mechanics needs 1 has 0

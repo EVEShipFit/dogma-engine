@@ -108,9 +108,17 @@ high_1-2/capacitorPeakLoad     = -4.000000
 high_1-2/cycleTime             = 2500.000000
 
 ship                             = skill Amarr Frigate needs 1 has 0
+ship                             = skill Spaceship Command needs 1 has 0
 low_1/Small Armor Repairer II    = skill Repair Systems needs 3 has 0
 low_1/Small Armor Repairer II    = skill Mechanics needs 3 has 0
 medium_1/1MN Afterburner II      = skill Afterburner needs 4 has 0
+medium_1/1MN Afterburner II      = skill Navigation needs 1 has 0
 medium_2/Warp Disruptor II       = skill Propulsion Jamming needs 2 has 0
+medium_2/Warp Disruptor II       = skill CPU Management needs 3 has 0
+medium_2/Warp Disruptor II       = skill Navigation needs 2 has 0
 high_1/Small Energy Nosferatu II = skill Capacitor Emission Systems needs 3 has 0
+high_1/Small Energy Nosferatu II = skill Power Grid Management needs 3 has 0
+high_1/Small Energy Nosferatu II = skill Science needs 2 has 0
 high_2/Small Energy Nosferatu II = skill Capacitor Emission Systems needs 3 has 0
+high_2/Small Energy Nosferatu II = skill Power Grid Management needs 3 has 0
+high_2/Small Energy Nosferatu II = skill Science needs 2 has 0

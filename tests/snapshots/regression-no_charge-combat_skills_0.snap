@@ -110,11 +110,15 @@ dronebay_1-2/damagePerSecondWithoutReload = 9.600000
 
 ship                               = resource LaunchedDrones 2.000000 of 0.000000
 ship                               = skill Gallente Frigate needs 1 has 0
+ship                               = skill Spaceship Command needs 1 has 0
 high_1/Small EMP Smartbomb I       = skill Energy Pulse Weapons needs 1 has 0
+high_1/Small EMP Smartbomb I       = skill Power Grid Management needs 2 has 0
+high_1/Small EMP Smartbomb I       = skill Science needs 2 has 0
 high_2/Civilian Gatling Autocannon = skill Gunnery needs 1 has 0
 high_3/125mm Gatling AutoCannon II = skill Small Projectile Turret needs 5 has 0
 high_3/125mm Gatling AutoCannon II = skill Gunnery needs 2 has 0
 high_3/125mm Gatling AutoCannon II = skill Small Autocannon Specialization needs 1 has 0
+high_3/125mm Gatling AutoCannon II = skill Motion Prediction needs 3 has 0
 dronebay/Hobgoblin II              = skill Light Drone Operation needs 5 has 0
 dronebay/Hobgoblin II              = skill Gallente Drone Specialization needs 1 has 0
 dronebay/Hobgoblin II              = skill Drones needs 5 has 0

@@ -90,8 +90,14 @@ high_1/speed             = 4474.999905
 high_1/damageMultiplier  = 7.900200
 
 ship                               = skill Amarr Tactical Destroyer needs 1 has 0
+ship                               = skill Amarr Destroyer needs 5 has 0
+ship                               = skill Amarr Frigate needs 3 has 0
+ship                               = skill Spaceship Command needs 1 has 0
 low_1/Heat Sink II                 = skill Weapon Upgrades needs 4 has 0
+low_1/Heat Sink II                 = skill Gunnery needs 2 has 0
 medium_1/1MN Afterburner II        = skill Afterburner needs 4 has 0
+medium_1/1MN Afterburner II        = skill Navigation needs 1 has 0
 high_1/Small Focused Beam Laser II = skill Small Energy Turret needs 5 has 0
-high_1/Small Focused Beam Laser II = skill Gunnery needs 1 has 0
+high_1/Small Focused Beam Laser II = skill Gunnery needs 2 has 0
 high_1/Small Focused Beam Laser II = skill Small Beam Laser Specialization needs 1 has 0
+high_1/Small Focused Beam Laser II = skill Sharpshooter needs 3 has 0
