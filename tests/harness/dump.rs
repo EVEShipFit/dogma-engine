@@ -140,6 +140,8 @@ fn dump_rule(info: &impl Info, rule: Rule) -> String {
         Rule::RigSize { ship, item } => format!("rig_size {item} ship takes {ship}"),
         Rule::ShipRestricted => "ship_restricted".to_string(),
         Rule::CapitalItem => "capital_item".to_string(),
+        Rule::StructureItem => "structure_item".to_string(),
+        Rule::ShipItem => "ship_item".to_string(),
         Rule::MaxGroup {
             group_id,
             limit,

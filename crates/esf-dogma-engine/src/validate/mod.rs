@@ -101,6 +101,10 @@ pub enum Rule {
     ShipRestricted,
     /// A capital item on a ship that is not a capital.
     CapitalItem,
+    /// A structure module on something that is not a structure.
+    StructureItem,
+    /// A module of a ship on a structure.
+    ShipItem,
     /// More of a group than the ship may hold in that state.
     MaxGroup {
         /// The group the limit is on.
@@ -234,6 +238,7 @@ struct Item<'a> {
     fit: &'a FitItem,
     result: &'a ItemResult,
     group_id: i32,
+    category_id: i32,
     rack: Option<SlotKind>,
     hardpoint: Option<SlotKind>,
 }
@@ -254,6 +259,9 @@ impl<'a, I: Info> Context<'a, I> {
                     group_id: info
                         .get_type(fit_item.type_id)
                         .map_or(0, |r#type| r#type.group_id()),
+                    category_id: info
+                        .get_type(fit_item.type_id)
+                        .map_or(0, |r#type| r#type.category_id()),
                     rack,
                     hardpoint,
                 }
@@ -347,6 +355,12 @@ impl Item<'_> {
     /// character.
     fn is_fitted(&self) -> bool {
         self.rack().is_some()
+    }
+
+    /// Whether the hull has to accept it: what is fitted to it, and the
+    /// fighters it launches.
+    fn is_on_hull(&self) -> bool {
+        self.is_fitted() || matches!(self.fit.slot, Slot::FighterTube(_) | Slot::FighterBay)
     }
 
     /// Whether the character has to be able to use it. Cargo is only hauled.
