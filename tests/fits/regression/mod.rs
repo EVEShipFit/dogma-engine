@@ -5,6 +5,7 @@ mod attribute_cap;
 mod beacons;
 mod boosters;
 mod burst_projector;
+mod capacitor_booster;
 mod damage_profile;
 mod drone_stack_state;
 mod fighters;
