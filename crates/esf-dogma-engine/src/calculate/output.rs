@@ -2,9 +2,13 @@ use std::collections::BTreeMap;
 
 use serde::Serialize;
 
+use esf_data::Info;
+
 use super::Objects;
 use super::item::{EffectOperator, Item, Object};
+use super::outgoing::outgoing;
 use crate::fit::State;
+use crate::projection::Projection;
 
 /// The result of [`calculate()`](crate::calculate).
 #[derive(Serialize, Debug)]
@@ -21,6 +25,9 @@ pub struct Calculation {
     /// Every buff handed to the fit.
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub buffs: Vec<BuffResult>,
+    /// All outgoing projections (effects and buffs).
+    #[serde(skip_serializing_if = "Projection::is_empty")]
+    pub outgoing: Projection,
 }
 
 /// A buff handed to the fit: an id naming what it changes, and how strong.
@@ -174,13 +181,14 @@ impl ItemResult {
 }
 
 impl Calculation {
-    pub(super) fn new(objects: &Objects) -> Calculation {
+    pub(super) fn new(info: &impl Info, objects: &Objects) -> Calculation {
         Calculation {
             ship: ItemResult::new(&objects.ship),
             mode: objects.mode.as_ref().map(ItemResult::new),
             items: objects.items.iter().map(ItemResult::new).collect(),
             character: ItemResult::new(&objects.char),
             buffs: objects.buffs.clone(),
+            outgoing: outgoing(info, objects),
         }
     }
 }

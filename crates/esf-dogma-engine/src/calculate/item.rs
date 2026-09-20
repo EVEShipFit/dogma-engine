@@ -167,8 +167,8 @@ impl EffectCategory {
     pub fn runs_at(self, state: ItemState) -> bool {
         match self.required_state() {
             Some(required) => state >= required,
-            /* Asks for no state, so only something always-on runs it. */
-            None => state == ItemState::AlwaysOn,
+            /* Asks for no state, so it runs the moment the item is active. */
+            None => state.is_active(),
         }
     }
 }

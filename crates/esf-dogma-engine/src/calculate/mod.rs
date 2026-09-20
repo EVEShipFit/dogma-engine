@@ -1,5 +1,6 @@
 mod attribute_ids;
 mod item;
+mod outgoing;
 mod output;
 mod pass_1;
 mod pass_2;
@@ -93,5 +94,5 @@ pub fn calculate(info: &impl Info, fit: &Fit, options: &Options) -> Calculation 
     pass_3::PassThree::pass(info, &mut objects);
     pass_4::PassFour::pass(info, &mut objects);
 
-    Calculation::new(&objects)
+    Calculation::new(info, &objects)
 }

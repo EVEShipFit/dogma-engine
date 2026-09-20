@@ -7,13 +7,10 @@ use super::attribute_ids::{
     ATTRIBUTE_RADIUS_ID, ATTRIBUTE_SKILL_LEVEL_ID, ATTRIBUTE_VOLUME_ID,
 };
 use super::item::{Attribute, Item};
+use super::outgoing::warfare_buffs;
 use super::output::{BuffResult, BuffSource};
 use super::{Info, Objects};
 use crate::fit::{DamageProfile, Fit, Mutation, Security, Spool};
-
-/* warfareBuff1 to warfareBuff4, as their (id, value) attribute pair. */
-const WARFARE_BUFF_ATTRIBUTE_IDS: [(i32, i32); 4] =
-    [(2468, 2469), (2470, 2471), (2472, 2473), (2536, 2537)];
 
 pub struct PassOne {}
 
@@ -29,23 +26,8 @@ impl Item {
         self.attributes.insert(attribute_id, Attribute::new(value));
     }
 
-    /// The buffs this item offers, read off its four `warfareBuff` pairs.
-    fn warfare_buffs(&self, from: BuffSource) -> impl Iterator<Item = Candidate> {
-        WARFARE_BUFF_ATTRIBUTE_IDS.into_iter().filter_map(
-            move |(id_attribute_id, value_attribute_id)| match self.value_of(id_attribute_id) as i32
-            {
-                0 => None,
-                id => Some(Candidate {
-                    id,
-                    value: self.value_of(value_attribute_id),
-                    from,
-                }),
-            },
-        )
-    }
-
     /* What pass 3 worked out, or the base value until it has run. */
-    fn value_of(&self, attribute_id: i32) -> f64 {
+    pub(super) fn value_of(&self, attribute_id: i32) -> f64 {
         self.attributes.get(&attribute_id).map_or(0.0, |attribute| {
             attribute.value.get().unwrap_or(attribute.base_value)
         })
@@ -58,7 +40,7 @@ impl Item {
         }
     }
 
-    fn set_attributes(&mut self, info: &impl Info) {
+    pub(super) fn set_attributes(&mut self, info: &impl Info) {
         self.set_type_ids(info);
         self.set_type_attributes(info, self.type_id);
     }
@@ -157,7 +139,11 @@ impl PassOne {
             let mut beacon = Item::new_beacon(*type_id);
 
             beacon.set_attributes(info);
-            candidates.extend(beacon.warfare_buffs(BuffSource::Beacon { type_id: *type_id }));
+            candidates.extend(warfare_buffs(&beacon).map(|buff| Candidate {
+                id: buff.id,
+                value: buff.value,
+                from: BuffSource::Beacon { type_id: *type_id },
+            }));
 
             objects.beacons.push(beacon);
         }

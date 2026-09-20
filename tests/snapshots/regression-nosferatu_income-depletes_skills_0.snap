@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills)"
+expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Punisher
 ship/scanStrength                            = 10.000000
@@ -67,6 +67,23 @@ ship/shipBonusSoEECS4                        = 0.000000
 ship/shipBonusSoEECS5                        = 0.000000
 ship/shipBonusAB3                            = 0.000000
 
+outgoing_effect_1/type                  = Warp Disruptor II
+outgoing_effect_1/effect                = warpDisrupt
+outgoing_effect_1/maxRange              = 24000.000000
+outgoing_effect_1/warpScrambleStrength  = 1.000000
+outgoing_effect_2/type                  = Small Energy Nosferatu II
+outgoing_effect_2/effect                = capacitorPeakLoadTaken
+outgoing_effect_2/capacitorTransferRate = 4.000000
+outgoing_effect_2/maxRange              = 5000.000000
+outgoing_effect_2/falloffEffectiveness  = 2500.000000
+outgoing_effect_2/remoteResistanceID    = 2045.000000
+outgoing_effect_3/type                  = Small Energy Nosferatu II
+outgoing_effect_3/effect                = capacitorPeakLoadTaken
+outgoing_effect_3/capacitorTransferRate = 4.000000
+outgoing_effect_3/maxRange              = 5000.000000
+outgoing_effect_3/falloffEffectiveness  = 2500.000000
+outgoing_effect_3/remoteResistanceID    = 2045.000000
+
 low_1/type              = Small Armor Repairer II
 low_1/state             = active
 low_1/armorRepairRate   = 15.333333
@@ -83,7 +100,8 @@ medium_2/state             = active
 medium_2/capacitorPeakLoad = 6.000000
 medium_2/cycleTime         = 5000.000000
 
-high_1-2/type              = Small Energy Nosferatu II
-high_1-2/state             = active
-high_1-2/capacitorPeakLoad = -4.000000
-high_1-2/cycleTime         = 2500.000000
+high_1-2/type                  = Small Energy Nosferatu II
+high_1-2/state                 = active
+high_1-2/capacitorTransferRate = 4.000000
+high_1-2/capacitorPeakLoad     = -4.000000
+high_1-2/cycleTime             = 2500.000000

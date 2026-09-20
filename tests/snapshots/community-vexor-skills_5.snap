@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills)"
+expression: "calculate_fit(eft_fit, skills, edit)"
 ---
 ship/type                                    = Vexor
 ship/scanStrength                            = 19.200000
@@ -134,6 +134,13 @@ character/piTaxReduction                           = 0.500000
 character/inventionReverseEngineeringResearchSpeed = 0.850000
 character/reactionTimeMultiplier                   = 0.800000
 character/reactionSlotLimit                        = 10.000000
+
+outgoing_effect_1/type                 = Stasis Webifier II
+outgoing_effect_1/effect               = remoteWebifierFalloff
+outgoing_effect_1/speedFactor          = -60.000000
+outgoing_effect_1/maxRange             = 10000.000000
+outgoing_effect_1/falloffEffectiveness = 0.000000
+outgoing_effect_1/remoteResistanceID   = 2115.000000
 
 low_1-2/type             = Drone Damage Amplifier II
 low_1-2/state            = online

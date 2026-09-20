@@ -118,7 +118,7 @@ fn for_each_in_location(
     }
 }
 
-fn get_effect_category(category: eve::EffectCategory) -> EffectCategory {
+pub(super) fn get_effect_category(category: eve::EffectCategory) -> EffectCategory {
     match category {
         eve::EffectCategory::Passive => EffectCategory::Passive,
         eve::EffectCategory::Active => EffectCategory::Active,

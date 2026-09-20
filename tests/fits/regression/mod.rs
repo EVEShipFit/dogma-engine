@@ -12,6 +12,7 @@ mod mutations;
 mod no_charge;
 mod no_cycle_time;
 mod nosferatu_income;
+mod projection;
 mod quantity_with_x_in_name;
 mod security_status;
 mod spool;

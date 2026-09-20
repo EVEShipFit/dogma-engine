@@ -26,6 +26,7 @@
 
 mod calculate;
 mod fit;
+mod projection;
 
 pub use calculate::{
     AttributeValue, BuffResult, BuffSource, Calculation, EffectOperator, ItemResult, Options,
@@ -35,3 +36,4 @@ pub use fit::{
     Character, Charge, DamageProfile, Environment, Fit, FitItem, Mutation, Security, Ship, Slot,
     Spool, State,
 };
+pub use projection::{ProjectedBuff, ProjectedEffect, Projection};

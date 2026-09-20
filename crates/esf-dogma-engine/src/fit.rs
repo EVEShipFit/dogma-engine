@@ -210,7 +210,7 @@ fn one() -> u32 {
 }
 
 /* JSON and JavaScript objects only have string keys. */
-fn id_map<'de, D, V>(deserializer: D) -> Result<BTreeMap<i32, V>, D::Error>
+pub(crate) fn id_map<'de, D, V>(deserializer: D) -> Result<BTreeMap<i32, V>, D::Error>
 where
     D: Deserializer<'de>,
     V: Deserialize<'de>,

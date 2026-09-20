@@ -74,6 +74,14 @@ All identifiers are those from the SDE.
   - `value`: how strong it is, in whatever the buff's operation reads.
   - `from`: what handed it over; `type` is `beacon` (with its `type_id`).
   - `applied`: false when another source of the same buff won.
+- `outgoing`: what the fit hands to other fits.
+  - `buffs`: buffs on offer, like the ones a command burst hands out.
+    - `id`: which buff, as `dbuffCollections` in the SDE numbers them.
+    - `value`: how strong it is, in whatever the buff's operation reads.
+  - `effects`: effects the fit aims at another, like a stasis webifier.
+    - `type_id`: the type the effect belongs to; its category decides the stacking penalty.
+    - `effect_id`: which effect, as `dogmaEffects` in the SDE numbers them.
+    - `attributes`: the value per attribute ID the effect reads, as this fit worked them out.
 
 Each result has:
 

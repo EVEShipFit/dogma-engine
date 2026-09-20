@@ -119,6 +119,15 @@ character/inventionReverseEngineeringResearchSpeed = 0.850000
 character/reactionTimeMultiplier                   = 0.800000
 character/reactionSlotLimit                        = 10.000000
 
+outgoing_effect_1/type                 = Heavy Mutadaptive Remote Armor Repairer II
+outgoing_effect_1/effect               = remoteArmorRepairRate
+outgoing_effect_1/spoolMultiplier      = 2.500000
+outgoing_effect_1/armorRepairRate      = 213.333333
+outgoing_effect_1/maxRange             = 24000.000000
+outgoing_effect_1/duration             = 6000.000000
+outgoing_effect_1/armorDamageAmount    = 512.000000
+outgoing_effect_1/falloffEffectiveness = 0.000000
+
 high_1/type                         = Supratidal Entropic Disintegrator II
 high_1/state                        = active
 high_1/spoolMultiplierBonus         = 2.125000
@@ -148,6 +157,7 @@ high_2/type                 = Heavy Mutadaptive Remote Armor Repairer II
 high_2/state                = active
 high_2/spoolMultiplierBonus = 1.500000
 high_2/spoolMultiplier      = 2.500000
+high_2/armorRepairRate      = 213.333333
 high_2/capacitorPeakLoad    = 32.062500
 high_2/cycleTime            = 6000.000000
 high_2/capacitorNeed        = 192.375000
