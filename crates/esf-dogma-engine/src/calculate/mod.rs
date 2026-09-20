@@ -36,6 +36,8 @@ pub(crate) struct Objects {
     pub projected: Vec<Projected>,
     pub buffs: Vec<ProjectedBuff>,
     pub sources: bool,
+    /// What a Reactive Armor Hardener shifts towards; `None` leaves it be.
+    pub reactive_armor: Option<[f64; 4]>,
 }
 
 impl Objects {
@@ -73,6 +75,7 @@ impl Objects {
             projected: Vec::new(),
             buffs: Vec::new(),
             sources: false,
+            reactive_armor: None,
         }
     }
 }

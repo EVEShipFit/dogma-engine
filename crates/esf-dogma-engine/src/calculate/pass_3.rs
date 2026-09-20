@@ -15,6 +15,8 @@ const OPERATOR_HAS_PENALTY: [EffectOperator; 5] = [
     EffectOperator::PostDiv,
 ];
 
+mod reactive_armor;
+
 pub struct PassThree {}
 
 #[derive(Default)]
@@ -239,6 +241,8 @@ impl Item {
 
 impl Pass for PassThree {
     fn pass(info: &impl Info, objects: &mut Objects) {
+        reactive_armor::simulate(info, objects);
+
         objects.ship.calculate_values(info, objects);
         for projected in &objects.projected {
             projected.item.calculate_values(info, objects);
