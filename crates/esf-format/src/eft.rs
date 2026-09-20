@@ -346,6 +346,7 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
     let Some((ship_type_name, name)) = header.split_once(",") else {
         return Err(Error::InvalidHeader);
     };
+    let (ship_type_name, name) = (ship_type_name.trim(), name.trim());
 
     let mut fit = Fit {
         name: Some(name.to_string()),
@@ -565,6 +566,14 @@ mod tests {
     #[test]
     fn header_without_comma() {
         assert_eq!(error("[Rifter]"), Error::InvalidHeader);
+    }
+
+    #[test]
+    fn header_is_trimmed() {
+        let fit = load_eft(&Names, "[ Rifter , My Rifter ]").unwrap();
+
+        assert_eq!(fit.ship.type_id, 587);
+        assert_eq!(fit.name.as_deref(), Some("My Rifter"));
     }
 
     #[test]
