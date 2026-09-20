@@ -88,6 +88,12 @@ high_1/damageMultiplierBonusMax     = 2.550000
 high_1/charge/type                  = Occult S
 
 ship                                   = skill Precursor Frigate needs 5 has 1
+ship                                   = skill Spaceship Command needs 3 has 0
+ship                                   = skill Power Grid Management needs 5 has 0
+ship                                   = skill Mechanics needs 5 has 0
 high_1/Light Entropic Disintegrator II = skill Small Precursor Weapon needs 5 has 0
 high_1/Light Entropic Disintegrator II = skill Small Disintegrator Specialization needs 1 has 0
+high_1/Light Entropic Disintegrator II = skill Motion Prediction needs 3 has 0
 high_1/charge/Occult S                 = skill Small Disintegrator Specialization needs 1 has 0
+high_1/charge/Occult S                 = skill Motion Prediction needs 3 has 0
+high_1/charge/Occult S                 = skill Small Precursor Weapon needs 5 has 0

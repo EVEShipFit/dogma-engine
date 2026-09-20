@@ -86,8 +86,12 @@ booster_1/type  = Standard Blue Pill Booster
 booster_1/state = offline
 
 ship                                 = skill Minmatar Frigate needs 1 has 0
+ship                                 = skill Spaceship Command needs 1 has 0
 medium_1/Medium Shield Booster II    = skill Shield Operation needs 3 has 0
+medium_1/Medium Shield Booster II    = skill Power Grid Management needs 1 has 0
 high_1/200mm AutoCannon II           = skill Small Projectile Turret needs 5 has 0
 high_1/200mm AutoCannon II           = skill Gunnery needs 2 has 0
 high_1/200mm AutoCannon II           = skill Small Autocannon Specialization needs 1 has 0
+high_1/200mm AutoCannon II           = skill Motion Prediction needs 3 has 0
 booster_1/Standard Blue Pill Booster = skill Biology needs 1 has 0
+booster_1/Standard Blue Pill Booster = skill Science needs 1 has 0

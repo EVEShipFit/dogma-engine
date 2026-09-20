@@ -294,6 +294,16 @@ impl<'a, I: Info> Context<'a, I> {
         self.value(result, attribute_id).unwrap_or(0.0)
     }
 
+    /// What an attribute starts at on a type the fit does not hold.
+    fn base_value(&self, type_id: i32, attribute_id: i32) -> Option<f64> {
+        self.info
+            .get_dogma_attributes(type_id)
+            .into_iter()
+            .flatten()
+            .find(|attribute| attribute.attribute_id() == attribute_id)
+            .map(|attribute| f64::from(attribute.value()))
+    }
+
     fn ship(&self) -> &ItemResult {
         &self.calculation.ship
     }

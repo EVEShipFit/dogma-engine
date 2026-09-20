@@ -73,6 +73,12 @@ dronebay_1-5/state = active
 
 ship                   = resource LaunchedDrones 5.000000 of 0.000000
 ship                   = skill Caldari Battleship needs 1 has 0
+ship                   = skill Spaceship Command needs 4 has 0
+ship                   = skill Caldari Battlecruiser needs 3 has 0
+ship                   = skill Caldari Cruiser needs 3 has 0
+ship                   = skill Caldari Destroyer needs 3 has 0
+ship                   = skill Caldari Frigate needs 3 has 0
 dronebay/Hornet EC-300 = skill Advanced Drone Avionics needs 1 has 0
 dronebay/Hornet EC-300 = skill Electronic Warfare needs 4 has 0
 dronebay/Hornet EC-300 = skill Drones needs 5 has 0
+dronebay/Hornet EC-300 = skill CPU Management needs 1 has 0

@@ -76,5 +76,8 @@ low_1/charge/type                    = Nanite Repair Paste
 low_1/charge/chargedRepairMultiplier = 3.000000
 
 ship                                  = skill Gallente Cruiser needs 1 has 0
+ship                                  = skill Spaceship Command needs 2 has 0
+ship                                  = skill Gallente Destroyer needs 3 has 0
+ship                                  = skill Gallente Frigate needs 3 has 0
 low_1/Medium Ancillary Armor Repairer = skill Repair Systems needs 1 has 0
 low_1/Medium Ancillary Armor Repairer = skill Mechanics needs 2 has 0

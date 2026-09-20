@@ -74,4 +74,8 @@ medium_1/capacitorNeed            = 0.000000
 medium_1/charge/type              = Cap Booster 100
 
 ship                                     = skill Caldari Cruiser needs 1 has 0
+ship                                     = skill Spaceship Command needs 2 has 0
+ship                                     = skill Caldari Destroyer needs 3 has 0
+ship                                     = skill Caldari Frigate needs 3 has 0
 medium_1/Medium Ancillary Shield Booster = skill Shield Operation needs 2 has 0
+medium_1/Medium Ancillary Shield Booster = skill Power Grid Management needs 1 has 0
