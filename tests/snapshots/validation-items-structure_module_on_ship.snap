@@ -1,0 +1,8 @@
+---
+source: tests/harness/case.rs
+expression: "validate_fit(eft_fit, skills, edit)"
+---
+ship                           = resource Cpu 4000.000000 of 162.500000
+ship                           = resource Powergrid 300000.000000 of 51.250000
+medium_1/Standup Cap Battery I = capital_item
+medium_1/Standup Cap Battery I = structure_item

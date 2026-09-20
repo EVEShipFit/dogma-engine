@@ -55,11 +55,21 @@ const GROUP_LIMITS: [(GroupLimit, &str); 3] = [
 /// takes one.
 const CAPITAL_VOLUME: f64 = 3500.0;
 const STRUCTURE_CATEGORY_ID: i32 = 65;
+const STRUCTURE_MODULE_CATEGORY_ID: i32 = 66;
+
+/// A fighter squadron has no category telling a structure's apart from a
+/// carrier's; these attributes do, one per role.
+const STANDUP_FIGHTERS: [&str; 3] = [
+    "fighterSquadronIsStandupLight",
+    "fighterSquadronIsStandupSupport",
+    "fighterSquadronIsStandupHeavy",
+];
 
 pub(super) fn validate<I: Info>(context: &Context<'_, I>, found: &mut Vec<Violation>) {
     rig_size(context, found);
     ship_restricted(context, found);
     capital_item(context, found);
+    standup(context, found);
     group_limits(context, found);
     type_limit(context, found);
 }
@@ -147,6 +157,32 @@ fn capital_item<I: Info>(context: &Context<'_, I>, found: &mut Vec<Violation>) {
         }
         if context.amount(item.result, volume) > CAPITAL_VOLUME {
             found.push(item.violation(Rule::CapitalItem));
+        }
+    }
+}
+
+fn standup<I: Info>(context: &Context<'_, I>, found: &mut Vec<Violation>) {
+    let markers: Vec<i32> = STANDUP_FIGHTERS
+        .iter()
+        .filter_map(|name| context.attribute_id(name))
+        .collect();
+
+    let structure = context.ship_category_id() == STRUCTURE_CATEGORY_ID;
+
+    for item in &context.items {
+        if !item.is_on_hull() {
+            continue;
+        }
+
+        let standup = item.category_id == STRUCTURE_MODULE_CATEGORY_ID
+            || markers
+                .iter()
+                .any(|attribute_id| context.amount(item.result, *attribute_id) != 0.0);
+
+        match (structure, standup) {
+            (false, true) => found.push(item.violation(Rule::StructureItem)),
+            (true, false) => found.push(item.violation(Rule::ShipItem)),
+            _ => {}
         }
     }
 }

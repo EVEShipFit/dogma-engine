@@ -45,6 +45,16 @@ Standup M-Set Missile Precision I
 Standup Cloning Center I
 "#;
 
+const SHIP_MODULE_ON_STRUCTURE: &str = r#"
+[Astrahus, Ship module]
+Damage Control II
+"#;
+
+const STRUCTURE_MODULE_ON_SHIP: &str = r#"
+[Rifter, Structure module]
+Standup Cap Battery I
+"#;
+
 validation! {
     rig_size = RIG_SIZE, skills: all(5);
     capital_item = CAPITAL, skills: all(5);
@@ -52,4 +62,6 @@ validation! {
     two_of_one_group_fitted = TWO_CONTROLS, skills: all(5);
     two_prop_mods_active = PROP_MODS, skills: all(5);
     structure = STRUCTURE, skills: all(5);
+    ship_module_on_structure = SHIP_MODULE_ON_STRUCTURE, skills: all(5);
+    structure_module_on_ship = STRUCTURE_MODULE_ON_SHIP, skills: all(5);
 }
