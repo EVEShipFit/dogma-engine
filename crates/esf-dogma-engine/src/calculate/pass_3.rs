@@ -79,7 +79,7 @@ impl Attribute {
                             continue;
                         };
 
-                        let applied = source_category <= item.state;
+                        let applied = source_category.runs_at(item.state);
                         if !applied && !objects.sources {
                             continue;
                         }
