@@ -1,0 +1,40 @@
+[build-system]
+requires = ["maturin>=1.9,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "eveshipfit-dogma-engine"
+description = "Library to calculate statistics for EVE Online ship fits"
+authors = [{ name = "EVEShipFit Team", email = "info@eveship.fit" }]
+license = "MIT"
+license-files = ["LICENSE"]
+readme = "README.md"
+requires-python = ">=3.10"
+keywords = ["eve-online", "sde", "dogma-engine"]
+dynamic = ["version"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Rust",
+    "Topic :: Games/Entertainment",
+    "Typing :: Typed",
+]
+
+[project.optional-dependencies]
+sde = ["eveshipfit-sde"]
+
+[project.urls]
+Repository = "https://github.com/EVEShipFit/dogma-engine"
+Issues = "https://github.com/EVEShipFit/dogma-engine/issues"
+
+[tool.maturin]
+manifest-path = "crates/esf-python/Cargo.toml"
+module-name = "esf_dogma_engine._esf_dogma_engine"
+python-source = "crates/esf-python/python"
+exclude = ["**/__pycache__/**"]
+features = ["pyo3/extension-module"]
+
+[tool.mypy]
+strict = true
+files = ["crates/esf-python/python", "crates/esf-python/tests"]

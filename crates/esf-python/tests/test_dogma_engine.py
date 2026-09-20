@@ -1,0 +1,147 @@
+import os
+from pathlib import Path
+
+import pytest
+
+import esf_dogma_engine as dogma
+from esf_dogma_engine.types import Character, Environment, FitItem
+
+SDE = Path(os.environ.get("ESF_SDE", Path(__file__).parents[3] / "node_modules/@eveshipfit/sde/dist/sde.dat"))
+
+RIFTER = 587
+AUTOCANNON = 2873
+REACTIVE_ARMOR_HARDENER = 4403
+GUNNERY = 3300
+STRUCTURE_HP = 9
+RATE_OF_FIRE = 51
+MAX_VELOCITY = 37
+ARMOR_KINETIC_RESONANCE = 269
+
+
+@pytest.fixture(scope="session", autouse=True)
+def sde() -> None:
+    dogma.load_sde_from_file(SDE)
+
+
+def fit(
+    *,
+    items: list[FitItem] | None = None,
+    character: Character | None = None,
+    environment: Environment | None = None,
+    incoming: dogma.Projection | None = None,
+) -> dogma.Fit:
+    """A Rifter with one autocannon, plus whatever else is asked for."""
+    fit: dogma.Fit = {
+        "ship": {"type_id": RIFTER},
+        "items": [
+            {"type_id": AUTOCANNON, "slot": {"type": "high", "index": 0}, "state": "active"},
+            *(items or []),
+        ],
+    }
+    if character is not None:
+        fit["character"] = character
+    if environment is not None:
+        fit["environment"] = environment
+    if incoming is not None:
+        fit["incoming"] = incoming
+    return fit
+
+
+def test_calculates_a_fit() -> None:
+    calculation = dogma.calculate(fit())
+
+    assert calculation["ship"]["attributes"][STRUCTURE_HP]["value"] > 0
+    assert calculation["items"][0]["state"] == "active"
+    assert len(calculation["items"]) == 1
+
+
+def test_attribute_keys_are_integers() -> None:
+    calculation = dogma.calculate(fit())
+
+    assert all(isinstance(key, int) for key in calculation["ship"]["attributes"])
+
+
+def rate_of_fire(calculation: dogma.Calculation) -> float:
+    return calculation["items"][0]["attributes"][RATE_OF_FIRE]["value"]
+
+
+def test_skills_take_integer_keys() -> None:
+    trained = dogma.calculate(fit(character={"skills": {GUNNERY: 5}}))
+    untrained = dogma.calculate(fit(character={"skills": {GUNNERY: 0}}))
+
+    assert rate_of_fire(trained) < rate_of_fire(untrained)
+
+
+def test_skills_still_take_string_keys() -> None:
+    """The WASM and JSON callers hand over string keys."""
+    strings = dogma.calculate(fit(character={"skills": {"3300": 5}}))  # type: ignore[arg-type]
+    integers = dogma.calculate(fit(character={"skills": {GUNNERY: 5}}))
+
+    assert rate_of_fire(strings) == rate_of_fire(integers)
+
+
+def test_outgoing_feeds_back_into_incoming() -> None:
+    webifier = dogma.calculate(
+        {
+            "ship": {"type_id": RIFTER},
+            "items": [
+                {"type_id": 527, "slot": {"type": "medium", "index": 0}, "state": "active"}
+            ],
+        }
+    )
+    outgoing = webifier["outgoing"]
+    assert outgoing["effects"]
+
+    webbed = dogma.calculate(fit(incoming=outgoing))
+    unwebbed = dogma.calculate(fit())
+
+    assert (
+        webbed["ship"]["attributes"][MAX_VELOCITY]["value"]
+        < unwebbed["ship"]["attributes"][MAX_VELOCITY]["value"]
+    )
+
+
+def test_sources_are_only_reported_when_asked_for() -> None:
+    skills: dogma.Fit = fit(character={"skills": {GUNNERY: 5}})
+
+    without = dogma.calculate(skills)
+    with_sources = dogma.calculate(skills, {"sources": True})
+
+    assert "sources" not in without["items"][0]["attributes"][RATE_OF_FIRE]
+
+    sources = with_sources["items"][0]["attributes"][RATE_OF_FIRE]["sources"]
+    assert {"type": "skill", "type_id": GUNNERY} in [source["from"] for source in sources]
+
+
+def test_reactive_armor_takes_a_profile_of_its_own() -> None:
+    hardener: FitItem = {
+        "type_id": REACTIVE_ARMOR_HARDENER,
+        "slot": {"type": "low", "index": 0},
+        "state": "active",
+    }
+
+    inert = dogma.calculate(fit(items=[hardener]))
+    adapting = dogma.calculate(
+        fit(items=[hardener], environment={"reactive_armor": {"profile": {"kinetic": 1.0}}})
+    )
+
+    assert (
+        adapting["ship"]["attributes"][ARMOR_KINETIC_RESONANCE]["value"]
+        < inert["ship"]["attributes"][ARMOR_KINETIC_RESONANCE]["value"]
+    )
+
+
+def test_beacon_returns_a_projection() -> None:
+    projection = dogma.beacon(RIFTER)
+
+    assert isinstance(projection, dict)
+
+
+def test_bad_fit_raises_value_error() -> None:
+    with pytest.raises(ValueError):
+        dogma.calculate({"ship": {"type_id": RIFTER}})  # type: ignore[typeddict-item]
+
+
+def test_loading_the_sde_twice_raises() -> None:
+    with pytest.raises(RuntimeError):
+        dogma.load_sde(b"")

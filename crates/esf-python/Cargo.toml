@@ -1,0 +1,27 @@
+[package]
+name = "esf-python"
+# Published to PyPI instead.
+publish = false
+description = "Library to calculate statistics for EVE Online ship fits"
+# Not the workspace version: maturin reads this one, and "0.0.0-git" is not a
+# PEP 440 version.
+version = "0.0.0"
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[lib]
+name = "_esf_dogma_engine"
+crate-type = ["cdylib"]
+
+[dependencies]
+esf-data.workspace = true
+esf-dogma-engine.workspace = true
+pyo3.workspace = true
+pythonize.workspace = true
+
+[features]
+# A wheel must not link against libpython, but `cargo test` and `cargo clippy`
+# must; maturin turns this on, a plain cargo build does not.
+extension-module = ["pyo3/extension-module"]
