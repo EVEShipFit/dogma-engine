@@ -118,7 +118,7 @@ ship/shipBonusSoEECS3                                          = 25.000000
 ship/shipBonusSoEECS4                                          = 25.000000
 ship/shipBonusSoEECS5                                          = 25.000000
 ship/shipBonusAB3                                              = 25.000000
-ship/miningScannerUpgrade                                      = 4.959375
+ship/miningScannerUpgrade                                      = 2.000000
 
 character/corporationMemberLimit                   = 12600.000000
 character/maxLockedTargets                         = 25.000000

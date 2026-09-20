@@ -1,5 +1,6 @@
 //! Regression cases that each reproduce a fixed bug or pin down one engine rule.
 
+mod attribute_cap;
 mod beacons;
 mod boosters;
 mod burst_projector;
