@@ -161,6 +161,25 @@ pub struct Environment {
     /// The security of the solar system.
     #[serde(default)]
     pub security: Security,
+    /// What a Reactive Armor Hardener shifts its resistances towards.
+    #[serde(default)]
+    pub reactive_armor: ReactiveArmor,
+}
+
+/// What a Reactive Armor Hardener shifts its resistances towards.
+///
+/// EVE shows it as a plain 15/15/15/15 hardener, as the client has no damage
+/// to shift it against. `DoNotAdapt` reports the same, and is the default.
+#[derive(Serialize, Deserialize, Debug, Copy, Clone, Default, PartialEq)]
+#[serde(rename_all = "snake_case")]
+pub enum ReactiveArmor {
+    /// Leave the resistances where they start, the way EVE shows them.
+    #[default]
+    DoNotAdapt,
+    /// Shift towards the damage the ship is already assumed to take.
+    DamageProfile,
+    /// Shift towards damage of its own, which the rest of the fit ignores.
+    Profile(DamageProfile),
 }
 
 /// How incoming damage is split over the four damage types. Only the ratio
@@ -258,6 +277,7 @@ mod tests {
         assert_eq!(fit.character.security_status, 0.0);
         assert_eq!(fit.environment.security, Security::HighSec);
         assert_eq!(fit.environment.damage_profile, DamageProfile::default());
+        assert_eq!(fit.environment.reactive_armor, ReactiveArmor::DoNotAdapt);
         assert!(fit.incoming.is_empty());
     }
 
@@ -282,6 +302,31 @@ mod tests {
             }
         );
         assert_eq!(fit.environment.security, Security::HighSec);
+    }
+
+    #[test]
+    fn reads_reactive_armor() {
+        let read = |environment| {
+            let fit: Fit = serde_json::from_str(&format!(
+                r#"{{"ship": {{"type_id": 587}}, "items": [], "environment": {environment}}}"#
+            ))
+            .unwrap();
+            fit.environment.reactive_armor
+        };
+
+        assert_eq!(
+            read(r#"{"reactive_armor": "damage_profile"}"#),
+            ReactiveArmor::DamageProfile
+        );
+        assert_eq!(
+            read(r#"{"reactive_armor": {"profile": {"kinetic": 3, "thermal": 1}}}"#),
+            ReactiveArmor::Profile(DamageProfile {
+                em: 0.0,
+                explosive: 0.0,
+                kinetic: 3.0,
+                thermal: 1.0,
+            })
+        );
     }
 
     #[test]

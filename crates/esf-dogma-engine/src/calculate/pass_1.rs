@@ -6,7 +6,7 @@ use super::attribute_ids::{
 };
 use super::item::{Attribute, Item};
 use super::{Info, Objects, Projected};
-use crate::fit::{DamageProfile, Fit, Mutation, Security, Spool};
+use crate::fit::{DamageProfile, Fit, Mutation, ReactiveArmor, Security, Spool};
 use crate::projection::ProjectedBuff;
 
 pub struct PassOne {}
@@ -76,25 +76,38 @@ impl Item {
     }
 
     fn set_damage_profile(&mut self, info: &impl Info, profile: DamageProfile) {
-        let total = profile.em + profile.explosive + profile.kinetic + profile.thermal;
-        /* Effective hitpoints are only right when the four add up to one. */
-        let (profile, total) = if total > 0.0 {
-            (profile, total)
-        } else {
-            (DamageProfile::default(), 1.0)
-        };
+        let names = [
+            "damageProfileEm",
+            "damageProfileExplosive",
+            "damageProfileKinetic",
+            "damageProfileThermal",
+        ];
 
-        for (name, value) in [
-            ("damageProfileEm", profile.em),
-            ("damageProfileExplosive", profile.explosive),
-            ("damageProfileKinetic", profile.kinetic),
-            ("damageProfileThermal", profile.thermal),
-        ] {
+        for (name, value) in names.iter().zip(normalized(profile)) {
             if let Some(attribute_id) = info.attribute_name_to_id(name) {
-                self.set_attribute(attribute_id, value / total);
+                self.set_attribute(attribute_id, value);
             }
         }
     }
+}
+
+/* Only the ratio between the four matters, and whoever reads them wants them
+ * to add up to one. */
+fn normalized(profile: DamageProfile) -> [f64; 4] {
+    let total = profile.em + profile.explosive + profile.kinetic + profile.thermal;
+    let (profile, total) = if total > 0.0 {
+        (profile, total)
+    } else {
+        (DamageProfile::default(), 1.0)
+    };
+
+    [
+        profile.em,
+        profile.explosive,
+        profile.kinetic,
+        profile.thermal,
+    ]
+    .map(|value| value / total)
 }
 
 impl PassOne {
@@ -116,6 +129,11 @@ impl PassOne {
         objects
             .ship
             .set_damage_profile(info, fit.environment.damage_profile);
+        objects.reactive_armor = match fit.environment.reactive_armor {
+            ReactiveArmor::DoNotAdapt => None,
+            ReactiveArmor::DamageProfile => Some(normalized(fit.environment.damage_profile)),
+            ReactiveArmor::Profile(profile) => Some(normalized(profile)),
+        };
         if let Some(mode) = objects.mode.as_mut() {
             mode.set_attributes(info);
         }

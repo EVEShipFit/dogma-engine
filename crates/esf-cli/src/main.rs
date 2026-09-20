@@ -6,7 +6,8 @@ use clap::{Parser, ValueEnum};
 
 use esf_data::{Info, InfoName, InfoNameSde, InfoSde, Names, Sde};
 use esf_dogma_engine::{
-    Calculation, DamageProfile, Fit, ItemResult, Options, Security, Slot, SourceRef, State,
+    Calculation, DamageProfile, Fit, ItemResult, Options, ReactiveArmor, Security, Slot, SourceRef,
+    State,
 };
 use esf_format::eft;
 
@@ -81,6 +82,17 @@ struct Args {
     )]
     damage_profile: Option<DamageProfile>,
 
+    /// What a Reactive Armor Hardener shifts towards; absent leaves it as EVE shows it.
+    #[clap(
+        long,
+        value_name = "EM,EXPLOSIVE,KINETIC,THERMAL",
+        num_args = 0..=1,
+        default_missing_value = "",
+        value_parser = parse_reactive_armor,
+        help_heading = "Environment"
+    )]
+    reactive_armor: Option<ReactiveArmor>,
+
     /// Default: table when stdout is a terminal, json otherwise.
     #[clap(short, long, value_enum, help_heading = "Output")]
     output: Option<Output>,
@@ -150,6 +162,14 @@ fn parse_damage_profile(value: &str) -> Result<DamageProfile, String> {
         kinetic,
         thermal,
     })
+}
+
+/* Without a profile of its own the hardener shifts towards the incoming damage. */
+fn parse_reactive_armor(value: &str) -> Result<ReactiveArmor, String> {
+    if value.is_empty() {
+        return Ok(ReactiveArmor::DamageProfile);
+    }
+    Ok(ReactiveArmor::Profile(parse_damage_profile(value)?))
 }
 
 fn fail(message: String) -> ! {
@@ -448,6 +468,9 @@ pub fn main() {
     };
     if let Some(damage_profile) = args.damage_profile {
         fit.environment.damage_profile = damage_profile;
+    }
+    if let Some(reactive_armor) = args.reactive_armor {
+        fit.environment.reactive_armor = reactive_armor;
     }
     let mut beacons = Vec::new();
     for name in &args.beacons {

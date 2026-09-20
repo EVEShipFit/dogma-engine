@@ -56,6 +56,9 @@ All identifiers are those from the SDE.
 - `environment` (optional): where the fit is.
   - `damage_profile` (optional, default 0.25 each): incoming damage for effective hitpoints, as `em`, `explosive`, `kinetic` and `thermal` (relative to each other).
   - `security` (optional, default `high_sec`): `high_sec`, `low_sec`, `null_sec` or `wormhole`.
+  - `reactive_armor` (optional, default `do_not_adapt`): what a Reactive Armor Hardener shifts its resistances towards.
+    `do_not_adapt` leaves them where EVE shows them, `damage_profile` shifts towards `damage_profile`, and
+    `{"profile": {..}}` shifts towards a profile of its own, written the same way as `damage_profile`.
 - `incoming` (optional): what effects and buffs to apply that come from outside the ship.
   A calculation reports the same shape as `outgoing`: feed one fit's result into another's `incoming` links them up.
   - `buffs` (optional, default none): buffs to apply, like the ones a command burst hands out.
