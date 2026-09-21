@@ -1,7 +1,11 @@
-use serde::Serialize;
 use std::cell::{Cell, RefCell};
 use std::collections::{BTreeMap, BTreeSet};
+
+use serde::Serialize;
 use strum_macros::EnumIter;
+
+#[cfg(feature = "typescript")]
+use tsify::Tsify;
 
 use super::output::Source;
 use crate::fit::{FitItem, Slot, State};
@@ -30,6 +34,7 @@ pub enum ItemState {
 
 /* Declaration order is the order pass 3 applies operators in; do not reorder. */
 /// How a modifier changes an attribute. They are applied in this order.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, EnumIter)]
 #[serde(rename_all = "snake_case")]
 pub enum EffectOperator {

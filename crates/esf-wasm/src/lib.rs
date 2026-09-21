@@ -1,9 +1,10 @@
 use std::sync::OnceLock;
 
+use tsify::{Ts, Tsify};
 use wasm_bindgen::prelude::*;
 
 use esf_data::{Error, InfoNameSde, InfoSde, Names, Sde};
-use esf_dogma_engine::{Fit, Options};
+use esf_dogma_engine::{Calculation, Fit, Options, Projection};
 
 /// The SDE is handed over once and then read straight out of WASM memory, so
 /// no lookup crosses back into JavaScript.
@@ -73,40 +74,41 @@ pub fn load_names(bytes: Vec<u8>) -> Result<i32, JsError> {
 
 /// Load a fit from EFT, the text format EVE copies a fit to the clipboard in.
 #[wasm_bindgen]
-pub fn load_eft(eft: &str) -> Result<JsValue, JsError> {
+pub fn load_eft(eft: &str) -> Result<Ts<Fit>, JsError> {
     let sde = sde()?;
 
     let info = InfoNameSde::new(sde, NAMES.get())?;
 
     let fit =
         esf_format::eft::load_eft(&info, eft).map_err(|error| JsError::new(&error.to_string()))?;
-    Ok(serde_wasm_bindgen::to_value(&fit)?)
+    Ok(fit.into_ts()?)
 }
 
-/// `js_options` may be left out; it then uses the defaults.
+/// `options` may be left out; it then uses the defaults.
 #[wasm_bindgen]
-pub fn calculate(js_fit: JsValue, js_options: JsValue) -> Result<JsValue, JsError> {
+pub fn calculate(fit: Ts<Fit>, options: Option<Ts<Options>>) -> Result<Ts<Calculation>, JsError> {
     let sde = sde()?;
 
-    let fit: Fit = serde_wasm_bindgen::from_value(js_fit)?;
-    let options: Options = match js_options.is_undefined() || js_options.is_null() {
-        true => Options::default(),
-        false => serde_wasm_bindgen::from_value(js_options)?,
+    let fit: Fit = fit.to_rust()?;
+    let options: Options = match options {
+        Some(options) => options.to_rust()?,
+        None => Options::default(),
     };
 
     let info = InfoSde::new(sde);
 
     let calculation = esf_dogma_engine::calculate(&info, &fit, &options);
-    Ok(serde_wasm_bindgen::to_value(&calculation)?)
+    Ok(calculation.into_ts()?)
 }
 
 /// Report the fitting rules the fit breaks. Calculates the fit itself, as
 /// every rule reads the values after skills and modules changed them.
-#[wasm_bindgen]
-pub fn validate(js_fit: JsValue) -> Result<JsValue, JsError> {
+/* `Ts` does not wrap a bare Vec, so the array is spelled out for TypeScript. */
+#[wasm_bindgen(unchecked_return_type = "Violation[]")]
+pub fn validate(fit: Ts<Fit>) -> Result<JsValue, JsError> {
     let sde = sde()?;
 
-    let fit: Fit = serde_wasm_bindgen::from_value(js_fit)?;
+    let fit: Fit = fit.to_rust()?;
     let info = InfoSde::new(sde);
 
     let calculation = esf_dogma_engine::calculate(&info, &fit, &Options::default());
@@ -117,11 +119,11 @@ pub fn validate(js_fit: JsValue) -> Result<JsValue, JsError> {
 /// What a beacon in space hands to every fit in there with it. Put the result
 /// in `incoming` of a fit to have it applied.
 #[wasm_bindgen]
-pub fn beacon(type_id: i32) -> Result<JsValue, JsError> {
+pub fn beacon(type_id: i32) -> Result<Ts<Projection>, JsError> {
     let sde = sde()?;
 
     let info = InfoSde::new(sde);
 
     let projection = esf_dogma_engine::beacon(&info, type_id);
-    Ok(serde_wasm_bindgen::to_value(&projection)?)
+    Ok(projection.into_ts()?)
 }
