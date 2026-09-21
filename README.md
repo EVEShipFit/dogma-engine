@@ -199,15 +199,16 @@ The WebAssembly variant is published on npm as
 [`@eveshipfit/dogma-engine`](https://www.npmjs.com/package/@eveshipfit/dogma-engine).
 [`@eveshipfit/sde`](https://www.npmjs.com/package/@eveshipfit/sde) ships `sde.dat` in its `dist` folder; serve or bundle that file.
 
-The package is built for bundlers (Vite, webpack 5, ...), which load the `.wasm` themselves.
+The package is an ES module with TypeScript types included, and it runs anywhere: under a bundler
+(Vite, webpack, ...), from a CDN, or in a plain `<script type="module">`.
+Its default export loads the WebAssembly and has to be awaited once before any other function is called.
 
 ```bash
 npm install @eveshipfit/dogma-engine @eveshipfit/sde
 ```
 
 ```js
-import {
-  init,
+import wasmInit, {
   load_sde,
   load_eft,
   save_eft,
@@ -216,7 +217,7 @@ import {
   beacon,
 } from "@eveshipfit/dogma-engine";
 
-init();
+await wasmInit();
 
 const sde = await fetch("/sde.dat").then((response) => response.arrayBuffer());
 const buildNumber = load_sde(new Uint8Array(sde));
@@ -366,7 +367,7 @@ This is done with [wasm-pack](https://rustwasm.github.io/wasm-pack/):
 
 ```bash
 cargo install wasm-pack
-wasm-pack build crates/esf-wasm --release --out-dir ../../pkg
+wasm-pack build crates/esf-wasm --release --target web --out-dir ../../pkg
 ```
 
 In the `pkg` folder is now a NPM module to use.

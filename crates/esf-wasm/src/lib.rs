@@ -21,8 +21,8 @@ fn sde() -> Result<&'static Sde<'static>, JsError> {
         .ok_or_else(|| JsError::new("SDE is not loaded; call load_sde() first"))
 }
 
-#[wasm_bindgen]
-pub fn init() {
+#[wasm_bindgen(start)]
+fn set_panic_hook() {
     std::panic::set_hook(Box::new(console_error_panic_hook::hook));
 }
 
