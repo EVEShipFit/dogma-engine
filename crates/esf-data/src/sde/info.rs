@@ -1,8 +1,10 @@
+use std::collections::BTreeMap;
+
 use flatbuffers::Vector;
 
 use super::{Names, Sde, eve};
 use crate::Error;
-use crate::info::{Info, InfoName};
+use crate::info::{Info, InfoExport, InfoName};
 
 /// [`Info`] answered from `sde.dat`.
 pub struct InfoSde<'a> {
@@ -44,6 +46,103 @@ impl Info for InfoSde<'_> {
     fn attribute_name_to_id(&self, name: &str) -> Option<i32> {
         self.sde.attribute_name_to_id(name)
     }
+}
+
+/* Only a handful of mutaplasmids exist, and only a mutated item looks one up,
+ * so a scan beats indexing them. */
+impl InfoExport for InfoSde<'_> {
+    fn find_mutaplasmid(&self, base: i32, result: i32, rolls: &BTreeMap<i32, f64>) -> Option<i32> {
+        let candidates = self
+            .sde
+            .mutaplasmids()
+            .filter(|mutaplasmid| makes(*mutaplasmid, base, result));
+
+        let (fitting, rest): (Vec<_>, Vec<_>) =
+            candidates.partition(|mutaplasmid| self.holds_rolls(*mutaplasmid, base, result, rolls));
+
+        /* The ranges of the mutaplasmids of one item nest, so the narrowest
+         * one that holds the rolls is the closest guess at the one used. */
+        let narrowest = fitting
+            .into_iter()
+            .min_by(|left, right| roll_width(*left).total_cmp(&roll_width(*right)));
+        let widest = || {
+            rest.into_iter()
+                .max_by(|left, right| roll_width(*left).total_cmp(&roll_width(*right)))
+        };
+
+        narrowest
+            .or_else(widest)
+            .map(|mutaplasmid| mutaplasmid.id())
+    }
+}
+
+impl InfoSde<'_> {
+    /// Whether every attribute the mutaplasmid rolls has a value in `rolls`
+    /// that it could have rolled. Its range is a factor of the unmutated
+    /// value.
+    fn holds_rolls(
+        &self,
+        mutaplasmid: eve::Mutaplasmid,
+        base: i32,
+        result: i32,
+        rolls: &BTreeMap<i32, f64>,
+    ) -> bool {
+        mutaplasmid
+            .attributes()
+            .into_iter()
+            .flatten()
+            .all(|attribute| {
+                let Some(rolled) = rolls.get(&attribute.attribute_id()) else {
+                    return false;
+                };
+                let Some(value) = self
+                    .base_value(base, attribute.attribute_id())
+                    .or_else(|| self.base_value(result, attribute.attribute_id()))
+                    .filter(|value| *value != 0.0)
+                else {
+                    return false;
+                };
+
+                /* Rounding trails along the way from the roll to the SDE and
+                 * back, so the edges of the range are not exact. */
+                let factor = rolled / value;
+                factor >= f64::from(attribute.min()) - FACTOR_SLACK
+                    && factor <= f64::from(attribute.max()) + FACTOR_SLACK
+            })
+    }
+
+    /// The value a type gives an attribute before anything modifies it.
+    fn base_value(&self, type_id: i32, attribute_id: i32) -> Option<f64> {
+        self.sde
+            .get_type(type_id)?
+            .dogma_attributes()?
+            .iter()
+            .find(|attribute| attribute.attribute_id() == attribute_id)
+            .map(|attribute| f64::from(attribute.value()))
+    }
+}
+
+/// How far outside its range a roll may land and still count.
+const FACTOR_SLACK: f64 = 1e-6;
+
+/// Whether the mutaplasmid turns `base` into `result`.
+fn makes(mutaplasmid: eve::Mutaplasmid, base: i32, result: i32) -> bool {
+    mutaplasmid.mappings().into_iter().flatten().any(|mapping| {
+        mapping.resulting_type_id() == result
+            && mapping
+                .applicable_type_ids()
+                .is_some_and(|type_ids| type_ids.iter().any(|type_id| type_id == base))
+    })
+}
+
+/// How far the mutaplasmid rolls, over all the attributes it touches.
+fn roll_width(mutaplasmid: eve::Mutaplasmid) -> f64 {
+    mutaplasmid
+        .attributes()
+        .into_iter()
+        .flatten()
+        .map(|attribute| f64::from(attribute.max() - attribute.min()))
+        .sum()
 }
 
 impl InfoName for InfoNameSde<'_> {

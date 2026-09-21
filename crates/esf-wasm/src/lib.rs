@@ -84,6 +84,17 @@ pub fn load_eft(eft: &str) -> Result<Ts<Fit>, JsError> {
     Ok(fit.into_ts()?)
 }
 
+/// Write a fit as EFT, the text format EVE copies a fit to the clipboard in.
+#[wasm_bindgen]
+pub fn save_eft(fit: Ts<Fit>) -> Result<String, JsError> {
+    let sde = sde()?;
+
+    let fit: Fit = fit.to_rust()?;
+    let info = InfoSde::new(sde);
+
+    esf_format::eft::save_eft(&info, &fit).map_err(|error| JsError::new(&error.to_string()))
+}
+
 /// `options` may be left out; it then uses the defaults.
 #[wasm_bindgen]
 pub fn calculate(fit: Ts<Fit>, options: Option<Ts<Options>>) -> Result<Ts<Calculation>, JsError> {

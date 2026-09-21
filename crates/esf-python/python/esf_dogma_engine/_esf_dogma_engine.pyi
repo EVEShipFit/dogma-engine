@@ -33,6 +33,15 @@ def load_eft(eft: str) -> Fit:
         ValueError: the text is not a fit this can read.
     """
 
+def save_eft(fit: Fit) -> str:
+    """Write a fit as EFT, the text format EVE copies a fit to the clipboard in.
+
+    Raises:
+        RuntimeError: the SDE is not loaded.
+        ValueError: the fit does not describe what it should, or names a type
+            the SDE does not know.
+    """
+
 def calculate(fit: Fit, options: Options | None = None) -> Calculation:
     """Calculate every attribute of the ship, its items and the character.
 

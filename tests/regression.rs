@@ -10,4 +10,5 @@
 #[macro_use]
 mod harness;
 
+mod eft;
 mod fits;

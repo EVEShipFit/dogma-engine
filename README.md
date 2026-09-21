@@ -206,7 +206,15 @@ npm install @eveshipfit/dogma-engine @eveshipfit/sde
 ```
 
 ```js
-import { init, load_sde, load_eft, calculate, validate, beacon } from "@eveshipfit/dogma-engine";
+import {
+  init,
+  load_sde,
+  load_eft,
+  save_eft,
+  calculate,
+  validate,
+  beacon,
+} from "@eveshipfit/dogma-engine";
 
 init();
 
@@ -225,6 +233,8 @@ const withSources = calculate(fit, { sources: true });
 const withBeacon = calculate({ ...fit, incoming: beacon(beaconTypeId) });
 /* Or if you have an EFT, the text format EVE copies a fit to the clipboard in: */
 const imported = calculate(load_eft("[Rifter, My Rifter]\n200mm AutoCannon I"));
+/* And to write a fit back out as EFT: */
+const eft = save_eft(fit);
 
 /* What EVE would not let you fly; it calculates the fit itself: */
 const violations = validate(fit);
@@ -266,6 +276,8 @@ with_sources = dogma.calculate(fit, {"sources": True})
 with_beacon = dogma.calculate({**fit, "incoming": dogma.beacon(beacon_type_id)})
 # Or if you have an EFT, the text format EVE copies a fit to the clipboard in:
 imported = dogma.calculate(dogma.load_eft("[Rifter, My Rifter]\n200mm AutoCannon I"))
+# And to write a fit back out as EFT:
+eft = dogma.save_eft(fit)
 
 # What EVE would not let you fly; it calculates the fit itself:
 violations = dogma.validate(fit)
@@ -307,6 +319,13 @@ printf '[Nergal, Spool]\nLight Entropic Disintegrator II, Occult S\n' \
 ```
 
 It prints a table on a terminal and JSON otherwise; see `--help` for the rest.
+
+Or to write the fit back out as EFT, instead of calculating it:
+
+```bash
+printf '[Nergal, Spool]\nLight Entropic Disintegrator II, Occult S\n' \
+  | cargo run --release -p esf-cli -- --eft
+```
 
 The regression suite reads the same paths; set `ESF_SDE` and `ESF_NAMES` to point it elsewhere.
 

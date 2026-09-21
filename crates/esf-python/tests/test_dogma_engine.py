@@ -200,6 +200,17 @@ def test_an_eft_matches_names_in_another_language() -> None:
     assert fit["items"][0]["type_id"] == AUTOCANNON_200MM
 
 
+def test_saves_an_eft() -> None:
+    eft = "[Rifter, My Rifter]\n200mm AutoCannon I, EMP S\n"
+
+    assert dogma.save_eft(dogma.load_eft(eft)) == eft
+
+
+def test_saving_an_eft_of_an_unknown_type_raises_value_error() -> None:
+    with pytest.raises(ValueError):
+        dogma.save_eft({"ship": {"type_id": -1}, "items": []})
+
+
 def test_a_bad_eft_raises_value_error() -> None:
     with pytest.raises(ValueError):
         dogma.load_eft("not a fit")

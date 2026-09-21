@@ -93,6 +93,10 @@ struct Args {
     )]
     reactive_armor: Option<ReactiveArmor>,
 
+    /// Write the fit back out as EFT instead of calculating it.
+    #[clap(long, help_heading = "Output")]
+    eft: bool,
+
     /// Default: table when stdout is a terminal, json otherwise.
     #[clap(short, long, value_enum, help_heading = "Output")]
     output: Option<Output>,
@@ -585,6 +589,12 @@ pub fn main() {
         fit.incoming
             .extend(esf_dogma_engine::beacon(&info, type_id));
     }
+    if args.eft {
+        let eft = eft::save_eft(&info, &fit).unwrap_or_else(|error| fail(error.to_string()));
+        print!("{eft}");
+        return;
+    }
+
     let options = Options {
         sources: args.sources,
     };
