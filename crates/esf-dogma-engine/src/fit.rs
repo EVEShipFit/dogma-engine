@@ -6,12 +6,17 @@ use std::fmt;
 use serde::de::{self, Visitor};
 use serde::{Deserialize, Deserializer, Serialize};
 
+#[cfg(feature = "typescript")]
+use tsify::Tsify;
+
 use crate::projection::Projection;
 
 /// A ship, what is fitted to it, and the character flying it.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Fit {
     /// Only for display; the calculation does not use it.
+    #[cfg_attr(feature = "typescript", tsify(optional))]
     pub name: Option<String>,
     /// The ship.
     pub ship: Ship,
@@ -29,6 +34,7 @@ pub struct Fit {
 }
 
 /// The ship of a fit.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Ship {
     /// The type id of the ship.
@@ -39,6 +45,7 @@ pub struct Ship {
 }
 
 /// A module, drone, fighter squadron, implant, booster or item in cargo.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct FitItem {
     /// The type id of the item.
@@ -53,6 +60,7 @@ pub struct FitItem {
     /// reach it.
     pub state: State,
     /// The charge loaded in the module, if any.
+    #[cfg_attr(feature = "typescript", tsify(optional))]
     pub charge: Option<Charge>,
     /// Only for mutated modules and drones.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -74,6 +82,7 @@ pub struct FitItem {
 
 /// Where an item is. The number is the position in its rack, starting at 0;
 /// for implants and boosters, the slot as EVE numbers it, starting at 1.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Deserialize, Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[serde(tag = "type", content = "index", rename_all = "snake_case")]
 pub enum Slot {
@@ -104,6 +113,7 @@ pub enum Slot {
 }
 
 /// The state of an item, lowest first.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Deserialize, Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "snake_case")]
 pub enum State {
@@ -118,6 +128,7 @@ pub enum State {
 }
 
 /// A charge loaded in a module.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Charge {
     /// The type id of the charge.
@@ -125,16 +136,22 @@ pub struct Charge {
 }
 
 /// How a module or drone was mutated.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Mutation {
     /// The type id of the item before it was mutated.
     pub base: i32,
     /// The rolled value of each mutated attribute, by attribute id.
     #[serde(default, deserialize_with = "id_map")]
+    #[cfg_attr(
+        feature = "typescript",
+        tsify(type = "Map<number, number> | Record<number, number>")
+    )]
     pub attributes: BTreeMap<i32, f64>,
 }
 
 /// How far a module has spooled.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Deserialize, Debug, Copy, Clone, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub enum Spool {
@@ -143,11 +160,16 @@ pub enum Spool {
 }
 
 /// The character flying the ship.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct Character {
     /// The level of each skill, by type id. A skill that is not listed is not
     /// trained, and gives no bonus.
     #[serde(default, deserialize_with = "id_map")]
+    #[cfg_attr(
+        feature = "typescript",
+        tsify(type = "Map<number, number> | Record<number, number>")
+    )]
     pub skills: BTreeMap<i32, u8>,
     /// -10.0 to 5.0. Only a few ships have a bonus that scales with it.
     #[serde(default)]
@@ -155,6 +177,7 @@ pub struct Character {
 }
 
 /// Where the ship is.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct Environment {
     /// The damage the ship is assumed to take, for effective hitpoints.
@@ -172,6 +195,7 @@ pub struct Environment {
 ///
 /// EVE shows it as a plain 15/15/15/15 hardener, as the client has no damage
 /// to shift it against. `DoNotAdapt` reports the same, and is the default.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Deserialize, Debug, Copy, Clone, Default, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub enum ReactiveArmor {
@@ -186,6 +210,7 @@ pub enum ReactiveArmor {
 
 /// How incoming damage is split over the four damage types. Only the ratio
 /// matters; the calculation scales the four to add up to one.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Deserialize, Debug, Copy, Clone, PartialEq)]
 pub struct DamageProfile {
     /// EM damage.
@@ -214,6 +239,7 @@ impl Default for DamageProfile {
 }
 
 /// The security of a solar system.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Deserialize, Debug, Copy, Clone, Default, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum Security {

@@ -27,6 +27,7 @@ serde-wasm-bindgen = "0.6"
 serde_json = "1.0"
 strum = "0.28"
 strum_macros = "0.28"
+tsify = { version = "0.5.8", default-features = false, features = ["js"] }
 wasm-bindgen = "0.2"
 
 # WASM is shipped over the wire, so it trades speed for size.

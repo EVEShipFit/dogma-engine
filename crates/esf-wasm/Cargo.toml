@@ -17,7 +17,8 @@ crate-type = ["cdylib"]
 [dependencies]
 console_error_panic_hook.workspace = true
 esf-data.workspace = true
-esf-dogma-engine.workspace = true
+esf-dogma-engine = { workspace = true, features = ["typescript"] }
 esf-format.workspace = true
 serde-wasm-bindgen.workspace = true
+tsify.workspace = true
 wasm-bindgen.workspace = true

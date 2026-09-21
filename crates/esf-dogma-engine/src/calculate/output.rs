@@ -2,6 +2,9 @@ use std::collections::BTreeMap;
 
 use serde::Serialize;
 
+#[cfg(feature = "typescript")]
+use tsify::Tsify;
+
 use esf_data::Info;
 
 use super::Objects;
@@ -11,6 +14,7 @@ use crate::fit::State;
 use crate::projection::{ProjectedBuff, Projection};
 
 /// The result of [`calculate()`](crate::calculate).
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Debug)]
 pub struct Calculation {
     /// The ship.
@@ -26,13 +30,16 @@ pub struct Calculation {
     /// the ones the fit's own bursts hand out. What is missing lost to another
     /// source of the same buff, or the SDE has no such buff.
     #[serde(skip_serializing_if = "Vec::is_empty")]
+    #[cfg_attr(feature = "typescript", tsify(optional))]
     pub buffs: Vec<ProjectedBuff>,
     /// All outgoing projections (effects and buffs).
     #[serde(skip_serializing_if = "Projection::is_empty")]
+    #[cfg_attr(feature = "typescript", tsify(optional))]
     pub outgoing: Projection,
 }
 
 /// The calculated attributes of the ship, its mode, the character, or one item.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Debug)]
 pub struct ItemResult {
     /// Every attribute, by attribute id.
@@ -46,6 +53,7 @@ pub struct ItemResult {
 }
 
 /// One attribute, before and after the effects on it.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Debug)]
 pub struct AttributeValue {
     /// The value from the SDE.
@@ -54,10 +62,12 @@ pub struct AttributeValue {
     pub value: f64,
     /// In the order pass 3 applied them; empty unless `Options::sources` is set.
     #[serde(skip_serializing_if = "Vec::is_empty")]
+    #[cfg_attr(feature = "typescript", tsify(optional))]
     pub sources: Vec<Source>,
 }
 
 /// One modifier on an attribute, and where it came from.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Debug, Clone)]
 pub struct Source {
     /// The object the effect belongs to.
@@ -82,6 +92,7 @@ pub struct Source {
 /// `Item` and `Charge` index into `Fit::items`, `Projected` into
 /// `Fit::incoming.effects`. A skill and a buff are not in the result, so they
 /// carry their own id.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Debug, Clone, Copy, PartialEq)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum SourceRef {

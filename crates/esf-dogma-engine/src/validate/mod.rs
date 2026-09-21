@@ -2,6 +2,9 @@
 
 use serde::Serialize;
 
+#[cfg(feature = "typescript")]
+use tsify::Tsify;
+
 use esf_data::{Info, eve};
 
 use crate::calculate::{Calculation, ItemResult};
@@ -14,6 +17,7 @@ mod skill;
 mod slot;
 
 /// One rule the fit breaks, and what breaks it.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Debug, Clone, PartialEq)]
 pub struct Violation {
     /// What the rule is about.
@@ -23,6 +27,7 @@ pub struct Violation {
 }
 
 /// What a [`Violation`] is about. `Item` and `Charge` index into `Fit::items`.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Debug, Clone, Copy, PartialEq, Eq)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum Target {
@@ -45,6 +50,7 @@ pub enum Target {
 /// What an item would accept instead is not repeated here; it is on the item
 /// itself, as `chargeGroup1`, `canFitShipType1` and the like.
 #[non_exhaustive]
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Debug, Clone, Copy, PartialEq)]
 #[serde(tag = "type", rename_all = "snake_case")]
 pub enum Rule {
@@ -137,6 +143,7 @@ pub enum Rule {
 }
 
 /// A resource the ship only has so much of.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Debug, Clone, Copy, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum Resource {
@@ -169,6 +176,7 @@ pub enum Resource {
 }
 
 /// A rack of slots, or a hardpoint a weapon needs.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Debug, Clone, Copy, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum SlotKind {
@@ -191,6 +199,7 @@ pub enum SlotKind {
 }
 
 /// Which state a group limit counts.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Debug, Clone, Copy, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum GroupLimit {

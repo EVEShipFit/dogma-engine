@@ -4,12 +4,16 @@ use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
 
+#[cfg(feature = "typescript")]
+use tsify::Tsify;
+
 use crate::fit::id_map;
 
 /// The external buffs and effects that can be applied to another ship.
 ///
 /// A calculation reports what the fit hands out; put that in
 /// [`Fit::incoming`](crate::Fit::incoming) of another fit to have it applied.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
 pub struct Projection {
     /// Buffs, like command burst hands.
@@ -21,6 +25,7 @@ pub struct Projection {
 }
 
 /// A projected buff (like command bursts).
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq)]
 pub struct ProjectedBuff {
     /// Which buff, as `dbuffCollections` in the SDE numbers them.
@@ -30,6 +35,7 @@ pub struct ProjectedBuff {
 }
 
 /// A projected dogma effect.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct ProjectedEffect {
     /// The type the effect belongs to.
@@ -38,6 +44,10 @@ pub struct ProjectedEffect {
     pub effect_id: i32,
     /// Every attribute and its value the effect reads.
     #[serde(default, deserialize_with = "id_map")]
+    #[cfg_attr(
+        feature = "typescript",
+        tsify(type = "Map<number, number> | Record<number, number>")
+    )]
     pub attributes: BTreeMap<i32, f64>,
 }
 

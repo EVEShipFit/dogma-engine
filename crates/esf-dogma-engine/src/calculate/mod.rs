@@ -9,6 +9,9 @@ mod pass_4;
 
 use serde::Deserialize;
 
+#[cfg(feature = "typescript")]
+use tsify::Tsify;
+
 use crate::fit::Fit;
 use crate::projection::ProjectedBuff;
 use esf_data::Info;
@@ -19,6 +22,7 @@ pub use outgoing::beacon;
 pub use output::{AttributeValue, Calculation, ItemResult, Source, SourceRef};
 
 /// What [`calculate()`] reports on top of the values.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Deserialize, Debug, Default, Clone)]
 #[serde(default)]
 pub struct Options {
