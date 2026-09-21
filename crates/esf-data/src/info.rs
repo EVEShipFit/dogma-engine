@@ -1,6 +1,8 @@
 //! The lookups the engine and the importers do, as traits, so the data does
 //! not have to come from [`Sde`](crate::Sde).
 
+use std::collections::BTreeMap;
+
 use flatbuffers::Vector;
 
 use crate::sde::eve;
@@ -23,6 +25,17 @@ pub trait Info {
     fn get_dbuff_collection(&self, buff_id: i32) -> Option<eve::DbuffCollection<'_>>;
     /// The id of the attribute with exactly this name, like `"cycleTime"`.
     fn attribute_name_to_id(&self, name: &str) -> Option<i32>;
+}
+
+/// What an exporter looks up on top of [`Info`] to write a fit back out.
+///
+/// [`InfoSde`](crate::InfoSde) answers it from `sde.dat`.
+pub trait InfoExport: Info {
+    /// The type id of a mutaplasmid that turns `base` into `result` with
+    /// these rolled attribute values. Several mutaplasmids may, differing
+    /// only in how far they roll, so this answers the narrowest one the rolls
+    /// fit in; when none of them hold every roll, the widest.
+    fn find_mutaplasmid(&self, base: i32, result: i32, rolls: &BTreeMap<i32, f64>) -> Option<i32>;
 }
 
 /// What an importer looks up to turn a fit written with names into type ids.

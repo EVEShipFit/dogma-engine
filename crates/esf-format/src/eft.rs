@@ -3,12 +3,12 @@
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fmt;
 
-use esf_data::{InfoName, eve};
+use esf_data::{Info, InfoExport, InfoName, eve};
 use esf_dogma_engine::{
     Character, Charge, Environment, Fit, FitItem, Mutation, Projection, Ship, Slot, State,
 };
 
-/// Why an EFT could not be loaded.
+/// Why an EFT could not be loaded or saved.
 #[derive(Clone, Debug, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum Error {
@@ -20,6 +20,8 @@ pub enum Error {
     InvalidEmptySlot(String),
     /// No type has this name.
     UnknownType(String),
+    /// No type has this id.
+    UnknownTypeId(i32),
     /// The type exists, but is not a module, implant or booster.
     NoSlot(String),
     /// A line refers to a mutation, like `[1]`, that no section describes.
@@ -30,6 +32,8 @@ pub enum Error {
     InvalidMutation(String),
     /// No attribute has this name.
     UnknownAttribute(String),
+    /// No attribute has this id.
+    UnknownAttributeId(i32),
     /// A mutation leaves out an attribute its mutaplasmid rolls.
     MissingRoll {
         /// The first line of the mutation.
@@ -53,10 +57,14 @@ impl fmt::Display for Error {
             Error::InvalidHeader => write!(f, "invalid EFT header"),
             Error::InvalidEmptySlot(line) => write!(f, "invalid empty slot {line}"),
             Error::UnknownType(name) => write!(f, "unknown type {name}"),
+            Error::UnknownTypeId(type_id) => write!(f, "unknown type id {type_id}"),
             Error::NoSlot(name) => write!(f, "{name} does not fit in any slot"),
             Error::UnknownMutation(reference) => write!(f, "unknown mutation [{reference}]"),
             Error::InvalidMutation(line) => write!(f, "invalid mutation {line}"),
             Error::UnknownAttribute(name) => write!(f, "unknown attribute {name}"),
+            Error::UnknownAttributeId(attribute_id) => {
+                write!(f, "unknown attribute id {attribute_id}")
+            }
             Error::MissingRoll {
                 mutation,
                 attribute_id,
@@ -500,6 +508,306 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
     }
 
     Ok(fit)
+}
+
+/* The attribute every module that can be activated has. */
+const ATTRIBUTE_CAPACITOR_NEED: i32 = 6;
+
+/* What a section holds, and how the items in it are ordered. */
+type SectionKey = fn(Slot) -> Option<u32>;
+
+/* The racks, in the order EVE writes them, with the line marking a slot
+ * nothing is in. */
+const RACK_SECTIONS: [(SectionKey, &str); 6] = [
+    (
+        |slot| match slot {
+            Slot::Low(index) => Some(index.into()),
+            _ => None,
+        },
+        "[Empty Low slot]",
+    ),
+    (
+        |slot| match slot {
+            Slot::Medium(index) => Some(index.into()),
+            _ => None,
+        },
+        "[Empty Med slot]",
+    ),
+    (
+        |slot| match slot {
+            Slot::High(index) => Some(index.into()),
+            _ => None,
+        },
+        "[Empty High slot]",
+    ),
+    (
+        |slot| match slot {
+            Slot::Rig(index) => Some(index.into()),
+            _ => None,
+        },
+        "[Empty Rig slot]",
+    ),
+    (
+        |slot| match slot {
+            Slot::Subsystem(index) => Some(index.into()),
+            _ => None,
+        },
+        "[Empty Subsystem slot]",
+    ),
+    (
+        |slot| match slot {
+            Slot::Service(index) => Some(index.into()),
+            _ => None,
+        },
+        "[Empty Service slot]",
+    ),
+];
+
+/* The bays, each written as a section of "<Type Name> x<Quantity>". A fighter
+ * in a tube comes before one in the bay. */
+const STACK_SECTIONS: [SectionKey; 3] = [
+    |slot| match slot {
+        Slot::DroneBay => Some(0),
+        _ => None,
+    },
+    |slot| match slot {
+        Slot::FighterTube(index) => Some(index.into()),
+        Slot::FighterBay => Some(u32::MAX),
+        _ => None,
+    },
+    |slot| match slot {
+        Slot::Cargo => Some(0),
+        _ => None,
+    },
+];
+
+/* Implants first, then boosters; both in the slot EVE numbers them by. */
+fn on_character(slot: Slot) -> Option<u32> {
+    match slot {
+        Slot::Implant(index) => Some(index.into()),
+        Slot::Booster(index) => Some(0x1_0000 + u32::from(index)),
+        _ => None,
+    }
+}
+
+/// The items of one section, by the key that orders them.
+fn section(fit: &Fit, key: SectionKey) -> Vec<(u32, &FitItem)> {
+    let mut items: Vec<(u32, &FitItem)> = fit
+        .items
+        .iter()
+        .filter_map(|item| Some((key(item.slot)?, item)))
+        .collect();
+    items.sort_by_key(|(key, _)| *key);
+    items
+}
+
+fn type_name(info: &impl Info, type_id: i32) -> Result<&str, Error> {
+    info.get_type(type_id)
+        .map(|r#type| r#type.name())
+        .ok_or(Error::UnknownTypeId(type_id))
+}
+
+fn attribute_name(info: &impl Info, attribute_id: i32) -> Result<&str, Error> {
+    info.get_dogma_attribute(attribute_id)
+        .map(|attribute| attribute.name())
+        .ok_or(Error::UnknownAttributeId(attribute_id))
+}
+
+/// The highest state a module can reach, the way the calculation works it out.
+/// Anything asked for above it is lowered to it.
+fn max_state(info: &impl Info, item: &FitItem) -> State {
+    let mut state = State::Offline;
+
+    /* Like its attributes, a mutated item has the effects of its base too. */
+    let types = [
+        Some(item.type_id),
+        item.mutation.as_ref().map(|mutation| mutation.base),
+    ];
+
+    for type_id in types.into_iter().flatten() {
+        for effect in info.get_dogma_effects(type_id).into_iter().flatten() {
+            let Some(effect) = info.get_dogma_effect(effect.effect_id()) else {
+                continue;
+            };
+
+            state = state.max(match effect.effect_category() {
+                eve::EffectCategory::Online => State::Online,
+                eve::EffectCategory::Active => State::Active,
+                eve::EffectCategory::Overload => State::Overload,
+                _ => continue,
+            });
+        }
+
+        /* Anything that draws capacitor can be activated. */
+        let draws_capacitor = info
+            .get_dogma_attributes(type_id)
+            .into_iter()
+            .flatten()
+            .any(|attribute| attribute.attribute_id() == ATTRIBUTE_CAPACITOR_NEED);
+        if draws_capacitor {
+            state = state.max(State::Active);
+        }
+    }
+
+    state
+}
+
+/// The name to write for an item, and the mutation section it points at.
+///
+/// A mutated item is written as its base type plus the section describing the
+/// mutation, the way PyFa writes it. When the SDE knows no mutaplasmid that
+/// makes this item, the mutation is dropped and the item written as the type
+/// it mutated into, as EFT has no other way to hold it.
+fn item_name<'a>(
+    info: &'a impl InfoExport,
+    item: &FitItem,
+    mutations: &mut Vec<Vec<String>>,
+) -> Result<(&'a str, Option<usize>), Error> {
+    /* A stack shares one line, so it cannot say which of them was mutated. */
+    let mutation = item.mutation.as_ref().filter(|_| item.quantity == 1);
+
+    let Some((mutation, mutaplasmid)) = mutation.and_then(|mutation| {
+        Some((
+            mutation,
+            info.find_mutaplasmid(mutation.base, item.type_id, &mutation.attributes)?,
+        ))
+    }) else {
+        return Ok((type_name(info, item.type_id)?, None));
+    };
+
+    let base = type_name(info, mutation.base)?;
+    let reference = mutations.len() + 1;
+    let mut section = vec![
+        format!("[{reference}] {base}"),
+        format!("  {}", type_name(info, mutaplasmid)?),
+    ];
+
+    let mut rolls: Vec<(&str, f64)> = mutation
+        .attributes
+        .iter()
+        .map(|(attribute_id, value)| Ok((attribute_name(info, *attribute_id)?, *value)))
+        .collect::<Result<_, Error>>()?;
+    rolls.sort_by_key(|(name, _)| *name);
+
+    if !rolls.is_empty() {
+        let rolls: Vec<String> = rolls
+            .into_iter()
+            .map(|(name, value)| format!("{name} {value}"))
+            .collect();
+        section.push(format!("  {}", rolls.join(", ")));
+    }
+
+    mutations.push(section);
+    Ok((base, Some(reference)))
+}
+
+/// "<Module Name>, <Charge Name> /<state> [<mutation>]"
+fn module_line(
+    info: &impl InfoExport,
+    item: &FitItem,
+    mutations: &mut Vec<Vec<String>>,
+) -> Result<String, Error> {
+    let (name, reference) = item_name(info, item, mutations)?;
+    let mut line = name.to_string();
+
+    if let Some(charge) = &item.charge {
+        line.push_str(", ");
+        line.push_str(type_name(info, charge.type_id)?);
+    }
+
+    /* An EFT that names no state means active, which the calculation lowers
+     * the same way as the state asked for here; only a difference after that
+     * is worth writing down. */
+    let max_state = max_state(info, item);
+    let state = item.state.min(max_state);
+    if state != State::Active.min(max_state) {
+        line.push_str(match state {
+            State::Offline => " /offline",
+            State::Online => " /online",
+            State::Active => " /active",
+            State::Overload => " /overload",
+        });
+    }
+
+    if let Some(reference) = reference {
+        line.push_str(&format!(" [{reference}]"));
+    }
+
+    Ok(line)
+}
+
+/// "<Type Name> x<Quantity> [<mutation>]"
+fn stack_line(
+    info: &impl InfoExport,
+    item: &FitItem,
+    mutations: &mut Vec<Vec<String>>,
+) -> Result<String, Error> {
+    let (name, reference) = item_name(info, item, mutations)?;
+    let mut line = format!("{name} x{}", item.quantity);
+
+    if let Some(reference) = reference {
+        line.push_str(&format!(" [{reference}]"));
+    }
+
+    Ok(line)
+}
+
+/// Write a fit as EFT text.
+pub fn save_eft(info: &impl InfoExport, fit: &Fit) -> Result<String, Error> {
+    let mut mutations: Vec<Vec<String>> = Vec::new();
+    let mut sections: Vec<Vec<String>> = Vec::new();
+
+    for (key, empty) in RACK_SECTIONS {
+        let mut lines: Vec<String> = Vec::new();
+
+        for (index, item) in section(fit, key) {
+            /* A slot nobody is in still has to be counted off. */
+            while lines.len() < index as usize {
+                lines.push(empty.to_string());
+            }
+            lines.push(module_line(info, item, &mut mutations)?);
+        }
+
+        sections.push(lines);
+    }
+
+    for key in STACK_SECTIONS {
+        sections.push(
+            section(fit, key)
+                .into_iter()
+                .map(|(_, item)| stack_line(info, item, &mut mutations))
+                .collect::<Result<_, Error>>()?,
+        );
+    }
+
+    /* Implants and boosters carry no quantity, so they read back as modules,
+     * which is where the slot of their type puts them. */
+    sections.push(
+        section(fit, on_character)
+            .into_iter()
+            .map(|(_, item)| Ok(type_name(info, item.type_id)?.to_string()))
+            .collect::<Result<_, Error>>()?,
+    );
+
+    sections.extend(mutations);
+
+    let ship_name = type_name(info, fit.ship.type_id)?;
+    let name = fit.name.as_deref().unwrap_or(ship_name);
+
+    let mut eft = format!("[{ship_name}, {name}]\n");
+    let sections = sections.into_iter().filter(|section| !section.is_empty());
+    for (index, section) in sections.enumerate() {
+        /* A blank line between sections, but not under the header. */
+        if index > 0 {
+            eft.push('\n');
+        }
+        for line in section {
+            eft.push_str(&line);
+            eft.push('\n');
+        }
+    }
+
+    Ok(eft)
 }
 
 #[cfg(test)]

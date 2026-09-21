@@ -82,6 +82,11 @@ impl<'a> Sde<'a> {
             .lookup_by_key(buff_id, |entry, key| entry.key_compare_with_value(*key))
     }
 
+    /// Every mutaplasmid, lowest type id first.
+    pub fn mutaplasmids(&self) -> impl Iterator<Item = eve::Mutaplasmid<'a>> {
+        self.sde.mutaplasmids().into_iter().flatten()
+    }
+
     /// A mutaplasmid by its type id.
     pub fn get_mutaplasmid(&self, type_id: i32) -> Option<eve::Mutaplasmid<'a>> {
         self.sde

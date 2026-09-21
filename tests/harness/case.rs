@@ -63,6 +63,10 @@ pub fn load(eft_fit: &str) -> Result<Fit, eft::Error> {
     eft::load_eft(&info_name, eft_fit.trim())
 }
 
+pub fn save(fit: &Fit) -> Result<String, eft::Error> {
+    eft::save_eft(&InfoSde::new(&SDE), fit)
+}
+
 /* EFT cannot express everything a fit can, so a case may edit the loaded fit. */
 pub fn calculate(
     eft_fit: &str,

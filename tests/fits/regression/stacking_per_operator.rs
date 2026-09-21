@@ -1,5 +1,5 @@
-//! Stacking penalty chains are per operator, as in pyfa: the Damage Control
-//! (PreMul) is not penalized by the Energized Membranes (PostPercent).
+//! Stacking penalty chains are per operator: the Damage Control (PreMul)
+//! is not penalized by the Energized Membranes (PostPercent).
 
 use crate::harness::all;
 

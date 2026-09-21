@@ -11,9 +11,9 @@ mod info;
 mod sde;
 
 pub use error::Error;
-pub use info::{Info, InfoName};
+pub use info::{Info, InfoExport, InfoName};
 pub use sde::{InfoNameSde, InfoSde, Names, Sde, eve};
 
-/// [`Info`] and [`InfoName`] hand out flatbuffers types; implementing them needs
-/// this exact version.
+/// The traits hand out flatbuffers types; implementing them needs this exact
+/// version.
 pub use flatbuffers;

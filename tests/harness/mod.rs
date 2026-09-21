@@ -13,7 +13,7 @@ mod case;
 mod dump;
 mod skills;
 
-pub use case::{calculate, load, outgoing, snapshot, snapshot_violations};
+pub use case::{calculate, load, outgoing, save, snapshot, snapshot_violations};
 pub use skills::{Skills, all, none};
 
 /// What a beacon hands out, by name.

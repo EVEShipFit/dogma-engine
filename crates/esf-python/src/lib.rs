@@ -83,6 +83,20 @@ fn load_eft(py: Python<'_>, eft: String) -> PyResult<Bound<'_, PyAny>> {
     Ok(pythonize(py, &fit)?)
 }
 
+/// Write a fit as EFT, the text format EVE copies a fit to the clipboard in.
+#[pyfunction]
+fn save_eft(py: Python<'_>, fit: &Bound<'_, PyAny>) -> PyResult<String> {
+    let sde = sde()?;
+
+    let fit: Fit = depythonize(fit).map_err(|error| PyValueError::new_err(error.to_string()))?;
+
+    py.detach(|| {
+        let info = InfoSde::new(sde);
+        esf_format::eft::save_eft(&info, &fit)
+            .map_err(|error| PyValueError::new_err(error.to_string()))
+    })
+}
+
 /// Calculate every attribute of the ship, its items and the character.
 #[pyfunction]
 #[pyo3(signature = (fit, options = None))]
@@ -146,6 +160,7 @@ fn _esf_dogma_engine(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(load_sde, module)?)?;
     module.add_function(wrap_pyfunction!(load_names, module)?)?;
     module.add_function(wrap_pyfunction!(load_eft, module)?)?;
+    module.add_function(wrap_pyfunction!(save_eft, module)?)?;
     module.add_function(wrap_pyfunction!(calculate, module)?)?;
     module.add_function(wrap_pyfunction!(validate, module)?)?;
     module.add_function(wrap_pyfunction!(beacon, module)?)?;
