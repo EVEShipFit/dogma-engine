@@ -199,15 +199,16 @@ The WebAssembly variant is published on npm as
 [`@eveshipfit/dogma-engine`](https://www.npmjs.com/package/@eveshipfit/dogma-engine).
 [`@eveshipfit/sde`](https://www.npmjs.com/package/@eveshipfit/sde) ships `sde.dat` in its `dist` folder; serve or bundle that file.
 
+The package is built for bundlers (Vite, webpack 5, ...), which load the `.wasm` themselves.
+
 ```bash
 npm install @eveshipfit/dogma-engine @eveshipfit/sde
 ```
 
 ```js
-import init, { init as initPanicHook, load_sde, load_eft, calculate, validate, beacon } from "@eveshipfit/dogma-engine";
+import { init, load_sde, load_eft, calculate, validate, beacon } from "@eveshipfit/dogma-engine";
 
-await init();
-initPanicHook();
+init();
 
 const sde = await fetch("/sde.dat").then((response) => response.arrayBuffer());
 const buildNumber = load_sde(new Uint8Array(sde));
