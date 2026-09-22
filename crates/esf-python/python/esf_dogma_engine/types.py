@@ -203,6 +203,7 @@ class Options(TypedDict, total=False):
     """What `calculate` reports on top of the values."""
 
     sources: bool
+    validate: bool
 
 
 class _NamedRef(TypedDict):
@@ -278,6 +279,7 @@ class Calculation(_CalculationRequired, total=False):
     mode: ItemResult
     buffs: list[ProjectedBuff]
     outgoing: Projection
+    violations: list["Violation"]
 
 
 Resource = Literal[

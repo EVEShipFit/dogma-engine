@@ -1,5 +1,5 @@
 use esf_data::{InfoNameSde, InfoSde};
-use esf_dogma_engine::{Calculation, Fit, Options, Projection};
+use esf_dogma_engine::{Calculation, Fit, Options, Projection, Violation};
 use esf_format::eft;
 
 use super::dump::{dump, dump_violations};
@@ -7,6 +7,11 @@ use super::skills::Skills;
 use super::{NAMES, SDE};
 
 const SNAPSHOTS: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/snapshots");
+
+const VALIDATE: Options = Options {
+    sources: false,
+    validate: true,
+};
 
 pub fn snapshot(module_path: &str, name: &str, eft_fit: &str, skills: Skills, edit: fn(&mut Fit)) {
     assert_valid(eft_fit, edit);
@@ -21,14 +26,14 @@ pub fn snapshot(module_path: &str, name: &str, eft_fit: &str, skills: Skills, ed
 /// rather than to the fit, so this judges it with everything trained; a case
 /// is free to calculate the same fit with fewer.
 fn assert_valid(eft_fit: &str, edit: fn(&mut Fit)) {
-    let (fit, calculation) = calculate(eft_fit, super::all(5), edit, &Options::default());
+    let (fit, calculation) = calculate(eft_fit, super::all(5), edit, &VALIDATE);
+    let violations = violations(&calculation);
 
     let info = InfoSde::new(&SDE);
-    let violations = esf_dogma_engine::validate(&info, &fit, &calculation);
     assert!(
         violations.is_empty(),
         "this fit breaks a rule, so EVE would not let you fly it:\n{}",
-        dump_violations(&info, &fit, &violations)
+        dump_violations(&info, &fit, violations)
     );
 }
 
@@ -90,17 +95,20 @@ pub fn outgoing(eft_fit: &str, skills: Skills) -> Projection {
 }
 
 fn calculate_fit(eft_fit: &str, skills: Skills, edit: fn(&mut Fit)) -> String {
-    let (fit, calculation) = calculate(eft_fit, skills, edit, &Options::default());
+    let (fit, calculation) = calculate(eft_fit, skills, edit, &VALIDATE);
 
     let info = InfoSde::new(&SDE);
-    let violations = esf_dogma_engine::validate(&info, &fit, &calculation);
-    dump(&info, &fit, &calculation, &violations)
+    dump(&info, &fit, &calculation, violations(&calculation))
 }
 
 fn validate_fit(eft_fit: &str, skills: Skills, edit: fn(&mut Fit)) -> String {
-    let (fit, calculation) = calculate(eft_fit, skills, edit, &Options::default());
+    let (fit, calculation) = calculate(eft_fit, skills, edit, &VALIDATE);
 
     let info = InfoSde::new(&SDE);
-    let violations = esf_dogma_engine::validate(&info, &fit, &calculation);
-    dump_violations(&info, &fit, &violations)
+    dump_violations(&info, &fit, violations(&calculation))
+}
+
+/* Always set: everything here calculates with `VALIDATE`. */
+fn violations(calculation: &Calculation) -> &[Violation] {
+    calculation.violations.as_deref().unwrap_or_default()
 }

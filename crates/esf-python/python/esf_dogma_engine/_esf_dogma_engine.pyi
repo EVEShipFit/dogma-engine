@@ -1,4 +1,4 @@
-from .types import Calculation, Fit, Options, Projection, Violation
+from .types import Calculation, Fit, Options, Projection
 
 def load_sde(bytes: bytes) -> int:
     """Load `sde.dat`. Returns the SDE build number.
@@ -48,17 +48,6 @@ def calculate(fit: Fit, options: Options | None = None) -> Calculation:
     Raises:
         RuntimeError: the SDE is not loaded.
         ValueError: the fit or the options do not describe what they should.
-    """
-
-def validate(fit: Fit) -> list[Violation]:
-    """Report the fitting rules the fit breaks.
-
-    Calculates the fit itself, as every rule reads the values after skills and
-    modules changed them. An empty list means the fit breaks nothing.
-
-    Raises:
-        RuntimeError: the SDE is not loaded.
-        ValueError: the fit does not describe what it should.
     """
 
 def beacon(type_id: int) -> Projection:

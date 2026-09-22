@@ -38,4 +38,4 @@ pub use fit::{
     Ship, Slot, Spool, State,
 };
 pub use projection::{ProjectedBuff, ProjectedEffect, Projection};
-pub use validate::{GroupLimit, Resource, Rule, SlotKind, Target, Violation, validate};
+pub use validate::{GroupLimit, Resource, Rule, SlotKind, Target, Violation};

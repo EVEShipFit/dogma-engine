@@ -219,7 +219,7 @@ pub enum GroupLimit {
 ///
 /// Violations come out grouped by the kind of rule, and within a kind in the
 /// order of `Fit::items`. An empty result means the fit breaks nothing.
-pub fn validate(info: &impl Info, fit: &Fit, calculation: &Calculation) -> Vec<Violation> {
+pub(crate) fn validate(info: &impl Info, fit: &Fit, calculation: &Calculation) -> Vec<Violation> {
     let context = Context::new(info, fit, calculation);
 
     let mut found = Vec::new();

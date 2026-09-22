@@ -38,7 +38,7 @@ supports, load `names.dat` as well::
 
 import os
 
-from ._esf_dogma_engine import beacon, calculate, load_eft, load_names, load_sde, save_eft, validate
+from ._esf_dogma_engine import beacon, calculate, load_eft, load_names, load_sde, save_eft
 from .types import Calculation, Fit, Options, Projection, Violation
 
 __all__ = [
@@ -55,7 +55,6 @@ __all__ = [
     "load_sde",
     "load_sde_from_file",
     "save_eft",
-    "validate",
 ]
 
 
