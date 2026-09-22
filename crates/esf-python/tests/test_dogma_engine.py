@@ -141,7 +141,10 @@ def test_validate_reports_a_full_rack() -> None:
         {"type_id": AUTOCANNON, "slot": {"type": "high", "index": index}, "state": "active"}
         for index in range(1, 4)
     ]
-    violations = dogma.validate(fit(items=extra, character={"skills": {}}))
+    calculation = dogma.calculate(
+        fit(items=extra, character={"skills": {}}), {"validate": True}
+    )
+    violations = calculation["violations"]
 
     assert {
         "target": {"type": "ship"},
@@ -150,7 +153,8 @@ def test_validate_reports_a_full_rack() -> None:
 
 
 def test_validate_reports_a_missing_skill() -> None:
-    violations = dogma.validate(fit(character={"skills": {}}))
+    calculation = dogma.calculate(fit(character={"skills": {}}), {"validate": True})
+    violations = calculation["violations"]
 
     assert {
         "target": {"type": "ship"},

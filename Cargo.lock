@@ -242,7 +242,6 @@ dependencies = [
  "esf-data",
  "esf-dogma-engine",
  "esf-format",
- "serde-wasm-bindgen",
  "tsify",
  "wasm-bindgen",
 ]

@@ -14,6 +14,7 @@ use tsify::Tsify;
 
 use crate::fit::Fit;
 use crate::projection::ProjectedBuff;
+use crate::validate::validate;
 use esf_data::Info;
 use item::{Item, Object};
 
@@ -28,6 +29,8 @@ pub use output::{AttributeValue, Calculation, ItemResult, Source, SourceRef};
 pub struct Options {
     /// Report per attribute the modifiers its value was calculated from.
     pub sources: bool,
+    /// Report the fitting rules the fit breaks.
+    pub validate: bool,
 }
 
 #[derive(Debug)]
@@ -96,6 +99,16 @@ trait Pass {
 
 /// Calculate every attribute of the ship, its items and the character.
 pub fn calculate(info: &impl Info, fit: &Fit, options: &Options) -> Calculation {
+    let mut calculation = calculate_with_bursts(info, fit, options);
+
+    if options.validate {
+        calculation.violations = Some(validate(info, fit, &calculation));
+    }
+
+    calculation
+}
+
+fn calculate_with_bursts(info: &impl Info, fit: &Fit, options: &Options) -> Calculation {
     let calculation = calculate_once(info, fit, options);
 
     /* A burst reaches the whole fleet, and the ship running it is part of that

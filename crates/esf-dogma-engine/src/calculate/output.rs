@@ -12,6 +12,7 @@ use super::item::{EffectOperator, Item, Object};
 use super::outgoing::outgoing;
 use crate::fit::State;
 use crate::projection::{ProjectedBuff, Projection};
+use crate::validate::Violation;
 
 /// The result of [`calculate()`](crate::calculate).
 #[cfg_attr(feature = "typescript", derive(Tsify))]
@@ -36,6 +37,10 @@ pub struct Calculation {
     #[serde(skip_serializing_if = "Projection::is_empty")]
     #[cfg_attr(feature = "typescript", tsify(optional))]
     pub outgoing: Projection,
+    /// The fitting rules the fit breaks; only with `Options::validate`.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[cfg_attr(feature = "typescript", tsify(optional))]
+    pub violations: Option<Vec<Violation>>,
 }
 
 /// The calculated attributes of the ship, its mode, the character, or one item.
@@ -177,6 +182,7 @@ impl Calculation {
             character: ItemResult::new(&objects.char),
             buffs: objects.buffs.clone(),
             outgoing: outgoing(info, objects),
+            violations: None,
         }
     }
 }

@@ -74,6 +74,7 @@ All identifiers are those from the SDE.
 
 - `sources` (optional, default false): report per attribute what its value was calculated from.
   Leave it off unless you show it; it makes the calculation several times bigger.
+- `validate` (optional, default false): also report the fitting rules the fit breaks, as `violations`.
 
 ### Calculation
 
@@ -85,6 +86,8 @@ All identifiers are those from the SDE.
   - `id`: which buff, as `dbuffCollections` in the SDE numbers them.
   - `value`: how strong it is, in whatever the buff's operation reads.
 - `outgoing`: what the fit hands to other fits, in the shape `incoming` takes.
+- `violations`: the fitting rules the fit breaks; only with the `validate` option.
+  Absent means they were not looked for, an empty list means none were broken.
 
 Each result has:
 
@@ -114,9 +117,12 @@ What additional attributes exist are defined in [EVEShipFit/sde-patched](https:/
 
 ## Validation
 
-`validate()` checks if the fit violates any rules that would prevent you from flying it in-game.
-It returns the violations, grouped by the kind of rule and, within a kind, in the order of `items`.
-An empty list means the fit breaks no rules.
+The `validate` option checks if the fit violates any rules that would prevent you from flying it in-game.
+The calculation then carries `violations`, grouped by the kind of rule and, within a kind, in the order of `items`.
+An empty list means the fit breaks no rules; absent means the option was off.
+
+Every rule reads the values after skills and modules changed them, so validation is part of `calculate()`
+rather than a call of its own; asking for both costs one calculation, not two.
 
 Each violation has:
 
@@ -162,7 +168,7 @@ cargo add esf-dogma-engine esf-data
 
 ```rust
 use esf_data::{InfoSde, Sde};
-use esf_dogma_engine::{Fit, Options, beacon, calculate, validate};
+use esf_dogma_engine::{Fit, Options, beacon, calculate};
 
 let bytes = std::fs::read("sde.dat")?;
 let sde = Sde::new(&bytes)?;
@@ -189,8 +195,8 @@ let with_sources = calculate(&info, &fit, &Options { sources: true, ..Default::d
 // Or if you have a beacon in space (like wormhole effects):
 let with_beacon = calculate(&info, &Fit { incoming: beacon(&info, beacon_type_id), ..fit }, &Options::default());
 
-// What EVE would not let you fly:
-let violations = validate(&info, &fit, &calculation);
+// What EVE would not let you fly, in `violations` of the calculation:
+let validated = calculate(&info, &fit, &Options { validate: true, ..Default::default() });
 ```
 
 ### Javascript (WebAssembly)
@@ -213,7 +219,6 @@ import wasmInit, {
   load_eft,
   save_eft,
   calculate,
-  validate,
   beacon,
 } from "@eveshipfit/dogma-engine";
 
@@ -237,8 +242,8 @@ const imported = calculate(load_eft("[Rifter, My Rifter]\n200mm AutoCannon I"));
 /* And to write a fit back out as EFT: */
 const eft = save_eft(fit);
 
-/* What EVE would not let you fly; it calculates the fit itself: */
-const violations = validate(fit);
+/* What EVE would not let you fly, in `violations` of the calculation: */
+const validated = calculate(fit, { validate: true });
 ```
 
 ### Python
@@ -280,8 +285,8 @@ imported = dogma.calculate(dogma.load_eft("[Rifter, My Rifter]\n200mm AutoCannon
 # And to write a fit back out as EFT:
 eft = dogma.save_eft(fit)
 
-# What EVE would not let you fly; it calculates the fit itself:
-violations = dogma.validate(fit)
+# What EVE would not let you fly, in `violations` of the calculation:
+validated = dogma.calculate(fit, {"validate": True})
 ```
 
 Fits and calculations are plain dicts, typed with `TypedDict` in `esf_dogma_engine.types`.

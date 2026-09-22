@@ -112,21 +112,6 @@ pub fn calculate(fit: Ts<Fit>, options: Option<Ts<Options>>) -> Result<Ts<Calcul
     Ok(calculation.into_ts()?)
 }
 
-/// Report the fitting rules the fit breaks. Calculates the fit itself, as
-/// every rule reads the values after skills and modules changed them.
-/* `Ts` does not wrap a bare Vec, so the array is spelled out for TypeScript. */
-#[wasm_bindgen(unchecked_return_type = "Violation[]")]
-pub fn validate(fit: Ts<Fit>) -> Result<JsValue, JsError> {
-    let sde = sde()?;
-
-    let fit: Fit = fit.to_rust()?;
-    let info = InfoSde::new(sde);
-
-    let calculation = esf_dogma_engine::calculate(&info, &fit, &Options::default());
-    let violations = esf_dogma_engine::validate(&info, &fit, &calculation);
-    Ok(serde_wasm_bindgen::to_value(&violations)?)
-}
-
 /// What a beacon in space hands to every fit in there with it. Put the result
 /// in `incoming` of a fit to have it applied.
 #[wasm_bindgen]

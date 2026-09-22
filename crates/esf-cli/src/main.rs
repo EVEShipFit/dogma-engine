@@ -597,6 +597,7 @@ pub fn main() {
 
     let options = Options {
         sources: args.sources,
+        validate: args.validate,
     };
     let mut calculation = esf_dogma_engine::calculate(&info, &fit, &options);
 
@@ -607,12 +608,10 @@ pub fn main() {
             false => Output::Json,
         });
 
-    if args.validate {
-        /* Before the filter, which throws away the attributes a rule reads. */
-        let violations = esf_dogma_engine::validate(&info, &fit, &calculation);
+    if let Some(violations) = &calculation.violations {
         match output {
-            Output::Json => println!("{}", serde_json::to_string(&violations).unwrap()),
-            Output::Table => print_violations(&info, &fit, &violations),
+            Output::Json => println!("{}", serde_json::to_string(violations).unwrap()),
+            Output::Table => print_violations(&info, &fit, violations),
         }
         return;
     }
