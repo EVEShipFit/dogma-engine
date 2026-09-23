@@ -9,7 +9,7 @@ description = "Library to calculate statistics for EVE Online ship fits"
 authors = [{ name = "EVEShipFit Team", email = "info@eveship.fit" }]
 license = "MIT"
 license-files = ["LICENSE"]
-readme = "README.md"
+readme = "crates/esf-python/README.md"
 requires-python = ">=3.10"
 keywords = ["eve-online", "sde", "dogma-engine"]
 classifiers = [
