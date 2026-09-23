@@ -203,95 +203,13 @@ let validated = calculate(&info, &fit, &Options { validate: true, ..Default::def
 
 The WebAssembly variant is published on npm as
 [`@eveshipfit/dogma-engine`](https://www.npmjs.com/package/@eveshipfit/dogma-engine).
-[`@eveshipfit/sde`](https://www.npmjs.com/package/@eveshipfit/sde) ships `sde.dat` in its `dist` folder; serve or bundle that file.
-
-The package is an ES module with TypeScript types included, and it runs anywhere: under a bundler
-(Vite, webpack, ...), from a CDN, or in a plain `<script type="module">`.
-Its default export loads the WebAssembly and has to be awaited once before any other function is called.
-
-```bash
-npm install @eveshipfit/dogma-engine @eveshipfit/sde
-```
-
-```js
-import wasmInit, {
-  load_sde,
-  load_eft,
-  save_eft,
-  calculate,
-  beacon,
-} from "@eveshipfit/dogma-engine";
-
-await wasmInit();
-
-const sde = await fetch("/sde.dat").then((response) => response.arrayBuffer());
-const buildNumber = load_sde(new Uint8Array(sde));
-const fit = {
-  ship: { type_id: 587 },
-  items: [{ type_id: 2873, slot: { type: "high", index: 0 }, state: "active", charge: { type_id: 185 } }],
-  character: { skills: { 3300: 5 } },
-};
-
-const calculation = calculate(fit);
-/* Or if you want to know the source of the effects: */
-const withSources = calculate(fit, { sources: true });
-/* Or if you have a beacon in space (like wormhole effects): */
-const withBeacon = calculate({ ...fit, incoming: beacon(beaconTypeId) });
-/* Or if you have an EFT, the text format EVE copies a fit to the clipboard in: */
-const imported = calculate(load_eft("[Rifter, My Rifter]\n200mm AutoCannon I"));
-/* And to write a fit back out as EFT: */
-const eft = save_eft(fit);
-
-/* What EVE would not let you fly, in `violations` of the calculation: */
-const validated = calculate(fit, { validate: true });
-```
+How to use it is explained in [its README](./crates/esf-wasm/README.md).
 
 ### Python
 
 The Python variant is published on PyPI as
 [`eveshipfit-dogma-engine`](https://pypi.org/project/eveshipfit-dogma-engine/).
-The `sde` extra brings in [`eveshipfit-sde`](https://pypi.org/project/eveshipfit-sde/), which ships `sde.dat`.
-
-```bash
-pip install eveshipfit-dogma-engine[sde]
-```
-
-```python
-import esf_dogma_engine as dogma
-from eveshipfit_sde import sde_path
-
-build_number = dogma.load_sde_from_file(sde_path())
-
-fit = {
-    "ship": {"type_id": 587},
-    "items": [
-        {
-            "type_id": 2873,
-            "slot": {"type": "high", "index": 0},
-            "state": "active",
-            "charge": {"type_id": 185},
-        }
-    ],
-    "character": {"skills": {3300: 5}},
-}
-
-calculation = dogma.calculate(fit)
-# Or if you want to know the source of the effects:
-with_sources = dogma.calculate(fit, {"sources": True})
-# Or if you have a beacon in space (like wormhole effects):
-with_beacon = dogma.calculate({**fit, "incoming": dogma.beacon(beacon_type_id)})
-# Or if you have an EFT, the text format EVE copies a fit to the clipboard in:
-imported = dogma.calculate(dogma.load_eft("[Rifter, My Rifter]\n200mm AutoCannon I"))
-# And to write a fit back out as EFT:
-eft = dogma.save_eft(fit)
-
-# What EVE would not let you fly, in `violations` of the calculation:
-validated = dogma.calculate(fit, {"validate": True})
-```
-
-Fits and calculations are plain dicts, typed with `TypedDict` in `esf_dogma_engine.types`.
-
-`load_eft`, `calculate` and `beacon` release the GIL while they work, so a thread pool calculates fits in parallel.
+How to use it is explained in [its README](./crates/esf-python/README.md).
 
 ## Development
 
