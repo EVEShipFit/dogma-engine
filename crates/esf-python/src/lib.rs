@@ -152,6 +152,27 @@ fn load_killmail<'py>(
     Ok(pythonize(py, &fit)?)
 }
 
+/// Load a fit from an EVEShip.fit link, given its version and its payload
+/// once unbase64'd and gunzipped.
+#[pyfunction]
+fn load_link<'py>(
+    py: Python<'py>,
+    version: String,
+    payload: String,
+) -> PyResult<Bound<'py, PyAny>> {
+    let sde = sde()?;
+    let names = NAMES.get();
+
+    let fit = py.detach(|| {
+        let info = InfoNameSde::new(sde, names)
+            .map_err(|error| PyRuntimeError::new_err(error.to_string()))?;
+        esf_format::link::load_link(&info, &version, &payload)
+            .map_err(|error| PyValueError::new_err(error.to_string()))
+    })?;
+
+    Ok(pythonize(py, &fit)?)
+}
+
 /// Calculate every attribute of the ship, its items and the character.
 #[pyfunction]
 #[pyo3(signature = (fit, options = None))]
@@ -202,6 +223,7 @@ fn _esf_dogma_engine(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(load_esi_fitting, module)?)?;
     module.add_function(wrap_pyfunction!(save_esi_fitting, module)?)?;
     module.add_function(wrap_pyfunction!(load_killmail, module)?)?;
+    module.add_function(wrap_pyfunction!(load_link, module)?)?;
     module.add_function(wrap_pyfunction!(calculate, module)?)?;
     module.add_function(wrap_pyfunction!(beacon, module)?)?;
     Ok(())

@@ -53,6 +53,8 @@ from_esi = dogma.load_esi_fitting(fitting)
 to_esi = dogma.save_esi_fitting(fit)
 # Or if you have a killmail, as ESI returns it, for the fit of the ship that died:
 from_killmail = dogma.load_killmail(killmail)
+# Or if you have an EVEShip.fit link, `<version>:<payload>`, with the payload gunzipped and unbase64'd:
+from_link = dogma.load_link(version, payload)
 
 # What EVE would not let you fly, in `violations` of the calculation:
 validated = dogma.calculate(fit, {"validate": True})

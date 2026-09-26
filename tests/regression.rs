@@ -15,3 +15,4 @@ mod eft;
 mod esi;
 mod fits;
 mod killmail;
+mod link;

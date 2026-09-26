@@ -33,6 +33,7 @@ import wasmInit, {
   load_esi_fitting,
   save_esi_fitting,
   load_killmail,
+  load_link,
   calculate,
   beacon,
 } from "@eveshipfit/dogma-engine";
@@ -61,6 +62,8 @@ const fromEsi = load_esi_fitting(fitting);
 const toEsi = save_esi_fitting(fit);
 /* Or if you have a killmail, as ESI returns it, for the fit of the ship that died: */
 const fromKillmail = load_killmail(killmail);
+/* Or if you have an EVEShip.fit link, `<version>:<payload>`, with the payload gunzipped and unbase64'd: */
+const fromLink = load_link(version, payload);
 
 /* What EVE would not let you fly, in `violations` of the calculation: */
 const validated = calculate(fit, { validate: true });

@@ -1,13 +1,17 @@
-use esf_data::InfoSde;
+use esf_data::{InfoNameSde, InfoSde};
 use serde::Serialize;
 
-use super::SDE;
+use super::{NAMES, SDE};
 
 const INPUT: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/formats");
 const SNAPSHOTS: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/snapshots");
 
 pub fn info() -> InfoSde<'static> {
     InfoSde::new(&SDE)
+}
+
+pub fn info_name() -> InfoNameSde<'static> {
+    InfoNameSde::new(&SDE, Some(&NAMES)).unwrap()
 }
 
 /// A file in `formats/`, as it came from where the format lives.
