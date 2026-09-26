@@ -1,5 +1,5 @@
-//! EVE's inventory flags: where an item is, by number (killmails) or by name
-//! (ESI fittings).
+//! EVE's inventory flags: where an item is, by number (killmails, older
+//! EVEShip.fit links) or by name (ESI fittings).
 
 use esf_dogma_engine::Slot;
 

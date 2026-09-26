@@ -133,6 +133,19 @@ pub fn load_killmail(killmail: Ts<EsiKillmail>) -> Result<Ts<Fit>, JsError> {
     Ok(fit.into_ts()?)
 }
 
+/// Load a fit from an EVEShip.fit link, given its version and its payload
+/// once unbase64'd and gunzipped.
+#[wasm_bindgen]
+pub fn load_link(version: &str, payload: &str) -> Result<Ts<Fit>, JsError> {
+    let sde = sde()?;
+
+    let info = InfoNameSde::new(sde, NAMES.get())?;
+
+    let fit = esf_format::link::load_link(&info, version, payload)
+        .map_err(|error| JsError::new(&error.to_string()))?;
+    Ok(fit.into_ts()?)
+}
+
 /// `options` may be left out; it then uses the defaults.
 #[wasm_bindgen]
 pub fn calculate(fit: Ts<Fit>, options: Option<Ts<Options>>) -> Result<Ts<Calculation>, JsError> {

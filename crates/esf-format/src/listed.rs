@@ -3,7 +3,7 @@
 
 use std::collections::{BTreeSet, HashMap};
 
-use esf_data::Info;
+use esf_data::{Info, InfoName};
 use esf_dogma_engine::{
     Character, Charge, Environment, Fit, FitItem, Projection, Ship, Slot, State,
 };
@@ -15,7 +15,7 @@ const CATEGORY_CHARGE: i32 = 8;
 const ATTRIBUTE_IMPLANTNESS: i32 = 331;
 const ATTRIBUTE_BOOSTERNESS: i32 = 1087;
 
-/// What placing an item looks up. [`Info`] and [`esf_data::InfoName`] both
+/// What placing an item looks up. [`Info`] and [`InfoName`] both
 /// answer it, so a format can take whichever it needs for the rest.
 pub(crate) trait Types {
     fn category_id(&self, type_id: i32) -> Option<i32>;
@@ -25,6 +25,22 @@ pub(crate) trait Types {
 pub(crate) struct ByInfo<'a, I>(pub &'a I);
 
 impl<I: Info> Types for ByInfo<'_, I> {
+    fn category_id(&self, type_id: i32) -> Option<i32> {
+        self.0.get_type(type_id).map(|r#type| r#type.category_id())
+    }
+
+    fn attribute(&self, type_id: i32, attribute_id: i32) -> Option<f32> {
+        self.0
+            .get_dogma_attributes(type_id)?
+            .iter()
+            .find(|attribute| attribute.attribute_id() == attribute_id)
+            .map(|attribute| attribute.value())
+    }
+}
+
+pub(crate) struct ByName<'a, I>(pub &'a I);
+
+impl<I: InfoName> Types for ByName<'_, I> {
     fn category_id(&self, type_id: i32) -> Option<i32> {
         self.0.get_type(type_id).map(|r#type| r#type.category_id())
     }

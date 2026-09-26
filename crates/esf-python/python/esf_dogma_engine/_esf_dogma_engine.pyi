@@ -78,6 +78,18 @@ def load_killmail(killmail: EsiKillmail) -> Fit:
         ValueError: the killmail does not describe what it should.
     """
 
+def load_link(version: str, payload: str) -> Fit:
+    """Load a fit from an EVEShip.fit link, of any version before `v4`.
+
+    A link is `<version>:<payload>`; hand over the payload once it is
+    base64-decoded and gunzipped. The fit has no skills.
+
+    Raises:
+        RuntimeError: the SDE is not loaded.
+        ValueError: the version is not one ever written, or the payload is not
+            a fit of that version.
+    """
+
 def calculate(fit: Fit, options: Options | None = None) -> Calculation:
     """Calculate every attribute of the ship, its items and the character.
 

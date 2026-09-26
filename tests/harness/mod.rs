@@ -15,7 +15,7 @@ mod formats;
 mod skills;
 
 pub use case::{calculate, load, outgoing, save, snapshot, snapshot_violations};
-pub use formats::{info, input, snapshot_json};
+pub use formats::{info, info_name, input, snapshot_json};
 pub use skills::{Skills, all, none};
 
 /// What a beacon hands out, by name.

@@ -6,6 +6,7 @@
 //!   [`esi::load_esi_fitting`] and [`esi::save_esi_fitting`].
 //! - ESI killmails, the ship that died as it was fitted; see
 //!   [`killmail::load_killmail`].
+//! - EVEShip.fit links, of the versions before `v4`; see [`link::load_link`].
 //!
 //! Only EFT names its items; the other formats use type ids. English names
 //! are found in `sde.dat`; add `names.dat` to also match names in the other
@@ -28,6 +29,7 @@
 pub mod eft;
 pub mod esi;
 pub mod killmail;
+pub mod link;
 
 mod flags;
 mod listed;

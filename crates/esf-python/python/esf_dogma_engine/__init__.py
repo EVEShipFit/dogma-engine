@@ -37,6 +37,11 @@ And a killmail, as ESI returns it, gives the fit of the ship that died::
 
     fit = dogma.load_killmail(killmail)
 
+An EVEShip.fit link is `<version>:<payload>`, with the payload gzipped and in
+base64; unpack it, and hand over both::
+
+    fit = dogma.load_link(version, gzip.decompress(base64.urlsafe_b64decode(payload)).decode())
+
 An import matches English names. To also match the other seven languages EVE
 supports, load `names.dat` as well::
 
@@ -53,6 +58,7 @@ from ._esf_dogma_engine import (
     load_eft,
     load_esi_fitting,
     load_killmail,
+    load_link,
     load_names,
     load_sde,
     save_eft,
@@ -81,6 +87,7 @@ __all__ = [
     "load_eft",
     "load_esi_fitting",
     "load_killmail",
+    "load_link",
     "load_names",
     "load_names_from_file",
     "load_sde",

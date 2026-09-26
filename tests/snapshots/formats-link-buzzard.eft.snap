@@ -1,0 +1,363 @@
+---
+source: tests/harness/formats.rs
+expression: json
+---
+{
+  "name": "Amarr Control Tower",
+  "ship": {
+    "type_id": 11192
+  },
+  "items": [
+    {
+      "type_id": 11563,
+      "slot": {
+        "type": "low",
+        "index": 0
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 2605,
+      "slot": {
+        "type": "low",
+        "index": 1
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 2605,
+      "slot": {
+        "type": "low",
+        "index": 2
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 35658,
+      "slot": {
+        "type": "medium",
+        "index": 0
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 30832,
+      "slot": {
+        "type": "medium",
+        "index": 1
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 6131,
+      "slot": {
+        "type": "medium",
+        "index": 2
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 33197,
+      "slot": {
+        "type": "medium",
+        "index": 3
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 33201,
+      "slot": {
+        "type": "medium",
+        "index": 4
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 4258,
+      "slot": {
+        "type": "high",
+        "index": 0
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 11578,
+      "slot": {
+        "type": "high",
+        "index": 1
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 58966,
+      "slot": {
+        "type": "high",
+        "index": 2
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 31220,
+      "slot": {
+        "type": "rig",
+        "index": 0
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 31165,
+      "slot": {
+        "type": "rig",
+        "index": 1
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 25605,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 1,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 25600,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 21,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 9826,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 1,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 25599,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 44,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 25597,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 13,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 25601,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 23,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 25619,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 3,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 15331,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 115,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 25618,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 3,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 25609,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 1,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 25617,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 3,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 25613,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 4,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 33195,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 1,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 25594,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 40,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 25598,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 7,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 80004,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 1,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 80016,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 14,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 80873,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 19,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 80014,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 46,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 80025,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 237,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 80019,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 38,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 80013,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 34,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 80003,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 1,
+      "state": "offline",
+      "charge": null
+    }
+  ],
+  "character": {
+    "skills": {},
+    "security_status": 0.0
+  },
+  "environment": {
+    "damage_profile": {
+      "em": 0.25,
+      "explosive": 0.25,
+      "kinetic": 0.25,
+      "thermal": 0.25
+    },
+    "security": "high_sec",
+    "reactive_armor": "do_not_adapt"
+  }
+}
