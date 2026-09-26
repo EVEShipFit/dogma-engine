@@ -1,4 +1,4 @@
-from .types import Calculation, EsiFitting, Fit, Options, Projection
+from .types import Calculation, EsiFitting, EsiKillmail, Fit, Options, Projection
 
 def load_sde(bytes: bytes) -> int:
     """Load `sde.dat`. Returns the SDE build number.
@@ -63,6 +63,19 @@ def save_esi_fitting(fit: Fit) -> EsiFitting:
     Raises:
         RuntimeError: the SDE is not loaded.
         ValueError: the fit does not describe what it should.
+    """
+
+def load_killmail(killmail: EsiKillmail) -> Fit:
+    """Load the fit of the ship that died from a killmail, as ESI returns it.
+
+    The fit has no skills, and is named after the killmail. A charge in the
+    slot of a module is loaded in it; what was destroyed and what dropped are
+    added up. Items under a flag a fit has no place for, and what was inside a
+    container, are left out.
+
+    Raises:
+        RuntimeError: the SDE is not loaded.
+        ValueError: the killmail does not describe what it should.
     """
 
 def calculate(fit: Fit, options: Options | None = None) -> Calculation:

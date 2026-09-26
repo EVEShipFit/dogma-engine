@@ -16,6 +16,9 @@ __all__ = [
     "Environment",
     "EsiFitting",
     "EsiFittingItem",
+    "EsiKillmail",
+    "EsiKillmailItem",
+    "EsiKillmailVictim",
     "Fit",
     "FitItem",
     "GroupLimit",
@@ -222,6 +225,37 @@ class EsiFitting(_EsiFittingRequired, total=False):
     has a `fitting_id`."""
 
     fitting_id: int
+
+
+class _EsiKillmailItemRequired(TypedDict):
+    flag: int
+    item_type_id: int
+
+
+class EsiKillmailItem(_EsiKillmailItemRequired, total=False):
+    """An item of a killmail; `flag` is where it was, like 27 for the first
+    high slot."""
+
+    quantity_destroyed: int
+    quantity_dropped: int
+
+
+class _EsiKillmailVictimRequired(TypedDict):
+    ship_type_id: int
+
+
+class EsiKillmailVictim(_EsiKillmailVictimRequired, total=False):
+    """The ship that died."""
+
+    items: list[EsiKillmailItem]
+
+
+class EsiKillmail(TypedDict):
+    """A killmail as ESI returns it; only what a fit is made from. Anything
+    else in it is ignored."""
+
+    killmail_id: int
+    victim: EsiKillmailVictim
 
 
 class Options(TypedDict, total=False):

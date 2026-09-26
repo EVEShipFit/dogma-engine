@@ -158,6 +158,7 @@ Fits can also be loaded from other formats, and saved back to most of them:
 
 - EFT: load and save. Loading matches the English names in `sde.dat`; also load `names.dat` to match the other languages EVE supports.
 - ESI fitting: load and save.
+- ESI killmail: load only.
 
 How each package is built is explained under [Integration](#integration).
 

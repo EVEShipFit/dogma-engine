@@ -33,6 +33,10 @@ An ESI fitting, as a character saves it in game, goes both ways too::
     fit = dogma.load_esi_fitting(fitting)
     fitting = dogma.save_esi_fitting(fit)
 
+And a killmail, as ESI returns it, gives the fit of the ship that died::
+
+    fit = dogma.load_killmail(killmail)
+
 An import matches English names. To also match the other seven languages EVE
 supports, load `names.dat` as well::
 
@@ -48,16 +52,26 @@ from ._esf_dogma_engine import (
     calculate,
     load_eft,
     load_esi_fitting,
+    load_killmail,
     load_names,
     load_sde,
     save_eft,
     save_esi_fitting,
 )
-from .types import Calculation, EsiFitting, Fit, Options, Projection, Violation
+from .types import (
+    Calculation,
+    EsiFitting,
+    EsiKillmail,
+    Fit,
+    Options,
+    Projection,
+    Violation,
+)
 
 __all__ = [
     "Calculation",
     "EsiFitting",
+    "EsiKillmail",
     "Fit",
     "Options",
     "Projection",
@@ -66,6 +80,7 @@ __all__ = [
     "calculate",
     "load_eft",
     "load_esi_fitting",
+    "load_killmail",
     "load_names",
     "load_names_from_file",
     "load_sde",

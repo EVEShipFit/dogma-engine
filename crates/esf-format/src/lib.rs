@@ -4,6 +4,8 @@
 //!   [`eft::save_eft`].
 //! - ESI fittings, the fits a character saves in game; see
 //!   [`esi::load_esi_fitting`] and [`esi::save_esi_fitting`].
+//! - ESI killmails, the ship that died as it was fitted; see
+//!   [`killmail::load_killmail`].
 //!
 //! Only EFT names its items; the other formats use type ids. English names
 //! are found in `sde.dat`; add `names.dat` to also match names in the other
@@ -25,6 +27,7 @@
 
 pub mod eft;
 pub mod esi;
+pub mod killmail;
 
 mod flags;
 mod listed;

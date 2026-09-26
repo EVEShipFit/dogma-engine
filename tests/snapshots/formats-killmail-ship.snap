@@ -1,0 +1,317 @@
+---
+source: tests/harness/formats.rs
+expression: json
+---
+{
+  "name": "Killmail 117923593",
+  "ship": {
+    "type_id": 17720
+  },
+  "items": [
+    {
+      "type_id": 3530,
+      "slot": {
+        "type": "low",
+        "index": 0
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 2048,
+      "slot": {
+        "type": "low",
+        "index": 1
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 519,
+      "slot": {
+        "type": "low",
+        "index": 2
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 11269,
+      "slot": {
+        "type": "low",
+        "index": 3
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 33101,
+      "slot": {
+        "type": "low",
+        "index": 4
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": {
+        "type_id": 28668
+      }
+    },
+    {
+      "type_id": 12058,
+      "slot": {
+        "type": "medium",
+        "index": 0
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 5975,
+      "slot": {
+        "type": "medium",
+        "index": 1
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 4833,
+      "slot": {
+        "type": "medium",
+        "index": 2
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": {
+        "type_id": 32014
+      }
+    },
+    {
+      "type_id": 448,
+      "slot": {
+        "type": "medium",
+        "index": 3
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 3244,
+      "slot": {
+        "type": "medium",
+        "index": 4
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 2913,
+      "slot": {
+        "type": "high",
+        "index": 0
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": {
+        "type_id": 12777
+      }
+    },
+    {
+      "type_id": 2913,
+      "slot": {
+        "type": "high",
+        "index": 1
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": {
+        "type_id": 12777
+      }
+    },
+    {
+      "type_id": 13003,
+      "slot": {
+        "type": "high",
+        "index": 2
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 2913,
+      "slot": {
+        "type": "high",
+        "index": 3
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": {
+        "type_id": 12777
+      }
+    },
+    {
+      "type_id": 2913,
+      "slot": {
+        "type": "high",
+        "index": 4
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": {
+        "type_id": 12777
+      }
+    },
+    {
+      "type_id": 31047,
+      "slot": {
+        "type": "rig",
+        "index": 0
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 31053,
+      "slot": {
+        "type": "rig",
+        "index": 1
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 31167,
+      "slot": {
+        "type": "rig",
+        "index": 2
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 23707,
+      "slot": {
+        "type": "drone_bay"
+      },
+      "quantity": 5,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 28334,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 996,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 21922,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 888,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 32014,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 11,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 28326,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 1000,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 12773,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 864,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 21904,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 720,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 21937,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 1000,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 28668,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 71,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 21896,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 596,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 12777,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 1004,
+      "state": "offline",
+      "charge": null
+    }
+  ],
+  "character": {
+    "skills": {},
+    "security_status": 0.0
+  },
+  "environment": {
+    "damage_profile": {
+      "em": 0.25,
+      "explosive": 0.25,
+      "kinetic": 0.25,
+      "thermal": 0.25
+    },
+    "security": "high_sec",
+    "reactive_armor": "do_not_adapt"
+  }
+}

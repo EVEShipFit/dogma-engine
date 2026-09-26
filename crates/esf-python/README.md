@@ -51,6 +51,8 @@ eft = dogma.save_eft(fit)
 # Or if you have a fitting a character saved in game, as ESI returns it (and the other way around):
 from_esi = dogma.load_esi_fitting(fitting)
 to_esi = dogma.save_esi_fitting(fit)
+# Or if you have a killmail, as ESI returns it, for the fit of the ship that died:
+from_killmail = dogma.load_killmail(killmail)
 
 # What EVE would not let you fly, in `violations` of the calculation:
 validated = dogma.calculate(fit, {"validate": True})
