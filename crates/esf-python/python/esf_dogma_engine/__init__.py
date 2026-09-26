@@ -28,6 +28,11 @@ An EFT-fit imports into a fit `calculate` reads::
 
     eft = dogma.save_eft(fit)
 
+An ESI fitting, as a character saves it in game, goes both ways too::
+
+    fit = dogma.load_esi_fitting(fitting)
+    fitting = dogma.save_esi_fitting(fit)
+
 An import matches English names. To also match the other seven languages EVE
 supports, load `names.dat` as well::
 
@@ -38,11 +43,21 @@ supports, load `names.dat` as well::
 
 import os
 
-from ._esf_dogma_engine import beacon, calculate, load_eft, load_names, load_sde, save_eft
-from .types import Calculation, Fit, Options, Projection, Violation
+from ._esf_dogma_engine import (
+    beacon,
+    calculate,
+    load_eft,
+    load_esi_fitting,
+    load_names,
+    load_sde,
+    save_eft,
+    save_esi_fitting,
+)
+from .types import Calculation, EsiFitting, Fit, Options, Projection, Violation
 
 __all__ = [
     "Calculation",
+    "EsiFitting",
     "Fit",
     "Options",
     "Projection",
@@ -50,11 +65,13 @@ __all__ = [
     "beacon",
     "calculate",
     "load_eft",
+    "load_esi_fitting",
     "load_names",
     "load_names_from_file",
     "load_sde",
     "load_sde_from_file",
     "save_eft",
+    "save_esi_fitting",
 ]
 
 

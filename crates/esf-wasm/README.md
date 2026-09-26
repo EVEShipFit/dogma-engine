@@ -30,6 +30,8 @@ import wasmInit, {
   load_sde,
   load_eft,
   save_eft,
+  load_esi_fitting,
+  save_esi_fitting,
   calculate,
   beacon,
 } from "@eveshipfit/dogma-engine";
@@ -53,6 +55,9 @@ const withBeacon = calculate({ ...fit, incoming: beacon(beaconTypeId) });
 const imported = calculate(load_eft("[Rifter, My Rifter]\n200mm AutoCannon I"));
 /* And to write a fit back out as EFT: */
 const eft = save_eft(fit);
+/* Or if you have a fitting a character saved in game, as ESI returns it (and the other way around): */
+const fromEsi = load_esi_fitting(fitting);
+const toEsi = save_esi_fitting(fit);
 
 /* What EVE would not let you fly, in `violations` of the calculation: */
 const validated = calculate(fit, { validate: true });

@@ -1,9 +1,13 @@
 //! Imports and exports EVE Online ship fits as an [`esf_dogma_engine::Fit`].
 //!
-//! Only EFT, the text format EVE copies fits to, is supported; see
-//! [`eft::load_eft`] and [`eft::save_eft`]. English names are found in
-//! `sde.dat`; add `names.dat` to also match names in the other languages EVE
-//! supports when importing. An export is always English.
+//! - EFT, the text format EVE copies fits to; see [`eft::load_eft`] and
+//!   [`eft::save_eft`].
+//! - ESI fittings, the fits a character saves in game; see
+//!   [`esi::load_esi_fitting`] and [`esi::save_esi_fitting`].
+//!
+//! Only EFT names its items; the other formats use type ids. English names
+//! are found in `sde.dat`; add `names.dat` to also match names in the other
+//! languages EVE supports when importing. An export is always English.
 //!
 //! ```no_run
 //! use esf_data::{InfoNameSde, InfoSde, Sde};
@@ -20,3 +24,7 @@
 #![warn(missing_docs)]
 
 pub mod eft;
+pub mod esi;
+
+mod flags;
+mod listed;

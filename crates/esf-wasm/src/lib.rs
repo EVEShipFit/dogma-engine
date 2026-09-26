@@ -5,6 +5,7 @@ use wasm_bindgen::prelude::*;
 
 use esf_data::{Error, InfoNameSde, InfoSde, Names, Sde};
 use esf_dogma_engine::{Calculation, Fit, Options, Projection};
+use esf_format::esi::EsiFitting;
 
 /// The SDE is handed over once and then read straight out of WASM memory, so
 /// no lookup crosses back into JavaScript.
@@ -93,6 +94,30 @@ pub fn save_eft(fit: Ts<Fit>) -> Result<String, JsError> {
     let info = InfoSde::new(sde);
 
     esf_format::eft::save_eft(&info, &fit).map_err(|error| JsError::new(&error.to_string()))
+}
+
+/// Load a fit from an ESI fitting, the fits a character saves in game.
+#[wasm_bindgen]
+pub fn load_esi_fitting(fitting: Ts<EsiFitting>) -> Result<Ts<Fit>, JsError> {
+    let sde = sde()?;
+
+    let fitting: EsiFitting = fitting.to_rust()?;
+    let info = InfoSde::new(sde);
+
+    let fit = esf_format::esi::load_esi_fitting(&info, &fitting);
+    Ok(fit.into_ts()?)
+}
+
+/// Write a fit as an ESI fitting, the fits a character saves in game.
+#[wasm_bindgen]
+pub fn save_esi_fitting(fit: Ts<Fit>) -> Result<Ts<EsiFitting>, JsError> {
+    let sde = sde()?;
+
+    let fit: Fit = fit.to_rust()?;
+    let info = InfoSde::new(sde);
+
+    let fitting = esf_format::esi::save_esi_fitting(&info, &fit);
+    Ok(fitting.into_ts()?)
 }
 
 /// `options` may be left out; it then uses the defaults.

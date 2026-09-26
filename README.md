@@ -151,16 +151,20 @@ Each violation has:
 
 ## Usage
 
-The engine is published for Rust, Javascript and Python; all three calculate the same way.
-Each hands over `sde.dat` once, and every lookup after that happens inside Rust.
-An EFT import matches the English names in `sde.dat`; hand over `names.dat` too to also match the other languages EVE supports.
+The engine is published for Rust, Javascript and Python, and all three give the same results.
+In each, you load `sde.dat` once, and then calculate as many fits as you like.
+
+Fits can also be loaded from other formats, and saved back to most of them:
+
+- EFT: load and save. Loading matches the English names in `sde.dat`; also load `names.dat` to match the other languages EVE supports.
+- ESI fitting: load and save.
 
 How each package is built is explained under [Integration](#integration).
 
 ### Rust
 
 The crate is published on crates.io as [`esf-dogma-engine`](https://crates.io/crates/esf-dogma-engine).
-`esf-data` reads `sde.dat`.
+`esf-data` reads `sde.dat`, and `esf-format` loads and saves the formats above.
 
 ```bash
 cargo add esf-dogma-engine esf-data

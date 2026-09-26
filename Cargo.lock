@@ -211,6 +211,10 @@ version = "0.0.0-git"
 dependencies = [
  "esf-data",
  "esf-dogma-engine",
+ "serde",
+ "serde-wasm-bindgen",
+ "tsify",
+ "wasm-bindgen",
 ]
 
 [[package]]
@@ -232,6 +236,8 @@ dependencies = [
  "esf-dogma-engine",
  "esf-format",
  "insta",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

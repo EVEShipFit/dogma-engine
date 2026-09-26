@@ -1,4 +1,4 @@
-"""The shapes `calculate` reads and returns.
+"""The shapes `calculate` and the formats read and return.
 
 Every identifier is the one the SDE uses. Maps are keyed by id; a result fed
 back in as `incoming` keeps its integer keys.
@@ -14,6 +14,8 @@ __all__ = [
     "DamageProfile",
     "EffectOperator",
     "Environment",
+    "EsiFitting",
+    "EsiFittingItem",
     "Fit",
     "FitItem",
     "GroupLimit",
@@ -197,6 +199,29 @@ class Fit(_FitRequired, total=False):
     character: Character
     environment: Environment
     incoming: Projection
+
+
+class EsiFittingItem(TypedDict):
+    """An item of an ESI fitting; `flag` is where it is, like `HiSlot0`,
+    `DroneBay` or `Cargo`."""
+
+    flag: str
+    quantity: int
+    type_id: int
+
+
+class _EsiFittingRequired(TypedDict):
+    name: str
+    description: str
+    ship_type_id: int
+    items: list[EsiFittingItem]
+
+
+class EsiFitting(_EsiFittingRequired, total=False):
+    """A fitting as ESI saves it for a character. Only a fitting ESI returns
+    has a `fitting_id`."""
+
+    fitting_id: int
 
 
 class Options(TypedDict, total=False):
