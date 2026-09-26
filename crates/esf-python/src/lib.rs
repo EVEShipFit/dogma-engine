@@ -7,6 +7,7 @@ use pythonize::{depythonize, pythonize};
 use esf_data::{Error, InfoNameSde, InfoSde, Names, Sde};
 use esf_dogma_engine::{Fit, Options};
 use esf_format::esi::EsiFitting;
+use esf_format::killmail::EsiKillmail;
 
 /// The SDE is handed over once and then read straight out of Rust memory, so
 /// no lookup crosses back into Python.
@@ -132,6 +133,25 @@ fn save_esi_fitting<'py>(py: Python<'py>, fit: &Bound<'py, PyAny>) -> PyResult<B
     Ok(pythonize(py, &fitting)?)
 }
 
+/// Load the fit of the ship that died from a killmail, as ESI returns it.
+#[pyfunction]
+fn load_killmail<'py>(
+    py: Python<'py>,
+    killmail: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyAny>> {
+    let sde = sde()?;
+
+    let killmail: EsiKillmail =
+        depythonize(killmail).map_err(|error| PyValueError::new_err(error.to_string()))?;
+
+    let fit = py.detach(|| {
+        let info = InfoSde::new(sde);
+        esf_format::killmail::load_killmail(&info, &killmail)
+    });
+
+    Ok(pythonize(py, &fit)?)
+}
+
 /// Calculate every attribute of the ship, its items and the character.
 #[pyfunction]
 #[pyo3(signature = (fit, options = None))]
@@ -181,6 +201,7 @@ fn _esf_dogma_engine(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(save_eft, module)?)?;
     module.add_function(wrap_pyfunction!(load_esi_fitting, module)?)?;
     module.add_function(wrap_pyfunction!(save_esi_fitting, module)?)?;
+    module.add_function(wrap_pyfunction!(load_killmail, module)?)?;
     module.add_function(wrap_pyfunction!(calculate, module)?)?;
     module.add_function(wrap_pyfunction!(beacon, module)?)?;
     Ok(())

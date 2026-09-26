@@ -1,0 +1,351 @@
+---
+source: tests/harness/formats.rs
+expression: json
+---
+{
+  "name": "Killmail 117621358",
+  "ship": {
+    "type_id": 35833
+  },
+  "items": [
+    {
+      "type_id": 47362,
+      "slot": {
+        "type": "low",
+        "index": 0
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 47342,
+      "slot": {
+        "type": "low",
+        "index": 1
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 47362,
+      "slot": {
+        "type": "low",
+        "index": 2
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 47362,
+      "slot": {
+        "type": "low",
+        "index": 3
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 35944,
+      "slot": {
+        "type": "medium",
+        "index": 0
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 47334,
+      "slot": {
+        "type": "medium",
+        "index": 1
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 47366,
+      "slot": {
+        "type": "medium",
+        "index": 2
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 47338,
+      "slot": {
+        "type": "medium",
+        "index": 3
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 47338,
+      "slot": {
+        "type": "medium",
+        "index": 4
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 47327,
+      "slot": {
+        "type": "high",
+        "index": 0
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 47323,
+      "slot": {
+        "type": "high",
+        "index": 1
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 47323,
+      "slot": {
+        "type": "high",
+        "index": 2
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 47323,
+      "slot": {
+        "type": "high",
+        "index": 3
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 47330,
+      "slot": {
+        "type": "high",
+        "index": 4
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 47330,
+      "slot": {
+        "type": "high",
+        "index": 5
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 37254,
+      "slot": {
+        "type": "rig",
+        "index": 0
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 37258,
+      "slot": {
+        "type": "rig",
+        "index": 1
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 37260,
+      "slot": {
+        "type": "rig",
+        "index": 2
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 35894,
+      "slot": {
+        "type": "service",
+        "index": 0
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 47037,
+      "slot": {
+        "type": "fighter_bay"
+      },
+      "quantity": 10,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 47141,
+      "slot": {
+        "type": "fighter_bay"
+      },
+      "quantity": 8,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 47143,
+      "slot": {
+        "type": "fighter_bay"
+      },
+      "quantity": 9,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 47123,
+      "slot": {
+        "type": "fighter_bay"
+      },
+      "quantity": 6,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 47136,
+      "slot": {
+        "type": "fighter_bay"
+      },
+      "quantity": 3,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 47127,
+      "slot": {
+        "type": "fighter_bay"
+      },
+      "quantity": 12,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 47119,
+      "slot": {
+        "type": "fighter_bay"
+      },
+      "quantity": 12,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 47035,
+      "slot": {
+        "type": "fighter_bay"
+      },
+      "quantity": 10,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 37821,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 6,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 37844,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 4249,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 37822,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 7,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 37824,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 7,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 37843,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 6102,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 37823,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 7,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 63195,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 17200,
+      "state": "offline",
+      "charge": null
+    }
+  ],
+  "character": {
+    "skills": {},
+    "security_status": 0.0
+  },
+  "environment": {
+    "damage_profile": {
+      "em": 0.25,
+      "explosive": 0.25,
+      "kinetic": 0.25,
+      "thermal": 0.25
+    },
+    "security": "high_sec",
+    "reactive_armor": "do_not_adapt"
+  }
+}

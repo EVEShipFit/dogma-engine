@@ -1,4 +1,5 @@
-//! EVE's inventory flags: where an item is, by name (ESI fittings).
+//! EVE's inventory flags: where an item is, by number (killmails) or by name
+//! (ESI fittings).
 
 use esf_dogma_engine::Slot;
 
@@ -14,6 +15,7 @@ pub(crate) enum Place {
 /* A run of flags, one per position in the rack. */
 struct Rack {
     name: &'static str,
+    first: i32,
     count: u8,
     slot: fn(u8) -> Slot,
 }
@@ -21,48 +23,70 @@ struct Rack {
 const RACKS: [Rack; 7] = [
     Rack {
         name: "LoSlot",
+        first: 11,
         count: 8,
         slot: Slot::Low,
     },
     Rack {
         name: "MedSlot",
+        first: 19,
         count: 8,
         slot: Slot::Medium,
     },
     Rack {
         name: "HiSlot",
+        first: 27,
         count: 8,
         slot: Slot::High,
     },
     Rack {
         name: "RigSlot",
+        first: 92,
         count: 8,
         slot: Slot::Rig,
     },
     Rack {
         name: "SubSystemSlot",
+        first: 125,
         count: 8,
         slot: Slot::Subsystem,
     },
     Rack {
         name: "FighterTube",
+        first: 159,
         count: 5,
         slot: Slot::FighterTube,
     },
     Rack {
         name: "ServiceSlot",
+        first: 164,
         count: 8,
         slot: Slot::Service,
     },
 ];
 
-const BAYS: [(&str, Place); 5] = [
-    ("Cargo", Place::Slot(Slot::Cargo)),
-    ("DroneBay", Place::Slot(Slot::DroneBay)),
-    ("Booster", Place::Booster),
-    ("Implant", Place::Implant),
-    ("FighterBay", Place::Slot(Slot::FighterBay)),
+const BAYS: [(&str, i32, Place); 5] = [
+    ("Cargo", 5, Place::Slot(Slot::Cargo)),
+    ("DroneBay", 87, Place::Slot(Slot::DroneBay)),
+    ("Booster", 88, Place::Booster),
+    ("Implant", 89, Place::Implant),
+    ("FighterBay", 158, Place::Slot(Slot::FighterBay)),
 ];
+
+/// `None` for a flag a fit has no place for, like a fuel bay.
+pub(crate) fn place_of_flag(flag: i32) -> Option<Place> {
+    let rack = RACKS
+        .iter()
+        .find(|rack| (rack.first..rack.first + i32::from(rack.count)).contains(&flag));
+    if let Some(rack) = rack {
+        let index = u8::try_from(flag - rack.first).ok()?;
+        return Some(Place::Slot((rack.slot)(index)));
+    }
+
+    BAYS.iter()
+        .find(|(_, number, _)| *number == flag)
+        .map(|(_, _, place)| *place)
+}
 
 /// By name, like `HiSlot0` or `DroneBay`.
 pub(crate) fn place_of_flag_name(name: &str) -> Option<Place> {
@@ -76,8 +100,8 @@ pub(crate) fn place_of_flag_name(name: &str) -> Option<Place> {
     }
 
     BAYS.iter()
-        .find(|(bay, _)| *bay == name)
-        .map(|(_, place)| *place)
+        .find(|(bay, _, _)| *bay == name)
+        .map(|(_, _, place)| *place)
 }
 
 /// The name of the flag a slot is, like `HiSlot0`. Implants and boosters are
@@ -97,8 +121,8 @@ pub(crate) fn flag_name(slot: Slot) -> String {
     }
 
     BAYS.iter()
-        .find(|(_, bay)| *bay == place)
-        .map(|(name, _)| name.to_string())
+        .find(|(_, _, bay)| *bay == place)
+        .map(|(name, _, _)| name.to_string())
         .expect("every slot is a rack or a bay")
 }
 
@@ -118,6 +142,16 @@ fn rack_index(slot: Slot) -> Option<u8> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn by_number() {
+        assert_eq!(place_of_flag(27), Some(Place::Slot(Slot::High(0))));
+        assert_eq!(place_of_flag(34), Some(Place::Slot(Slot::High(7))));
+        assert_eq!(place_of_flag(125), Some(Place::Slot(Slot::Subsystem(0))));
+        assert_eq!(place_of_flag(87), Some(Place::Slot(Slot::DroneBay)));
+        assert_eq!(place_of_flag(89), Some(Place::Implant));
+        assert_eq!(place_of_flag(133), None);
+    }
 
     #[test]
     fn by_name() {

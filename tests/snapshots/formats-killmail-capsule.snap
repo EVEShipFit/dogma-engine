@@ -1,0 +1,56 @@
+---
+source: tests/harness/formats.rs
+expression: json
+---
+{
+  "name": "Killmail 138642919",
+  "ship": {
+    "type_id": 670
+  },
+  "items": [
+    {
+      "type_id": 27093,
+      "slot": {
+        "type": "implant",
+        "index": 7
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 3168,
+      "slot": {
+        "type": "implant",
+        "index": 9
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 27096,
+      "slot": {
+        "type": "implant",
+        "index": 10
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    }
+  ],
+  "character": {
+    "skills": {},
+    "security_status": 0.0
+  },
+  "environment": {
+    "damage_profile": {
+      "em": 0.25,
+      "explosive": 0.25,
+      "kinetic": 0.25,
+      "thermal": 0.25
+    },
+    "security": "high_sec",
+    "reactive_armor": "do_not_adapt"
+  }
+}

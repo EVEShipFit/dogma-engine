@@ -239,3 +239,21 @@ def test_an_esi_fitting_round_trips() -> None:
     fit = dogma.load_esi_fitting(fitting)
     assert fit["items"][0]["charge"] == {"type_id": EMP_S}
     assert dogma.save_esi_fitting(fit) == fitting
+
+
+def test_a_killmail_gives_the_fit_of_the_ship_that_died() -> None:
+    killmail: dogma.EsiKillmail = {
+        "killmail_id": 1,
+        "victim": {
+            "ship_type_id": RIFTER,
+            "items": [
+                {"flag": 27, "item_type_id": AUTOCANNON_200MM, "quantity_destroyed": 1},
+                {"flag": 27, "item_type_id": EMP_S, "quantity_dropped": 1},
+            ],
+        },
+    }
+
+    fit = dogma.load_killmail(killmail)
+    assert fit["name"] == "Killmail 1"
+    assert fit["items"][0]["slot"] == {"type": "high", "index": 0}
+    assert fit["items"][0]["charge"] == {"type_id": EMP_S}
