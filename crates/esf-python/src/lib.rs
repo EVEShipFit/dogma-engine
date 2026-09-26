@@ -6,6 +6,7 @@ use pythonize::{depythonize, pythonize};
 
 use esf_data::{Error, InfoNameSde, InfoSde, Names, Sde};
 use esf_dogma_engine::{Fit, Options};
+use esf_format::esi::EsiFitting;
 
 /// The SDE is handed over once and then read straight out of Rust memory, so
 /// no lookup crosses back into Python.
@@ -97,6 +98,40 @@ fn save_eft(py: Python<'_>, fit: &Bound<'_, PyAny>) -> PyResult<String> {
     })
 }
 
+/// Load a fit from an ESI fitting, the fits a character saves in game.
+#[pyfunction]
+fn load_esi_fitting<'py>(
+    py: Python<'py>,
+    fitting: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyAny>> {
+    let sde = sde()?;
+
+    let fitting: EsiFitting =
+        depythonize(fitting).map_err(|error| PyValueError::new_err(error.to_string()))?;
+
+    let fit = py.detach(|| {
+        let info = InfoSde::new(sde);
+        esf_format::esi::load_esi_fitting(&info, &fitting)
+    });
+
+    Ok(pythonize(py, &fit)?)
+}
+
+/// Write a fit as an ESI fitting, the fits a character saves in game.
+#[pyfunction]
+fn save_esi_fitting<'py>(py: Python<'py>, fit: &Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
+    let sde = sde()?;
+
+    let fit: Fit = depythonize(fit).map_err(|error| PyValueError::new_err(error.to_string()))?;
+
+    let fitting = py.detach(|| {
+        let info = InfoSde::new(sde);
+        esf_format::esi::save_esi_fitting(&info, &fit)
+    });
+
+    Ok(pythonize(py, &fitting)?)
+}
+
 /// Calculate every attribute of the ship, its items and the character.
 #[pyfunction]
 #[pyo3(signature = (fit, options = None))]
@@ -144,6 +179,8 @@ fn _esf_dogma_engine(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(load_names, module)?)?;
     module.add_function(wrap_pyfunction!(load_eft, module)?)?;
     module.add_function(wrap_pyfunction!(save_eft, module)?)?;
+    module.add_function(wrap_pyfunction!(load_esi_fitting, module)?)?;
+    module.add_function(wrap_pyfunction!(save_esi_fitting, module)?)?;
     module.add_function(wrap_pyfunction!(calculate, module)?)?;
     module.add_function(wrap_pyfunction!(beacon, module)?)?;
     Ok(())

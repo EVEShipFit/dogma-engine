@@ -223,3 +223,19 @@ def test_a_bad_eft_raises_value_error() -> None:
 def test_loading_the_names_twice_raises() -> None:
     with pytest.raises(RuntimeError):
         dogma.load_names(b"")
+
+
+def test_an_esi_fitting_round_trips() -> None:
+    fitting: dogma.EsiFitting = {
+        "name": "Gun",
+        "description": "",
+        "ship_type_id": RIFTER,
+        "items": [
+            {"flag": "HiSlot0", "quantity": 1, "type_id": AUTOCANNON_200MM},
+            {"flag": "HiSlot0", "quantity": 1, "type_id": EMP_S},
+        ],
+    }
+
+    fit = dogma.load_esi_fitting(fitting)
+    assert fit["items"][0]["charge"] == {"type_id": EMP_S}
+    assert dogma.save_esi_fitting(fit) == fitting

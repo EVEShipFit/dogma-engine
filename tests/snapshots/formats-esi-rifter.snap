@@ -1,0 +1,111 @@
+---
+source: tests/harness/formats.rs
+expression: json
+---
+{
+  "name": "Autocannon brawler",
+  "description": "",
+  "ship_type_id": 587,
+  "items": [
+    {
+      "flag": "LoSlot0",
+      "quantity": 1,
+      "type_id": 2048
+    },
+    {
+      "flag": "LoSlot1",
+      "quantity": 1,
+      "type_id": 1183
+    },
+    {
+      "flag": "LoSlot2",
+      "quantity": 1,
+      "type_id": 519
+    },
+    {
+      "flag": "LoSlot3",
+      "quantity": 1,
+      "type_id": 2605
+    },
+    {
+      "flag": "MedSlot0",
+      "quantity": 1,
+      "type_id": 438
+    },
+    {
+      "flag": "MedSlot1",
+      "quantity": 1,
+      "type_id": 448
+    },
+    {
+      "flag": "MedSlot2",
+      "quantity": 1,
+      "type_id": 4025
+    },
+    {
+      "flag": "HiSlot0",
+      "quantity": 1,
+      "type_id": 2889
+    },
+    {
+      "flag": "HiSlot0",
+      "quantity": 1,
+      "type_id": 21898
+    },
+    {
+      "flag": "HiSlot1",
+      "quantity": 1,
+      "type_id": 2889
+    },
+    {
+      "flag": "HiSlot1",
+      "quantity": 1,
+      "type_id": 21898
+    },
+    {
+      "flag": "HiSlot2",
+      "quantity": 1,
+      "type_id": 2889
+    },
+    {
+      "flag": "HiSlot2",
+      "quantity": 1,
+      "type_id": 21898
+    },
+    {
+      "flag": "RigSlot0",
+      "quantity": 1,
+      "type_id": 31668
+    },
+    {
+      "flag": "RigSlot1",
+      "quantity": 1,
+      "type_id": 31045
+    },
+    {
+      "flag": "RigSlot2",
+      "quantity": 1,
+      "type_id": 31045
+    },
+    {
+      "flag": "DroneBay",
+      "quantity": 3,
+      "type_id": 2488
+    },
+    {
+      "flag": "Cargo",
+      "quantity": 400,
+      "type_id": 21898
+    },
+    {
+      "flag": "Cargo",
+      "quantity": 10,
+      "type_id": 28668
+    },
+    {
+      "flag": "Cargo",
+      "quantity": 1,
+      "type_id": 9899
+    }
+  ]
+}

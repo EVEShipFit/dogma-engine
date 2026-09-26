@@ -48,6 +48,9 @@ with_beacon = dogma.calculate({**fit, "incoming": dogma.beacon(beacon_type_id)})
 imported = dogma.calculate(dogma.load_eft("[Rifter, My Rifter]\n200mm AutoCannon I"))
 # And to write a fit back out as EFT:
 eft = dogma.save_eft(fit)
+# Or if you have a fitting a character saved in game, as ESI returns it (and the other way around):
+from_esi = dogma.load_esi_fitting(fitting)
+to_esi = dogma.save_esi_fitting(fit)
 
 # What EVE would not let you fly, in `violations` of the calculation:
 validated = dogma.calculate(fit, {"validate": True})
@@ -67,7 +70,7 @@ dogma.load_names_from_file(names_path())
 Fits and calculations are plain dicts, typed with `TypedDict` in `esf_dogma_engine.types`.
 What every field means is explained under [Input and output](https://github.com/EVEShipFit/dogma-engine#input-and-output).
 
-`load_eft`, `calculate` and `beacon` release the GIL while they work, so a thread pool calculates fits in parallel.
+Every function but `load_sde` and `load_names` releases the GIL while it works, so a thread pool calculates fits in parallel.
 
 ## More
 

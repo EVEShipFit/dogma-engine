@@ -1,4 +1,4 @@
-from .types import Calculation, Fit, Options, Projection
+from .types import Calculation, EsiFitting, Fit, Options, Projection
 
 def load_sde(bytes: bytes) -> int:
     """Load `sde.dat`. Returns the SDE build number.
@@ -40,6 +40,29 @@ def save_eft(fit: Fit) -> str:
         RuntimeError: the SDE is not loaded.
         ValueError: the fit does not describe what it should, or names a type
             the SDE does not know.
+    """
+
+def load_esi_fitting(fitting: EsiFitting) -> Fit:
+    """Load a fit from an ESI fitting, the fits a character saves in game.
+
+    The fit has no skills; fill in `character` yourself. A charge in the slot
+    of a module is loaded in it; items under a flag a fit has no place for are
+    left out.
+
+    Raises:
+        RuntimeError: the SDE is not loaded.
+        ValueError: the fitting does not describe what it should.
+    """
+
+def save_esi_fitting(fit: Fit) -> EsiFitting:
+    """Write a fit as an ESI fitting, the fits a character saves in game.
+
+    ESI has no fighter tubes, implants or boosters: a squadron goes in the
+    fighter bay, the others in the cargo. States are not kept.
+
+    Raises:
+        RuntimeError: the SDE is not loaded.
+        ValueError: the fit does not describe what it should.
     """
 
 def calculate(fit: Fit, options: Options | None = None) -> Calculation:

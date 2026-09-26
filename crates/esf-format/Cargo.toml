@@ -1,6 +1,6 @@
 [package]
 name = "esf-format"
-description = "Imports EVE Online ship fits, like EFT, into the dogma engine"
+description = "Imports EVE Online ship fits, like EFT and ESI fittings, into the dogma engine"
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
@@ -12,3 +12,16 @@ keywords.workspace = true
 [dependencies]
 esf-data.workspace = true
 esf-dogma-engine.workspace = true
+serde.workspace = true
+serde-wasm-bindgen = { workspace = true, optional = true }
+tsify = { workspace = true, optional = true }
+wasm-bindgen = { workspace = true, optional = true }
+
+[features]
+# Emits the TypeScript for the formats that cross the WASM boundary as objects.
+typescript = [
+    "dep:tsify",
+    "dep:serde-wasm-bindgen",
+    "dep:wasm-bindgen",
+    "esf-dogma-engine/typescript",
+]

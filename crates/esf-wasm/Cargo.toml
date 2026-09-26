@@ -18,6 +18,6 @@ crate-type = ["cdylib"]
 console_error_panic_hook.workspace = true
 esf-data.workspace = true
 esf-dogma-engine = { workspace = true, features = ["typescript"] }
-esf-format.workspace = true
+esf-format = { workspace = true, features = ["typescript"] }
 tsify.workspace = true
 wasm-bindgen.workspace = true
