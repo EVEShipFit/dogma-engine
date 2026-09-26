@@ -1,13 +1,14 @@
 //! EVEShip.fit links, which carry a fit in the `fit` value of their URL.
 //!
 //! A link is `<version>:<payload>`, where the payload is gzipped and then
-//! base64-encoded. Unpacking it is left to the caller, as a browser does that
-//! natively; this reads the payload once unpacked.
+//! base64-encoded. Packing and unpacking it is left to the caller, as a
+//! browser does that natively; this reads and writes the payload unpacked.
 
 use std::fmt;
 
 use esf_data::InfoName;
-use esf_dogma_engine::{Fit, Slot, State};
+use esf_dogma_engine::{Character, Environment, Fit, FitItem, Projection, Ship, Slot, State};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 use crate::eft;
 use crate::flags::{Place, place_of_flag};
@@ -26,6 +27,8 @@ pub enum Error {
     InvalidNumber(String),
     /// An `eft:` link that is not a valid EFT.
     Eft(eft::Error),
+    /// A `v4:` link that is not the JSON of a fit.
+    InvalidJson(String),
 }
 
 impl fmt::Display for Error {
@@ -35,6 +38,7 @@ impl fmt::Display for Error {
             Error::Killmail => write!(f, "a killmail link holds no fit"),
             Error::InvalidNumber(field) => write!(f, "{field} is not a number"),
             Error::Eft(error) => write!(f, "invalid EFT in link: {error}"),
+            Error::InvalidJson(error) => write!(f, "invalid fit in link: {error}"),
         }
     }
 }
@@ -51,14 +55,73 @@ impl std::error::Error for Error {}
 ///   `drone,<type>,<active>,<passive>` or `cargo,<type>,<quantity>`.
 /// - `eft` is an EFT, with a type id instead of a name for a type the site
 ///   that wrote it did not know.
+/// - `v4` is the fit as JSON, as [`save_link`] writes it. Only with the
+///   `json` feature; otherwise, read it with [`deserialize_v4`].
 pub fn load_link(info: &impl InfoName, version: &str, payload: &str) -> Result<Fit, Error> {
     match version {
+        #[cfg(feature = "json")]
+        "v4" => load_v4(payload),
         "v1" | "v2" => load_v1_or_v2(info, payload),
         "v3" => load_v3(info, payload),
         "eft" => eft::load_eft(info, &with_type_names(info, payload)).map_err(Error::Eft),
         "killmail" => Err(Error::Killmail),
         _ => Err(Error::UnknownVersion(version.to_string())),
     }
+}
+
+/// Write the payload of a `v4` link: the fit as JSON. The link is `v4:`,
+/// then this gzipped and in base64url.
+///
+/// A link does not carry the character, so anyone opening it sees the fit
+/// with their own skills.
+#[cfg(feature = "json")]
+pub fn save_link(fit: &Fit) -> String {
+    let mut json = Vec::new();
+    serialize_v4(fit, &mut serde_json::Serializer::new(&mut json)).expect("a fit is always JSON");
+    String::from_utf8(json).expect("JSON is always UTF-8")
+}
+
+#[cfg(feature = "json")]
+fn load_v4(json: &str) -> Result<Fit, Error> {
+    let mut deserializer = serde_json::Deserializer::from_str(json);
+    deserialize_v4(&mut deserializer)
+        .and_then(|fit| deserializer.end().map(|_| fit))
+        .map_err(|error| Error::InvalidJson(error.to_string()))
+}
+
+/// A `v4` fit, as [`save_link`] writes it, in any serde format. For a caller
+/// that has JSON at hand already, like a browser.
+pub fn serialize_v4<S: Serializer>(fit: &Fit, serializer: S) -> Result<S::Ok, S::Error> {
+    V4 {
+        name: &fit.name,
+        ship: &fit.ship,
+        items: &fit.items,
+        environment: &fit.environment,
+        incoming: &fit.incoming,
+    }
+    .serialize(serializer)
+}
+
+/// A `v4` fit, as [`load_link`] reads it, from any serde format. For a caller
+/// that has JSON at hand already, like a browser.
+pub fn deserialize_v4<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Fit, D::Error> {
+    let fit = Fit::deserialize(deserializer)?;
+    Ok(Fit {
+        character: Character::default(),
+        ..fit
+    })
+}
+
+/* A fit, but without the character. */
+#[derive(Serialize)]
+struct V4<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    name: &'a Option<String>,
+    ship: &'a Ship,
+    items: &'a [FitItem],
+    environment: &'a Environment,
+    #[serde(skip_serializing_if = "Projection::is_empty")]
+    incoming: &'a Projection,
 }
 
 fn parse(csv: &str) -> (Vec<&str>, impl Iterator<Item = Vec<&str>>) {

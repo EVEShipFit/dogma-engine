@@ -1,9 +1,52 @@
 //! EVEShip.fit links, by the payload they carry once unpacked.
 
-use esf_dogma_engine::{Fit, Slot, State};
-use esf_format::link::{Error, load_link};
+use std::collections::BTreeSet;
 
-use crate::harness::{info_name, input, snapshot_json};
+use esf_dogma_engine::{Fit, Security, Slot, Spool, State};
+use esf_format::link::{Error, load_link, save_link};
+
+use crate::harness::{info_name, input, load, snapshot_json};
+
+/* A mutated module, a drone in space, a squadron in a tube, a booster with a
+ * side effect, and a fit that is not in high-sec; all of it a v4 keeps. */
+const EVERYTHING: &str = "\
+[Thanatos, Everything]
+
+Warp Scrambler II [1]
+Heavy Entropic Disintegrator II, Occult L
+
+Templar II x6
+
+Hobgoblin II x5
+
+Standard Blue Pill Booster
+
+[1] Warp Scrambler II
+  Unstable Warp Scrambler Mutaplasmid
+  capacitorNeed 7.5, cpu 30, maxRange 10500
+";
+
+fn everything() -> Fit {
+    let mut fit = load(EVERYTHING).unwrap();
+    fit.character.skills.insert(3300, 5);
+    fit.environment.security = Security::LowSec;
+    for item in &mut fit.items {
+        match item.slot {
+            Slot::FighterBay => item.slot = Slot::FighterTube(0),
+            Slot::High(_) if item.charge.is_some() => {
+                item.spool = Some(Spool::MultiplierBonus(0.5));
+            }
+            Slot::Booster(_) => item.booster_side_effects = BTreeSet::from([5]),
+            _ => {}
+        }
+    }
+    fit
+}
+
+/* Fits do not compare, so their JSON stands in for them. */
+fn json(fit: &Fit) -> serde_json::Value {
+    serde_json::to_value(fit).unwrap()
+}
 
 fn link(version: &str, payload: &str) -> Result<Fit, Error> {
     load_link(&info_name(), version, payload)
@@ -32,6 +75,43 @@ fn loads_a_v3() {
 #[test]
 fn loads_an_eft() {
     snapshot_json("link-buzzard.eft", &read("buzzard.eft", "txt"));
+}
+
+#[test]
+fn loads_a_v4() {
+    snapshot_json("link-rifter.v4", &read("rifter.v4", "json"));
+}
+
+#[test]
+fn saves_a_v4() {
+    let payload: serde_json::Value = serde_json::from_str(&save_link(&everything())).unwrap();
+    snapshot_json("link-everything.v4", &payload);
+}
+
+#[test]
+fn round_trips_a_v4() {
+    let mut fit = everything();
+    let again = link("v4", &save_link(&fit)).unwrap();
+
+    fit.character = Default::default();
+    assert_eq!(json(&again), json(&fit));
+}
+
+/* Whoever opens a link sees the fit with their own skills. */
+#[test]
+fn leaves_the_character_out_of_a_v4() {
+    let payload = save_link(&everything());
+    assert!(!payload.contains("character"));
+
+    let with_character =
+        r#"{"ship": {"type_id": 587}, "items": [], "character": {"skills": {"3300": 5}}}"#;
+    assert!(
+        link("v4", with_character)
+            .unwrap()
+            .character
+            .skills
+            .is_empty()
+    );
 }
 
 #[test]
@@ -104,4 +184,6 @@ fn refuses_what_is_not_a_fit() {
         Error::InvalidNumber("0".to_string())
     );
     assert!(matches!(link("eft", "not a fit"), Err(Error::Eft(_))));
+    assert!(matches!(link("v4", "[]"), Err(Error::InvalidJson(_))));
+    assert!(matches!(link("v4", "{"), Err(Error::InvalidJson(_))));
 }

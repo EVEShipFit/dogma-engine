@@ -1,0 +1,189 @@
+---
+source: tests/harness/formats.rs
+expression: json
+---
+{
+  "name": "Autocannon brawler",
+  "ship": {
+    "type_id": 587
+  },
+  "items": [
+    {
+      "type_id": 2048,
+      "slot": {
+        "type": "low",
+        "index": 0
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 1183,
+      "slot": {
+        "type": "low",
+        "index": 1
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 519,
+      "slot": {
+        "type": "low",
+        "index": 2
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 2605,
+      "slot": {
+        "type": "low",
+        "index": 3
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 438,
+      "slot": {
+        "type": "medium",
+        "index": 0
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 448,
+      "slot": {
+        "type": "medium",
+        "index": 1
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 4025,
+      "slot": {
+        "type": "medium",
+        "index": 2
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 2889,
+      "slot": {
+        "type": "high",
+        "index": 0
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": {
+        "type_id": 21898
+      }
+    },
+    {
+      "type_id": 2889,
+      "slot": {
+        "type": "high",
+        "index": 1
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": {
+        "type_id": 21898
+      }
+    },
+    {
+      "type_id": 2889,
+      "slot": {
+        "type": "high",
+        "index": 2
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": {
+        "type_id": 21898
+      }
+    },
+    {
+      "type_id": 31668,
+      "slot": {
+        "type": "rig",
+        "index": 0
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 31045,
+      "slot": {
+        "type": "rig",
+        "index": 1
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 31045,
+      "slot": {
+        "type": "rig",
+        "index": 2
+      },
+      "quantity": 1,
+      "state": "active",
+      "charge": null
+    },
+    {
+      "type_id": 21898,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 400,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 21924,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 400,
+      "state": "offline",
+      "charge": null
+    },
+    {
+      "type_id": 28668,
+      "slot": {
+        "type": "cargo"
+      },
+      "quantity": 10,
+      "state": "offline",
+      "charge": null
+    }
+  ],
+  "character": {
+    "skills": {},
+    "security_status": 0.0
+  },
+  "environment": {
+    "damage_profile": {
+      "em": 0.25,
+      "explosive": 0.25,
+      "kinetic": 0.25,
+      "thermal": 0.25
+    },
+    "security": "high_sec",
+    "reactive_armor": "do_not_adapt"
+  }
+}

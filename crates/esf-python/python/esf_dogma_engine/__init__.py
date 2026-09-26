@@ -42,6 +42,10 @@ base64; unpack it, and hand over both::
 
     fit = dogma.load_link(version, gzip.decompress(base64.urlsafe_b64decode(payload)).decode())
 
+`save_link` writes the payload of a `v4` link; pack it the other way around::
+
+    link = "v4:" + base64.urlsafe_b64encode(gzip.compress(dogma.save_link(fit).encode())).decode()
+
 An import matches English names. To also match the other seven languages EVE
 supports, load `names.dat` as well::
 
@@ -63,6 +67,7 @@ from ._esf_dogma_engine import (
     load_sde,
     save_eft,
     save_esi_fitting,
+    save_link,
 )
 from .types import (
     Calculation,
@@ -94,6 +99,7 @@ __all__ = [
     "load_sde_from_file",
     "save_eft",
     "save_esi_fitting",
+    "save_link",
 ]
 
 

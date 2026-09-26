@@ -13,11 +13,16 @@ keywords.workspace = true
 esf-data.workspace = true
 esf-dogma-engine.workspace = true
 serde.workspace = true
+serde_json = { workspace = true, optional = true }
 serde-wasm-bindgen = { workspace = true, optional = true }
 tsify = { workspace = true, optional = true }
 wasm-bindgen = { workspace = true, optional = true }
 
 [features]
+default = ["json"]
+# Reads and writes `v4` links as JSON. The WASM build leaves it out, as the
+# browser has JSON already, and it would double the code for every fit type.
+json = ["dep:serde_json"]
 # Emits the TypeScript for the formats that cross the WASM boundary as objects.
 typescript = [
     "dep:tsify",

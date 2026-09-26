@@ -55,6 +55,8 @@ to_esi = dogma.save_esi_fitting(fit)
 from_killmail = dogma.load_killmail(killmail)
 # Or if you have an EVEShip.fit link, `<version>:<payload>`, with the payload gunzipped and unbase64'd:
 from_link = dogma.load_link(version, payload)
+# And to write the payload of a `v4` link; gzip and base64url it, and put `v4:` in front:
+to_link = dogma.save_link(fit)
 
 # What EVE would not let you fly, in `violations` of the calculation:
 validated = dogma.calculate(fit, {"validate": True})

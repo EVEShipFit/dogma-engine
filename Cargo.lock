@@ -213,6 +213,7 @@ dependencies = [
  "esf-dogma-engine",
  "serde",
  "serde-wasm-bindgen",
+ "serde_json",
  "tsify",
  "wasm-bindgen",
 ]
@@ -248,6 +249,8 @@ dependencies = [
  "esf-data",
  "esf-dogma-engine",
  "esf-format",
+ "js-sys",
+ "serde-wasm-bindgen",
  "tsify",
  "wasm-bindgen",
 ]

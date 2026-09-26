@@ -269,3 +269,23 @@ def test_a_link_gives_its_fit() -> None:
 def test_a_link_of_an_unknown_version_raises_value_error() -> None:
     with pytest.raises(ValueError):
         dogma.load_link("v9", "")
+
+
+def test_a_v4_link_round_trips() -> None:
+    fit: dogma.Fit = {
+        "name": "Gun",
+        "ship": {"type_id": RIFTER},
+        "items": [
+            {
+                "type_id": AUTOCANNON_200MM,
+                "slot": {"type": "high", "index": 0},
+                "state": "active",
+                "charge": {"type_id": EMP_S},
+            }
+        ],
+        "character": {"skills": {GUNNERY: 5}},
+    }
+
+    again = dogma.load_link("v4", dogma.save_link(fit))
+    assert again["items"][0]["charge"] == {"type_id": EMP_S}
+    assert again["character"]["skills"] == {}

@@ -79,7 +79,7 @@ def load_killmail(killmail: EsiKillmail) -> Fit:
     """
 
 def load_link(version: str, payload: str) -> Fit:
-    """Load a fit from an EVEShip.fit link, of any version before `v4`.
+    """Load a fit from an EVEShip.fit link, of any version ever written.
 
     A link is `<version>:<payload>`; hand over the payload once it is
     base64-decoded and gunzipped. The fit has no skills.
@@ -88,6 +88,16 @@ def load_link(version: str, payload: str) -> Fit:
         RuntimeError: the SDE is not loaded.
         ValueError: the version is not one ever written, or the payload is not
             a fit of that version.
+    """
+
+def save_link(fit: Fit) -> str:
+    """Write the payload of a `v4` EVEShip.fit link: the fit as JSON.
+
+    The link is `v4:`, then this gzipped and in base64url. It does not carry
+    the character, so anyone opening it sees the fit with their own skills.
+
+    Raises:
+        ValueError: the fit does not describe what it should.
     """
 
 def calculate(fit: Fit, options: Options | None = None) -> Calculation:

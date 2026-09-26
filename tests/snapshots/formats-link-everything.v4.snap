@@ -1,0 +1,87 @@
+---
+source: tests/harness/formats.rs
+expression: json
+---
+{
+  "environment": {
+    "damage_profile": {
+      "em": 0.25,
+      "explosive": 0.25,
+      "kinetic": 0.25,
+      "thermal": 0.25
+    },
+    "reactive_armor": "do_not_adapt",
+    "security": "low_sec"
+  },
+  "items": [
+    {
+      "charge": null,
+      "mutation": {
+        "attributes": {
+          "50": 30.0,
+          "54": 10500.0,
+          "6": 7.5
+        },
+        "base": 448
+      },
+      "quantity": 1,
+      "slot": {
+        "index": 0,
+        "type": "medium"
+      },
+      "state": "active",
+      "type_id": 47732
+    },
+    {
+      "charge": {
+        "type_id": 47934
+      },
+      "quantity": 1,
+      "slot": {
+        "index": 0,
+        "type": "high"
+      },
+      "spool": {
+        "multiplier_bonus": 0.5
+      },
+      "state": "active",
+      "type_id": 47918
+    },
+    {
+      "charge": null,
+      "quantity": 6,
+      "slot": {
+        "index": 0,
+        "type": "fighter_tube"
+      },
+      "state": "offline",
+      "type_id": 40556
+    },
+    {
+      "charge": null,
+      "quantity": 5,
+      "slot": {
+        "type": "drone_bay"
+      },
+      "state": "active",
+      "type_id": 2456
+    },
+    {
+      "booster_side_effects": [
+        5
+      ],
+      "charge": null,
+      "quantity": 1,
+      "slot": {
+        "index": 1,
+        "type": "booster"
+      },
+      "state": "active",
+      "type_id": 9950
+    }
+  ],
+  "name": "Everything",
+  "ship": {
+    "type_id": 23911
+  }
+}

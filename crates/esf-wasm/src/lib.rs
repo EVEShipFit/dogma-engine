@@ -7,6 +7,7 @@ use esf_data::{Error, InfoNameSde, InfoSde, Names, Sde};
 use esf_dogma_engine::{Calculation, Fit, Options, Projection};
 use esf_format::esi::EsiFitting;
 use esf_format::killmail::EsiKillmail;
+use esf_format::link;
 
 /// The SDE is handed over once and then read straight out of WASM memory, so
 /// no lookup crosses back into JavaScript.
@@ -137,13 +138,47 @@ pub fn load_killmail(killmail: Ts<EsiKillmail>) -> Result<Ts<Fit>, JsError> {
 /// once unbase64'd and gunzipped.
 #[wasm_bindgen]
 pub fn load_link(version: &str, payload: &str) -> Result<Ts<Fit>, JsError> {
+    /* The browser reads the JSON of a v4, so the WASM needs no JSON of its own. */
+    if version == "v4" {
+        let invalid = |error: String| JsError::new(&link::Error::InvalidJson(error).to_string());
+        let json = js_sys::JSON::parse(payload).map_err(|_| invalid("not JSON".to_string()))?;
+        let fit = link::deserialize_v4(serde_wasm_bindgen::Deserializer::from(json)).map_err(
+            |error| {
+                let error: js_sys::Error = JsValue::from(error).unchecked_into();
+                invalid(error.message().into())
+            },
+        )?;
+        return Ok(fit.into_ts()?);
+    }
+
     let sde = sde()?;
 
     let info = InfoNameSde::new(sde, NAMES.get())?;
 
-    let fit = esf_format::link::load_link(&info, version, payload)
+    let fit = link::load_link(&info, version, payload)
         .map_err(|error| JsError::new(&error.to_string()))?;
     Ok(fit.into_ts()?)
+}
+
+/// Write the payload of a `v4` EVEShip.fit link: the fit as JSON. The link is
+/// `v4:`, then this gzipped and in base64url.
+#[wasm_bindgen]
+pub fn save_link(fit: Ts<Fit>) -> Result<String, JsError> {
+    let fit: Fit = fit.to_rust()?;
+
+    let serializer = serde_wasm_bindgen::Serializer::new().serialize_missing_as_null(true);
+    let json = link::serialize_v4(&fit, &serializer)?;
+
+    /* Maps are keyed by id, which a JSON object only takes as a string. */
+    let replacer = Closure::<dyn Fn(JsValue, JsValue) -> Result<JsValue, JsValue>>::new(
+        |_key, value: JsValue| match value.dyn_ref::<js_sys::Map>() {
+            Some(map) => js_sys::Object::from_entries(map).map(JsValue::from),
+            None => Ok(value),
+        },
+    );
+    js_sys::JSON::stringify_with_replacer(&json, replacer.as_ref())
+        .map(String::from)
+        .map_err(|_| JsError::new("the fit cannot be written as JSON"))
 }
 
 /// `options` may be left out; it then uses the defaults.

@@ -173,6 +173,14 @@ fn load_link<'py>(
     Ok(pythonize(py, &fit)?)
 }
 
+/// Write the payload of a `v4` EVEShip.fit link: the fit as JSON. The link is
+/// `v4:`, then this gzipped and in base64url.
+#[pyfunction]
+fn save_link(fit: &Bound<'_, PyAny>) -> PyResult<String> {
+    let fit: Fit = depythonize(fit).map_err(|error| PyValueError::new_err(error.to_string()))?;
+    Ok(esf_format::link::save_link(&fit))
+}
+
 /// Calculate every attribute of the ship, its items and the character.
 #[pyfunction]
 #[pyo3(signature = (fit, options = None))]
@@ -224,6 +232,7 @@ fn _esf_dogma_engine(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(save_esi_fitting, module)?)?;
     module.add_function(wrap_pyfunction!(load_killmail, module)?)?;
     module.add_function(wrap_pyfunction!(load_link, module)?)?;
+    module.add_function(wrap_pyfunction!(save_link, module)?)?;
     module.add_function(wrap_pyfunction!(calculate, module)?)?;
     module.add_function(wrap_pyfunction!(beacon, module)?)?;
     Ok(())
