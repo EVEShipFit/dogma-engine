@@ -84,7 +84,12 @@ pub struct FitItem {
 /// for implants and boosters, the slot as EVE numbers it, starting at 1.
 #[cfg_attr(feature = "typescript", derive(Tsify))]
 #[derive(Serialize, Deserialize, Debug, Copy, Clone, PartialEq, Eq, Hash)]
-#[serde(tag = "type", content = "index", rename_all = "snake_case")]
+#[serde(
+    tag = "type",
+    content = "index",
+    rename_all = "snake_case",
+    try_from = "SlotFields"
+)]
 pub enum Slot {
     /// A high slot.
     High(u8),
@@ -110,6 +115,53 @@ pub enum Slot {
     DroneBay,
     /// The cargo hold; nothing in it is calculated.
     Cargo,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "snake_case")]
+enum SlotType {
+    High,
+    Medium,
+    Low,
+    Rig,
+    Subsystem,
+    Service,
+    FighterTube,
+    FighterBay,
+    Implant,
+    Booster,
+    DroneBay,
+    Cargo,
+}
+
+#[derive(Deserialize)]
+struct SlotFields {
+    r#type: SlotType,
+    #[serde(default)]
+    index: Option<u16>,
+}
+
+impl TryFrom<SlotFields> for Slot {
+    type Error = &'static str;
+
+    fn try_from(fields: SlotFields) -> Result<Slot, Self::Error> {
+        let index = || fields.index.ok_or("missing field `index`");
+        let small = || u8::try_from(index()?).map_err(|_| "`index` is out of range");
+        Ok(match fields.r#type {
+            SlotType::High => Slot::High(small()?),
+            SlotType::Medium => Slot::Medium(small()?),
+            SlotType::Low => Slot::Low(small()?),
+            SlotType::Rig => Slot::Rig(small()?),
+            SlotType::Subsystem => Slot::Subsystem(small()?),
+            SlotType::Service => Slot::Service(small()?),
+            SlotType::FighterTube => Slot::FighterTube(small()?),
+            SlotType::FighterBay => Slot::FighterBay,
+            SlotType::Implant => Slot::Implant(small()?),
+            SlotType::Booster => Slot::Booster(index()?),
+            SlotType::DroneBay => Slot::DroneBay,
+            SlotType::Cargo => Slot::Cargo,
+        })
+    }
 }
 
 /// The state of an item, lowest first.
@@ -265,13 +317,27 @@ where
     D: Deserializer<'de>,
     V: Deserialize<'de>,
 {
-    Ok(BTreeMap::<Id, V>::deserialize(deserializer)?
-        .into_iter()
-        .map(|(Id(key), value)| (key, value))
-        .collect())
+    struct IdMapVisitor<V>(std::marker::PhantomData<V>);
+
+    impl<'de, V: Deserialize<'de>> Visitor<'de> for IdMapVisitor<V> {
+        type Value = BTreeMap<i32, V>;
+
+        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+            formatter.write_str("a map of identifiers")
+        }
+
+        fn visit_map<A: de::MapAccess<'de>>(self, mut map: A) -> Result<Self::Value, A::Error> {
+            let mut out = BTreeMap::new();
+            while let Some((Id(key), value)) = map.next_entry()? {
+                out.insert(key, value);
+            }
+            Ok(out)
+        }
+    }
+
+    deserializer.deserialize_map(IdMapVisitor(std::marker::PhantomData))
 }
 
-#[derive(PartialEq, Eq, PartialOrd, Ord)]
 struct Id(i32);
 
 impl<'de> Deserialize<'de> for Id {
@@ -579,5 +645,15 @@ mod tests {
         assert!(!json.contains("incoming"));
         assert_eq!(parsed.items[0].slot, Slot::Medium(2));
         assert_eq!(parsed.items[0].state, State::Overload);
+    }
+
+    #[test]
+    fn rejects_a_slot_without_its_index() {
+        let slot = |json: &str| serde_json::from_str::<Slot>(json);
+
+        assert_eq!(slot(r#"{"type": "drone_bay"}"#).unwrap(), Slot::DroneBay);
+        assert!(slot(r#"{"type": "high"}"#).is_err());
+        assert!(slot(r#"{"type": "high", "index": 300}"#).is_err());
+        assert!(slot(r#"{"type": "nowhere", "index": 0}"#).is_err());
     }
 }
