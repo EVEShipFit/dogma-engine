@@ -26,4 +26,5 @@ validation! {
     too_many_high_slots = HIGH_SLOTS, skills: all(5);
     wrong_rack = ONE_MODULE, skills: all(5), edit: |fit| fit.items[0].slot = Slot::High(0);
     slot_taken = TWO_MODULES, skills: all(5), edit: |fit| fit.items[1].slot = fit.items[0].slot;
+    module_in_cargo = ONE_MODULE, skills: all(5), edit: |fit| fit.items[0].slot = Slot::Cargo;
 }

@@ -41,7 +41,10 @@ pub(super) fn validate<I: Info>(context: &Context<'_, I>, found: &mut Vec<Violat
     }
 
     for item in &context.items {
-        if let Some(rack) = item.rack.filter(|rack| item.rack() != Some(*rack)) {
+        if let Some(rack) = item
+            .rack
+            .filter(|rack| item.is_fitted() && item.rack() != Some(*rack))
+        {
             found.push(item.violation(Rule::WrongSlot { expected: rack }));
         }
         if holds_one(item.fit.slot) && shares_slot(context, item) {
