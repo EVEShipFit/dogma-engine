@@ -116,3 +116,63 @@ fn leaves_the_bay_drones_in_their_slot() {
 
     assert!(fit.items.iter().all(|item| item.slot == Slot::DroneBay));
 }
+
+#[test]
+fn onlines_one_of_a_group_with_an_online_limit() {
+    let eft =
+        "[Venture, Survey]\n\nBasic Mining Survey Chipset\nML-3 Compact Mining Survey Chipset";
+    assert_eq!(
+        settle(eft, all(5)),
+        [
+            item("Basic Mining Survey Chipset", 1, State::Active),
+            item("ML-3 Compact Mining Survey Chipset", 1, State::Offline),
+        ]
+    );
+}
+
+#[test]
+fn starts_in_the_first_mode() {
+    let mut fit = load("[Confessor, Mode]").unwrap();
+    let info = info();
+    post_load(&info, &mut fit);
+
+    let mode = fit.ship.mode.and_then(|mode| info.get_type(mode));
+    assert_eq!(mode.map(|mode| mode.name()), Some("Confessor Defense Mode"));
+}
+
+#[test]
+fn keeps_a_mode_already_set() {
+    let mut fit = load("[Confessor, Mode]").unwrap();
+    fit.ship.mode = Some(34321);
+    post_load(&info(), &mut fit);
+
+    assert_eq!(fit.ship.mode, Some(34321));
+}
+
+#[test]
+fn fills_the_fighter_tubes() {
+    let mut fit = load("[Thanatos, Fighters]\n\nFirbolg II x30\nDromi II x30").unwrap();
+    fit.character.skills = all(5).levels;
+    let info = info();
+    post_load(&info, &mut fit);
+
+    let items: Vec<_> = fit
+        .items
+        .iter()
+        .map(|item| {
+            let name = info.get_type(item.type_id).unwrap().name();
+            (name, item.slot, item.quantity, item.state)
+        })
+        .collect();
+    assert_eq!(
+        items,
+        [
+            ("Firbolg II", Slot::FighterBay, 12, State::Offline),
+            ("Dromi II", Slot::FighterBay, 27, State::Offline),
+            ("Firbolg II", Slot::FighterTube(0), 6, State::Active),
+            ("Firbolg II", Slot::FighterTube(1), 6, State::Active),
+            ("Firbolg II", Slot::FighterTube(2), 6, State::Active),
+            ("Dromi II", Slot::FighterTube(3), 3, State::Active),
+        ]
+    );
+}
