@@ -33,7 +33,11 @@ An ESI fitting, as a character saves it in game, goes both ways too::
     fit = dogma.load_esi_fitting(fitting)
     fitting = dogma.save_esi_fitting(fit)
 
-Neither carries states; once `character` holds the skills, `post_load` sets
+DNA, the fits EVE links to in chat, only loads::
+
+    fit = dogma.load_dna("587:2048;1::")
+
+None carries states; once `character` holds the skills, `post_load` sets
 the ones EVE gives an imported fit::
 
     fit = dogma.post_load(fit)
@@ -66,6 +70,7 @@ import os
 from ._esf_dogma_engine import (
     beacon,
     calculate,
+    load_dna,
     load_eft,
     load_esf,
     load_esf_link,
@@ -100,6 +105,7 @@ __all__ = [
     "Violation",
     "beacon",
     "calculate",
+    "load_dna",
     "load_eft",
     "load_esf",
     "load_esf_link",

@@ -8,6 +8,11 @@ use esf_dogma_engine::{
     Character, Charge, Environment, Fit, FitItem, Mutation, Projection, Ship, Slot, State,
 };
 
+use crate::flags::{
+    EFFECT_HI_POWER, EFFECT_LO_POWER, EFFECT_MED_POWER, EFFECT_RACKS, EFFECT_RIG_SLOT,
+    EFFECT_SERVICE_SLOT, EFFECT_SUBSYSTEM,
+};
+
 /// Why an EFT could not be loaded or saved.
 #[derive(Clone, Debug, PartialEq, Eq)]
 #[non_exhaustive]
@@ -78,25 +83,6 @@ impl fmt::Display for Error {
 
 impl std::error::Error for Error {}
 
-/* The effect that marks which rack a module fits in. */
-const EFFECT_LO_POWER: i32 = 11;
-const EFFECT_HI_POWER: i32 = 12;
-const EFFECT_MED_POWER: i32 = 13;
-const EFFECT_RIG_SLOT: i32 = 2663;
-const EFFECT_SUBSYSTEM: i32 = 3772;
-const EFFECT_SERVICE_SLOT: i32 = 6306;
-
-type Rack = fn(u8) -> Slot;
-
-const RACKS: [(i32, Rack); 6] = [
-    (EFFECT_LO_POWER, Slot::Low),
-    (EFFECT_HI_POWER, Slot::High),
-    (EFFECT_MED_POWER, Slot::Medium),
-    (EFFECT_RIG_SLOT, Slot::Rig),
-    (EFFECT_SUBSYSTEM, Slot::Subsystem),
-    (EFFECT_SERVICE_SLOT, Slot::Service),
-];
-
 const CATEGORY_DRONE: i32 = 18;
 const CATEGORY_FIGHTER: i32 = 87;
 
@@ -145,7 +131,9 @@ fn find_slot(
         .into_iter()
         .flatten()
         .find_map(|effect| {
-            let (rack, slot) = RACKS.iter().find(|(rack, _)| *rack == effect.effect_id())?;
+            let (rack, slot) = EFFECT_RACKS
+                .iter()
+                .find(|(rack, _)| *rack == effect.effect_id())?;
             Some(slot(next_index(rack_indexes, *rack)))
         })
         .or_else(|| find_character_slot(info, type_id))

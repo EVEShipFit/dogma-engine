@@ -66,8 +66,8 @@ def save_esi_fitting(fit: Fit) -> EsiFitting:
     """
 
 def post_load(fit: Fit) -> Fit:
-    """Set a fit loaded from EFT or an ESI fitting to the states EVE gives it
-    on import. Set the skills of the character first.
+    """Set a fit loaded from EFT, an ESI fitting or DNA to the states EVE
+    gives it on import. Set the skills of the character first.
 
     A ship with modes starts in its first; a cloak is online rather than
     active; of modules with a limit on how many can be online or active, like
@@ -91,6 +91,19 @@ def load_killmail(killmail: EsiKillmail) -> Fit:
     Raises:
         RuntimeError: the SDE is not loaded.
         ValueError: the killmail does not describe what it should.
+    """
+
+def load_dna(dna: str) -> Fit:
+    """Load a fit from DNA, the fits EVE links to in chat, with or without its
+    `fitting:` prefix.
+
+    The fit has no skills and no name. A module fills the next free slot of
+    its rack; drones and fighters go in their bay, anything else in the cargo.
+    A DNA cut short, without its closing `::`, loses its last item.
+
+    Raises:
+        RuntimeError: the SDE is not loaded.
+        ValueError: the DNA has no ship, or a type or quantity is not a number.
     """
 
 def load_link(version: str, payload: str) -> Fit:
