@@ -29,7 +29,7 @@ const ATTRIBUTE_SQUADRON_SIZE: i32 = 2215;
 
 /// What a type is, for placement.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(super) enum Kind {
+pub(crate) enum Kind {
     Hull,
     Modifier,
     Sub,
@@ -46,7 +46,7 @@ pub(super) enum Kind {
     Other,
 }
 
-pub(super) struct Lookup<'a, I> {
+pub(crate) struct Lookup<'a, I> {
     pub info: &'a I,
 }
 

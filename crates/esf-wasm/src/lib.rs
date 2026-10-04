@@ -122,6 +122,19 @@ pub fn save_esi_fitting(fit: Ts<Fit>) -> Result<Ts<EsiFitting>, JsError> {
     Ok(fitting.into_ts()?)
 }
 
+/// Set a fit loaded from EFT or an ESI fitting to the states EVE gives it on
+/// import. Set the skills of the character first.
+#[wasm_bindgen]
+pub fn post_load(fit: Ts<Fit>) -> Result<Ts<Fit>, JsError> {
+    let sde = sde()?;
+
+    let mut fit: Fit = fit.to_rust()?;
+    let info = InfoSde::new(sde);
+
+    esf_format::post_load(&info, &mut fit);
+    Ok(fit.into_ts()?)
+}
+
 /// Load the fit of the ship that died from a killmail, as ESI returns it.
 #[wasm_bindgen]
 pub fn load_killmail(killmail: Ts<EsiKillmail>) -> Result<Ts<Fit>, JsError> {

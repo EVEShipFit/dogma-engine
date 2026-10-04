@@ -10,6 +10,9 @@
 //!   [`killmail::load_killmail`].
 //! - EVEShip.fit links, of the versions before `v4`; see [`link::load_link`].
 //!
+//! EFT and ESI fittings carry no states; [`post_load()`] sets the ones EVE
+//! would.
+//!
 //! Only EFT names its items; the other formats use type ids. English names
 //! are found in `sde.dat`; add `names.dat` to also match names in the other
 //! languages EVE supports when importing. An export is always English.
@@ -36,3 +39,6 @@ pub mod link;
 
 mod flags;
 mod listed;
+mod post_load;
+
+pub use post_load::post_load;

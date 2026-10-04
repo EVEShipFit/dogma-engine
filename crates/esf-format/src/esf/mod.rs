@@ -3,7 +3,7 @@
 mod binary;
 mod canonical;
 mod fit;
-mod lookup;
+pub(crate) mod lookup;
 mod model;
 mod names;
 mod resolve;

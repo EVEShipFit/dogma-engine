@@ -65,6 +65,21 @@ def save_esi_fitting(fit: Fit) -> EsiFitting:
         ValueError: the fit does not describe what it should.
     """
 
+def post_load(fit: Fit) -> Fit:
+    """Set a fit loaded from EFT or an ESI fitting to the states EVE gives it
+    on import. Set the skills of the character first.
+
+    A ship with modes starts in its first; a cloak is online rather than
+    active; of modules with a limit on how many can be online or active, like
+    a microwarpdrive and an afterburner, only the first keep their state; only
+    the drones that fit in space are launched, the most damaging first; and
+    fighters fill the empty tubes.
+
+    Raises:
+        RuntimeError: the SDE is not loaded.
+        ValueError: the fit does not describe what it should.
+    """
+
 def load_killmail(killmail: EsiKillmail) -> Fit:
     """Load the fit of the ship that died from a killmail, as ESI returns it.
 
