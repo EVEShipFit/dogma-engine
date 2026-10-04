@@ -86,14 +86,15 @@ impl InfoEsf for InfoSde<'_> {
     }
 
     fn group_type_ids(&self, group_id: i32) -> impl Iterator<Item = i32> {
-        self.sde
-            .types()
-            .filter(move |r#type| r#type.group_id() == group_id)
-            .map(|r#type| r#type.id())
+        self.sde.group_type_ids(group_id).iter().copied()
     }
 
-    fn mutaplasmids(&self) -> Vec<eve::Mutaplasmid<'_>> {
-        self.sde.mutaplasmids().collect()
+    fn mutaplasmids_of(&self, base: i32) -> &[i32] {
+        self.sde.mutaplasmids_of(base)
+    }
+
+    fn get_mutaplasmid(&self, type_id: i32) -> Option<eve::Mutaplasmid<'_>> {
+        self.sde.get_mutaplasmid(type_id)
     }
 }
 

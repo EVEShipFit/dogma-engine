@@ -2,6 +2,9 @@
 
 /// Unicode simple case folding of one character.
 pub fn fold_char(c: char) -> char {
+    if c.is_ascii() {
+        return c.to_ascii_lowercase();
+    }
     let mut lower = c.to_lowercase();
     let (Some(lower), None) = (lower.next(), lower.next()) else {
         return c;
@@ -24,6 +27,9 @@ pub fn fold_char(c: char) -> char {
 
 /// A name with every character case folded, for comparing names.
 pub fn fold_case(name: &str) -> String {
+    if name.is_ascii() {
+        return name.to_ascii_lowercase();
+    }
     name.chars().map(fold_char).collect()
 }
 

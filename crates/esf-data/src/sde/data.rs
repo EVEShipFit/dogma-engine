@@ -8,6 +8,10 @@ use crate::fold::{fold_case, fold_char};
 
 /// Compare two names case-insensitively without allocating.
 fn compare_folded(left: &str, right: &str) -> Ordering {
+    if left.is_ascii() && right.is_ascii() {
+        let left = left.bytes().map(|byte| byte.to_ascii_lowercase());
+        return left.cmp(right.bytes().map(|byte| byte.to_ascii_lowercase()));
+    }
     left.chars()
         .map(fold_char)
         .cmp(right.chars().map(fold_char))
@@ -15,9 +19,7 @@ fn compare_folded(left: &str, right: &str) -> Ordering {
 
 /// Names sorted case-insensitively, published first, then lowest id.
 fn sorted_names(mut entries: Vec<(&str, bool, i32)>) -> Vec<(&str, bool, i32)> {
-    /* Folding during the sort would redo it on every comparison; entries
-     * arrive in id order and the sort is stable. */
-    entries.sort_by_cached_key(|entry| (fold_case(entry.0), !entry.1));
+    entries.sort_by_cached_key(|entry| (fold_case(entry.0), !entry.1, entry.2));
     entries
 }
 
@@ -37,6 +39,8 @@ pub struct Sde<'a> {
     /// the borrowed names mean building it allocates one vector and no more.
     type_names: OnceLock<Vec<(&'a str, bool, i32)>>,
     attribute_names: OnceLock<Vec<(&'a str, bool, i32)>>,
+    group_types: OnceLock<HashMap<i32, Vec<i32>>>,
+    base_mutaplasmids: OnceLock<HashMap<i32, Vec<i32>>>,
 }
 
 impl<'a> Sde<'a> {
@@ -56,6 +60,8 @@ impl<'a> Sde<'a> {
             attribute_ids,
             type_names: OnceLock::new(),
             attribute_names: OnceLock::new(),
+            group_types: OnceLock::new(),
+            base_mutaplasmids: OnceLock::new(),
         })
     }
 
@@ -67,6 +73,21 @@ impl<'a> Sde<'a> {
     /// Every type, lowest id first.
     pub fn types(&self) -> impl Iterator<Item = eve::Type<'a>> {
         self.sde.types().into_iter().flatten()
+    }
+
+    /// The ids of the types in a group, lowest first.
+    pub fn group_type_ids(&self, group_id: i32) -> &[i32] {
+        let group_types = self.group_types.get_or_init(|| {
+            let mut group_types: HashMap<i32, Vec<i32>> = HashMap::new();
+            for r#type in self.types() {
+                group_types
+                    .entry(r#type.group_id())
+                    .or_default()
+                    .push(r#type.id());
+            }
+            group_types
+        });
+        group_types.get(&group_id).map_or(&[], Vec::as_slice)
     }
 
     /// A type by id.
@@ -102,6 +123,28 @@ impl<'a> Sde<'a> {
     /// Every mutaplasmid, lowest type id first.
     pub fn mutaplasmids(&self) -> impl Iterator<Item = eve::Mutaplasmid<'a>> {
         self.sde.mutaplasmids().into_iter().flatten()
+    }
+
+    /// The type ids of the mutaplasmids that apply to `base`, lowest first.
+    pub fn mutaplasmids_of(&self, base: i32) -> &[i32] {
+        let base_mutaplasmids = self.base_mutaplasmids.get_or_init(|| {
+            let mut base_mutaplasmids: HashMap<i32, Vec<i32>> = HashMap::new();
+            for mutaplasmid in self.mutaplasmids() {
+                let bases = mutaplasmid
+                    .mappings()
+                    .into_iter()
+                    .flatten()
+                    .flat_map(|mapping| mapping.applicable_type_ids().into_iter().flatten());
+                for base in bases {
+                    let mutaplasmids = base_mutaplasmids.entry(base).or_default();
+                    if mutaplasmids.last() != Some(&mutaplasmid.id()) {
+                        mutaplasmids.push(mutaplasmid.id());
+                    }
+                }
+            }
+            base_mutaplasmids
+        });
+        base_mutaplasmids.get(&base).map_or(&[], Vec::as_slice)
     }
 
     /// A mutaplasmid by its type id.

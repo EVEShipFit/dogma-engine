@@ -253,7 +253,8 @@ fn resolve_line<'b, I: InfoEsf>(
     if let Some(given) = &line.mutaplasmid {
         let matches = lookup
             .mutaplasmids(type_id)
-            .into_iter()
+            .iter()
+            .copied()
             .filter(|mutaplasmid| is_word_prefix(given, lookup.name(*mutaplasmid)))
             .collect();
         item.mutaplasmid = Some(pick(matches, given, "mutaplasmid", number)?);

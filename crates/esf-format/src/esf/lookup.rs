@@ -151,8 +151,10 @@ impl<'a, I: InfoEsf> Lookup<'a, I> {
     }
 
     pub fn modes(&self, hull: i32) -> Vec<i32> {
+        let prefix = format!("{} ", self.name(hull));
         self.info
             .group_type_ids(GROUP_SHIP_MODIFIERS)
+            .filter(|mode| self.name(*mode).starts_with(&prefix))
             .filter(|mode| self.mode_hull(*mode) == Some(hull))
             .collect()
     }
@@ -165,27 +167,14 @@ impl<'a, I: InfoEsf> Lookup<'a, I> {
             .trim_start_matches(' ')
     }
 
-    pub fn mutaplasmids(&self, base: i32) -> Vec<i32> {
-        self.info
-            .mutaplasmids()
-            .into_iter()
-            .filter(|mutaplasmid| {
-                mutaplasmid.mappings().into_iter().flatten().any(|mapping| {
-                    mapping
-                        .applicable_type_ids()
-                        .is_some_and(|type_ids| type_ids.iter().any(|type_id| type_id == base))
-                })
-            })
-            .map(|mutaplasmid| mutaplasmid.id())
-            .collect()
+    pub fn mutaplasmids(&self, base: i32) -> &'a [i32] {
+        self.info.mutaplasmids_of(base)
     }
 
     /// The type a mutaplasmid turns `base` into.
     pub fn mutated(&self, mutaplasmid: i32, base: i32) -> Option<i32> {
         self.info
-            .mutaplasmids()
-            .into_iter()
-            .find(|candidate| candidate.id() == mutaplasmid)?
+            .get_mutaplasmid(mutaplasmid)?
             .mappings()?
             .iter()
             .find(|mapping| {
@@ -198,9 +187,7 @@ impl<'a, I: InfoEsf> Lookup<'a, I> {
 
     pub fn rollable(&self, mutaplasmid: i32) -> Vec<i32> {
         self.info
-            .mutaplasmids()
-            .into_iter()
-            .find(|candidate| candidate.id() == mutaplasmid)
+            .get_mutaplasmid(mutaplasmid)
             .and_then(|mutaplasmid| mutaplasmid.attributes())
             .into_iter()
             .flatten()

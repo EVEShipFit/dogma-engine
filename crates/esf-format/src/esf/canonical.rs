@@ -37,7 +37,8 @@ fn mutaplasmid_name<I: InfoEsf>(lookup: &Lookup<I>, mutaplasmid: i32, base: Opti
     let others: Vec<&str> = base
         .map(|base| lookup.mutaplasmids(base))
         .unwrap_or_default()
-        .into_iter()
+        .iter()
+        .copied()
         .filter(|other| *other != mutaplasmid)
         .map(|other| lookup.name(other))
         .collect();
