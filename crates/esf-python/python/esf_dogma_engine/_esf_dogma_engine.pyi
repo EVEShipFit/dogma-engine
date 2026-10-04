@@ -90,6 +90,41 @@ def load_link(version: str, payload: str) -> Fit:
             a fit of that version.
     """
 
+def load_esf(text: str) -> Fit:
+    """Load a fit from an esf/1 document, as text.
+
+    Of a document with several fits, this is the first one no other fit
+    carries. The fit has no skills.
+
+    Raises:
+        RuntimeError: the SDE is not loaded.
+        ValueError: the document is not valid esf/1, or its fit has no ship.
+    """
+
+def load_esf_link(link: str) -> Fit:
+    """Load a fit from an esf/1 link: the binary form, in base64url.
+
+    Raises:
+        RuntimeError: the SDE is not loaded.
+        ValueError: the link is not valid esf/1, or its fit has no ship.
+    """
+
+def save_esf(fit: Fit) -> str:
+    """Write a fit as an esf/1 document, as text, in canonical form.
+
+    Raises:
+        RuntimeError: the SDE is not loaded.
+        ValueError: the fit names a type the SDE does not know.
+    """
+
+def save_esf_link(fit: Fit) -> str:
+    """Write a fit as an esf/1 link: the binary form, in base64url.
+
+    Raises:
+        RuntimeError: the SDE is not loaded.
+        ValueError: the fit names a type the SDE does not know.
+    """
+
 def calculate(fit: Fit, options: Options | None = None) -> Calculation:
     """Calculate every attribute of the ship, its items and the character.
 

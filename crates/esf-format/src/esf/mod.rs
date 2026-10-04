@@ -12,7 +12,7 @@ mod text;
 use esf_data::InfoEsf;
 
 pub use binary::{decode_base64url, encode_base64url};
-pub use fit::{from_fit, to_fit};
+pub use fit::{from_fit, main_fit, to_fit};
 pub use model::{Entry, Error, EsfFit, Location, State};
 
 use lookup::Lookup;

@@ -42,6 +42,12 @@ base64; unpack it, and hand over both::
 
     fit = dogma.load_link(version, gzip.decompress(base64.urlsafe_b64decode(payload)).decode())
 
+An esf/1 document, EVEShip.fit's own format, goes both ways as text, and as a
+link: its binary form in base64url::
+
+    fit = dogma.load_esf("%esf/1\nRifter\n200mm AutoCannon I\n")
+    link = dogma.save_esf_link(fit)
+
 An import matches English names. To also match the other seven languages EVE
 supports, load `names.dat` as well::
 
@@ -56,12 +62,16 @@ from ._esf_dogma_engine import (
     beacon,
     calculate,
     load_eft,
+    load_esf,
+    load_esf_link,
     load_esi_fitting,
     load_killmail,
     load_link,
     load_names,
     load_sde,
     save_eft,
+    save_esf,
+    save_esf_link,
     save_esi_fitting,
 )
 from .types import (
@@ -85,6 +95,8 @@ __all__ = [
     "beacon",
     "calculate",
     "load_eft",
+    "load_esf",
+    "load_esf_link",
     "load_esi_fitting",
     "load_killmail",
     "load_link",
@@ -93,6 +105,8 @@ __all__ = [
     "load_sde",
     "load_sde_from_file",
     "save_eft",
+    "save_esf",
+    "save_esf_link",
     "save_esi_fitting",
 ]
 

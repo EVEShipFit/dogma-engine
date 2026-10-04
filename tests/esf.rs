@@ -4,8 +4,8 @@
 
 use esf_dogma_engine::{Slot, State};
 use esf_format::esf::{
-    EsfFit, decode_base64url, encode_base64url, from_fit, load_esf, save_esf, save_esf_binary,
-    to_fit,
+    EsfFit, decode_base64url, encode_base64url, from_fit, load_esf, main_fit, save_esf,
+    save_esf_binary, to_fit,
 };
 
 use crate::harness::{info, info_name};
@@ -167,4 +167,10 @@ Gyrostabilizer II !off
 fn cannot_calculate_a_fit_without_a_ship() {
     let fits = load("%esf/1\n- \"Contract\"\nDamage Control II\n");
     assert!(to_fit(&info(), &fits[0]).is_err());
+}
+
+#[test]
+fn the_main_fit_is_the_one_not_carried() {
+    let fits = load("%esf/1\nHeron \"Scout\"\n\n%esf/1\nRaven\nHeron \"Scout\" @frigate\n");
+    assert_eq!(main_fit(&fits).unwrap().hull, fits[1].hull);
 }

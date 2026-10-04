@@ -2,7 +2,7 @@
 
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
-use esf_data::InfoEsf;
+use esf_data::{InfoEsf, fold_case};
 use esf_dogma_engine::{
     Character, Charge, Environment, Fit, FitItem, Mutation, Projection, Ship, Slot,
     State as EngineState,
@@ -49,6 +49,21 @@ fn next_index(
         .map_err(|_| Error::new(format!("too many {} slots", rack.name())))?;
     *counter += count;
     Ok(index)
+}
+
+/// The fit a document is about: the first one no other fit carries.
+pub fn main_fit(fits: &[EsfFit]) -> Option<&EsfFit> {
+    let carried = |fit: &EsfFit| {
+        fits.iter().flat_map(|other| &other.entries).any(|entry| {
+            entry.type_id == fit.hull
+                && entry
+                    .fit_name
+                    .as_deref()
+                    .zip(fit.name.as_deref())
+                    .is_some_and(|(left, right)| fold_case(left) == fold_case(right))
+        })
+    };
+    fits.iter().find(|fit| !carried(fit))
 }
 
 /// Turn a fit into one the dogma engine calculates, without skills.
