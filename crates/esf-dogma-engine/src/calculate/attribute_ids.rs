@@ -4,6 +4,7 @@ pub const ATTRIBUTE_CAPACITY_ID: i32 = 38;
 pub const ATTRIBUTE_VOLUME_ID: i32 = 161;
 pub const ATTRIBUTE_RADIUS_ID: i32 = 162;
 pub const ATTRIBUTE_SKILL_LEVEL_ID: i32 = 280;
+pub const ATTRIBUTE_UPGRADE_LOAD_ID: i32 = 1152;
 pub const ATTRIBUTE_REMOTE_RESISTANCE_ID: i32 = 2138;
 pub const ATTRIBUTE_PILOT_SECURITY_STATUS_ID: i32 = 2610;
 /** warfareBuff1 to warfareBuff4, as their (id, value) attribute pair. */

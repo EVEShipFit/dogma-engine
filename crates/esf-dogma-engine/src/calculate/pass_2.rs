@@ -4,11 +4,13 @@ use esf_data::eve;
 
 use super::attribute_ids::{
     ATTRIBUTE_CAPACITOR_NEED_ID, ATTRIBUTE_REMOTE_RESISTANCE_ID, ATTRIBUTE_SKILLS,
+    ATTRIBUTE_UPGRADE_LOAD_ID,
 };
 use super::item::{
     Attribute, Effect, EffectCategory, EffectOperator, Item, ItemState, Object, Origin,
 };
 use super::{Info, Objects, Pass};
+use crate::fit::Slot;
 use crate::projection::ProjectedBuff;
 
 /** Categories of the effect source which are exempt of stacking penalty.
@@ -322,11 +324,17 @@ impl Item {
                 })
             });
 
+        let is_rig = matches!(self.slot, Some(Slot::Rig(_)));
+
         for dogma_effect in own_effects.into_iter().flatten().chain(base_effects) {
             let Some(type_dogma_effect) = info.get_dogma_effect(dogma_effect.effect_id()) else {
                 continue;
             };
-            let category = get_effect_category(type_dogma_effect.effect_category());
+            let category = match get_effect_category(type_dogma_effect.effect_category()) {
+                /* A rig can be taken offline; then it does nothing. */
+                EffectCategory::Passive if is_rig => EffectCategory::Online,
+                category => category,
+            };
 
             /* Find the highest state an item can be in. */
             if let Some(state) = category.required_state() {
@@ -390,11 +398,20 @@ impl Item {
                 let Some(target) = get_target_object(modifier.domain(), origin) else {
                     continue;
                 };
+
+                /* An offline rig still takes up calibration. */
+                let source_category =
+                    if is_rig && modifier.modified_attribute_id() == ATTRIBUTE_UPGRADE_LOAD_ID {
+                        EffectCategory::Passive
+                    } else {
+                        category
+                    };
+
                 effects.push(Pass2Effect {
                     origin: Origin::Effect {
                         effect_id: dogma_effect.effect_id(),
                         source: origin,
-                        source_category: category,
+                        source_category,
                         attribute_id: modifier.modifying_attribute_id(),
                     },
                     modifier: effect_modifier,

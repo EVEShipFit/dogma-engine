@@ -20,6 +20,7 @@ mod nosferatu_income;
 mod projection;
 mod quantity_with_x_in_name;
 mod reactive_armor_hardener;
+mod rig_offline;
 mod security_status;
 mod spool;
 mod stacking_per_operator;
