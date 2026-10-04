@@ -259,6 +259,19 @@ def test_a_killmail_gives_the_fit_of_the_ship_that_died() -> None:
     assert fit["items"][0]["charge"] == {"type_id": EMP_S}
 
 
+def test_dna_gives_its_fit() -> None:
+    fit = dogma.load_dna(f"fitting:{RIFTER}:{AUTOCANNON_200MM};2:{EMP_S};100::")
+
+    assert fit["ship"]["type_id"] == RIFTER
+    assert fit["items"][1]["slot"] == {"type": "high", "index": 1}
+    assert fit["items"][2]["slot"] == {"type": "cargo"}
+
+
+def test_dna_without_a_ship_raises_value_error() -> None:
+    with pytest.raises(ValueError):
+        dogma.load_dna(f"{EMP_S};1::")
+
+
 def test_a_link_gives_its_fit() -> None:
     fit = dogma.load_link("v2", f"{RIFTER},Gun,\n27,{AUTOCANNON_200MM},1,{EMP_S},Active")
 

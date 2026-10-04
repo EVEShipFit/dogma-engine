@@ -1,5 +1,5 @@
 //! EVE's inventory flags: where an item is, by number (killmails, older
-//! EVEShip.fit links) or by name (ESI fittings).
+//! EVEShip.fit links) or by name (ESI fittings); and the rack a module fits in.
 
 use esf_dogma_engine::Slot;
 
@@ -11,6 +11,25 @@ pub(crate) enum Place {
     Implant,
     Booster,
 }
+
+/* The effect that marks which rack a module fits in. */
+pub(crate) const EFFECT_LO_POWER: i32 = 11;
+pub(crate) const EFFECT_HI_POWER: i32 = 12;
+pub(crate) const EFFECT_MED_POWER: i32 = 13;
+pub(crate) const EFFECT_RIG_SLOT: i32 = 2663;
+pub(crate) const EFFECT_SUBSYSTEM: i32 = 3772;
+pub(crate) const EFFECT_SERVICE_SLOT: i32 = 6306;
+
+type EffectRack = fn(u8) -> Slot;
+
+pub(crate) const EFFECT_RACKS: [(i32, EffectRack); 6] = [
+    (EFFECT_LO_POWER, Slot::Low),
+    (EFFECT_HI_POWER, Slot::High),
+    (EFFECT_MED_POWER, Slot::Medium),
+    (EFFECT_RIG_SLOT, Slot::Rig),
+    (EFFECT_SUBSYSTEM, Slot::Subsystem),
+    (EFFECT_SERVICE_SLOT, Slot::Service),
+];
 
 /* A run of flags, one per position in the rack. */
 struct Rack {

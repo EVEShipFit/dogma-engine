@@ -23,8 +23,8 @@ const DAMAGE_ATTRIBUTES: [&str; 4] = [
     "explosiveDamage",
 ];
 
-/// Set up a fit loaded from EFT or an ESI fitting the way EVE does when it
-/// imports that fit.
+/// Set up a fit loaded from EFT, an ESI fitting or DNA the way EVE does when
+/// it imports that fit.
 ///
 /// - A ship with modes and none set starts in its first mode.
 /// - A cloak or mass entangler is online, not active.

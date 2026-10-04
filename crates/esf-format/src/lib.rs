@@ -9,8 +9,9 @@
 //! - ESI killmails, the ship that died as it was fitted; see
 //!   [`killmail::load_killmail`].
 //! - EVEShip.fit links, of the versions before `v4`; see [`link::load_link`].
+//! - DNA, the fits EVE links to in chat; see [`dna::load_dna`].
 //!
-//! EFT and ESI fittings carry no states; [`post_load()`] sets the ones EVE
+//! EFT, ESI fittings and DNA carry no states; [`post_load()`] sets the ones EVE
 //! would.
 //!
 //! Only EFT names its items; the other formats use type ids. English names
@@ -31,6 +32,7 @@
 
 #![warn(missing_docs)]
 
+pub mod dna;
 pub mod eft;
 pub mod esf;
 pub mod esi;

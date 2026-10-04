@@ -122,8 +122,8 @@ pub fn save_esi_fitting(fit: Ts<Fit>) -> Result<Ts<EsiFitting>, JsError> {
     Ok(fitting.into_ts()?)
 }
 
-/// Set a fit loaded from EFT or an ESI fitting to the states EVE gives it on
-/// import. Set the skills of the character first.
+/// Set a fit loaded from EFT, an ESI fitting or DNA to the states EVE gives
+/// it on import. Set the skills of the character first.
 #[wasm_bindgen]
 pub fn post_load(fit: Ts<Fit>) -> Result<Ts<Fit>, JsError> {
     let sde = sde()?;
@@ -144,6 +144,18 @@ pub fn load_killmail(killmail: Ts<EsiKillmail>) -> Result<Ts<Fit>, JsError> {
     let info = InfoSde::new(sde);
 
     let fit = esf_format::killmail::load_killmail(&info, &killmail);
+    Ok(fit.into_ts()?)
+}
+
+/// Load a fit from DNA, the fits EVE links to in chat.
+#[wasm_bindgen]
+pub fn load_dna(dna: &str) -> Result<Ts<Fit>, JsError> {
+    let sde = sde()?;
+
+    let info = InfoSde::new(sde);
+
+    let fit =
+        esf_format::dna::load_dna(&info, dna).map_err(|error| JsError::new(&error.to_string()))?;
     Ok(fit.into_ts()?)
 }
 

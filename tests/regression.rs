@@ -11,6 +11,7 @@
 #[macro_use]
 mod harness;
 
+mod dna;
 mod eft;
 mod esf;
 mod esi;
