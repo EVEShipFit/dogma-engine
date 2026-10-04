@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Revelation
 ship/capacitorStablePercentage               = 84.027778
@@ -107,6 +107,7 @@ ship/shipBonusSoEECS3                        = 25.000000
 ship/shipBonusSoEECS4                        = 25.000000
 ship/shipBonusSoEECS5                        = 25.000000
 ship/shipBonusAB3                            = 25.000000
+ship/remoteCapacitorImpedance                = 0.000001
 
 character/corporationMemberLimit                   = 12600.000000
 character/maxLockedTargets                         = 25.000000

@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Paladin
 ship/maxTargetsCharacter                     = 25.000000
@@ -34,7 +34,7 @@ ship/capacitorDepletesIn                     = -1.000000
 ship/capacitorPeakDeltaPercentage            = 100.000000
 ship/capacitorPeakDelta                      = 31.250000
 ship/capacitorPeakRecharge                   = 31.250000
-ship/alignTime                               = 10.270778
+ship/alignTime                               = 10.276766
 ship/hp                                      = 10625.000000
 ship/powerOutput                             = 20000.000000
 ship/powerLoad                               = 100.000000
@@ -42,7 +42,7 @@ ship/maxVelocity                             = 0.000000
 ship/cpuOutput                               = 662.500000
 ship/cpuLoad                                 = 7.500000
 ship/rechargeRate                            = 750000.000000
-ship/agility                                 = 0.046305
+ship/agility                                 = 0.057915
 ship/maxTargetRange                          = 147875.000000
 ship/scanSpeed                               = 5625.000000
 ship/warpScrambleStatus                      = 100.000000
@@ -104,6 +104,7 @@ ship/shipBonusSoEECS3                        = 25.000000
 ship/shipBonusSoEECS4                        = 25.000000
 ship/shipBonusSoEECS5                        = 25.000000
 ship/shipBonusAB3                            = 25.000000
+ship/remoteCapacitorImpedance                = 0.000001
 
 character/corporationMemberLimit                   = 12600.000000
 character/maxLockedTargets                         = 25.000000
