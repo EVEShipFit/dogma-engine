@@ -42,6 +42,7 @@ All identifiers are those from the SDE.
       Absent for `fighter_bay`, `drone_bay` and `cargo`.
   - `quantity` (optional, default 1): stack size for drones, fighters and cargo. For fighters in a tube, the squadron size.
   - `state`: requested state; `offline`, `online`, `active` or `overload`.
+    An offline rig gives no bonus and no drawback, but still uses calibration.
   - `charge` (optional): the loaded charge, as `type_id`.
   - `mutation` (optional): for mutated items (Abyssal modules, mutated drones, ...).
     - `base`: type ID of the item before it was mutated.
