@@ -4,12 +4,27 @@ use std::sync::OnceLock;
 
 use super::eve;
 use crate::Error;
+use crate::fold::{fold_case, fold_char};
 
 /// Compare two names case-insensitively without allocating.
-fn compare_lowercase(left: &str, right: &str) -> Ordering {
-    let left = left.chars().flat_map(char::to_lowercase);
-    let right = right.chars().flat_map(char::to_lowercase);
-    left.cmp(right)
+fn compare_folded(left: &str, right: &str) -> Ordering {
+    left.chars()
+        .map(fold_char)
+        .cmp(right.chars().map(fold_char))
+}
+
+/// Names sorted case-insensitively, published first, then lowest id.
+fn sorted_names(mut entries: Vec<(&str, bool, i32)>) -> Vec<(&str, bool, i32)> {
+    /* Folding during the sort would redo it on every comparison; entries
+     * arrive in id order and the sort is stable. */
+    entries.sort_by_cached_key(|entry| (fold_case(entry.0), !entry.1));
+    entries
+}
+
+fn find_name(names: &[(&str, bool, i32)], name: &str) -> Option<i32> {
+    let position = names.partition_point(|entry| compare_folded(entry.0, name) == Ordering::Less);
+    let entry = names.get(position)?;
+    (compare_folded(entry.0, name) == Ordering::Equal).then_some(entry.2)
 }
 
 /// Reader for `sde.dat`, everything needed to calculate a fit.
@@ -18,9 +33,10 @@ fn compare_lowercase(left: &str, right: &str) -> Ordering {
 pub struct Sde<'a> {
     sde: eve::Sde<'a>,
     attribute_ids: HashMap<&'a str, i32>,
-    /// Built on first use: only an EFT import looks a type up by name, and
+    /// Built on first use: only an import looks a name up, and
     /// the borrowed names mean building it allocates one vector and no more.
     type_names: OnceLock<Vec<(&'a str, bool, i32)>>,
+    attribute_names: OnceLock<Vec<(&'a str, bool, i32)>>,
 }
 
 impl<'a> Sde<'a> {
@@ -39,6 +55,7 @@ impl<'a> Sde<'a> {
             sde,
             attribute_ids,
             type_names: OnceLock::new(),
+            attribute_names: OnceLock::new(),
         })
     }
 
@@ -103,21 +120,27 @@ impl<'a> Sde<'a> {
     /// prefers a published type, then the lowest id.
     pub fn type_name_to_id(&self, name: &str) -> Option<i32> {
         let type_names = self.type_names.get_or_init(|| {
-            let mut entries: Vec<(&'a str, bool, i32)> = self
-                .types()
-                .map(|r#type| (r#type.name(), r#type.published(), r#type.id()))
-                .collect();
-            /* Lowercasing during the sort would redo it on every comparison;
-             * types arrive in id order and the sort is stable, so a shared
-             * name ends up published first, then lowest id. */
-            entries.sort_by_cached_key(|entry| (entry.0.to_lowercase(), !entry.1));
-            entries
+            sorted_names(
+                self.types()
+                    .map(|r#type| (r#type.name(), r#type.published(), r#type.id()))
+                    .collect(),
+            )
         });
+        find_name(type_names, name)
+    }
 
-        let position =
-            type_names.partition_point(|entry| compare_lowercase(entry.0, name) == Ordering::Less);
-
-        let entry = type_names.get(position)?;
-        (compare_lowercase(entry.0, name) == Ordering::Equal).then_some(entry.2)
+    /// Look an attribute up by its name ignoring case; published first, then lowest id.
+    pub fn attribute_name_to_id_ignoring_case(&self, name: &str) -> Option<i32> {
+        let attribute_names = self.attribute_names.get_or_init(|| {
+            sorted_names(
+                self.sde
+                    .dogma_attributes()
+                    .into_iter()
+                    .flatten()
+                    .map(|attribute| (attribute.name(), attribute.published(), attribute.id()))
+                    .collect(),
+            )
+        });
+        find_name(attribute_names, name)
     }
 }

@@ -1,5 +1,7 @@
 //! Imports and exports EVE Online ship fits as an [`esf_dogma_engine::Fit`].
 //!
+//! - esf/1, EVEShip.fit's own format, as text and as binary; see
+//!   [`esf::load_esf`], [`esf::save_esf`] and [`esf::save_esf_binary`].
 //! - EFT, the text format EVE copies fits to; see [`eft::load_eft`] and
 //!   [`eft::save_eft`].
 //! - ESI fittings, the fits a character saves in game; see
@@ -27,6 +29,7 @@
 #![warn(missing_docs)]
 
 pub mod eft;
+pub mod esf;
 pub mod esi;
 pub mod killmail;
 pub mod link;

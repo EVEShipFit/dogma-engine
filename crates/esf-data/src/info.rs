@@ -56,3 +56,15 @@ pub trait InfoName {
     /// A mutaplasmid by its type id.
     fn get_mutaplasmid(&self, type_id: i32) -> Option<eve::Mutaplasmid<'_>>;
 }
+
+/// What the esf/1 format looks up on top of [`InfoExport`].
+pub trait InfoEsf: InfoExport {
+    /// The id of the type with this English name, ignoring case.
+    fn type_name_to_id(&self, name: &str) -> Option<i32>;
+    /// The id of the attribute with this name, ignoring case.
+    fn attribute_name_to_id_ignoring_case(&self, name: &str) -> Option<i32>;
+    /// The ids of the types in a group, lowest first.
+    fn group_type_ids(&self, group_id: i32) -> impl Iterator<Item = i32>;
+    /// Every mutaplasmid, lowest type id first.
+    fn mutaplasmids(&self) -> Vec<eve::Mutaplasmid<'_>>;
+}

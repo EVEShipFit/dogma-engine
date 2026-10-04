@@ -4,7 +4,7 @@ use flatbuffers::Vector;
 
 use super::{Names, Sde, eve};
 use crate::Error;
-use crate::info::{Info, InfoExport, InfoName};
+use crate::info::{Info, InfoEsf, InfoExport, InfoName};
 
 /// [`Info`] answered from `sde.dat`.
 pub struct InfoSde<'a> {
@@ -73,6 +73,27 @@ impl InfoExport for InfoSde<'_> {
         narrowest
             .or_else(widest)
             .map(|mutaplasmid| mutaplasmid.id())
+    }
+}
+
+impl InfoEsf for InfoSde<'_> {
+    fn type_name_to_id(&self, name: &str) -> Option<i32> {
+        self.sde.type_name_to_id(name)
+    }
+
+    fn attribute_name_to_id_ignoring_case(&self, name: &str) -> Option<i32> {
+        self.sde.attribute_name_to_id_ignoring_case(name)
+    }
+
+    fn group_type_ids(&self, group_id: i32) -> impl Iterator<Item = i32> {
+        self.sde
+            .types()
+            .filter(move |r#type| r#type.group_id() == group_id)
+            .map(|r#type| r#type.id())
+    }
+
+    fn mutaplasmids(&self) -> Vec<eve::Mutaplasmid<'_>> {
+        self.sde.mutaplasmids().collect()
     }
 }
 

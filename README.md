@@ -257,6 +257,14 @@ printf '[Nergal, Spool]\nLight Entropic Disintegrator II, Occult S\n' \
   | cargo run --release -p esf-cli -- --eft
 ```
 
+The input can also be an [esf/1](https://github.com/EVEShipFit/esf-format) document, text or binary.
+`--esf check`, `--esf canonical` and `--esf binary` check one, or write it in canonical form.
+That is the interface the esf/1 test suite runs against:
+
+```bash
+uv run --project ../esf-format/tools esf-test -- target/release/esf-cli --esf
+```
+
 The regression suite reads the same paths; set `ESF_SDE` and `ESF_NAMES` to point it elsewhere.
 
 ## Regression

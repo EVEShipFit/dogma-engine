@@ -1,5 +1,5 @@
 use std::collections::BTreeMap;
-use std::io::{IsTerminal, Read};
+use std::io::{IsTerminal, Read, Write};
 use std::path::PathBuf;
 
 use clap::{Parser, ValueEnum};
@@ -9,7 +9,7 @@ use esf_dogma_engine::{
     Calculation, DamageProfile, Fit, ItemResult, Options, ReactiveArmor, Rule, Security, Slot,
     SourceRef, State, Target, Violation,
 };
-use esf_format::eft;
+use esf_format::{eft, esf};
 
 const SKILL_CATEGORY_ID: i32 = 16;
 const CELESTIAL_CATEGORY_ID: i32 = 2;
@@ -97,6 +97,10 @@ struct Args {
     #[clap(long, help_heading = "Output")]
     eft: bool,
 
+    /// Read the input as esf/1 and check it, or write it as canonical text or binary.
+    #[clap(long, value_enum, value_name = "ACTION", help_heading = "Output")]
+    esf: Option<EsfAction>,
+
     /// Default: table when stdout is a terminal, json otherwise.
     #[clap(short, long, value_enum, help_heading = "Output")]
     output: Option<Output>,
@@ -127,6 +131,13 @@ struct Args {
 enum Output {
     Json,
     Table,
+}
+
+#[derive(Clone, Copy, ValueEnum)]
+enum EsfAction {
+    Check,
+    Canonical,
+    Binary,
 }
 
 #[derive(Clone, Copy, ValueEnum)]
@@ -527,21 +538,37 @@ fn print_table(info: &InfoSde, fit: &Fit, calculation: &Calculation, hide_empty:
     }
 }
 
+fn run_esf(info: &InfoSde, action: EsfAction, input: &[u8]) {
+    let fits = esf::load_esf(info, input).unwrap_or_else(|error| fail(error.to_string()));
+    let output = match action {
+        EsfAction::Check => return,
+        EsfAction::Canonical => esf::save_esf(info, &fits).map(String::into_bytes),
+        EsfAction::Binary => esf::save_esf_binary(info, &fits),
+    };
+    let output = output.unwrap_or_else(|error| fail(error.to_string()));
+    std::io::stdout().write_all(&output).unwrap();
+}
+
 pub fn main() {
     let args: Args = Args::parse();
 
-    /* "eft" can come either from stdin, or from eft-file parameter. */
-    let eft = match &args.eft_filename {
-        Some(filename) => std::fs::read_to_string(filename).unwrap(),
+    /* The fit can come either from stdin, or from eft-file parameter. */
+    let input = match &args.eft_filename {
+        Some(filename) => std::fs::read(filename).unwrap(),
         None => {
-            let mut buffer = String::new();
-            std::io::stdin().read_to_string(&mut buffer).unwrap();
+            let mut buffer = Vec::new();
+            std::io::stdin().read_to_end(&mut buffer).unwrap();
             buffer
         }
     };
 
     let sde_bytes = std::fs::read(&args.sde_filename).unwrap();
     let sde = Sde::new(&sde_bytes).unwrap();
+
+    if let Some(action) = args.esf {
+        run_esf(&InfoSde::new(&sde), action, &input);
+        return;
+    }
 
     /* English names come from the SDE; the names file only widens that to the
      * other seven languages, so a missing one is not fatal. */
@@ -550,7 +577,15 @@ pub fn main() {
 
     let info_name = InfoNameSde::new(&sde, names.as_ref()).unwrap();
 
-    let mut fit = eft::load_eft(&info_name, &eft).unwrap();
+    let mut fit = match input.trim_ascii_start().starts_with(b"[") {
+        true => eft::load_eft(&info_name, &String::from_utf8_lossy(&input)).unwrap(),
+        false => {
+            let info = InfoSde::new(&sde);
+            esf::load_esf(&info, &input)
+                .and_then(|fits| esf::to_fit(&info, &fits[0]))
+                .unwrap_or_else(|error| fail(error.to_string()))
+        }
+    };
 
     /* Without this the states from the EFT are used. */
     if let Some(state) = &args.state {
