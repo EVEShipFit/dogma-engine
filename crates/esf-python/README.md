@@ -55,6 +55,11 @@ to_esi = dogma.save_esi_fitting(fit)
 from_killmail = dogma.load_killmail(killmail)
 # Or if you have an EVEShip.fit link, `<version>:<payload>`, with the payload gunzipped and unbase64'd:
 from_link = dogma.load_link(version, payload)
+# Or if you have an esf/1 document, as text or as a link (and the other way around):
+from_esf = dogma.load_esf("%esf/1\nRifter\n200mm AutoCannon I\n")
+from_esf_link = dogma.load_esf_link(link)
+esf = dogma.save_esf(fit)
+link = dogma.save_esf_link(fit)
 
 # What EVE would not let you fly, in `violations` of the calculation:
 validated = dogma.calculate(fit, {"validate": True})

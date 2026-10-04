@@ -12,6 +12,7 @@
 mod harness;
 
 mod eft;
+mod esf;
 mod esi;
 mod fits;
 mod killmail;

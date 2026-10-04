@@ -269,3 +269,23 @@ def test_a_link_gives_its_fit() -> None:
 def test_a_link_of_an_unknown_version_raises_value_error() -> None:
     with pytest.raises(ValueError):
         dogma.load_link("v9", "")
+
+
+def test_an_esf_round_trips() -> None:
+    esf = "%esf/1\nRifter \"My Rifter\"\n\n200mm AutoCannon I :EMP S\n"
+    fit = dogma.load_esf(esf)
+
+    assert fit["ship"]["type_id"] == RIFTER
+    assert dogma.save_esf(fit) == esf
+
+
+def test_an_esf_link_round_trips() -> None:
+    fit = dogma.load_esf("%esf/1\nRifter\n200mm AutoCannon I :EMP S\n")
+    link = dogma.save_esf_link(fit)
+
+    assert dogma.save_esf(dogma.load_esf_link(link)) == dogma.save_esf(fit)
+
+
+def test_a_bad_esf_raises_value_error() -> None:
+    with pytest.raises(ValueError, match="line 2"):
+        dogma.load_esf("%esf/1\nNot A Ship\n")

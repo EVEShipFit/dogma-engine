@@ -6,6 +6,7 @@ use pythonize::{depythonize, pythonize};
 
 use esf_data::{Error, InfoNameSde, InfoSde, Names, Sde};
 use esf_dogma_engine::{Fit, Options};
+use esf_format::esf;
 use esf_format::esi::EsiFitting;
 use esf_format::killmail::EsiKillmail;
 
@@ -173,6 +174,68 @@ fn load_link<'py>(
     Ok(pythonize(py, &fit)?)
 }
 
+fn esf_error(error: esf::Error) -> PyErr {
+    PyValueError::new_err(error.to_string())
+}
+
+fn load_esf_fit(sde: &'static Sde<'static>, data: &[u8]) -> PyResult<Fit> {
+    let info = InfoSde::new(sde);
+
+    let fits = esf::load_esf(&info, data).map_err(esf_error)?;
+    let fit =
+        esf::main_fit(&fits).ok_or_else(|| PyValueError::new_err("no fit stands on its own"))?;
+    esf::to_fit(&info, fit).map_err(esf_error)
+}
+
+/// Load a fit from an esf/1 document, as text.
+#[pyfunction]
+fn load_esf(py: Python<'_>, text: String) -> PyResult<Bound<'_, PyAny>> {
+    let sde = sde()?;
+
+    let fit = py.detach(|| load_esf_fit(sde, text.as_bytes()))?;
+
+    Ok(pythonize(py, &fit)?)
+}
+
+/// Load a fit from an esf/1 link: the binary form, in base64url.
+#[pyfunction]
+fn load_esf_link(py: Python<'_>, link: String) -> PyResult<Bound<'_, PyAny>> {
+    let sde = sde()?;
+
+    let fit = py.detach(|| load_esf_fit(sde, &esf::decode_base64url(&link).map_err(esf_error)?))?;
+
+    Ok(pythonize(py, &fit)?)
+}
+
+/// Write a fit as an esf/1 document, as text.
+#[pyfunction]
+fn save_esf(py: Python<'_>, fit: &Bound<'_, PyAny>) -> PyResult<String> {
+    let sde = sde()?;
+
+    let fit: Fit = depythonize(fit).map_err(|error| PyValueError::new_err(error.to_string()))?;
+
+    py.detach(|| {
+        let info = InfoSde::new(sde);
+        let esf_fit = esf::from_fit(&info, &fit).map_err(esf_error)?;
+        esf::save_esf(&info, &[esf_fit]).map_err(esf_error)
+    })
+}
+
+/// Write a fit as an esf/1 link: the binary form, in base64url.
+#[pyfunction]
+fn save_esf_link(py: Python<'_>, fit: &Bound<'_, PyAny>) -> PyResult<String> {
+    let sde = sde()?;
+
+    let fit: Fit = depythonize(fit).map_err(|error| PyValueError::new_err(error.to_string()))?;
+
+    py.detach(|| {
+        let info = InfoSde::new(sde);
+        let esf_fit = esf::from_fit(&info, &fit).map_err(esf_error)?;
+        let binary = esf::save_esf_binary(&info, &[esf_fit]).map_err(esf_error)?;
+        Ok(esf::encode_base64url(&binary))
+    })
+}
+
 /// Calculate every attribute of the ship, its items and the character.
 #[pyfunction]
 #[pyo3(signature = (fit, options = None))]
@@ -224,6 +287,10 @@ fn _esf_dogma_engine(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(save_esi_fitting, module)?)?;
     module.add_function(wrap_pyfunction!(load_killmail, module)?)?;
     module.add_function(wrap_pyfunction!(load_link, module)?)?;
+    module.add_function(wrap_pyfunction!(load_esf, module)?)?;
+    module.add_function(wrap_pyfunction!(load_esf_link, module)?)?;
+    module.add_function(wrap_pyfunction!(save_esf, module)?)?;
+    module.add_function(wrap_pyfunction!(save_esf_link, module)?)?;
     module.add_function(wrap_pyfunction!(calculate, module)?)?;
     module.add_function(wrap_pyfunction!(beacon, module)?)?;
     Ok(())

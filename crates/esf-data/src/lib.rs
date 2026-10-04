@@ -7,11 +7,13 @@
 #![warn(missing_docs)]
 
 mod error;
+mod fold;
 mod info;
 mod sde;
 
 pub use error::Error;
-pub use info::{Info, InfoExport, InfoName};
+pub use fold::{fold_case, fold_char, sort_by_text};
+pub use info::{Info, InfoEsf, InfoExport, InfoName};
 pub use sde::{InfoNameSde, InfoSde, Names, Sde, eve};
 
 /// The traits hand out flatbuffers types; implementing them needs this exact

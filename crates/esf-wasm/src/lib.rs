@@ -5,6 +5,7 @@ use wasm_bindgen::prelude::*;
 
 use esf_data::{Error, InfoNameSde, InfoSde, Names, Sde};
 use esf_dogma_engine::{Calculation, Fit, Options, Projection};
+use esf_format::esf;
 use esf_format::esi::EsiFitting;
 use esf_format::killmail::EsiKillmail;
 
@@ -144,6 +145,53 @@ pub fn load_link(version: &str, payload: &str) -> Result<Ts<Fit>, JsError> {
     let fit = esf_format::link::load_link(&info, version, payload)
         .map_err(|error| JsError::new(&error.to_string()))?;
     Ok(fit.into_ts()?)
+}
+
+fn esf_error(error: esf::Error) -> JsError {
+    JsError::new(&error.to_string())
+}
+
+fn load_esf_fit(data: &[u8]) -> Result<Ts<Fit>, JsError> {
+    let info = InfoSde::new(sde()?);
+
+    let fits = esf::load_esf(&info, data).map_err(esf_error)?;
+    let fit = esf::main_fit(&fits).ok_or_else(|| JsError::new("no fit stands on its own"))?;
+    Ok(esf::to_fit(&info, fit).map_err(esf_error)?.into_ts()?)
+}
+
+fn save_esf_fit(fit: Ts<Fit>) -> Result<(InfoSde<'static>, esf::EsfFit), JsError> {
+    let info = InfoSde::new(sde()?);
+
+    let fit: Fit = fit.to_rust()?;
+    let esf_fit = esf::from_fit(&info, &fit).map_err(esf_error)?;
+    Ok((info, esf_fit))
+}
+
+/// Load a fit from an esf/1 document, as text.
+#[wasm_bindgen]
+pub fn load_esf(text: &str) -> Result<Ts<Fit>, JsError> {
+    load_esf_fit(text.as_bytes())
+}
+
+/// Load a fit from an esf/1 link: the binary form, in base64url.
+#[wasm_bindgen]
+pub fn load_esf_link(link: &str) -> Result<Ts<Fit>, JsError> {
+    load_esf_fit(&esf::decode_base64url(link).map_err(esf_error)?)
+}
+
+/// Write a fit as an esf/1 document, as text.
+#[wasm_bindgen]
+pub fn save_esf(fit: Ts<Fit>) -> Result<String, JsError> {
+    let (info, esf_fit) = save_esf_fit(fit)?;
+    esf::save_esf(&info, &[esf_fit]).map_err(esf_error)
+}
+
+/// Write a fit as an esf/1 link: the binary form, in base64url.
+#[wasm_bindgen]
+pub fn save_esf_link(fit: Ts<Fit>) -> Result<String, JsError> {
+    let (info, esf_fit) = save_esf_fit(fit)?;
+    let binary = esf::save_esf_binary(&info, &[esf_fit]).map_err(esf_error)?;
+    Ok(esf::encode_base64url(&binary))
 }
 
 /// `options` may be left out; it then uses the defaults.
