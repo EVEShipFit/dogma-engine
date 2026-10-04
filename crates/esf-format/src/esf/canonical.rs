@@ -92,11 +92,7 @@ fn body<I: InfoEsf>(lookup: &Lookup<I>, entry: &Entry, naming: Naming) -> Result
                 if !value.is_finite() {
                     return Err(Error::new("an override value is not finite"));
                 }
-                let value = match naming {
-                    Naming::Shortest => number(*value),
-                    Naming::Full => value.to_string(),
-                };
-                Ok(format!("{name} {value}"))
+                Ok(format!("{name} {}", number(*value)))
             })
             .collect::<Result<Vec<_>, _>>()?;
         parts.push(format!("{{{}}}", pairs.join(", ")));
@@ -228,7 +224,10 @@ fn line<I: InfoEsf>(lookup: &Lookup<I>, fits: &[Fit], fit: &Fit, item: &Item) ->
                 .or_insert_with(|| lookup.base_value(type_id, attribute_id));
         }
     }
-    entry.overrides = overrides.into_iter().collect();
+    entry.overrides = overrides
+        .into_iter()
+        .map(|(attribute_id, value)| (attribute_id, if value == 0.0 { 0.0 } else { value }))
+        .collect();
     entry.overrides.sort_by_cached_key(|(attribute_id, _)| {
         let name = lookup.attribute_name(*attribute_id).unwrap_or_default();
         (fold_case(name), name)
