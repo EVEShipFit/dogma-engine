@@ -26,6 +26,34 @@ fn sorted_names(entries: Vec<(&str, bool, i32)>) -> Vec<(&str, bool, i32)> {
     })
 }
 
+/// The position of each entry in a vector, by id.
+struct IdIndex {
+    first: i32,
+    /// `u32::MAX` where no entry has that id.
+    positions: Vec<u32>,
+}
+
+impl IdIndex {
+    fn new(ids: impl Iterator<Item = i32> + Clone) -> IdIndex {
+        let first = ids.clone().min().unwrap_or(0);
+        let mut positions = Vec::new();
+        for (position, id) in ids.enumerate() {
+            let offset = id.abs_diff(first) as usize;
+            if positions.len() <= offset {
+                positions.resize(offset + 1, u32::MAX);
+            }
+            positions[offset] = position as u32;
+        }
+        IdIndex { first, positions }
+    }
+
+    fn get(&self, id: i32) -> Option<usize> {
+        let offset = usize::try_from(id.checked_sub(self.first)?).ok()?;
+        let position = *self.positions.get(offset)?;
+        (position != u32::MAX).then_some(position as usize)
+    }
+}
+
 fn find_name(names: &[(&str, bool, i32)], name: &str) -> Option<i32> {
     let position = names.partition_point(|entry| compare_folded(entry.0, name) == Ordering::Less);
     let entry = names.get(position)?;
@@ -38,6 +66,8 @@ fn find_name(names: &[(&str, bool, i32)], name: &str) -> Option<i32> {
 pub struct Sde<'a> {
     sde: eve::Sde<'a>,
     attribute_ids: HashMap<&'a str, i32>,
+    attribute_positions: IdIndex,
+    effect_positions: IdIndex,
     /// Built on first use: only an import looks a name up, and
     /// the borrowed names mean building it allocates one vector and no more.
     type_names: OnceLock<Vec<(&'a str, bool, i32)>>,
@@ -47,7 +77,7 @@ pub struct Sde<'a> {
 }
 
 impl<'a> Sde<'a> {
-    /// Check the bytes are a valid SDE, and index the attributes by name.
+    /// Check the bytes are a valid SDE, and index the attributes and effects.
     pub fn new(bytes: &'a [u8]) -> Result<Sde<'a>, Error> {
         let sde = eve::root_as_sde(bytes).map_err(Error::InvalidSde)?;
 
@@ -58,9 +88,24 @@ impl<'a> Sde<'a> {
             }
         }
 
+        let attribute_positions = IdIndex::new(
+            sde.dogma_attributes()
+                .into_iter()
+                .flatten()
+                .map(|attribute| attribute.id()),
+        );
+        let effect_positions = IdIndex::new(
+            sde.dogma_effects()
+                .into_iter()
+                .flatten()
+                .map(|effect| effect.id()),
+        );
+
         Ok(Sde {
             sde,
             attribute_ids,
+            attribute_positions,
+            effect_positions,
             type_names: OnceLock::new(),
             attribute_names: OnceLock::new(),
             group_types: OnceLock::new(),
@@ -102,18 +147,14 @@ impl<'a> Sde<'a> {
 
     /// An attribute by id.
     pub fn get_dogma_attribute(&self, attribute_id: i32) -> Option<eve::DogmaAttribute<'a>> {
-        self.sde
-            .dogma_attributes()?
-            .lookup_by_key(attribute_id, |entry, key| {
-                entry.key_compare_with_value(*key)
-            })
+        let position = self.attribute_positions.get(attribute_id)?;
+        Some(self.sde.dogma_attributes()?.get(position))
     }
 
     /// An effect by id.
     pub fn get_dogma_effect(&self, effect_id: i32) -> Option<eve::DogmaEffect<'a>> {
-        self.sde
-            .dogma_effects()?
-            .lookup_by_key(effect_id, |entry, key| entry.key_compare_with_value(*key))
+        let position = self.effect_positions.get(effect_id)?;
+        Some(self.sde.dogma_effects()?.get(position))
     }
 
     /// A buff by id.
