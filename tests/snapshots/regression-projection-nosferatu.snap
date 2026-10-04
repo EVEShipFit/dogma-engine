@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Rupture
 ship/capacitorStablePercentage               = 0.000000
@@ -145,25 +145,6 @@ incoming_effect_1/maxRange              = 30000.000000
 incoming_effect_1/falloffEffectiveness  = 10000.000000
 incoming_effect_1/remoteResistanceID    = 2045.000000
 
-low_1/type  = Damage Control II
-low_1/state = online
-
-low_2/type  = Gyrostabilizer II
-low_2/state = online
-
-medium_1/type              = 10MN Afterburner II
-medium_1/state             = active
-medium_1/capacitorPeakLoad = 3.000000
-medium_1/cycleTime         = 7500.000000
-medium_1/capacitorNeed     = 22.500000
-medium_1/speedFactor       = 168.750000
-medium_1/duration          = 7500.000000
-medium_1/heatDamage        = 4.275000
-
-medium_2/type  = Large Shield Extender II
-medium_2/state = online
-medium_2/power = 120.000000
-
 high_1/type                         = 425mm AutoCannon II
 high_1/state                        = active
 high_1/damageVolley                 = 249.515088
@@ -204,3 +185,22 @@ high_2/charge/kineticDamage         = 276.375000
 high_2/charge/explosionDelay        = 7312.500000
 high_2/charge/aoeVelocity           = 106.500000
 high_2/charge/aoeCloudSize          = 180.750000
+
+medium_1/type              = 10MN Afterburner II
+medium_1/state             = active
+medium_1/capacitorPeakLoad = 3.000000
+medium_1/cycleTime         = 7500.000000
+medium_1/capacitorNeed     = 22.500000
+medium_1/speedFactor       = 168.750000
+medium_1/duration          = 7500.000000
+medium_1/heatDamage        = 4.275000
+
+medium_2/type  = Large Shield Extender II
+medium_2/state = online
+medium_2/power = 120.000000
+
+low_1/type  = Damage Control II
+low_1/state = online
+
+low_2/type  = Gyrostabilizer II
+low_2/state = online

@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Caracal
 ship/capacitorStablePercentage               = 0.000000
@@ -152,11 +152,24 @@ outgoing_effect_1/maxRange             = 10000.000000
 outgoing_effect_1/falloffEffectiveness = 0.000000
 outgoing_effect_1/remoteResistanceID   = 2115.000000
 
-low_1-3/type  = Ballistic Control System I
-low_1-3/state = online
-
-low_4/type  = IFFA Compact Damage Control
-low_4/state = online
+high_1-5/type                         = Prototype 'Arbalest' Heavy Assault Missile Launcher I
+high_1-5/state                        = active
+high_1-5/damageVolley                 = 162.309666
+high_1-5/speedWithReload              = 3166.535620
+high_1-5/speedOfReload                = 166.666667
+high_1-5/damagePerSecondWithReload    = 51.257805
+high_1-5/damagePerSecondWithoutReload = 54.105586
+high_1-5/chargeAmount                 = 60.000000
+high_1-5/power                        = 97.200000
+high_1-5/cpu                          = 29.250000
+high_1-5/speed                        = 2999.868952
+high_1-5/heatDamage                   = 0.750000
+high_1-5/charge/type                  = Scourge Heavy Assault Missile
+high_1-5/charge/maxVelocity           = 5062.500000
+high_1-5/charge/kineticDamage         = 162.309666
+high_1-5/charge/explosionDelay        = 6000.000000
+high_1-5/charge/aoeVelocity           = 151.500000
+high_1-5/charge/aoeCloudSize          = 93.750000
 
 medium_1/type              = 10MN Y-S8 Compact Afterburner
 medium_1/state             = active
@@ -191,24 +204,11 @@ medium_5/cycleTime         = 5000.000000
 medium_5/capacitorNeed     = 1.500000
 medium_5/heatDamage        = 3.750000
 
-high_1-5/type                         = Prototype 'Arbalest' Heavy Assault Missile Launcher I
-high_1-5/state                        = active
-high_1-5/damageVolley                 = 162.309666
-high_1-5/speedWithReload              = 3166.535620
-high_1-5/speedOfReload                = 166.666667
-high_1-5/damagePerSecondWithReload    = 51.257805
-high_1-5/damagePerSecondWithoutReload = 54.105586
-high_1-5/chargeAmount                 = 60.000000
-high_1-5/power                        = 97.200000
-high_1-5/cpu                          = 29.250000
-high_1-5/speed                        = 2999.868952
-high_1-5/heatDamage                   = 0.750000
-high_1-5/charge/type                  = Scourge Heavy Assault Missile
-high_1-5/charge/maxVelocity           = 5062.500000
-high_1-5/charge/kineticDamage         = 162.309666
-high_1-5/charge/explosionDelay        = 6000.000000
-high_1-5/charge/aoeVelocity           = 151.500000
-high_1-5/charge/aoeCloudSize          = 93.750000
+low_1-3/type  = Ballistic Control System I
+low_1-3/state = online
+
+low_4/type  = IFFA Compact Damage Control
+low_4/state = online
 
 rig_1-3/type  = Medium Ancillary Current Router I
 rig_1-3/state = online

@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Vexor
 ship/capacitorStablePercentage               = 0.000000
@@ -123,6 +123,16 @@ character/inventionReverseEngineeringResearchSpeed = 0.850000
 character/reactionTimeMultiplier                   = 0.800000
 character/reactionSlotLimit                        = 10.000000
 
+medium_1/type                     = Medium Ancillary Shield Booster
+medium_1/state                    = active
+medium_1/capacitorInjectionAmount = 100.000000
+medium_1/shieldBoostRate          = 48.666667
+medium_1/chargeAmount             = 3.500000
+medium_1/cycleTime                = 3000.000000
+medium_1/capacitorNeed            = 0.000000
+medium_1/heatDamage               = 0.975000
+medium_1/charge/type              = Cap Booster 100
+
 low_1/type                           = Medium Ancillary Armor Repairer
 low_1/state                          = active
 low_1/armorRepairRate                = 69.000000
@@ -134,13 +144,3 @@ low_1/armorDamageAmount              = 621.000000
 low_1/heatDamage                     = 3.975000
 low_1/charge/type                    = Nanite Repair Paste
 low_1/charge/chargedRepairMultiplier = 3.000000
-
-medium_1/type                     = Medium Ancillary Shield Booster
-medium_1/state                    = active
-medium_1/capacitorInjectionAmount = 100.000000
-medium_1/shieldBoostRate          = 48.666667
-medium_1/chargeAmount             = 3.500000
-medium_1/cycleTime                = 3000.000000
-medium_1/capacitorNeed            = 0.000000
-medium_1/heatDamage               = 0.975000
-medium_1/charge/type              = Cap Booster 100

@@ -1,10 +1,11 @@
 use crate::harness::all;
 
-const FIT: &str = r#"
-[Gila, 20240806 - Community Fit by HateLesS]
-Drone Damage Amplifier II
-Drone Damage Amplifier II
-Drone Damage Amplifier II
+const FIT: &str = r#"%esf/1
+Gila "20240806 - Community Fit by HateLesS"
+
+2x Upgraded 'Malkuth' Rapid Light Missile Launcher :Caldari Navy Mjolnir Light Missile
+Drone Link Augmentor I
+2x Upgraded 'Malkuth' Rapid Light Missile Launcher :Caldari Navy Mjolnir Light Missile
 
 Multispectrum Shield Hardener II
 Republic Fleet Large Cap Battery
@@ -13,19 +14,12 @@ Multispectrum Shield Hardener II
 Copasetic Compact Shield Boost Amplifier
 Pithum C-Type Medium Shield Booster
 
-Upgraded 'Malkuth' Rapid Light Missile Launcher, Caldari Navy Mjolnir Light Missile
-Upgraded 'Malkuth' Rapid Light Missile Launcher, Caldari Navy Mjolnir Light Missile
-Drone Link Augmentor I
-Upgraded 'Malkuth' Rapid Light Missile Launcher, Caldari Navy Mjolnir Light Missile
-Upgraded 'Malkuth' Rapid Light Missile Launcher, Caldari Navy Mjolnir Light Missile
+3x Drone Damage Amplifier II
 
-Medium Core Defense Operational Solidifier I
-Medium Core Defense Operational Solidifier I
+2x Medium Core Defense Operational Solidifier I
 Medium Core Defense Operational Solidifier II
 
-
-
-Imperial Navy Infiltrator x2
+2x Imperial Navy Infiltrator
 "#;
 
 regression! {

@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Rifter
 ship/maxTargetsCharacter                     = 25.000000
@@ -162,43 +162,6 @@ incoming_effect_7/type                              = Class 6 Cataclysmic Variab
 incoming_effect_7/effect                            = systemRemoteCapTransmitterAmount
 incoming_effect_7/energyTransferAmountBonus         = 0.500000
 
-low_1/type  = Damage Control II
-low_1/state = online
-
-low_2/type              = Small Armor Repairer II
-low_2/state             = active
-low_2/armorRepairRate   = 10.222222
-low_2/capacitorPeakLoad = 8.888889
-low_2/cycleTime         = 4500.000000
-low_2/duration          = 4500.000000
-low_2/armorDamageAmount = 46.000000
-low_2/heatDamage        = 4.050000
-
-low_3/type  = Overdrive Injector System II
-low_3/state = online
-
-medium_1/type  = Small Shield Extender II
-medium_1/state = online
-medium_1/power = 2.250000
-
-medium_2/type              = 1MN Afterburner II
-medium_2/state             = active
-medium_2/capacitorPeakLoad = 0.733333
-medium_2/cycleTime         = 7500.000000
-medium_2/capacitorNeed     = 5.500000
-medium_2/speedFactor       = 168.750000
-medium_2/duration          = 7500.000000
-medium_2/heatDamage        = 7.200000
-
-medium_3/type                     = Small Capacitor Booster II
-medium_3/state                    = active
-medium_3/capacitorInjectionAmount = 400.000000
-medium_3/chargeAmount             = 1.250000
-medium_3/capacitorPeakLoad        = -33.333333
-medium_3/cycleTime                = 12000.000000
-medium_3/heatDamage               = 3.975000
-medium_3/charge/type              = Navy Cap Booster 400
-
 high_1/type                         = 200mm AutoCannon II
 high_1/state                        = active
 high_1/damageVolley                 = 75.610631
@@ -239,3 +202,40 @@ high_2/charge/kineticDamage         = 70.537499
 high_2/charge/explosionDelay        = 3000.000000
 high_2/charge/aoeVelocity           = 193.500000
 high_2/charge/aoeCloudSize          = 25.500000
+
+medium_1/type  = Small Shield Extender II
+medium_1/state = online
+medium_1/power = 2.250000
+
+medium_2/type              = 1MN Afterburner II
+medium_2/state             = active
+medium_2/capacitorPeakLoad = 0.733333
+medium_2/cycleTime         = 7500.000000
+medium_2/capacitorNeed     = 5.500000
+medium_2/speedFactor       = 168.750000
+medium_2/duration          = 7500.000000
+medium_2/heatDamage        = 7.200000
+
+medium_3/type                     = Small Capacitor Booster II
+medium_3/state                    = active
+medium_3/capacitorInjectionAmount = 400.000000
+medium_3/chargeAmount             = 1.250000
+medium_3/capacitorPeakLoad        = -33.333333
+medium_3/cycleTime                = 12000.000000
+medium_3/heatDamage               = 3.975000
+medium_3/charge/type              = Navy Cap Booster 400
+
+low_1/type  = Damage Control II
+low_1/state = online
+
+low_2/type              = Small Armor Repairer II
+low_2/state             = active
+low_2/armorRepairRate   = 10.222222
+low_2/capacitorPeakLoad = 8.888889
+low_2/cycleTime         = 4500.000000
+low_2/duration          = 4500.000000
+low_2/armorDamageAmount = 46.000000
+low_2/heatDamage        = 4.050000
+
+low_3/type  = Overdrive Injector System II
+low_3/state = online

@@ -2,37 +2,36 @@
 
 use crate::harness::all;
 
-const FITTING: &str = r#"
-[Rifter, Fitting]
+const FITTING: &str = r#"%esf/1
+Rifter "Fitting"
+
+3x Warp Disruptor II
+
 1600mm Steel Plates II
-Warp Disruptor II
-Warp Disruptor II
-Warp Disruptor II
 "#;
 
-const CALIBRATION: &str = r#"
-[Rifter, Calibration]
-Small Projectile Collision Accelerator I
-Small Projectile Collision Accelerator I
-Small Projectile Collision Accelerator I
+const CALIBRATION: &str = r#"%esf/1
+Rifter "Calibration"
+
+3x Small Projectile Collision Accelerator I
 "#;
 
-const MANY_DRONES: &str = r#"
-[Vexor, Many drones]
+const MANY_DRONES: &str = r#"%esf/1
+Vexor "Many drones"
 
-Hammerhead II x13
+13x Hammerhead II
 "#;
 
-const FEW_DRONES: &str = r#"
-[Vexor, Few drones]
+const FEW_DRONES: &str = r#"%esf/1
+Vexor "Few drones"
 
-Hobgoblin II x5
+5x Hobgoblin II
 "#;
 
-const CARGO: &str = r#"
-[Rifter, Cargo]
+const CARGO: &str = r#"%esf/1
+Rifter "Cargo"
 
-EMP S x100000
+100000x EMP S
 "#;
 
 validation! {

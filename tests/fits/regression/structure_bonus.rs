@@ -5,31 +5,30 @@ use esf_dogma_engine::Security;
 use crate::harness::all;
 
 /* Powered (because of Cloning Center) should give more hp / cap. */
-const POWERED: &str = r#"
-[Astrahus, Structure bonus powered]
-Standup Layered Armor Plating I
+const POWERED: &str = r#"%esf/1
+Astrahus "Structure bonus powered"
 
 Standup Cap Battery I
 
-
+Standup Layered Armor Plating I
 
 Standup Cloning Center I
 "#;
 
 /* Without a service module the plating does nothing. */
-const UNPOWERED: &str = r#"
-[Astrahus, Structure bonus unpowered]
-Standup Layered Armor Plating I
+const UNPOWERED: &str = r#"%esf/1
+Astrahus "Structure bonus unpowered"
 
 Standup Cap Battery I
+
+Standup Layered Armor Plating I
 "#;
 
 /* Rigs should apply bonuses to modules, more so outside high-sec. */
-const RIGGED: &str = r#"
-[Astrahus, Structure bonus rigged]
+const RIGGED: &str = r#"%esf/1
+Astrahus "Structure bonus rigged"
 
-
-Standup Multirole Missile Launcher I, Standup Cruise Missile
+Standup Multirole Missile Launcher I :Standup Cruise Missile
 
 Standup M-Set Missile Precision I
 Standup M-Set Missile Projection I

@@ -7,26 +7,29 @@
 
 use crate::harness::all;
 
-const LOADED: &str = r#"
-[Vexor, Charged repair loaded]
-Medium Ancillary Armor Repairer, Nanite Repair Paste
+const LOADED: &str = r#"%esf/1
+Vexor "Charged repair loaded"
+
+Medium Ancillary Armor Repairer :Nanite Repair Paste
 "#;
 
-const EMPTY: &str = r#"
-[Vexor, Charged repair empty]
+const EMPTY: &str = r#"%esf/1
+Vexor "Charged repair empty"
+
 Medium Ancillary Armor Repairer
 "#;
 
 /* A plain repairer holds no multiplier, so paste or not it never trebles. */
-const PLAIN: &str = r#"
-[Vexor, Charged repair plain repairer]
+const PLAIN: &str = r#"%esf/1
+Vexor "Charged repair plain repairer"
+
 Medium Armor Repairer II
 "#;
 
-const REMOTE: &str = r#"
-[Vexor, Charged repair remote]
+const REMOTE: &str = r#"%esf/1
+Vexor "Charged repair remote"
 
-Medium Ancillary Remote Armor Repairer, Nanite Repair Paste
+Medium Ancillary Remote Armor Repairer :Nanite Repair Paste
 "#;
 
 regression! {

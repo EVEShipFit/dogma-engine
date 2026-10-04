@@ -6,32 +6,32 @@
 
 use crate::harness::all;
 
-const LOADED: &str = r#"
-[Vexor, Capacitor booster loaded]
+const LOADED: &str = r#"%esf/1
+Vexor "Capacitor booster loaded"
 
-Medium Capacitor Booster II, Cap Booster 400
+Medium Capacitor Booster II :Cap Booster 400
 "#;
 
-const EMPTY: &str = r#"
-[Vexor, Capacitor booster empty]
+const EMPTY: &str = r#"%esf/1
+Vexor "Capacitor booster empty"
 
 Medium Capacitor Booster II
 "#;
 
 /* Runs dry in 40s without the booster, and holds with it. */
-const DRAINED: &str = r#"
-[Vexor, Capacitor booster keeps up]
-Medium Armor Repairer II
-Medium Armor Repairer II
+const DRAINED: &str = r#"%esf/1
+Vexor "Capacitor booster keeps up"
 
 5MN Microwarpdrive II
-Medium Capacitor Booster II, Cap Booster 400
+Medium Capacitor Booster II :Cap Booster 400
+
+2x Medium Armor Repairer II
 "#;
 
-const FUEL_ONLY: &str = r#"
-[Caracal, Cap booster charge as fuel]
+const FUEL_ONLY: &str = r#"%esf/1
+Caracal "Cap booster charge as fuel"
 
-Medium Ancillary Shield Booster, Cap Booster 100
+Medium Ancillary Shield Booster :Cap Booster 100
 "#;
 
 regression! {

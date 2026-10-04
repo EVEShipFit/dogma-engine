@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Rupture
 ship/capacitorStablePercentage               = 0.000000
@@ -94,14 +94,25 @@ ship/shipBonusSoEECS4                        = 0.000000
 ship/shipBonusSoEECS5                        = 0.000000
 ship/shipBonusAB3                            = 0.000000
 
-low_1-3/type  = Counterbalanced Compact Gyrostabilizer
-low_1-3/state = online
-
-low_4/type  = Fourier Compact Tracking Enhancer
-low_4/state = online
-
-low_5/type  = IFFA Compact Damage Control
-low_5/state = online
+high_1-4/type                         = 220mm Medium Prototype Automatic Cannon
+high_1-4/state                        = active
+high_1-4/damageVolley                 = 88.556509
+high_1-4/speedWithReload              = 3545.310732
+high_1-4/speedOfReload                = 62.500001
+high_1-4/damagePerSecondWithReload    = 24.978490
+high_1-4/damagePerSecondWithoutReload = 25.426736
+high_1-4/chargeAmount                 = 159.999998
+high_1-4/cycleTime                    = 3482.810731
+high_1-4/power                        = 121.000000
+high_1-4/speed                        = 3482.810731
+high_1-4/maxRange                     = 1120.387500
+high_1-4/damageMultiplier             = 3.208569
+high_1-4/falloff                      = 13080.556292
+high_1-4/trackingSpeed                = 41.969666
+high_1-4/barrageDmgMultiplier         = 3.208569
+high_1-4/barrageFalloff               = 13080.556292
+high_1-4/entityFlyRange               = 250.000000
+high_1-4/charge/type                  = Republic Fleet EMP M
 
 medium_1/type              = Large C5-L Compact Shield Booster
 medium_1/state             = active
@@ -122,25 +133,14 @@ medium_3/cycleTime         = 10000.000000
 medium_4/type  = Large Compact Pb-Acid Cap Battery
 medium_4/state = online
 
-high_1-4/type                         = 220mm Medium Prototype Automatic Cannon
-high_1-4/state                        = active
-high_1-4/damageVolley                 = 88.556509
-high_1-4/speedWithReload              = 3545.310732
-high_1-4/speedOfReload                = 62.500001
-high_1-4/damagePerSecondWithReload    = 24.978490
-high_1-4/damagePerSecondWithoutReload = 25.426736
-high_1-4/chargeAmount                 = 159.999998
-high_1-4/cycleTime                    = 3482.810731
-high_1-4/power                        = 121.000000
-high_1-4/speed                        = 3482.810731
-high_1-4/maxRange                     = 1120.387500
-high_1-4/damageMultiplier             = 3.208569
-high_1-4/falloff                      = 13080.556292
-high_1-4/trackingSpeed                = 41.969666
-high_1-4/barrageDmgMultiplier         = 3.208569
-high_1-4/barrageFalloff               = 13080.556292
-high_1-4/entityFlyRange               = 250.000000
-high_1-4/charge/type                  = Republic Fleet EMP M
+low_1-3/type  = Counterbalanced Compact Gyrostabilizer
+low_1-3/state = online
+
+low_4/type  = Fourier Compact Tracking Enhancer
+low_4/state = online
+
+low_5/type  = IFFA Compact Damage Control
+low_5/state = online
 
 rig_1/type  = Medium EM Shield Reinforcer I
 rig_1/state = online
@@ -163,25 +163,6 @@ ship                                           = skill Minmatar Cruiser needs 1 
 ship                                           = skill Spaceship Command needs 2 has 0
 ship                                           = skill Minmatar Destroyer needs 3 has 0
 ship                                           = skill Minmatar Frigate needs 3 has 0
-low_1/Counterbalanced Compact Gyrostabilizer   = skill Weapon Upgrades needs 1 has 0
-low_1/Counterbalanced Compact Gyrostabilizer   = skill Gunnery needs 2 has 0
-low_2/Counterbalanced Compact Gyrostabilizer   = skill Weapon Upgrades needs 1 has 0
-low_2/Counterbalanced Compact Gyrostabilizer   = skill Gunnery needs 2 has 0
-low_3/Counterbalanced Compact Gyrostabilizer   = skill Weapon Upgrades needs 1 has 0
-low_3/Counterbalanced Compact Gyrostabilizer   = skill Gunnery needs 2 has 0
-low_4/Fourier Compact Tracking Enhancer        = skill Weapon Upgrades needs 1 has 0
-low_4/Fourier Compact Tracking Enhancer        = skill Gunnery needs 2 has 0
-low_5/IFFA Compact Damage Control              = skill Hull Upgrades needs 1 has 0
-low_5/IFFA Compact Damage Control              = skill Mechanics needs 1 has 0
-medium_1/Large C5-L Compact Shield Booster     = skill Shield Operation needs 2 has 0
-medium_1/Large C5-L Compact Shield Booster     = skill Power Grid Management needs 1 has 0
-medium_2/Compact Multispectrum Shield Hardener = skill Tactical Shield Manipulation needs 1 has 0
-medium_2/Compact Multispectrum Shield Hardener = skill Power Grid Management needs 3 has 0
-medium_3/10MN Y-S8 Compact Afterburner         = skill Afterburner needs 1 has 0
-medium_3/10MN Y-S8 Compact Afterburner         = skill Navigation needs 1 has 0
-medium_4/Large Compact Pb-Acid Cap Battery     = skill Energy Grid Upgrades needs 2 has 0
-medium_4/Large Compact Pb-Acid Cap Battery     = skill Power Grid Management needs 2 has 0
-medium_4/Large Compact Pb-Acid Cap Battery     = skill Science needs 1 has 0
 high_1/220mm Medium Prototype Automatic Cannon = skill Medium Projectile Turret needs 1 has 0
 high_1/220mm Medium Prototype Automatic Cannon = skill Gunnery needs 3 has 0
 high_1/220mm Medium Prototype Automatic Cannon = skill Small Projectile Turret needs 3 has 0
@@ -194,5 +175,24 @@ high_3/220mm Medium Prototype Automatic Cannon = skill Small Projectile Turret n
 high_4/220mm Medium Prototype Automatic Cannon = skill Medium Projectile Turret needs 1 has 0
 high_4/220mm Medium Prototype Automatic Cannon = skill Gunnery needs 3 has 0
 high_4/220mm Medium Prototype Automatic Cannon = skill Small Projectile Turret needs 3 has 0
+medium_1/Large C5-L Compact Shield Booster     = skill Shield Operation needs 2 has 0
+medium_1/Large C5-L Compact Shield Booster     = skill Power Grid Management needs 1 has 0
+medium_2/Compact Multispectrum Shield Hardener = skill Tactical Shield Manipulation needs 1 has 0
+medium_2/Compact Multispectrum Shield Hardener = skill Power Grid Management needs 3 has 0
+medium_3/10MN Y-S8 Compact Afterburner         = skill Afterburner needs 1 has 0
+medium_3/10MN Y-S8 Compact Afterburner         = skill Navigation needs 1 has 0
+medium_4/Large Compact Pb-Acid Cap Battery     = skill Energy Grid Upgrades needs 2 has 0
+medium_4/Large Compact Pb-Acid Cap Battery     = skill Power Grid Management needs 2 has 0
+medium_4/Large Compact Pb-Acid Cap Battery     = skill Science needs 1 has 0
+low_1/Counterbalanced Compact Gyrostabilizer   = skill Weapon Upgrades needs 1 has 0
+low_1/Counterbalanced Compact Gyrostabilizer   = skill Gunnery needs 2 has 0
+low_2/Counterbalanced Compact Gyrostabilizer   = skill Weapon Upgrades needs 1 has 0
+low_2/Counterbalanced Compact Gyrostabilizer   = skill Gunnery needs 2 has 0
+low_3/Counterbalanced Compact Gyrostabilizer   = skill Weapon Upgrades needs 1 has 0
+low_3/Counterbalanced Compact Gyrostabilizer   = skill Gunnery needs 2 has 0
+low_4/Fourier Compact Tracking Enhancer        = skill Weapon Upgrades needs 1 has 0
+low_4/Fourier Compact Tracking Enhancer        = skill Gunnery needs 2 has 0
+low_5/IFFA Compact Damage Control              = skill Hull Upgrades needs 1 has 0
+low_5/IFFA Compact Damage Control              = skill Mechanics needs 1 has 0
 dronebay/Acolyte I                             = skill Light Drone Operation needs 1 has 0
 dronebay/Acolyte I                             = skill Drones needs 1 has 0

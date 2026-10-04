@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Thanatos
 ship/capacitorStablePercentage               = 100.000000
@@ -129,22 +129,22 @@ character/reactionSlotLimit                        = 10.000000
 high_1/type  = Fighter Support Unit II
 high_1/state = online
 
-fighterbay_1-6/type                                        = Templar II
-fighterbay_1-6/state                                       = offline
-fighterbay_1-6/maxVelocity                                 = 1435.968672
-fighterbay_1-6/shieldCapacity                              = 5410.968458
-fighterbay_1-6/shieldRechargeRate                          = 657999.998331
-fighterbay_1-6/fighterAbilityMissilesDamageMultiplier      = 2.578125
-fighterbay_1-6/fighterAbilityMissilesRange                 = 12500.000000
-fighterbay_1-6/fighterAbilityMissilesDuration              = 13159.999967
-fighterbay_1-6/fighterAbilityAttackMissileDamageMultiplier = 2.578125
-fighterbay_1-6/fighterAbilityAttackMissileDuration         = 4699.999988
-fighterbay_1-6/fighterAbilityAttackMissileRangeOptimal     = 12000.000000
+fighterbay_1-3/type                                = Dromi II
+fighterbay_1-3/state                               = offline
+fighterbay_1-3/maxVelocity                         = 985.799947
+fighterbay_1-3/shieldCapacity                      = 13974.608621
+fighterbay_1-3/shieldRechargeRate                  = 2067999.994755
+fighterbay_1-3/fighterAbilityAfterburnerSpeedBonus = 110.000000
+fighterbay_1-3/fighterSquadronOrbitRange           = 10000.000000
 
-fighterbay_7-9/type                                = Dromi II
-fighterbay_7-9/state                               = offline
-fighterbay_7-9/maxVelocity                         = 985.799947
-fighterbay_7-9/shieldCapacity                      = 13974.608621
-fighterbay_7-9/shieldRechargeRate                  = 2067999.994755
-fighterbay_7-9/fighterAbilityAfterburnerSpeedBonus = 110.000000
-fighterbay_7-9/fighterSquadronOrbitRange           = 10000.000000
+fighterbay_4-9/type                                        = Templar II
+fighterbay_4-9/state                                       = offline
+fighterbay_4-9/maxVelocity                                 = 1435.968672
+fighterbay_4-9/shieldCapacity                              = 5410.968458
+fighterbay_4-9/shieldRechargeRate                          = 657999.998331
+fighterbay_4-9/fighterAbilityMissilesDamageMultiplier      = 2.578125
+fighterbay_4-9/fighterAbilityMissilesRange                 = 12500.000000
+fighterbay_4-9/fighterAbilityMissilesDuration              = 13159.999967
+fighterbay_4-9/fighterAbilityAttackMissileDamageMultiplier = 2.578125
+fighterbay_4-9/fighterAbilityAttackMissileDuration         = 4699.999988
+fighterbay_4-9/fighterAbilityAttackMissileRangeOptimal     = 12000.000000

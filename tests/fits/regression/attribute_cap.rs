@@ -4,25 +4,24 @@
 
 use crate::harness::all;
 
-const POLARIZED: &str = r#"
-[Armageddon, Polarized]
-Polarized Mega Pulse Laser
-Polarized Mega Pulse Laser
-Polarized Mega Pulse Laser
-Polarized Mega Pulse Laser
-Polarized Mega Pulse Laser
+const POLARIZED: &str = r#"%esf/1
+Armageddon "Polarized"
+
+5x Polarized Mega Pulse Laser
 "#;
 
 /* One gun zeroes the resistances the same as a full rack. */
-const POLARIZED_ONE: &str = r#"
-[Armageddon, Polarized single]
+const POLARIZED_ONE: &str = r#"%esf/1
+Armageddon "Polarized single"
+
 Polarized Mega Pulse Laser
 "#;
 
 /* Resistance modules win none of it back: the assign runs last, and the cap
  * it lands on is the same either way. */
-const POLARIZED_TANKED: &str = r#"
-[Armageddon, Polarized tanked]
+const POLARIZED_TANKED: &str = r#"%esf/1
+Armageddon "Polarized tanked"
+
 Polarized Mega Pulse Laser
 
 Multispectrum Shield Hardener II

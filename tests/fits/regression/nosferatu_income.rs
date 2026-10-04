@@ -3,26 +3,26 @@
 
 use crate::harness::all;
 
-const STABLE: &str = r#"
-[Punisher, Nosferatu income stable]
-Small Armor Repairer II
+const STABLE: &str = r#"%esf/1
+Punisher "Nosferatu income stable"
+
+2x Small Energy Nosferatu II
 
 5MN Microwarpdrive II
 
-Small Energy Nosferatu II
-Small Energy Nosferatu II
+Small Armor Repairer II
 "#;
 
 /* Still unstable with the income, so the simulation has to credit it too. */
-const DEPLETES: &str = r#"
-[Punisher, Nosferatu income depletes]
-Small Armor Repairer II
+const DEPLETES: &str = r#"%esf/1
+Punisher "Nosferatu income depletes"
+
+2x Small Energy Nosferatu II
 
 1MN Afterburner II
 Warp Disruptor II
 
-Small Energy Nosferatu II
-Small Energy Nosferatu II
+Small Armor Repairer II
 "#;
 
 regression! {

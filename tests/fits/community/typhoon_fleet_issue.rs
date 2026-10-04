@@ -1,37 +1,26 @@
 use crate::harness::all;
 
-const FIT: &str = r#"
-[Typhoon Fleet Issue, 20240720 - Community Fit by Melamori]
-Ballistic Control System II
-Ballistic Control System II
-Ballistic Control System II
-Drone Damage Amplifier II
-Drone Damage Amplifier II
-Ballistic Control System II
-Missile Guidance Enhancer II
+const FIT: &str = r#"%esf/1
+Typhoon Fleet Issue "20240720 - Community Fit by Melamori"
 
-Large Shield Booster II
-Missile Guidance Computer II, Missile Precision Script
-Missile Guidance Computer II, Missile Precision Script
-Eutectic Compact Cap Recharger
-500MN Quad LiF Restrained Microwarpdrive
-
-Rapid Heavy Missile Launcher II, Caldari Navy Scourge Heavy Missile
-Rapid Heavy Missile Launcher II, Caldari Navy Scourge Heavy Missile
-Rapid Heavy Missile Launcher II, Caldari Navy Scourge Heavy Missile
-Rapid Heavy Missile Launcher II, Caldari Navy Scourge Heavy Missile
-Rapid Heavy Missile Launcher II, Caldari Navy Scourge Heavy Missile
-Rapid Heavy Missile Launcher II, Caldari Navy Scourge Heavy Missile
+6x Rapid Heavy Missile Launcher II :Caldari Navy Scourge Heavy Missile
 Auto Targeting System I
 Drone Link Augmentor II
 
+Large Shield Booster II
+2x Missile Guidance Computer II :Missile Precision Script
+Eutectic Compact Cap Recharger
+500MN Quad LiF Restrained Microwarpdrive
+
+3x Ballistic Control System II
+2x Drone Damage Amplifier II
+Ballistic Control System II
+Missile Guidance Enhancer II
+
 Large EM Shield Reinforcer II
-Large Capacitor Control Circuit I
-Large Capacitor Control Circuit I
+2x Large Capacitor Control Circuit I
 
-
-
-Ogre II x5
+5x Ogre II
 "#;
 
 regression! {

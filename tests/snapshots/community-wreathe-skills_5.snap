@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Wreathe
 ship/capacitorStablePercentage               = 68.591283
@@ -127,12 +127,6 @@ character/inventionReverseEngineeringResearchSpeed = 0.850000
 character/reactionTimeMultiplier                   = 0.800000
 character/reactionSlotLimit                        = 10.000000
 
-low_1-3/type  = Expanded Cargohold II
-low_1-3/state = online
-
-low_4-5/type  = Inertial Stabilizers II
-low_4-5/state = online
-
 medium_1-2/type  = Large Shield Extender I
 medium_1-2/state = online
 medium_1-2/power = 112.500000
@@ -152,6 +146,12 @@ medium_5/type                    = EM Shield Amplifier I
 medium_5/state                   = online
 medium_5/power                   = 0.750000
 medium_5/emDamageResistanceBonus = -40.625000
+
+low_1-3/type  = Expanded Cargohold II
+low_1-3/state = online
+
+low_4-5/type  = Inertial Stabilizers II
+low_4-5/state = online
 
 rig_1-3/type     = Medium Hyperspatial Velocity Optimizer I
 rig_1-3/state    = online

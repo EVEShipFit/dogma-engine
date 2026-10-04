@@ -1,15 +1,16 @@
 //! A booster always gives its bonus, but only the side effects the fit rolled.
-//! EFT has no way to say which, so the case sets them on the loaded fit.
+//! esf/1 has no way to say which, so the case sets them on the loaded fit.
 
 use std::collections::BTreeSet;
 
 use crate::harness::all;
 
-const FIT: &str = r#"
-[Rifter, Boosters]
-Medium Shield Booster II
+const FIT: &str = r#"%esf/1
+Rifter "Boosters"
 
 200mm AutoCannon II
+
+Medium Shield Booster II
 
 Standard Blue Pill Booster
 "#;

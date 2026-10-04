@@ -3,10 +3,8 @@
 
 use crate::harness::all;
 
-const FIT: &str = r#"
-[Rifter, No cycle time]
-
-[Empty Low slot]
+const FIT: &str = r#"%esf/1
+Rifter "No cycle time"
 
 QA Immunity Module
 "#;

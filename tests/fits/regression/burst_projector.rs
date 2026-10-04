@@ -3,26 +3,26 @@
 
 use crate::harness::all;
 
-const ECM: &str = r#"
-[Nyx, ECM Jammer Burst Projector]
+const ECM: &str = r#"%esf/1
+Nyx "ECM Jammer Burst Projector"
 
 ECM Jammer Burst Projector
 "#;
 
-const SENSOR_DAMPENING: &str = r#"
-[Nyx, Sensor Dampening Burst Projector]
+const SENSOR_DAMPENING: &str = r#"%esf/1
+Nyx "Sensor Dampening Burst Projector"
 
 Sensor Dampening Burst Projector
 "#;
 
-const TARGET_ILLUMINATION: &str = r#"
-[Nyx, Target Illumination Burst Projector]
+const TARGET_ILLUMINATION: &str = r#"%esf/1
+Nyx "Target Illumination Burst Projector"
 
 Target Illumination Burst Projector
 "#;
 
-const WEAPON_DISRUPTION: &str = r#"
-[Nyx, Weapon Disruption Burst Projector]
+const WEAPON_DISRUPTION: &str = r#"%esf/1
+Nyx "Weapon Disruption Burst Projector"
 
 Weapon Disruption Burst Projector
 "#;

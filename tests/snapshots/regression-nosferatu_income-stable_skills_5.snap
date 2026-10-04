@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Punisher
 ship/capacitorStablePercentage               = 74.848171
@@ -141,13 +141,12 @@ outgoing_effect_2/maxRange              = 5000.000000
 outgoing_effect_2/falloffEffectiveness  = 2500.000000
 outgoing_effect_2/remoteResistanceID    = 2045.000000
 
-low_1/type              = Small Armor Repairer II
-low_1/state             = active
-low_1/armorRepairRate   = 20.444444
-low_1/capacitorPeakLoad = 8.888889
-low_1/cycleTime         = 4500.000000
-low_1/duration          = 4500.000000
-low_1/heatDamage        = 4.050000
+high_1-2/type                  = Small Energy Nosferatu II
+high_1-2/state                 = active
+high_1-2/capacitorTransferRate = 4.000000
+high_1-2/capacitorPeakLoad     = -4.000000
+high_1-2/cycleTime             = 2500.000000
+high_1-2/heatDamage            = 0.862500
 
 medium_1/type              = 5MN Microwarpdrive II
 medium_1/state             = active
@@ -157,9 +156,10 @@ medium_1/capacitorNeed     = 30.000000
 medium_1/speedFactor       = 637.500000
 medium_1/heatDamage        = 14.250000
 
-high_1-2/type                  = Small Energy Nosferatu II
-high_1-2/state                 = active
-high_1-2/capacitorTransferRate = 4.000000
-high_1-2/capacitorPeakLoad     = -4.000000
-high_1-2/cycleTime             = 2500.000000
-high_1-2/heatDamage            = 0.862500
+low_1/type              = Small Armor Repairer II
+low_1/state             = active
+low_1/armorRepairRate   = 20.444444
+low_1/capacitorPeakLoad = 8.888889
+low_1/cycleTime         = 4500.000000
+low_1/duration          = 4500.000000
+low_1/heatDamage        = 4.050000

@@ -14,7 +14,7 @@ mod dump;
 mod formats;
 mod skills;
 
-pub use case::{calculate, load, outgoing, save, snapshot, snapshot_violations};
+pub use case::{calculate, load, load_eft, outgoing, save_eft, snapshot, snapshot_violations};
 pub use formats::{info, info_name, input, snapshot_json};
 pub use skills::{Skills, all, none};
 

@@ -8,6 +8,51 @@ expression: json
   "ship_type_id": 587,
   "items": [
     {
+      "flag": "HiSlot0",
+      "quantity": 1,
+      "type_id": 2889
+    },
+    {
+      "flag": "HiSlot0",
+      "quantity": 1,
+      "type_id": 21898
+    },
+    {
+      "flag": "HiSlot1",
+      "quantity": 1,
+      "type_id": 2889
+    },
+    {
+      "flag": "HiSlot1",
+      "quantity": 1,
+      "type_id": 21898
+    },
+    {
+      "flag": "HiSlot2",
+      "quantity": 1,
+      "type_id": 2889
+    },
+    {
+      "flag": "HiSlot2",
+      "quantity": 1,
+      "type_id": 21898
+    },
+    {
+      "flag": "MedSlot0",
+      "quantity": 1,
+      "type_id": 438
+    },
+    {
+      "flag": "MedSlot1",
+      "quantity": 1,
+      "type_id": 448
+    },
+    {
+      "flag": "MedSlot2",
+      "quantity": 1,
+      "type_id": 4025
+    },
+    {
       "flag": "LoSlot0",
       "quantity": 1,
       "type_id": 2048
@@ -26,51 +71,6 @@ expression: json
       "flag": "LoSlot3",
       "quantity": 1,
       "type_id": 2605
-    },
-    {
-      "flag": "MedSlot0",
-      "quantity": 1,
-      "type_id": 438
-    },
-    {
-      "flag": "MedSlot1",
-      "quantity": 1,
-      "type_id": 448
-    },
-    {
-      "flag": "MedSlot2",
-      "quantity": 1,
-      "type_id": 4025
-    },
-    {
-      "flag": "HiSlot0",
-      "quantity": 1,
-      "type_id": 2889
-    },
-    {
-      "flag": "HiSlot0",
-      "quantity": 1,
-      "type_id": 21898
-    },
-    {
-      "flag": "HiSlot1",
-      "quantity": 1,
-      "type_id": 2889
-    },
-    {
-      "flag": "HiSlot1",
-      "quantity": 1,
-      "type_id": 21898
-    },
-    {
-      "flag": "HiSlot2",
-      "quantity": 1,
-      "type_id": 2889
-    },
-    {
-      "flag": "HiSlot2",
-      "quantity": 1,
-      "type_id": 21898
     },
     {
       "flag": "RigSlot0",
@@ -94,13 +94,13 @@ expression: json
     },
     {
       "flag": "Cargo",
-      "quantity": 400,
-      "type_id": 21898
+      "quantity": 10,
+      "type_id": 28668
     },
     {
       "flag": "Cargo",
-      "quantity": 10,
-      "type_id": 28668
+      "quantity": 400,
+      "type_id": 21898
     },
     {
       "flag": "Cargo",

@@ -1,37 +1,35 @@
 //! ESI fittings, as a character saves them in game.
 
-use esf_dogma_engine::{Fit, Slot};
+use esf_dogma_engine::Fit;
 use esf_format::esi::{EsiFitting, EsiFittingItem, load_esi_fitting, save_esi_fitting};
 
 use crate::harness::{info, input, load, snapshot_json};
 
 /* Every rack, charges, drones, cargo, and an implant a fitting has no place for. */
-const RIFTER: &str = "\
-[Rifter, Autocannon brawler]
-Damage Control II
-Small Armor Repairer II
-Gyrostabilizer II
-Nanofiber Internal Structure II
+const RIFTER: &str = r#"%esf/1
+Rifter "Autocannon brawler"
+
+3x 200mm AutoCannon II :Republic Fleet EMP S
 
 1MN Afterburner II
 Warp Scrambler II
 X5 Enduring Stasis Webifier
 
-200mm AutoCannon II, Republic Fleet EMP S
-200mm AutoCannon II, Republic Fleet EMP S
-200mm AutoCannon II, Republic Fleet EMP S
+Damage Control II
+Small Armor Repairer II
+Gyrostabilizer II
+Nanofiber Internal Structure II
 
 Small Projectile Burst Aerator I
-Small Auxiliary Nano Pump I
-Small Auxiliary Nano Pump I
+2x Small Auxiliary Nano Pump I
 
-Warrior II x3
+3x Warrior II
 
-Republic Fleet EMP S x400
-Nanite Repair Paste x10
+400x Republic Fleet EMP S
+10x Nanite Repair Paste
 
 Ocular Filter - Basic
-";
+"#;
 
 fn read(name: &str) -> EsiFitting {
     serde_json::from_str(&input(&format!("{name}.esi.json"))).unwrap()
@@ -43,7 +41,7 @@ fn by_flag(mut items: Vec<EsiFittingItem>) -> Vec<EsiFittingItem> {
 }
 
 fn empty(name: Option<&str>) -> Fit {
-    let mut fit = load("[Rifter, Empty]").unwrap();
+    let mut fit = load("%esf/1\nRifter \"Empty\"").unwrap();
     fit.name = name.map(str::to_string);
     fit
 }
@@ -71,7 +69,7 @@ fn round_trips_a_fitting() {
 
 #[test]
 fn lists_a_charge_in_the_slot_of_its_module() {
-    let fit = load("[Rifter, Gun]\n\n200mm AutoCannon II, EMP S").unwrap();
+    let fit = load("%esf/1\nRifter \"Gun\"\n\n200mm AutoCannon II :EMP S").unwrap();
     let fitting = save_esi_fitting(&info(), &fit);
 
     let charge = fit.items[0].charge.as_ref().unwrap().type_id;
@@ -99,8 +97,7 @@ fn lists_a_charge_in_the_slot_of_its_module() {
 /* ESI has no fighter tubes, implants or boosters. */
 #[test]
 fn puts_what_a_fitting_has_no_place_for_elsewhere() {
-    let mut fit = load("[Thanatos, Fighters]\n\nTemplar II x6").unwrap();
-    fit.items[0].slot = Slot::FighterTube(0);
+    let fit = load("%esf/1\nThanatos \"Fighters\"\n\n6x Templar II").unwrap();
     let tube = save_esi_fitting(&info(), &fit);
     assert_eq!(tube.items[0].flag, "FighterBay");
 

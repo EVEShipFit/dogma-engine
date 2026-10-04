@@ -2,17 +2,17 @@
 //! counts towards the drones in space, and each stack is its quantity strong.
 
 use crate::harness::all;
-use esf_dogma_engine::State;
 
-const FIT: &str = r#"
-[Vexor, Drone stack state]
+const FIT: &str = r#"%esf/1
+Vexor "Drone stack state"
+
 Drone Damage Amplifier II
 
-Hammerhead II x3
-Hammerhead II x2
+3x Hammerhead II
+2x Hammerhead II !off
 "#;
 
 regression! {
-    skills_0 = FIT, skills: all(0), edit: |fit| fit.items[2].state = State::Offline;
-    skills_5 = FIT, skills: all(5), edit: |fit| fit.items[2].state = State::Offline;
+    skills_0 = FIT, skills: all(0);
+    skills_5 = FIT, skills: all(5);
 }

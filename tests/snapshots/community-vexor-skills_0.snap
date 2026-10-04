@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Vexor
 ship/capacitorStablePercentage               = 0.000000
@@ -96,23 +96,18 @@ outgoing_effect_1/maxRange             = 10000.000000
 outgoing_effect_1/falloffEffectiveness = 0.000000
 outgoing_effect_1/remoteResistanceID   = 2115.000000
 
-low_1-2/type             = Drone Damage Amplifier II
-low_1-2/state            = online
-low_1-2/damageMultiplier = 1.419694
-
-low_3/type              = Medium Armor Repairer II
-low_3/state             = active
-low_3/armorRepairRate   = 39.864311
-low_3/capacitorPeakLoad = 13.333333
-low_3/cycleTime         = 12000.000000
-low_3/power             = 166.980000
-low_3/armorDamageAmount = 478.371736
-
-low_4/type  = Multispectrum Energized Membrane II
-low_4/state = online
-
-low_5/type  = Damage Control II
-low_5/state = online
+high_1-4/type                         = Heavy Electron Blaster II
+high_1-4/state                        = active
+high_1-4/damageVolley                 = 60.857999
+high_1-4/speedWithReload              = 3025.000000
+high_1-4/speedOfReload                = 25.000000
+high_1-4/damagePerSecondWithReload    = 20.118347
+high_1-4/damagePerSecondWithoutReload = 20.286000
+high_1-4/chargeAmount                 = 199.999997
+high_1-4/capacitorPeakLoad            = 0.653333
+high_1-4/cycleTime                    = 3000.000000
+high_1-4/maxRange                     = 1200.000000
+high_1-4/charge/type                  = Caldari Navy Antimatter Charge M
 
 medium_1/type  = Large Compact Pb-Acid Cap Battery
 medium_1/state = online
@@ -138,18 +133,23 @@ medium_4/state             = active
 medium_4/capacitorPeakLoad = 8.000000
 medium_4/cycleTime         = 10000.000000
 
-high_1-4/type                         = Heavy Electron Blaster II
-high_1-4/state                        = active
-high_1-4/damageVolley                 = 60.857999
-high_1-4/speedWithReload              = 3025.000000
-high_1-4/speedOfReload                = 25.000000
-high_1-4/damagePerSecondWithReload    = 20.118347
-high_1-4/damagePerSecondWithoutReload = 20.286000
-high_1-4/chargeAmount                 = 199.999997
-high_1-4/capacitorPeakLoad            = 0.653333
-high_1-4/cycleTime                    = 3000.000000
-high_1-4/maxRange                     = 1200.000000
-high_1-4/charge/type                  = Caldari Navy Antimatter Charge M
+low_1-2/type             = Drone Damage Amplifier II
+low_1-2/state            = online
+low_1-2/damageMultiplier = 1.419694
+
+low_3/type              = Medium Armor Repairer II
+low_3/state             = active
+low_3/armorRepairRate   = 39.864311
+low_3/capacitorPeakLoad = 13.333333
+low_3/cycleTime         = 12000.000000
+low_3/power             = 166.980000
+low_3/armorDamageAmount = 478.371736
+
+low_4/type  = Multispectrum Energized Membrane II
+low_4/state = online
+
+low_5/type  = Damage Control II
+low_5/state = online
 
 rig_1-2/type  = Medium Auxiliary Nano Pump I
 rig_1-2/state = online
@@ -163,28 +163,6 @@ ship                                       = skill Gallente Cruiser needs 1 has 
 ship                                       = skill Spaceship Command needs 2 has 0
 ship                                       = skill Gallente Destroyer needs 3 has 0
 ship                                       = skill Gallente Frigate needs 3 has 0
-low_1/Drone Damage Amplifier II            = skill Weapon Upgrades needs 4 has 0
-low_1/Drone Damage Amplifier II            = skill Drones needs 4 has 0
-low_1/Drone Damage Amplifier II            = skill Gunnery needs 2 has 0
-low_2/Drone Damage Amplifier II            = skill Weapon Upgrades needs 4 has 0
-low_2/Drone Damage Amplifier II            = skill Drones needs 4 has 0
-low_2/Drone Damage Amplifier II            = skill Gunnery needs 2 has 0
-low_3/Medium Armor Repairer II             = skill Repair Systems needs 4 has 0
-low_3/Medium Armor Repairer II             = skill Mechanics needs 4 has 0
-low_4/Multispectrum Energized Membrane II  = skill Hull Upgrades needs 5 has 0
-low_4/Multispectrum Energized Membrane II  = skill Mechanics needs 1 has 0
-low_5/Damage Control II                    = skill Hull Upgrades needs 4 has 0
-low_5/Damage Control II                    = skill Mechanics needs 1 has 0
-medium_1/Large Compact Pb-Acid Cap Battery = skill Energy Grid Upgrades needs 2 has 0
-medium_1/Large Compact Pb-Acid Cap Battery = skill Power Grid Management needs 2 has 0
-medium_1/Large Compact Pb-Acid Cap Battery = skill Science needs 1 has 0
-medium_2/Stasis Webifier II                = skill Propulsion Jamming needs 4 has 0
-medium_2/Stasis Webifier II                = skill CPU Management needs 3 has 0
-medium_2/Stasis Webifier II                = skill Navigation needs 2 has 0
-medium_3/Omnidirectional Tracking Link II  = skill Drone Sharpshooting needs 5 has 0
-medium_3/Omnidirectional Tracking Link II  = skill Drones needs 5 has 0
-medium_4/10MN Y-S8 Compact Afterburner     = skill Afterburner needs 1 has 0
-medium_4/10MN Y-S8 Compact Afterburner     = skill Navigation needs 1 has 0
 high_1/Heavy Electron Blaster II           = skill Medium Hybrid Turret needs 5 has 0
 high_1/Heavy Electron Blaster II           = skill Gunnery needs 3 has 0
 high_1/Heavy Electron Blaster II           = skill Medium Blaster Specialization needs 1 has 0
@@ -205,3 +183,25 @@ high_4/Heavy Electron Blaster II           = skill Gunnery needs 3 has 0
 high_4/Heavy Electron Blaster II           = skill Medium Blaster Specialization needs 1 has 0
 high_4/Heavy Electron Blaster II           = skill Small Hybrid Turret needs 3 has 0
 high_4/Heavy Electron Blaster II           = skill Motion Prediction needs 4 has 0
+medium_1/Large Compact Pb-Acid Cap Battery = skill Energy Grid Upgrades needs 2 has 0
+medium_1/Large Compact Pb-Acid Cap Battery = skill Power Grid Management needs 2 has 0
+medium_1/Large Compact Pb-Acid Cap Battery = skill Science needs 1 has 0
+medium_2/Stasis Webifier II                = skill Propulsion Jamming needs 4 has 0
+medium_2/Stasis Webifier II                = skill CPU Management needs 3 has 0
+medium_2/Stasis Webifier II                = skill Navigation needs 2 has 0
+medium_3/Omnidirectional Tracking Link II  = skill Drone Sharpshooting needs 5 has 0
+medium_3/Omnidirectional Tracking Link II  = skill Drones needs 5 has 0
+medium_4/10MN Y-S8 Compact Afterburner     = skill Afterburner needs 1 has 0
+medium_4/10MN Y-S8 Compact Afterburner     = skill Navigation needs 1 has 0
+low_1/Drone Damage Amplifier II            = skill Weapon Upgrades needs 4 has 0
+low_1/Drone Damage Amplifier II            = skill Drones needs 4 has 0
+low_1/Drone Damage Amplifier II            = skill Gunnery needs 2 has 0
+low_2/Drone Damage Amplifier II            = skill Weapon Upgrades needs 4 has 0
+low_2/Drone Damage Amplifier II            = skill Drones needs 4 has 0
+low_2/Drone Damage Amplifier II            = skill Gunnery needs 2 has 0
+low_3/Medium Armor Repairer II             = skill Repair Systems needs 4 has 0
+low_3/Medium Armor Repairer II             = skill Mechanics needs 4 has 0
+low_4/Multispectrum Energized Membrane II  = skill Hull Upgrades needs 5 has 0
+low_4/Multispectrum Energized Membrane II  = skill Mechanics needs 1 has 0
+low_5/Damage Control II                    = skill Hull Upgrades needs 4 has 0
+low_5/Damage Control II                    = skill Mechanics needs 1 has 0

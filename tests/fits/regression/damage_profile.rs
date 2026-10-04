@@ -5,12 +5,13 @@ use esf_dogma_engine::DamageProfile;
 
 use crate::harness::all;
 
-const RIFTER: &str = r#"
-[Rifter, Damage profile]
-Damage Control II
-Small Armor Repairer II
+const RIFTER: &str = r#"%esf/1
+Rifter "Damage profile"
 
 Medium Shield Extender II
+
+Damage Control II
+Small Armor Repairer II
 "#;
 
 regression! {

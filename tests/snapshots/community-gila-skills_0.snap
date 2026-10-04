@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Gila
 ship/capacitorStablePercentage               = 0.000000
@@ -87,9 +87,28 @@ ship/shipBonusAB3                            = 0.000000
 
 character/droneControlDistance = 40000.000000
 
-low_1-3/type             = Drone Damage Amplifier II
-low_1-3/state            = online
-low_1-3/damageMultiplier = 1.585755
+high_1-2/type                         = Upgraded 'Malkuth' Rapid Light Missile Launcher
+high_1-2/state                        = active
+high_1-2/damageVolley                 = 95.000000
+high_1-2/speedWithReload              = 9252.105245
+high_1-2/speedOfReload                = 1842.105245
+high_1-2/damagePerSecondWithReload    = 10.267933
+high_1-2/damagePerSecondWithoutReload = 12.820513
+high_1-2/chargeAmount                 = 19.000000
+high_1-2/charge/type                  = Caldari Navy Mjolnir Light Missile
+
+high_3/type  = Drone Link Augmentor I
+high_3/state = online
+
+high_4-5/type                         = Upgraded 'Malkuth' Rapid Light Missile Launcher
+high_4-5/state                        = active
+high_4-5/damageVolley                 = 95.000000
+high_4-5/speedWithReload              = 9252.105245
+high_4-5/speedOfReload                = 1842.105245
+high_4-5/damagePerSecondWithReload    = 10.267933
+high_4-5/damagePerSecondWithoutReload = 12.820513
+high_4-5/chargeAmount                 = 19.000000
+high_4-5/charge/type                  = Caldari Navy Mjolnir Light Missile
 
 medium_1/type              = Multispectrum Shield Hardener II
 medium_1/state             = active
@@ -121,28 +140,9 @@ medium_6/shieldBonus       = 215.975000
 medium_6/duration          = 1734.000000
 medium_6/heatDamage        = 2.000000
 
-high_1-2/type                         = Upgraded 'Malkuth' Rapid Light Missile Launcher
-high_1-2/state                        = active
-high_1-2/damageVolley                 = 95.000000
-high_1-2/speedWithReload              = 9252.105245
-high_1-2/speedOfReload                = 1842.105245
-high_1-2/damagePerSecondWithReload    = 10.267933
-high_1-2/damagePerSecondWithoutReload = 12.820513
-high_1-2/chargeAmount                 = 19.000000
-high_1-2/charge/type                  = Caldari Navy Mjolnir Light Missile
-
-high_3/type  = Drone Link Augmentor I
-high_3/state = online
-
-high_4-5/type                         = Upgraded 'Malkuth' Rapid Light Missile Launcher
-high_4-5/state                        = active
-high_4-5/damageVolley                 = 95.000000
-high_4-5/speedWithReload              = 9252.105245
-high_4-5/speedOfReload                = 1842.105245
-high_4-5/damagePerSecondWithReload    = 10.267933
-high_4-5/damagePerSecondWithoutReload = 12.820513
-high_4-5/chargeAmount                 = 19.000000
-high_4-5/charge/type                  = Caldari Navy Mjolnir Light Missile
+low_1-3/type             = Drone Damage Amplifier II
+low_1-3/state            = online
+low_1-3/damageMultiplier = 1.585755
 
 rig_1-2/type  = Medium Core Defense Operational Solidifier I
 rig_1-2/state = online
@@ -170,28 +170,6 @@ ship                                                   = skill Caldari Destroyer
 ship                                                   = skill Gallente Destroyer needs 3 has 0
 ship                                                   = skill Caldari Frigate needs 3 has 0
 ship                                                   = skill Gallente Frigate needs 3 has 0
-low_1/Drone Damage Amplifier II                        = skill Weapon Upgrades needs 4 has 0
-low_1/Drone Damage Amplifier II                        = skill Drones needs 4 has 0
-low_1/Drone Damage Amplifier II                        = skill Gunnery needs 2 has 0
-low_2/Drone Damage Amplifier II                        = skill Weapon Upgrades needs 4 has 0
-low_2/Drone Damage Amplifier II                        = skill Drones needs 4 has 0
-low_2/Drone Damage Amplifier II                        = skill Gunnery needs 2 has 0
-low_3/Drone Damage Amplifier II                        = skill Weapon Upgrades needs 4 has 0
-low_3/Drone Damage Amplifier II                        = skill Drones needs 4 has 0
-low_3/Drone Damage Amplifier II                        = skill Gunnery needs 2 has 0
-medium_1/Multispectrum Shield Hardener II              = skill Tactical Shield Manipulation needs 4 has 0
-medium_1/Multispectrum Shield Hardener II              = skill Power Grid Management needs 3 has 0
-medium_2/Republic Fleet Large Cap Battery              = skill Energy Grid Upgrades needs 2 has 0
-medium_2/Republic Fleet Large Cap Battery              = skill Power Grid Management needs 2 has 0
-medium_2/Republic Fleet Large Cap Battery              = skill Science needs 1 has 0
-medium_3/10MN Monopropellant Enduring Afterburner      = skill Afterburner needs 1 has 0
-medium_3/10MN Monopropellant Enduring Afterburner      = skill Navigation needs 1 has 0
-medium_4/Multispectrum Shield Hardener II              = skill Tactical Shield Manipulation needs 4 has 0
-medium_4/Multispectrum Shield Hardener II              = skill Power Grid Management needs 3 has 0
-medium_5/Copasetic Compact Shield Boost Amplifier      = skill Shield Management needs 1 has 0
-medium_5/Copasetic Compact Shield Boost Amplifier      = skill Power Grid Management needs 3 has 0
-medium_6/Pithum C-Type Medium Shield Booster           = skill Shield Operation needs 1 has 0
-medium_6/Pithum C-Type Medium Shield Booster           = skill Power Grid Management needs 1 has 0
 high_1/Upgraded 'Malkuth' Rapid Light Missile Launcher = skill Light Missiles needs 1 has 0
 high_1/Upgraded 'Malkuth' Rapid Light Missile Launcher = skill Missile Launcher Operation needs 2 has 0
 high_1/charge/Caldari Navy Mjolnir Light Missile       = skill Light Missiles needs 1 has 0
@@ -210,5 +188,27 @@ high_5/Upgraded 'Malkuth' Rapid Light Missile Launcher = skill Light Missiles ne
 high_5/Upgraded 'Malkuth' Rapid Light Missile Launcher = skill Missile Launcher Operation needs 2 has 0
 high_5/charge/Caldari Navy Mjolnir Light Missile       = skill Light Missiles needs 1 has 0
 high_5/charge/Caldari Navy Mjolnir Light Missile       = skill Missile Launcher Operation needs 2 has 0
+medium_1/Multispectrum Shield Hardener II              = skill Tactical Shield Manipulation needs 4 has 0
+medium_1/Multispectrum Shield Hardener II              = skill Power Grid Management needs 3 has 0
+medium_2/Republic Fleet Large Cap Battery              = skill Energy Grid Upgrades needs 2 has 0
+medium_2/Republic Fleet Large Cap Battery              = skill Power Grid Management needs 2 has 0
+medium_2/Republic Fleet Large Cap Battery              = skill Science needs 1 has 0
+medium_3/10MN Monopropellant Enduring Afterburner      = skill Afterburner needs 1 has 0
+medium_3/10MN Monopropellant Enduring Afterburner      = skill Navigation needs 1 has 0
+medium_4/Multispectrum Shield Hardener II              = skill Tactical Shield Manipulation needs 4 has 0
+medium_4/Multispectrum Shield Hardener II              = skill Power Grid Management needs 3 has 0
+medium_5/Copasetic Compact Shield Boost Amplifier      = skill Shield Management needs 1 has 0
+medium_5/Copasetic Compact Shield Boost Amplifier      = skill Power Grid Management needs 3 has 0
+medium_6/Pithum C-Type Medium Shield Booster           = skill Shield Operation needs 1 has 0
+medium_6/Pithum C-Type Medium Shield Booster           = skill Power Grid Management needs 1 has 0
+low_1/Drone Damage Amplifier II                        = skill Weapon Upgrades needs 4 has 0
+low_1/Drone Damage Amplifier II                        = skill Drones needs 4 has 0
+low_1/Drone Damage Amplifier II                        = skill Gunnery needs 2 has 0
+low_2/Drone Damage Amplifier II                        = skill Weapon Upgrades needs 4 has 0
+low_2/Drone Damage Amplifier II                        = skill Drones needs 4 has 0
+low_2/Drone Damage Amplifier II                        = skill Gunnery needs 2 has 0
+low_3/Drone Damage Amplifier II                        = skill Weapon Upgrades needs 4 has 0
+low_3/Drone Damage Amplifier II                        = skill Drones needs 4 has 0
+low_3/Drone Damage Amplifier II                        = skill Gunnery needs 2 has 0
 dronebay/Imperial Navy Infiltrator                     = skill Medium Drone Operation needs 1 has 0
 dronebay/Imperial Navy Infiltrator                     = skill Drones needs 3 has 0

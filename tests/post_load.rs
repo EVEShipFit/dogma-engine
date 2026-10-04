@@ -4,11 +4,11 @@ use esf_data::Info;
 use esf_dogma_engine::{Slot, State};
 use esf_format::post_load;
 
-use crate::harness::{Skills, all, info, load, none};
+use crate::harness::{Skills, all, info, load_eft, none};
 
 /// Each item of the fit after `post_load`, as name, quantity and state.
 fn settle(eft: &str, skills: Skills) -> Vec<(String, u32, State)> {
-    let mut fit = load(eft).unwrap();
+    let mut fit = load_eft(eft).unwrap();
     fit.character.skills = skills.levels;
 
     let info = info();
@@ -110,7 +110,7 @@ fn launches_no_drones_without_skills() {
 
 #[test]
 fn leaves_the_bay_drones_in_their_slot() {
-    let mut fit = load("[Vexor, Drones]\n\nHammerhead II x8").unwrap();
+    let mut fit = load_eft("[Vexor, Drones]\n\nHammerhead II x8").unwrap();
     fit.character.skills = all(5).levels;
     post_load(&info(), &mut fit);
 
@@ -132,7 +132,7 @@ fn onlines_one_of_a_group_with_an_online_limit() {
 
 #[test]
 fn starts_in_the_first_mode() {
-    let mut fit = load("[Confessor, Mode]").unwrap();
+    let mut fit = load_eft("[Confessor, Mode]").unwrap();
     let info = info();
     post_load(&info, &mut fit);
 
@@ -142,7 +142,7 @@ fn starts_in_the_first_mode() {
 
 #[test]
 fn keeps_a_mode_already_set() {
-    let mut fit = load("[Confessor, Mode]").unwrap();
+    let mut fit = load_eft("[Confessor, Mode]").unwrap();
     fit.ship.mode = Some(34321);
     post_load(&info(), &mut fit);
 
@@ -151,7 +151,7 @@ fn keeps_a_mode_already_set() {
 
 #[test]
 fn fills_the_fighter_tubes() {
-    let mut fit = load("[Thanatos, Fighters]\n\nFirbolg II x30\nDromi II x30").unwrap();
+    let mut fit = load_eft("[Thanatos, Fighters]\n\nFirbolg II x30\nDromi II x30").unwrap();
     fit.character.skills = all(5).levels;
     let info = info();
     post_load(&info, &mut fit);

@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Omen
 ship/capacitorStablePercentage               = 0.000000
@@ -144,25 +144,26 @@ outgoing_effect_1/maxRange             = 10000.000000
 outgoing_effect_1/falloffEffectiveness = 0.000000
 outgoing_effect_1/remoteResistanceID   = 2115.000000
 
-low_1-3/type  = Extruded Compact Heat Sink
-low_1-3/state = online
-
-low_4-5/type                           = Compact Multispectrum Energized Membrane
-low_4-5/state                          = online
-low_4-5/emDamageResistanceBonus        = -21.099999
-low_4-5/explosiveDamageResistanceBonus = -21.099999
-low_4-5/kineticDamageResistanceBonus   = -21.099999
-low_4-5/thermalDamageResistanceBonus   = -21.099999
-
-low_6/type              = Medium ACM Compact Armor Repairer
-low_6/state             = active
-low_6/armorRepairRate   = 45.786184
-low_6/capacitorPeakLoad = 17.777778
-low_6/cycleTime         = 9000.000000
-low_6/power             = 119.070000
-low_6/duration          = 9000.000000
-low_6/armorDamageAmount = 412.075653
-low_6/heatDamage        = 3.975000
+high_1-5/type                         = Focused Anode Pulse Particle Stream I
+high_1-5/state                        = active
+high_1-5/damageVolley                 = 110.216426
+high_1-5/speedWithReload              = 1717.399497
+high_1-5/speedOfReload                = 0.010000
+high_1-5/damagePerSecondWithReload    = 64.176347
+high_1-5/damagePerSecondWithoutReload = 64.176721
+high_1-5/capacitorPeakLoad            = 1.484812
+high_1-5/cycleTime                    = 1717.389497
+high_1-5/capacitorNeed                = 2.550000
+high_1-5/power                        = 102.600000
+high_1-5/cpu                          = 19.500000
+high_1-5/speed                        = 1717.389497
+high_1-5/maxRange                     = 6792.500000
+high_1-5/damageMultiplier             = 3.993349
+high_1-5/falloff                      = 5000.000000
+high_1-5/trackingSpeed                = 35.999999
+high_1-5/entityFlyRange               = 250.000000
+high_1-5/heatDamage                   = 0.450000
+high_1-5/charge/type                  = Imperial Navy Multifrequency M
 
 medium_1/type              = 10MN Y-S8 Compact Afterburner
 medium_1/state             = active
@@ -184,26 +185,25 @@ medium_3/cycleTime         = 5000.000000
 medium_3/capacitorNeed     = 1.500000
 medium_3/heatDamage        = 3.750000
 
-high_1-5/type                         = Focused Anode Pulse Particle Stream I
-high_1-5/state                        = active
-high_1-5/damageVolley                 = 110.216426
-high_1-5/speedWithReload              = 1717.399497
-high_1-5/speedOfReload                = 0.010000
-high_1-5/damagePerSecondWithReload    = 64.176347
-high_1-5/damagePerSecondWithoutReload = 64.176721
-high_1-5/capacitorPeakLoad            = 1.484812
-high_1-5/cycleTime                    = 1717.389497
-high_1-5/capacitorNeed                = 2.550000
-high_1-5/power                        = 102.600000
-high_1-5/cpu                          = 19.500000
-high_1-5/speed                        = 1717.389497
-high_1-5/maxRange                     = 6792.500000
-high_1-5/damageMultiplier             = 3.993349
-high_1-5/falloff                      = 5000.000000
-high_1-5/trackingSpeed                = 35.999999
-high_1-5/entityFlyRange               = 250.000000
-high_1-5/heatDamage                   = 0.450000
-high_1-5/charge/type                  = Imperial Navy Multifrequency M
+low_1-3/type  = Extruded Compact Heat Sink
+low_1-3/state = online
+
+low_4-5/type                           = Compact Multispectrum Energized Membrane
+low_4-5/state                          = online
+low_4-5/emDamageResistanceBonus        = -21.099999
+low_4-5/explosiveDamageResistanceBonus = -21.099999
+low_4-5/kineticDamageResistanceBonus   = -21.099999
+low_4-5/thermalDamageResistanceBonus   = -21.099999
+
+low_6/type              = Medium ACM Compact Armor Repairer
+low_6/state             = active
+low_6/armorRepairRate   = 45.786184
+low_6/capacitorPeakLoad = 17.777778
+low_6/cycleTime         = 9000.000000
+low_6/power             = 119.070000
+low_6/duration          = 9000.000000
+low_6/armorDamageAmount = 412.075653
+low_6/heatDamage        = 3.975000
 
 rig_1/type     = Medium EM Armor Reinforcer I
 rig_1/state    = online

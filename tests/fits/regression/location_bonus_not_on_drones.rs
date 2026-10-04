@@ -3,12 +3,12 @@
 
 use crate::harness::all;
 
-const FIT: &str = r#"
-[Scorpion, Location bonus not on drones]
+const FIT: &str = r#"%esf/1
+Scorpion "Location bonus not on drones"
 
 Large Particle Dispersion Augmentor II
 
-Hornet EC-300 x5
+5x Hornet EC-300
 "#;
 
 regression! {

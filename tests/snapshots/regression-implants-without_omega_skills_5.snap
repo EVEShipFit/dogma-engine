@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Punisher
 ship/capacitorStablePercentage               = 100.000000
@@ -133,10 +133,6 @@ implant_2/type         = High-grade Amulet Beta
 implant_2/state        = offline
 implant_2/armorHpBonus = 4.022714
 
-implant_3/type         = High-grade Amulet Gamma
-implant_3/state        = offline
-implant_3/armorHpBonus = 6.034071
-
 implant_4/type         = High-grade Amulet Delta
 implant_4/state        = offline
 implant_4/armorHpBonus = 8.045428
@@ -144,3 +140,7 @@ implant_4/armorHpBonus = 8.045428
 implant_5/type         = High-grade Amulet Epsilon
 implant_5/state        = offline
 implant_5/armorHpBonus = 10.056785
+
+implant_3/type         = High-grade Amulet Gamma
+implant_3/state        = offline
+implant_3/armorHpBonus = 6.034071

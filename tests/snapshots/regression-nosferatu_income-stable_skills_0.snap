@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Punisher
 ship/capacitorStablePercentage               = 70.823170
@@ -85,33 +85,33 @@ outgoing_effect_2/maxRange              = 5000.000000
 outgoing_effect_2/falloffEffectiveness  = 2500.000000
 outgoing_effect_2/remoteResistanceID    = 2045.000000
 
-low_1/type              = Small Armor Repairer II
-low_1/state             = active
-low_1/armorRepairRate   = 15.333333
-low_1/capacitorPeakLoad = 6.666667
-low_1/cycleTime         = 6000.000000
-
-medium_1/type              = 5MN Microwarpdrive II
-medium_1/state             = active
-medium_1/capacitorPeakLoad = 4.000000
-medium_1/cycleTime         = 10000.000000
-
 high_1-2/type                  = Small Energy Nosferatu II
 high_1-2/state                 = active
 high_1-2/capacitorTransferRate = 4.000000
 high_1-2/capacitorPeakLoad     = -4.000000
 high_1-2/cycleTime             = 2500.000000
 
+medium_1/type              = 5MN Microwarpdrive II
+medium_1/state             = active
+medium_1/capacitorPeakLoad = 4.000000
+medium_1/cycleTime         = 10000.000000
+
+low_1/type              = Small Armor Repairer II
+low_1/state             = active
+low_1/armorRepairRate   = 15.333333
+low_1/capacitorPeakLoad = 6.666667
+low_1/cycleTime         = 6000.000000
+
 ship                             = skill Amarr Frigate needs 1 has 0
 ship                             = skill Spaceship Command needs 1 has 0
-low_1/Small Armor Repairer II    = skill Repair Systems needs 3 has 0
-low_1/Small Armor Repairer II    = skill Mechanics needs 3 has 0
-medium_1/5MN Microwarpdrive II   = skill High Speed Maneuvering needs 3 has 0
-medium_1/5MN Microwarpdrive II   = skill Navigation needs 3 has 0
-medium_1/5MN Microwarpdrive II   = skill Afterburner needs 3 has 0
 high_1/Small Energy Nosferatu II = skill Capacitor Emission Systems needs 3 has 0
 high_1/Small Energy Nosferatu II = skill Power Grid Management needs 3 has 0
 high_1/Small Energy Nosferatu II = skill Science needs 2 has 0
 high_2/Small Energy Nosferatu II = skill Capacitor Emission Systems needs 3 has 0
 high_2/Small Energy Nosferatu II = skill Power Grid Management needs 3 has 0
 high_2/Small Energy Nosferatu II = skill Science needs 2 has 0
+medium_1/5MN Microwarpdrive II   = skill High Speed Maneuvering needs 3 has 0
+medium_1/5MN Microwarpdrive II   = skill Navigation needs 3 has 0
+medium_1/5MN Microwarpdrive II   = skill Afterburner needs 3 has 0
+low_1/Small Armor Repairer II    = skill Repair Systems needs 3 has 0
+low_1/Small Armor Repairer II    = skill Mechanics needs 3 has 0

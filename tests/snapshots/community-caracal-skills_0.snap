@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Caracal
 ship/capacitorStablePercentage               = 0.000000
@@ -102,11 +102,17 @@ outgoing_effect_1/maxRange             = 10000.000000
 outgoing_effect_1/falloffEffectiveness = 0.000000
 outgoing_effect_1/remoteResistanceID   = 2115.000000
 
-low_1-3/type  = Ballistic Control System I
-low_1-3/state = online
-
-low_4/type  = IFFA Compact Damage Control
-low_4/state = online
+high_1-5/type                         = Prototype 'Arbalest' Heavy Assault Missile Launcher I
+high_1-5/state                        = active
+high_1-5/damageVolley                 = 118.043394
+high_1-5/speedWithReload              = 5395.196431
+high_1-5/speedOfReload                = 166.666667
+high_1-5/damagePerSecondWithReload    = 21.879351
+high_1-5/damagePerSecondWithoutReload = 22.576785
+high_1-5/chargeAmount                 = 60.000000
+high_1-5/speed                        = 5228.529764
+high_1-5/charge/type                  = Scourge Heavy Assault Missile
+high_1-5/charge/kineticDamage         = 118.043394
 
 medium_1/type              = 10MN Y-S8 Compact Afterburner
 medium_1/state             = active
@@ -130,17 +136,11 @@ medium_5/state             = active
 medium_5/capacitorPeakLoad = 0.400000
 medium_5/cycleTime         = 5000.000000
 
-high_1-5/type                         = Prototype 'Arbalest' Heavy Assault Missile Launcher I
-high_1-5/state                        = active
-high_1-5/damageVolley                 = 118.043394
-high_1-5/speedWithReload              = 5395.196431
-high_1-5/speedOfReload                = 166.666667
-high_1-5/damagePerSecondWithReload    = 21.879351
-high_1-5/damagePerSecondWithoutReload = 22.576785
-high_1-5/chargeAmount                 = 60.000000
-high_1-5/speed                        = 5228.529764
-high_1-5/charge/type                  = Scourge Heavy Assault Missile
-high_1-5/charge/kineticDamage         = 118.043394
+low_1-3/type  = Ballistic Control System I
+low_1-3/state = online
+
+low_4/type  = IFFA Compact Damage Control
+low_4/state = online
 
 rig_1-3/type  = Medium Ancillary Current Router I
 rig_1-3/state = online
@@ -158,27 +158,6 @@ ship                                                         = skill Caldari Cru
 ship                                                         = skill Spaceship Command needs 2 has 0
 ship                                                         = skill Caldari Destroyer needs 3 has 0
 ship                                                         = skill Caldari Frigate needs 3 has 0
-low_1/Ballistic Control System I                             = skill Weapon Upgrades needs 1 has 0
-low_1/Ballistic Control System I                             = skill Gunnery needs 2 has 0
-low_2/Ballistic Control System I                             = skill Weapon Upgrades needs 1 has 0
-low_2/Ballistic Control System I                             = skill Gunnery needs 2 has 0
-low_3/Ballistic Control System I                             = skill Weapon Upgrades needs 1 has 0
-low_3/Ballistic Control System I                             = skill Gunnery needs 2 has 0
-low_4/IFFA Compact Damage Control                            = skill Hull Upgrades needs 1 has 0
-low_4/IFFA Compact Damage Control                            = skill Mechanics needs 1 has 0
-medium_1/10MN Y-S8 Compact Afterburner                       = skill Afterburner needs 1 has 0
-medium_1/10MN Y-S8 Compact Afterburner                       = skill Navigation needs 1 has 0
-medium_2/Large C5-L Compact Shield Booster                   = skill Shield Operation needs 2 has 0
-medium_2/Large C5-L Compact Shield Booster                   = skill Power Grid Management needs 1 has 0
-medium_3/Large Compact Pb-Acid Cap Battery                   = skill Energy Grid Upgrades needs 2 has 0
-medium_3/Large Compact Pb-Acid Cap Battery                   = skill Power Grid Management needs 2 has 0
-medium_3/Large Compact Pb-Acid Cap Battery                   = skill Science needs 1 has 0
-medium_4/Compact EM Shield Amplifier                         = skill Shield Upgrades needs 1 has 0
-medium_4/Compact EM Shield Amplifier                         = skill Power Grid Management needs 2 has 0
-medium_4/Compact EM Shield Amplifier                         = skill Science needs 1 has 0
-medium_5/X5 Enduring Stasis Webifier                         = skill Propulsion Jamming needs 1 has 0
-medium_5/X5 Enduring Stasis Webifier                         = skill CPU Management needs 3 has 0
-medium_5/X5 Enduring Stasis Webifier                         = skill Navigation needs 2 has 0
 high_1/Prototype 'Arbalest' Heavy Assault Missile Launcher I = skill Heavy Assault Missiles needs 1 has 0
 high_1/Prototype 'Arbalest' Heavy Assault Missile Launcher I = skill Missile Launcher Operation needs 3 has 0
 high_1/Prototype 'Arbalest' Heavy Assault Missile Launcher I = skill Light Missiles needs 3 has 0
@@ -209,5 +188,26 @@ high_5/Prototype 'Arbalest' Heavy Assault Missile Launcher I = skill Light Missi
 high_5/charge/Scourge Heavy Assault Missile                  = skill Heavy Assault Missiles needs 1 has 0
 high_5/charge/Scourge Heavy Assault Missile                  = skill Missile Launcher Operation needs 3 has 0
 high_5/charge/Scourge Heavy Assault Missile                  = skill Light Missiles needs 3 has 0
+medium_1/10MN Y-S8 Compact Afterburner                       = skill Afterburner needs 1 has 0
+medium_1/10MN Y-S8 Compact Afterburner                       = skill Navigation needs 1 has 0
+medium_2/Large C5-L Compact Shield Booster                   = skill Shield Operation needs 2 has 0
+medium_2/Large C5-L Compact Shield Booster                   = skill Power Grid Management needs 1 has 0
+medium_3/Large Compact Pb-Acid Cap Battery                   = skill Energy Grid Upgrades needs 2 has 0
+medium_3/Large Compact Pb-Acid Cap Battery                   = skill Power Grid Management needs 2 has 0
+medium_3/Large Compact Pb-Acid Cap Battery                   = skill Science needs 1 has 0
+medium_4/Compact EM Shield Amplifier                         = skill Shield Upgrades needs 1 has 0
+medium_4/Compact EM Shield Amplifier                         = skill Power Grid Management needs 2 has 0
+medium_4/Compact EM Shield Amplifier                         = skill Science needs 1 has 0
+medium_5/X5 Enduring Stasis Webifier                         = skill Propulsion Jamming needs 1 has 0
+medium_5/X5 Enduring Stasis Webifier                         = skill CPU Management needs 3 has 0
+medium_5/X5 Enduring Stasis Webifier                         = skill Navigation needs 2 has 0
+low_1/Ballistic Control System I                             = skill Weapon Upgrades needs 1 has 0
+low_1/Ballistic Control System I                             = skill Gunnery needs 2 has 0
+low_2/Ballistic Control System I                             = skill Weapon Upgrades needs 1 has 0
+low_2/Ballistic Control System I                             = skill Gunnery needs 2 has 0
+low_3/Ballistic Control System I                             = skill Weapon Upgrades needs 1 has 0
+low_3/Ballistic Control System I                             = skill Gunnery needs 2 has 0
+low_4/IFFA Compact Damage Control                            = skill Hull Upgrades needs 1 has 0
+low_4/IFFA Compact Damage Control                            = skill Mechanics needs 1 has 0
 dronebay/Hornet I                                            = skill Light Drone Operation needs 1 has 0
 dronebay/Hornet I                                            = skill Drones needs 1 has 0
