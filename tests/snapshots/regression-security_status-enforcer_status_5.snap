@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Enforcer
 ship/capacitorStablePercentage               = 0.000000
@@ -137,24 +137,6 @@ character/inventionReverseEngineeringResearchSpeed = 0.850000
 character/reactionTimeMultiplier                   = 0.800000
 character/reactionSlotLimit                        = 10.000000
 
-low_1/type              = Medium Armor Repairer II
-low_1/state             = active
-low_1/armorRepairRate   = 61.333333
-low_1/capacitorPeakLoad = 17.777778
-low_1/cycleTime         = 9000.000000
-low_1/duration          = 9000.000000
-low_1/armorDamageAmount = 552.000000
-low_1/heatDamage        = 3.975000
-
-medium_1/type              = Medium Shield Booster II
-medium_1/state             = active
-medium_1/shieldBoostRate   = 52.000000
-medium_1/capacitorPeakLoad = 18.000000
-medium_1/cycleTime         = 3000.000000
-medium_1/capacitorNeed     = 54.000000
-medium_1/shieldBonus       = 156.000000
-medium_1/heatDamage        = 0.750000
-
 high_1/type                         = Heavy Assault Missile Launcher II
 high_1/state                        = active
 high_1/damageVolley                 = 137.500000
@@ -173,3 +155,21 @@ high_1/charge/kineticDamage         = 137.500000
 high_1/charge/explosionDelay        = 9000.000000
 high_1/charge/aoeVelocity           = 151.500000
 high_1/charge/aoeCloudSize          = 93.750000
+
+medium_1/type              = Medium Shield Booster II
+medium_1/state             = active
+medium_1/shieldBoostRate   = 52.000000
+medium_1/capacitorPeakLoad = 18.000000
+medium_1/cycleTime         = 3000.000000
+medium_1/capacitorNeed     = 54.000000
+medium_1/shieldBonus       = 156.000000
+medium_1/heatDamage        = 0.750000
+
+low_1/type              = Medium Armor Repairer II
+low_1/state             = active
+low_1/armorRepairRate   = 61.333333
+low_1/capacitorPeakLoad = 17.777778
+low_1/cycleTime         = 9000.000000
+low_1/duration          = 9000.000000
+low_1/armorDamageAmount = 552.000000
+low_1/heatDamage        = 3.975000

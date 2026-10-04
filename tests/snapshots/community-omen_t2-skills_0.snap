@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Omen
 ship/maxTargetsCharacter                     = 0.000000
@@ -98,24 +98,23 @@ outgoing_effect_1/effect               = warpDisrupt
 outgoing_effect_1/maxRange             = 24000.000000
 outgoing_effect_1/warpScrambleStrength = 1.000000
 
-low_1/type  = 800mm Crystalline Carbonide Restrained Plates
-low_1/state = online
-
-low_2/type  = Damage Control II
-low_2/state = online
-
-low_3-4/type  = Heat Sink II
-low_3-4/state = online
-
-low_5/type              = Medium Ancillary Armor Repairer
-low_5/state             = active
-low_5/armorRepairRate   = 17.250000
-low_5/chargeAmount      = 0.320000
-low_5/capacitorPeakLoad = 13.333333
-low_5/cycleTime         = 12000.000000
-
-low_6/type  = Multispectrum Energized Membrane II
-low_6/state = online
+high_1-5/type                         = Focused Medium Pulse Laser II
+high_1-5/state                        = active
+high_1-5/damageVolley                 = 101.578460
+high_1-5/speedWithReload              = 3293.973891
+high_1-5/speedOfReload                = 0.010000
+high_1-5/damagePerSecondWithReload    = 30.837664
+high_1-5/damagePerSecondWithoutReload = 30.837758
+high_1-5/capacitorPeakLoad            = 3.035856
+high_1-5/cycleTime                    = 3293.963891
+high_1-5/capacitorNeed                = 10.000000
+high_1-5/power                        = 151.250000
+high_1-5/speed                        = 3293.963891
+high_1-5/maxRange                     = 7986.698470
+high_1-5/damageMultiplier             = 2.869448
+high_1-5/trackingSpeed                = 20.159999
+high_1-5/entityFlyRange               = 250.000000
+high_1-5/charge/type                  = Conflagration M
 
 medium_1/type              = 50MN Quad LiF Restrained Microwarpdrive
 medium_1/state             = active
@@ -135,23 +134,24 @@ medium_3/capacitorPeakLoad        = -62.745098
 medium_3/cycleTime                = 12750.000000
 medium_3/charge/type              = Navy Cap Booster 800
 
-high_1-5/type                         = Focused Medium Pulse Laser II
-high_1-5/state                        = active
-high_1-5/damageVolley                 = 101.578460
-high_1-5/speedWithReload              = 3293.973891
-high_1-5/speedOfReload                = 0.010000
-high_1-5/damagePerSecondWithReload    = 30.837664
-high_1-5/damagePerSecondWithoutReload = 30.837758
-high_1-5/capacitorPeakLoad            = 3.035856
-high_1-5/cycleTime                    = 3293.963891
-high_1-5/capacitorNeed                = 10.000000
-high_1-5/power                        = 151.250000
-high_1-5/speed                        = 3293.963891
-high_1-5/maxRange                     = 7986.698470
-high_1-5/damageMultiplier             = 2.869448
-high_1-5/trackingSpeed                = 20.159999
-high_1-5/entityFlyRange               = 250.000000
-high_1-5/charge/type                  = Conflagration M
+low_1/type  = 800mm Crystalline Carbonide Restrained Plates
+low_1/state = online
+
+low_2/type  = Damage Control II
+low_2/state = online
+
+low_3-4/type  = Heat Sink II
+low_3-4/state = online
+
+low_5/type              = Medium Ancillary Armor Repairer
+low_5/state             = active
+low_5/armorRepairRate   = 17.250000
+low_5/chargeAmount      = 0.320000
+low_5/capacitorPeakLoad = 13.333333
+low_5/cycleTime         = 12000.000000
+
+low_6/type  = Multispectrum Energized Membrane II
+low_6/state = online
 
 rig_1-2/type  = Medium Energy Locus Coordinator II
 rig_1-2/state = online
@@ -159,17 +159,17 @@ rig_1-2/state = online
 rig_3/type  = Medium Polycarbon Engine Housing I
 rig_3/state = online
 
-dronebay_1-2/type                         = Warrior II
-dronebay_1-2/state                        = active
-dronebay_1-2/damageVolley                 = 31.199999
-dronebay_1-2/speedWithReload              = 4000.000000
-dronebay_1-2/damagePerSecondWithoutReload = 7.800000
+dronebay_1-3/type                         = Hammerhead II
+dronebay_1-3/state                        = active
+dronebay_1-3/damageVolley                 = 61.439999
+dronebay_1-3/speedWithReload              = 4000.000000
+dronebay_1-3/damagePerSecondWithoutReload = 15.360000
 
-dronebay_3-5/type                         = Hammerhead II
-dronebay_3-5/state                        = active
-dronebay_3-5/damageVolley                 = 61.439999
-dronebay_3-5/speedWithReload              = 4000.000000
-dronebay_3-5/damagePerSecondWithoutReload = 15.360000
+dronebay_4-5/type                         = Warrior II
+dronebay_4-5/state                        = active
+dronebay_4-5/damageVolley                 = 31.199999
+dronebay_4-5/speedWithReload              = 4000.000000
+dronebay_4-5/damagePerSecondWithoutReload = 7.800000
 
 ship                                                = resource Cpu 435.000000 of 330.000000
 ship                                                = resource Powergrid 1366.250000 of 1000.000000
@@ -178,26 +178,6 @@ ship                                                = skill Amarr Cruiser needs 
 ship                                                = skill Spaceship Command needs 2 has 0
 ship                                                = skill Amarr Destroyer needs 3 has 0
 ship                                                = skill Amarr Frigate needs 3 has 0
-low_1/800mm Crystalline Carbonide Restrained Plates = skill Hull Upgrades needs 3 has 0
-low_1/800mm Crystalline Carbonide Restrained Plates = skill Mechanics needs 1 has 0
-low_2/Damage Control II                             = skill Hull Upgrades needs 4 has 0
-low_2/Damage Control II                             = skill Mechanics needs 1 has 0
-low_3/Heat Sink II                                  = skill Weapon Upgrades needs 4 has 0
-low_3/Heat Sink II                                  = skill Gunnery needs 2 has 0
-low_4/Heat Sink II                                  = skill Weapon Upgrades needs 4 has 0
-low_4/Heat Sink II                                  = skill Gunnery needs 2 has 0
-low_5/Medium Ancillary Armor Repairer               = skill Repair Systems needs 1 has 0
-low_5/Medium Ancillary Armor Repairer               = skill Mechanics needs 2 has 0
-low_6/Multispectrum Energized Membrane II           = skill Hull Upgrades needs 5 has 0
-low_6/Multispectrum Energized Membrane II           = skill Mechanics needs 1 has 0
-medium_1/50MN Quad LiF Restrained Microwarpdrive    = skill High Speed Maneuvering needs 1 has 0
-medium_1/50MN Quad LiF Restrained Microwarpdrive    = skill Navigation needs 3 has 0
-medium_1/50MN Quad LiF Restrained Microwarpdrive    = skill Afterburner needs 3 has 0
-medium_2/Warp Disruptor II                          = skill Propulsion Jamming needs 2 has 0
-medium_2/Warp Disruptor II                          = skill CPU Management needs 3 has 0
-medium_2/Warp Disruptor II                          = skill Navigation needs 2 has 0
-medium_3/Medium F-RX Compact Capacitor Booster      = skill Capacitor Systems Operation needs 1 has 0
-medium_3/Medium F-RX Compact Capacitor Booster      = skill Power Grid Management needs 1 has 0
 high_1/Focused Medium Pulse Laser II                = skill Medium Energy Turret needs 5 has 0
 high_1/Focused Medium Pulse Laser II                = skill Gunnery needs 3 has 0
 high_1/Focused Medium Pulse Laser II                = skill Medium Pulse Laser Specialization needs 1 has 0
@@ -248,9 +228,29 @@ high_5/charge/Conflagration M                       = skill Motion Prediction ne
 high_5/charge/Conflagration M                       = skill Medium Energy Turret needs 5 has 0
 high_5/charge/Conflagration M                       = skill Gunnery needs 3 has 0
 high_5/charge/Conflagration M                       = skill Small Energy Turret needs 3 has 0
-dronebay/Warrior II                                 = skill Light Drone Operation needs 5 has 0
-dronebay/Warrior II                                 = skill Minmatar Drone Specialization needs 1 has 0
-dronebay/Warrior II                                 = skill Drones needs 5 has 0
+medium_1/50MN Quad LiF Restrained Microwarpdrive    = skill High Speed Maneuvering needs 1 has 0
+medium_1/50MN Quad LiF Restrained Microwarpdrive    = skill Navigation needs 3 has 0
+medium_1/50MN Quad LiF Restrained Microwarpdrive    = skill Afterburner needs 3 has 0
+medium_2/Warp Disruptor II                          = skill Propulsion Jamming needs 2 has 0
+medium_2/Warp Disruptor II                          = skill CPU Management needs 3 has 0
+medium_2/Warp Disruptor II                          = skill Navigation needs 2 has 0
+medium_3/Medium F-RX Compact Capacitor Booster      = skill Capacitor Systems Operation needs 1 has 0
+medium_3/Medium F-RX Compact Capacitor Booster      = skill Power Grid Management needs 1 has 0
+low_1/800mm Crystalline Carbonide Restrained Plates = skill Hull Upgrades needs 3 has 0
+low_1/800mm Crystalline Carbonide Restrained Plates = skill Mechanics needs 1 has 0
+low_2/Damage Control II                             = skill Hull Upgrades needs 4 has 0
+low_2/Damage Control II                             = skill Mechanics needs 1 has 0
+low_3/Heat Sink II                                  = skill Weapon Upgrades needs 4 has 0
+low_3/Heat Sink II                                  = skill Gunnery needs 2 has 0
+low_4/Heat Sink II                                  = skill Weapon Upgrades needs 4 has 0
+low_4/Heat Sink II                                  = skill Gunnery needs 2 has 0
+low_5/Medium Ancillary Armor Repairer               = skill Repair Systems needs 1 has 0
+low_5/Medium Ancillary Armor Repairer               = skill Mechanics needs 2 has 0
+low_6/Multispectrum Energized Membrane II           = skill Hull Upgrades needs 5 has 0
+low_6/Multispectrum Energized Membrane II           = skill Mechanics needs 1 has 0
 dronebay/Hammerhead II                              = skill Medium Drone Operation needs 5 has 0
 dronebay/Hammerhead II                              = skill Gallente Drone Specialization needs 1 has 0
 dronebay/Hammerhead II                              = skill Drones needs 5 has 0
+dronebay/Warrior II                                 = skill Light Drone Operation needs 5 has 0
+dronebay/Warrior II                                 = skill Minmatar Drone Specialization needs 1 has 0
+dronebay/Warrior II                                 = skill Drones needs 5 has 0

@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Typhoon Fleet Issue
 ship/capacitorStablePercentage               = 0.000000
@@ -86,18 +86,29 @@ ship/shipBonusAB3                            = 0.000000
 character/missileDamageMultiplier = 1.299583
 character/droneControlDistance    = 44000.000000
 
-low_1-3/type  = Ballistic Control System II
-low_1-3/state = online
+high_1-6/type                         = Rapid Heavy Missile Launcher II
+high_1-6/state                        = active
+high_1-6/damageVolley                 = 222.228673
+high_1-6/speedWithReload              = 5246.651578
+high_1-6/speedOfReload                = 1399.999969
+high_1-6/damagePerSecondWithReload    = 42.356286
+high_1-6/damagePerSecondWithoutReload = 57.771978
+high_1-6/chargeAmount                 = 25.000001
+high_1-6/speed                        = 3846.651609
+high_1-6/charge/type                  = Caldari Navy Scourge Heavy Missile
+high_1-6/charge/maxVelocity           = 4558.000000
+high_1-6/charge/kineticDamage         = 222.228673
+high_1-6/charge/explosionDelay        = 6890.000000
+high_1-6/charge/aoeVelocity           = 117.101939
+high_1-6/charge/aoeCloudSize          = 96.707825
 
-low_4-5/type             = Drone Damage Amplifier II
-low_4-5/state            = online
-low_4-5/damageMultiplier = 1.419694
+high_7/type              = Auto Targeting System I
+high_7/state             = active
+high_7/capacitorPeakLoad = 1.600000
+high_7/cycleTime         = 5000.000000
 
-low_6/type  = Ballistic Control System II
-low_6/state = online
-
-low_7/type  = Missile Guidance Enhancer II
-low_7/state = online
+high_8/type  = Drone Link Augmentor II
+high_8/state = online
 
 medium_1/type              = Large Shield Booster II
 medium_1/state             = active
@@ -123,29 +134,18 @@ medium_5/state             = active
 medium_5/capacitorPeakLoad = 32.000000
 medium_5/cycleTime         = 10000.000000
 
-high_1-6/type                         = Rapid Heavy Missile Launcher II
-high_1-6/state                        = active
-high_1-6/damageVolley                 = 222.228673
-high_1-6/speedWithReload              = 5246.651578
-high_1-6/speedOfReload                = 1399.999969
-high_1-6/damagePerSecondWithReload    = 42.356286
-high_1-6/damagePerSecondWithoutReload = 57.771978
-high_1-6/chargeAmount                 = 25.000001
-high_1-6/speed                        = 3846.651609
-high_1-6/charge/type                  = Caldari Navy Scourge Heavy Missile
-high_1-6/charge/maxVelocity           = 4558.000000
-high_1-6/charge/kineticDamage         = 222.228673
-high_1-6/charge/explosionDelay        = 6890.000000
-high_1-6/charge/aoeVelocity           = 117.101939
-high_1-6/charge/aoeCloudSize          = 96.707825
+low_1-3/type  = Ballistic Control System II
+low_1-3/state = online
 
-high_7/type              = Auto Targeting System I
-high_7/state             = active
-high_7/capacitorPeakLoad = 1.600000
-high_7/cycleTime         = 5000.000000
+low_4-5/type             = Drone Damage Amplifier II
+low_4-5/state            = online
+low_4-5/damageMultiplier = 1.419694
 
-high_8/type  = Drone Link Augmentor II
-high_8/state = online
+low_6/type  = Ballistic Control System II
+low_6/state = online
+
+low_7/type  = Missile Guidance Enhancer II
+low_7/state = online
 
 rig_1/type  = Large EM Shield Reinforcer II
 rig_1/state = online
@@ -168,34 +168,6 @@ ship                                              = skill Minmatar Battlecruiser
 ship                                              = skill Minmatar Cruiser needs 3 has 0
 ship                                              = skill Minmatar Destroyer needs 3 has 0
 ship                                              = skill Minmatar Frigate needs 3 has 0
-low_1/Ballistic Control System II                 = skill Weapon Upgrades needs 4 has 0
-low_1/Ballistic Control System II                 = skill Gunnery needs 2 has 0
-low_2/Ballistic Control System II                 = skill Weapon Upgrades needs 4 has 0
-low_2/Ballistic Control System II                 = skill Gunnery needs 2 has 0
-low_3/Ballistic Control System II                 = skill Weapon Upgrades needs 4 has 0
-low_3/Ballistic Control System II                 = skill Gunnery needs 2 has 0
-low_4/Drone Damage Amplifier II                   = skill Weapon Upgrades needs 4 has 0
-low_4/Drone Damage Amplifier II                   = skill Drones needs 4 has 0
-low_4/Drone Damage Amplifier II                   = skill Gunnery needs 2 has 0
-low_5/Drone Damage Amplifier II                   = skill Weapon Upgrades needs 4 has 0
-low_5/Drone Damage Amplifier II                   = skill Drones needs 4 has 0
-low_5/Drone Damage Amplifier II                   = skill Gunnery needs 2 has 0
-low_6/Ballistic Control System II                 = skill Weapon Upgrades needs 4 has 0
-low_6/Ballistic Control System II                 = skill Gunnery needs 2 has 0
-low_7/Missile Guidance Enhancer II                = skill Weapon Upgrades needs 4 has 0
-low_7/Missile Guidance Enhancer II                = skill Gunnery needs 2 has 0
-medium_1/Large Shield Booster II                  = skill Shield Operation needs 4 has 0
-medium_1/Large Shield Booster II                  = skill Power Grid Management needs 1 has 0
-medium_2/Missile Guidance Computer II             = skill Missile Bombardment needs 4 has 0
-medium_2/Missile Guidance Computer II             = skill Missile Launcher Operation needs 1 has 0
-medium_3/Missile Guidance Computer II             = skill Missile Bombardment needs 4 has 0
-medium_3/Missile Guidance Computer II             = skill Missile Launcher Operation needs 1 has 0
-medium_4/Eutectic Compact Cap Recharger           = skill Energy Grid Upgrades needs 2 has 0
-medium_4/Eutectic Compact Cap Recharger           = skill Power Grid Management needs 2 has 0
-medium_4/Eutectic Compact Cap Recharger           = skill Science needs 1 has 0
-medium_5/500MN Quad LiF Restrained Microwarpdrive = skill High Speed Maneuvering needs 1 has 0
-medium_5/500MN Quad LiF Restrained Microwarpdrive = skill Navigation needs 3 has 0
-medium_5/500MN Quad LiF Restrained Microwarpdrive = skill Afterburner needs 3 has 0
 high_1/Rapid Heavy Missile Launcher II            = skill Missile Launcher Operation needs 3 has 0
 high_1/Rapid Heavy Missile Launcher II            = skill Heavy Missile Specialization needs 1 has 0
 high_1/Rapid Heavy Missile Launcher II            = skill Heavy Missiles needs 5 has 0
@@ -242,6 +214,34 @@ high_7/Auto Targeting System I                    = skill Target Management need
 high_7/Auto Targeting System I                    = skill CPU Management needs 1 has 0
 high_8/Drone Link Augmentor II                    = skill Drone Avionics needs 5 has 0
 high_8/Drone Link Augmentor II                    = skill Drones needs 1 has 0
+medium_1/Large Shield Booster II                  = skill Shield Operation needs 4 has 0
+medium_1/Large Shield Booster II                  = skill Power Grid Management needs 1 has 0
+medium_2/Missile Guidance Computer II             = skill Missile Bombardment needs 4 has 0
+medium_2/Missile Guidance Computer II             = skill Missile Launcher Operation needs 1 has 0
+medium_3/Missile Guidance Computer II             = skill Missile Bombardment needs 4 has 0
+medium_3/Missile Guidance Computer II             = skill Missile Launcher Operation needs 1 has 0
+medium_4/Eutectic Compact Cap Recharger           = skill Energy Grid Upgrades needs 2 has 0
+medium_4/Eutectic Compact Cap Recharger           = skill Power Grid Management needs 2 has 0
+medium_4/Eutectic Compact Cap Recharger           = skill Science needs 1 has 0
+medium_5/500MN Quad LiF Restrained Microwarpdrive = skill High Speed Maneuvering needs 1 has 0
+medium_5/500MN Quad LiF Restrained Microwarpdrive = skill Navigation needs 3 has 0
+medium_5/500MN Quad LiF Restrained Microwarpdrive = skill Afterburner needs 3 has 0
+low_1/Ballistic Control System II                 = skill Weapon Upgrades needs 4 has 0
+low_1/Ballistic Control System II                 = skill Gunnery needs 2 has 0
+low_2/Ballistic Control System II                 = skill Weapon Upgrades needs 4 has 0
+low_2/Ballistic Control System II                 = skill Gunnery needs 2 has 0
+low_3/Ballistic Control System II                 = skill Weapon Upgrades needs 4 has 0
+low_3/Ballistic Control System II                 = skill Gunnery needs 2 has 0
+low_4/Drone Damage Amplifier II                   = skill Weapon Upgrades needs 4 has 0
+low_4/Drone Damage Amplifier II                   = skill Drones needs 4 has 0
+low_4/Drone Damage Amplifier II                   = skill Gunnery needs 2 has 0
+low_5/Drone Damage Amplifier II                   = skill Weapon Upgrades needs 4 has 0
+low_5/Drone Damage Amplifier II                   = skill Drones needs 4 has 0
+low_5/Drone Damage Amplifier II                   = skill Gunnery needs 2 has 0
+low_6/Ballistic Control System II                 = skill Weapon Upgrades needs 4 has 0
+low_6/Ballistic Control System II                 = skill Gunnery needs 2 has 0
+low_7/Missile Guidance Enhancer II                = skill Weapon Upgrades needs 4 has 0
+low_7/Missile Guidance Enhancer II                = skill Gunnery needs 2 has 0
 dronebay/Ogre II                                  = skill Heavy Drone Operation needs 5 has 0
 dronebay/Ogre II                                  = skill Gallente Drone Specialization needs 1 has 0
 dronebay/Ogre II                                  = skill Drones needs 5 has 0

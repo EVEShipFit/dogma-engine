@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Tristan
 ship/capacitorStablePercentage               = 84.333001
@@ -84,17 +84,17 @@ medium_1/state             = active
 medium_1/capacitorPeakLoad = 1.500000
 medium_1/cycleTime         = 5000.000000
 
-dronebay_1/type                         = Light Mutated Drone
-dronebay_1/state                        = active
-dronebay_1/damageVolley                 = 44.000000
-dronebay_1/speedWithReload              = 4000.000000
-dronebay_1/damagePerSecondWithoutReload = 11.000000
+dronebay_1-2/type                         = Hobgoblin II
+dronebay_1-2/state                        = active
+dronebay_1-2/damageVolley                 = 38.399999
+dronebay_1-2/speedWithReload              = 4000.000000
+dronebay_1-2/damagePerSecondWithoutReload = 9.600000
 
-dronebay_2-3/type                         = Hobgoblin II
-dronebay_2-3/state                        = active
-dronebay_2-3/damageVolley                 = 38.399999
-dronebay_2-3/speedWithReload              = 4000.000000
-dronebay_2-3/damagePerSecondWithoutReload = 9.600000
+dronebay_3/type                         = Light Mutated Drone
+dronebay_3/state                        = active
+dronebay_3/damageVolley                 = 44.000000
+dronebay_3/speedWithReload              = 4000.000000
+dronebay_3/damagePerSecondWithoutReload = 11.000000
 
 ship                            = resource LaunchedDrones 3.000000 of 0.000000
 ship                            = skill Gallente Frigate needs 1 has 0
@@ -102,6 +102,9 @@ ship                            = skill Spaceship Command needs 1 has 0
 medium_1/Abyssal Warp Scrambler = skill Propulsion Jamming needs 2 has 0
 medium_1/Abyssal Warp Scrambler = skill Navigation needs 2 has 0
 medium_1/Abyssal Warp Scrambler = skill CPU Management needs 3 has 0
+dronebay/Hobgoblin II           = skill Light Drone Operation needs 5 has 0
+dronebay/Hobgoblin II           = skill Gallente Drone Specialization needs 1 has 0
+dronebay/Hobgoblin II           = skill Drones needs 5 has 0
 dronebay/Light Mutated Drone    = skill Light Drone Operation needs 5 has 0
 dronebay/Light Mutated Drone    = skill Mutated Drone Specialization needs 1 has 0
 dronebay/Light Mutated Drone    = skill Drones needs 5 has 0
@@ -109,6 +112,3 @@ dronebay/Light Mutated Drone    = skill Gallente Drone Specialization needs 1 ha
 dronebay/Light Mutated Drone    = skill Amarr Drone Specialization needs 1 has 0
 dronebay/Light Mutated Drone    = skill Caldari Drone Specialization needs 1 has 0
 dronebay/Light Mutated Drone    = skill Minmatar Drone Specialization needs 1 has 0
-dronebay/Hobgoblin II           = skill Light Drone Operation needs 5 has 0
-dronebay/Hobgoblin II           = skill Gallente Drone Specialization needs 1 has 0
-dronebay/Hobgoblin II           = skill Drones needs 5 has 0

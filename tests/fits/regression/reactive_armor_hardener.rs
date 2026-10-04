@@ -3,13 +3,28 @@
 //! module the resistances it ends up holding, but only when asked: EVE itself
 //! has no damage to shift against, and shows a plain 15/15/15/15 hardener.
 
-use esf_dogma_engine::{DamageProfile, ReactiveArmor, State};
+use esf_dogma_engine::{DamageProfile, ReactiveArmor};
 
 use crate::harness::all;
 
-const RIFTER: &str = r#"
-[Rifter, Reactive Armor Hardener]
+const RIFTER: &str = r#"%esf/1
+Rifter "Reactive Armor Hardener"
+
 Reactive Armor Hardener
+Damage Control II
+"#;
+
+const RIFTER_OFFLINE: &str = r#"%esf/1
+Rifter "Reactive Armor Hardener"
+
+Reactive Armor Hardener !off
+Damage Control II
+"#;
+
+const RIFTER_OVERLOADED: &str = r#"%esf/1
+Rifter "Reactive Armor Hardener"
+
+Reactive Armor Hardener !heat
 Damage Control II
 "#;
 
@@ -39,15 +54,9 @@ regression! {
      * hitpoints still answer to the even damage of the fit. */
     own_profile = RIFTER, skills: all(5), edit: |fit| fit.environment.reactive_armor = ReactiveArmor::Profile(THERMAL);
     /* Nothing shifts while it is not running. */
-    offline = RIFTER, skills: all(5), edit: |fit| {
-        fit.items[0].state = State::Offline;
-        fit.environment.reactive_armor = ReactiveArmor::DamageProfile;
-    };
+    offline = RIFTER_OFFLINE, skills: all(5), edit: |fit| fit.environment.reactive_armor = ReactiveArmor::DamageProfile;
     /* Only the cycle time overloads, and with one module that changes nothing. */
-    overloaded = RIFTER, skills: all(5), edit: |fit| {
-        fit.items[0].state = State::Overload;
-        fit.environment.reactive_armor = ReactiveArmor::DamageProfile;
-    };
+    overloaded = RIFTER_OVERLOADED, skills: all(5), edit: |fit| fit.environment.reactive_armor = ReactiveArmor::DamageProfile;
     /* A pilot without the skill still shifts the same; only the cycle differs. */
     no_skills = RIFTER, skills: all(0), edit: |fit| fit.environment.reactive_armor = ReactiveArmor::DamageProfile;
 }

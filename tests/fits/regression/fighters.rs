@@ -5,15 +5,32 @@
 use std::collections::BTreeSet;
 
 use crate::harness::all;
-use esf_dogma_engine::{Slot, State};
 
-const FIT: &str = r#"
-[Thanatos, Fighters]
+const FIT: &str = r#"%esf/1
+Thanatos "Fighters"
+
 Fighter Support Unit II
 
-Templar II x6
+3x Dromi II @bay
+6x Templar II @bay
+"#;
 
-Dromi II x3
+const LAUNCHED: &str = r#"%esf/1
+Thanatos "Fighters"
+
+Fighter Support Unit II
+
+3x Dromi II
+6x Templar II
+"#;
+
+const LAUNCHED_OFFLINE: &str = r#"%esf/1
+Thanatos "Fighters"
+
+Fighter Support Unit II
+
+3x Dromi II
+6x Templar II !off
 "#;
 
 const ATTACK: i32 = 6465;
@@ -21,21 +38,10 @@ const MISSILES: i32 = 6431;
 
 regression! {
     bay_skills_5 = FIT, skills: all(5);
-    launched_skills_0 = FIT, skills: all(0), edit: launch;
-    launched_skills_5 = FIT, skills: all(5), edit: launch;
-    missiles_skills_5 = FIT, skills: all(5), edit: |fit| {
-        launch(fit);
-        fit.items[1].fighter_abilities = Some(BTreeSet::from([ATTACK, MISSILES]));
+    launched_skills_0 = LAUNCHED, skills: all(0);
+    launched_skills_5 = LAUNCHED, skills: all(5);
+    missiles_skills_5 = LAUNCHED, skills: all(5), edit: |fit| {
+        fit.items[2].fighter_abilities = Some(BTreeSet::from([ATTACK, MISSILES]));
     };
-    offline_skills_5 = FIT, skills: all(5), edit: |fit| {
-        launch(fit);
-        fit.items[1].state = State::Offline;
-    };
-}
-
-fn launch(fit: &mut esf_dogma_engine::Fit) {
-    fit.items[1].slot = Slot::FighterTube(0);
-    fit.items[1].state = State::Active;
-    fit.items[2].slot = Slot::FighterTube(1);
-    fit.items[2].state = State::Active;
+    offline_skills_5 = LAUNCHED_OFFLINE, skills: all(5);
 }

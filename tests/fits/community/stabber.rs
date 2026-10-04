@@ -1,31 +1,26 @@
 use crate::harness::all;
 
-const FIT: &str = r#"
-[Stabber, 20240806 - Community Fit by Nora Maldroan]
-Tracking Enhancer II
-Damage Control II
-Gyrostabilizer II
-Gyrostabilizer II
+const FIT: &str = r#"%esf/1
+Stabber "20240806 - Community Fit by Nora Maldroan"
 
-50MN Cold-Gas Enduring Microwarpdrive
-Large Shield Extender II
-Large Shield Extender II
-Warp Disruptor II
-
-220mm Vulcan AutoCannon II, Barrage M
-220mm Vulcan AutoCannon II, Barrage M
+2x 220mm Vulcan AutoCannon II :Barrage M
 Medium Infectious Scoped Energy Neutralizer
 Small Infectious Scoped Energy Neutralizer
-220mm Vulcan AutoCannon II, Barrage M
-220mm Vulcan AutoCannon II, Barrage M
+2x 220mm Vulcan AutoCannon II :Barrage M
+
+50MN Cold-Gas Enduring Microwarpdrive
+2x Large Shield Extender II
+Warp Disruptor II
+
+Tracking Enhancer II
+Damage Control II
+2x Gyrostabilizer II
 
 Medium Ancillary Current Router I
 Medium EM Shield Reinforcer I
 Medium Polycarbon Engine Housing I
 
-
-
-Acolyte II x5
+5x Acolyte II
 "#;
 
 regression! {

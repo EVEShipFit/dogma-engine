@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Tristan
 ship/capacitorStablePercentage               = 93.127688
@@ -140,28 +140,28 @@ medium_1/cycleTime         = 5000.000000
 medium_1/capacitorNeed     = 5.625000
 medium_1/heatDamage        = 3.750000
 
-dronebay_1/type                         = Light Mutated Drone
-dronebay_1/state                        = active
-dronebay_1/damageVolley                 = 90.750000
-dronebay_1/speedWithReload              = 4000.000000
-dronebay_1/damagePerSecondWithoutReload = 22.687500
-dronebay_1/hp                           = 468.750000
-dronebay_1/maxVelocity                  = 4375.000000
-dronebay_1/maxRange                     = 2750.000000
-dronebay_1/damageMultiplier             = 4.537500
-dronebay_1/trackingSpeed                = 3.450000
-dronebay_1/shieldCapacity               = 116.250000
-dronebay_1/armorHP                      = 206.250000
+dronebay_1-2/type                         = Hobgoblin II
+dronebay_1-2/state                        = active
+dronebay_1-2/damageVolley                 = 79.199998
+dronebay_1-2/speedWithReload              = 4000.000000
+dronebay_1-2/damagePerSecondWithoutReload = 19.800000
+dronebay_1-2/hp                           = 450.000000
+dronebay_1-2/maxVelocity                  = 4200.000000
+dronebay_1-2/maxRange                     = 2625.000000
+dronebay_1-2/damageMultiplier             = 3.960000
+dronebay_1-2/trackingSpeed                = 3.267000
+dronebay_1-2/shieldCapacity               = 112.500000
+dronebay_1-2/armorHP                      = 202.500000
 
-dronebay_2-3/type                         = Hobgoblin II
-dronebay_2-3/state                        = active
-dronebay_2-3/damageVolley                 = 79.199998
-dronebay_2-3/speedWithReload              = 4000.000000
-dronebay_2-3/damagePerSecondWithoutReload = 19.800000
-dronebay_2-3/hp                           = 450.000000
-dronebay_2-3/maxVelocity                  = 4200.000000
-dronebay_2-3/maxRange                     = 2625.000000
-dronebay_2-3/damageMultiplier             = 3.960000
-dronebay_2-3/trackingSpeed                = 3.267000
-dronebay_2-3/shieldCapacity               = 112.500000
-dronebay_2-3/armorHP                      = 202.500000
+dronebay_3/type                         = Light Mutated Drone
+dronebay_3/state                        = active
+dronebay_3/damageVolley                 = 90.750000
+dronebay_3/speedWithReload              = 4000.000000
+dronebay_3/damagePerSecondWithoutReload = 22.687500
+dronebay_3/hp                           = 468.750000
+dronebay_3/maxVelocity                  = 4375.000000
+dronebay_3/maxRange                     = 2750.000000
+dronebay_3/damageMultiplier             = 4.537500
+dronebay_3/trackingSpeed                = 3.450000
+dronebay_3/shieldCapacity               = 116.250000
+dronebay_3/armorHP                      = 206.250000

@@ -1,6 +1,6 @@
 use esf_data::{InfoNameSde, InfoSde};
 use esf_dogma_engine::{Calculation, Fit, Options, Projection, Violation};
-use esf_format::eft;
+use esf_format::{eft, esf};
 
 use super::dump::{dump, dump_violations};
 use super::skills::Skills;
@@ -13,11 +13,11 @@ const VALIDATE: Options = Options {
     validate: true,
 };
 
-pub fn snapshot(module_path: &str, name: &str, eft_fit: &str, skills: Skills, edit: fn(&mut Fit)) {
-    assert_valid(eft_fit, edit);
+pub fn snapshot(module_path: &str, name: &str, text: &str, skills: Skills, edit: fn(&mut Fit)) {
+    assert_valid(text, edit);
 
     insta::with_settings!({snapshot_path => SNAPSHOTS, prepend_module_to_snapshot => false}, {
-        insta::assert_snapshot!(case(module_path, name), calculate_fit(eft_fit, skills, edit));
+        insta::assert_snapshot!(case(module_path, name), calculate_fit(text, skills, edit));
     });
 }
 
@@ -25,8 +25,8 @@ pub fn snapshot(module_path: &str, name: &str, eft_fit: &str, skills: Skills, ed
 /// quietly rests on a fit that could not exist. Skills belong to the character
 /// rather than to the fit, so this judges it with everything trained; a case
 /// is free to calculate the same fit with fewer.
-fn assert_valid(eft_fit: &str, edit: fn(&mut Fit)) {
-    let (fit, calculation) = calculate(eft_fit, super::all(5), edit, &VALIDATE);
+fn assert_valid(text: &str, edit: fn(&mut Fit)) {
+    let (fit, calculation) = calculate(text, super::all(5), edit, &VALIDATE);
     let violations = violations(&calculation);
 
     let info = InfoSde::new(&SDE);
@@ -42,12 +42,12 @@ fn assert_valid(eft_fit: &str, edit: fn(&mut Fit)) {
 pub fn snapshot_violations(
     module_path: &str,
     name: &str,
-    eft_fit: &str,
+    text: &str,
     skills: Skills,
     edit: fn(&mut Fit),
 ) {
     insta::with_settings!({snapshot_path => SNAPSHOTS, prepend_module_to_snapshot => false}, {
-        insta::assert_snapshot!(case(module_path, name), validate_fit(eft_fit, skills, edit));
+        insta::assert_snapshot!(case(module_path, name), validate_fit(text, skills, edit));
     });
 }
 
@@ -63,23 +63,29 @@ fn case(module_path: &str, name: &str) -> String {
         .join("-")
 }
 
-pub fn load(eft_fit: &str) -> Result<Fit, eft::Error> {
+pub fn load(text: &str) -> Result<Fit, esf::Error> {
+    let info = InfoSde::new(&SDE);
+    let fits = esf::load_esf(&info, text.as_bytes())?;
+    esf::to_fit(&info, esf::main_fit(&fits).unwrap())
+}
+
+pub fn load_eft(eft_fit: &str) -> Result<Fit, eft::Error> {
     let info_name = InfoNameSde::new(&SDE, Some(&NAMES)).unwrap();
     eft::load_eft(&info_name, eft_fit.trim())
 }
 
-pub fn save(fit: &Fit) -> Result<String, eft::Error> {
+pub fn save_eft(fit: &Fit) -> Result<String, eft::Error> {
     eft::save_eft(&InfoSde::new(&SDE), fit)
 }
 
-/* EFT cannot express everything a fit can, so a case may edit the loaded fit. */
+/* esf/1 cannot express everything a fit can, so a case may edit the loaded fit. */
 pub fn calculate(
-    eft_fit: &str,
+    text: &str,
     skills: Skills,
     edit: fn(&mut Fit),
     options: &Options,
 ) -> (Fit, Calculation) {
-    let mut fit = load(eft_fit).unwrap();
+    let mut fit = load(text).unwrap();
     fit.character.skills = skills.levels;
     edit(&mut fit);
 
@@ -88,21 +94,21 @@ pub fn calculate(
     (fit, calculation)
 }
 
-/// What another EFT fit hands out, to put in the `incoming` of this one.
-pub fn outgoing(eft_fit: &str, skills: Skills) -> Projection {
-    let (_, calculation) = calculate(eft_fit, skills, |_| {}, &Options::default());
+/// What another fit hands out, to put in the `incoming` of this one.
+pub fn outgoing(text: &str, skills: Skills) -> Projection {
+    let (_, calculation) = calculate(text, skills, |_| {}, &Options::default());
     calculation.outgoing
 }
 
-fn calculate_fit(eft_fit: &str, skills: Skills, edit: fn(&mut Fit)) -> String {
-    let (fit, calculation) = calculate(eft_fit, skills, edit, &VALIDATE);
+fn calculate_fit(text: &str, skills: Skills, edit: fn(&mut Fit)) -> String {
+    let (fit, calculation) = calculate(text, skills, edit, &VALIDATE);
 
     let info = InfoSde::new(&SDE);
     dump(&info, &fit, &calculation, violations(&calculation))
 }
 
-fn validate_fit(eft_fit: &str, skills: Skills, edit: fn(&mut Fit)) -> String {
-    let (fit, calculation) = calculate(eft_fit, skills, edit, &VALIDATE);
+fn validate_fit(text: &str, skills: Skills, edit: fn(&mut Fit)) -> String {
+    let (fit, calculation) = calculate(text, skills, edit, &VALIDATE);
 
     let info = InfoSde::new(&SDE);
     dump_violations(&info, &fit, violations(&calculation))

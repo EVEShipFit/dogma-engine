@@ -5,124 +5,141 @@ use crate::harness::{all, outgoing};
 
 /* Turrets, missiles and a propulsion module, so every kind of ewar has
  * something to bite on. */
-const TARGET: &str = r#"
-[Rupture, Target]
-Damage Control II
-Gyrostabilizer II
+const TARGET: &str = r#"%esf/1
+Rupture "Target"
+
+425mm AutoCannon II :Republic Fleet EMP M
+Heavy Missile Launcher II :Scourge Fury Heavy Missile
 
 10MN Afterburner II
 Large Shield Extender II
 
-425mm AutoCannon II, Republic Fleet EMP M
-Heavy Missile Launcher II, Scourge Fury Heavy Missile
+Damage Control II
+Gyrostabilizer II
 "#;
 
-const WEB: &str = r#"
-[Celestis, Web]
+const WEB: &str = r#"%esf/1
+Celestis "Web"
+
 Stasis Webifier II
 "#;
 
-const TWO_WEBS: &str = r#"
-[Celestis, Webs]
-Stasis Webifier II
-Stasis Webifier II
+const TWO_WEBS: &str = r#"%esf/1
+Celestis "Webs"
+
+2x Stasis Webifier II
 "#;
 
-const PAINTER: &str = r#"
-[Celestis, Painter]
+const PAINTER: &str = r#"%esf/1
+Celestis "Painter"
+
 Target Painter II
 "#;
 
-const DAMPENER: &str = r#"
-[Celestis, Dampener]
+const DAMPENER: &str = r#"%esf/1
+Celestis "Dampener"
+
 Remote Sensor Dampener II
 "#;
 
-const TRACKING_DISRUPTOR: &str = r#"
-[Celestis, Tracking Disruptor]
+const TRACKING_DISRUPTOR: &str = r#"%esf/1
+Celestis "Tracking Disruptor"
+
 Tracking Disruptor II
 "#;
 
-const GUIDANCE_DISRUPTOR: &str = r#"
-[Celestis, Guidance Disruptor]
+const GUIDANCE_DISRUPTOR: &str = r#"%esf/1
+Celestis "Guidance Disruptor"
+
 Guidance Disruptor II
 "#;
 
-const SENSOR_BOOSTER: &str = r#"
-[Osprey, Sensor Booster]
+const SENSOR_BOOSTER: &str = r#"%esf/1
+Osprey "Sensor Booster"
+
 Remote Sensor Booster II
 "#;
 
-const WEB_DRONES: &str = r#"
-[Vexor, Web Drones]
+const WEB_DRONES: &str = r#"%esf/1
+Vexor "Web Drones"
 
-'Aergia' Hobgoblin SW-300 x5
+5x 'Aergia' Hobgoblin SW-300
 "#;
 
 /* A burst hands over buffs rather than effects, and only once it has a
  * charge naming which. */
-const BURSTS: &str = r#"
-[Claymore, Bursts]
-Shield Command Burst II, Shield Harmonizing Charge
-Skirmish Command Burst II, Rapid Deployment Charge
+const BURSTS: &str = r#"%esf/1
+Claymore "Bursts"
+
+Shield Command Burst II :Shield Harmonizing Charge
+Skirmish Command Burst II :Rapid Deployment Charge
 "#;
 
-const BURSTS_WITHOUT_CHARGES: &str = r#"
-[Claymore, Bursts]
+const BURSTS_WITHOUT_CHARGES: &str = r#"%esf/1
+Claymore "Bursts"
+
 Shield Command Burst II
 Skirmish Command Burst II
 "#;
 
 /* Logistics repairs the ship it is aimed at, which is a rate on that ship
  * rather than an attribute of its own. */
-const REMOTE_ARMOR: &str = r#"
-[Oneiros, Remote Armor]
+const REMOTE_ARMOR: &str = r#"%esf/1
+Oneiros "Remote Armor"
+
 Large Remote Armor Repairer II
 "#;
 
-const REMOTE_SHIELD: &str = r#"
-[Basilisk, Remote Shield]
+const REMOTE_SHIELD: &str = r#"%esf/1
+Basilisk "Remote Shield"
+
 Large Remote Shield Booster II
 "#;
 
-const REMOTE_HULL: &str = r#"
-[Osprey, Remote Hull]
+const REMOTE_HULL: &str = r#"%esf/1
+Osprey "Remote Hull"
+
 Large Remote Hull Repairer II
 "#;
 
-const REMOTE_ARMOR_DRONES: &str = r#"
-[Vexor, Repair Drones]
+const REMOTE_ARMOR_DRONES: &str = r#"%esf/1
+Vexor "Repair Drones"
 
-Heavy Armor Maintenance Bot I x3
+3x Heavy Armor Maintenance Bot I
 "#;
 
 /* Capacitor warfare: one gives capacitor away, the other two take it. */
-const REMOTE_CAP: &str = r#"
-[Basilisk, Remote Cap]
+const REMOTE_CAP: &str = r#"%esf/1
+Basilisk "Remote Cap"
+
 Large Remote Capacitor Transmitter II
 "#;
 
-const NEUTRALIZER: &str = r#"
-[Curse, Neutralizer]
+const NEUTRALIZER: &str = r#"%esf/1
+Curse "Neutralizer"
+
 Medium Energy Neutralizer II
 "#;
 
-const NOSFERATU: &str = r#"
-[Curse, Nosferatu]
+const NOSFERATU: &str = r#"%esf/1
+Curse "Nosferatu"
+
 Medium Energy Nosferatu II
 "#;
 
 /* A Marauder in bastion shrugs off remote assistance, and a dreadnought in
  * siege shrugs off dampening and weapon disruption. */
-const BASTION: &str = r#"
-[Paladin, Bastion]
+const BASTION: &str = r#"%esf/1
+Paladin "Bastion"
+
 Bastion Module I
 "#;
 
-const SIEGE: &str = r#"
-[Revelation, Siege]
+const SIEGE: &str = r#"%esf/1
+Revelation "Siege"
+
 Siege Module II
-Dual Giga Pulse Laser II, Conflagration XL
+Dual Giga Pulse Laser II :Conflagration XL
 "#;
 
 regression! {

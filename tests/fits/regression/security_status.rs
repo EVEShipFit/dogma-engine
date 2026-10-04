@@ -4,23 +4,22 @@
 use crate::harness::all;
 
 /* Repair amount: +10% per point of status. */
-const ENFORCER: &str = r#"
-[Enforcer, Security status]
-Medium Armor Repairer II
+const ENFORCER: &str = r#"%esf/1
+Enforcer "Security status"
+
+Heavy Assault Missile Launcher II :Scourge Heavy Assault Missile
 
 Medium Shield Booster II
 
-Heavy Assault Missile Launcher II, Scourge Heavy Assault Missile
+Medium Armor Repairer II
 "#;
 
 /* Damage: +7.5% per point of negative status, on both guns and missiles. */
-const SIDEWINDER: &str = r#"
-[Sidewinder, Security status]
+const SIDEWINDER: &str = r#"%esf/1
+Sidewinder "Security status"
 
-
-
-125mm Gatling AutoCannon II, EMP S
-Rocket Launcher II, Scourge Rocket
+125mm Gatling AutoCannon II :EMP S
+Rocket Launcher II :Scourge Rocket
 "#;
 
 regression! {

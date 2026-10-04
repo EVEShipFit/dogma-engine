@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Vexor
 ship/capacitorStablePercentage               = 71.560240
@@ -124,14 +124,6 @@ character/inventionReverseEngineeringResearchSpeed = 0.850000
 character/reactionTimeMultiplier                   = 0.800000
 character/reactionSlotLimit                        = 10.000000
 
-low_1-2/type              = Medium Armor Repairer II
-low_1-2/state             = active
-low_1-2/armorRepairRate   = 40.888889
-low_1-2/capacitorPeakLoad = 17.777778
-low_1-2/cycleTime         = 9000.000000
-low_1-2/duration          = 9000.000000
-low_1-2/heatDamage        = 3.975000
-
 medium_1/type              = 5MN Microwarpdrive II
 medium_1/state             = active
 medium_1/capacitorPeakLoad = 3.000000
@@ -148,3 +140,11 @@ medium_2/capacitorPeakLoad        = -33.333333
 medium_2/cycleTime                = 12000.000000
 medium_2/heatDamage               = 3.000000
 medium_2/charge/type              = Cap Booster 400
+
+low_1-2/type              = Medium Armor Repairer II
+low_1-2/state             = active
+low_1-2/armorRepairRate   = 40.888889
+low_1-2/capacitorPeakLoad = 17.777778
+low_1-2/cycleTime         = 9000.000000
+low_1-2/duration          = 9000.000000
+low_1-2/heatDamage        = 3.975000

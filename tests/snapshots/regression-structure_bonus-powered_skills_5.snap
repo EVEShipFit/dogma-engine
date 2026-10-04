@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                      = Astrahus
 ship/capacitorStablePercentage                 = 100.000000
@@ -75,11 +75,11 @@ character/inventionReverseEngineeringResearchSpeed = 0.850000
 character/reactionTimeMultiplier                   = 0.800000
 character/reactionSlotLimit                        = 10.000000
 
-low_1/type  = Standup Layered Armor Plating I
-low_1/state = online
-
 medium_1/type  = Standup Cap Battery I
 medium_1/state = online
+
+low_1/type  = Standup Layered Armor Plating I
+low_1/state = online
 
 service_1/type                          = Standup Cloning Center I
 service_1/state                         = online

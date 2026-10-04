@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Astrahus
 ship/capacitorStablePercentage               = 100.000000
@@ -73,14 +73,14 @@ implant_1/state = offline
 implant_2/type  = High-grade Amulet Beta
 implant_2/state = offline
 
-implant_3/type  = High-grade Amulet Gamma
-implant_3/state = offline
-
 implant_4/type  = High-grade Amulet Delta
 implant_4/state = offline
 
 implant_5/type  = High-grade Amulet Epsilon
 implant_5/state = offline
+
+implant_3/type  = High-grade Amulet Gamma
+implant_3/state = offline
 
 implant_6/type  = High-grade Amulet Omega
 implant_6/state = offline

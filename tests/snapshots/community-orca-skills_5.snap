@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                                      = Orca
 ship/capacitorStablePercentage                                 = 76.638308
@@ -175,33 +175,6 @@ outgoing_buff_4/value = -37.195312
 outgoing_buff_5/id    = 2474
 outgoing_buff_5/value = 4.959375
 
-low_1/type  = Reinforced Bulkheads II
-low_1/state = online
-
-low_2/type  = Damage Control II
-low_2/state = online
-
-medium_1-2/type  = Drone Navigation Computer II
-medium_1-2/state = online
-
-medium_3/type              = Multispectrum Shield Hardener II
-medium_3/state             = active
-medium_3/capacitorPeakLoad = 3.200000
-medium_3/cycleTime         = 10000.000000
-medium_3/heatDamage        = 2.550000
-
-medium_4/type              = Pith X-Type Thermal Shield Hardener
-medium_4/state             = active
-medium_4/capacitorPeakLoad = 1.666667
-medium_4/cycleTime         = 12000.000000
-medium_4/heatDamage        = 3.000000
-
-medium_5/type              = Pith X-Type Kinetic Shield Hardener
-medium_5/state             = active
-medium_5/capacitorPeakLoad = 1.666667
-medium_5/cycleTime         = 12000.000000
-medium_5/heatDamage        = 3.000000
-
 high_1/type                = Large Industrial Core II
 high_1/state               = active
 high_1/consumptionQuantity = 300.000000
@@ -280,6 +253,33 @@ high_6/capacitorPeakLoad  = 1.000000
 high_6/cycleTime          = 5000.000000
 high_6/maxRange           = 84000.000000
 high_6/maxTractorVelocity = 1200.000000
+
+medium_1-2/type  = Drone Navigation Computer II
+medium_1-2/state = online
+
+medium_3/type              = Multispectrum Shield Hardener II
+medium_3/state             = active
+medium_3/capacitorPeakLoad = 3.200000
+medium_3/cycleTime         = 10000.000000
+medium_3/heatDamage        = 2.550000
+
+medium_4/type              = Pith X-Type Thermal Shield Hardener
+medium_4/state             = active
+medium_4/capacitorPeakLoad = 1.666667
+medium_4/cycleTime         = 12000.000000
+medium_4/heatDamage        = 3.000000
+
+medium_5/type              = Pith X-Type Kinetic Shield Hardener
+medium_5/state             = active
+medium_5/capacitorPeakLoad = 1.666667
+medium_5/cycleTime         = 12000.000000
+medium_5/heatDamage        = 3.000000
+
+low_1/type  = Reinforced Bulkheads II
+low_1/state = online
+
+low_2/type  = Damage Control II
+low_2/state = online
 
 rig_1-2/type     = Large Drone Mining Augmentor II
 rig_1-2/state    = online

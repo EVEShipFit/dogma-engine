@@ -2,56 +2,63 @@
 
 use crate::harness::all;
 
-const RIG_SIZE: &str = r#"
-[Rifter, Rig size]
+const RIG_SIZE: &str = r#"%esf/1
+Rifter "Rig size"
+
 Medium Ancillary Current Router I
 "#;
 
-const CAPITAL: &str = r#"
-[Rifter, Capital]
+const CAPITAL: &str = r#"%esf/1
+Rifter "Capital"
+
 Capital Shield Booster II
 "#;
 
-const RESTRICTED: &str = r#"
-[Rifter, Restricted]
+const RESTRICTED: &str = r#"%esf/1
+Rifter "Restricted"
+
 Bomb Launcher II
 "#;
 
-const TWO_CONTROLS: &str = r#"
-[Rifter, Two controls]
-Damage Control II
-Damage Control II
+const TWO_CONTROLS: &str = r#"%esf/1
+Rifter "Two controls"
+
+2x Damage Control II
 "#;
 
 /* An afterburner and a microwarpdrive share a group, so the limit on how many
  * of a group run at once is what keeps one of the two off. */
-const PROP_MODS: &str = r#"
-[Rifter, Prop mods]
+const PROP_MODS: &str = r#"%esf/1
+Rifter "Prop mods"
+
 5MN Microwarpdrive II
 1MN Afterburner II
 "#;
 
 /* A structure takes modules as large as a capital's, and is not a ship. */
-const STRUCTURE: &str = r#"
-[Astrahus, Structure]
-Standup Layered Armor Plating I
+const STRUCTURE: &str = r#"%esf/1
+Astrahus "Structure"
+
+Standup Heavy Energy Neutralizer I
 
 Standup Cap Battery I
 
-Standup Heavy Energy Neutralizer I
+Standup Layered Armor Plating I
 
 Standup M-Set Missile Precision I
 
 Standup Cloning Center I
 "#;
 
-const SHIP_MODULE_ON_STRUCTURE: &str = r#"
-[Astrahus, Ship module]
+const SHIP_MODULE_ON_STRUCTURE: &str = r#"%esf/1
+Astrahus "Ship module"
+
 Damage Control II
 "#;
 
-const STRUCTURE_MODULE_ON_SHIP: &str = r#"
-[Rifter, Structure module]
+const STRUCTURE_MODULE_ON_SHIP: &str = r#"%esf/1
+Rifter "Structure module"
+
 Standup Cap Battery I
 "#;
 

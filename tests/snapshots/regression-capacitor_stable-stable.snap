@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Dominix
 ship/capacitorStablePercentage               = 80.434849
@@ -74,14 +74,14 @@ outgoing_effect_1/capacitorTransferRate = 20.833333
 outgoing_effect_1/maxRange              = 16000.000000
 outgoing_effect_1/falloffEffectiveness  = 8000.000000
 
-medium_1-5/type  = Cap Recharger II
-medium_1-5/state = online
-
 high_1/type                  = Heavy Energy Neutralizer I
 high_1/state                 = active
 high_1/capacitorTransferRate = 20.833333
 high_1/capacitorPeakLoad     = 20.833333
 high_1/cycleTime             = 24000.000000
+
+medium_1-5/type  = Cap Recharger II
+medium_1-5/state = online
 
 ship                              = skill Gallente Battleship needs 1 has 0
 ship                              = skill Spaceship Command needs 4 has 0
@@ -89,6 +89,9 @@ ship                              = skill Gallente Battlecruiser needs 3 has 0
 ship                              = skill Gallente Cruiser needs 3 has 0
 ship                              = skill Gallente Destroyer needs 3 has 0
 ship                              = skill Gallente Frigate needs 3 has 0
+high_1/Heavy Energy Neutralizer I = skill Capacitor Emission Systems needs 3 has 0
+high_1/Heavy Energy Neutralizer I = skill Power Grid Management needs 3 has 0
+high_1/Heavy Energy Neutralizer I = skill Science needs 2 has 0
 medium_1/Cap Recharger II         = skill Energy Grid Upgrades needs 3 has 0
 medium_1/Cap Recharger II         = skill Power Grid Management needs 2 has 0
 medium_1/Cap Recharger II         = skill Science needs 1 has 0
@@ -104,6 +107,3 @@ medium_4/Cap Recharger II         = skill Science needs 1 has 0
 medium_5/Cap Recharger II         = skill Energy Grid Upgrades needs 3 has 0
 medium_5/Cap Recharger II         = skill Power Grid Management needs 2 has 0
 medium_5/Cap Recharger II         = skill Science needs 1 has 0
-high_1/Heavy Energy Neutralizer I = skill Capacitor Emission Systems needs 3 has 0
-high_1/Heavy Energy Neutralizer I = skill Power Grid Management needs 3 has 0
-high_1/Heavy Energy Neutralizer I = skill Science needs 2 has 0

@@ -7,35 +7,38 @@
 
 use crate::harness::all;
 
-const ARMOR_LOADED: &str = r#"
-[Vexor, Ancillary armor repairer loaded]
-Medium Ancillary Armor Repairer, Nanite Repair Paste
+const ARMOR_LOADED: &str = r#"%esf/1
+Vexor "Ancillary armor repairer loaded"
+
+Medium Ancillary Armor Repairer :Nanite Repair Paste
 "#;
 
-const ARMOR_EMPTY: &str = r#"
-[Vexor, Ancillary armor repairer empty]
+const ARMOR_EMPTY: &str = r#"%esf/1
+Vexor "Ancillary armor repairer empty"
+
 Medium Ancillary Armor Repairer
 "#;
 
-const SHIELD_LOADED: &str = r#"
-[Caracal, Ancillary shield booster loaded]
+const SHIELD_LOADED: &str = r#"%esf/1
+Caracal "Ancillary shield booster loaded"
 
-Medium Ancillary Shield Booster, Cap Booster 100
+Medium Ancillary Shield Booster :Cap Booster 100
 "#;
 
 /* Without a charge it falls back on the capacitor, and still boosts. */
-const SHIELD_EMPTY: &str = r#"
-[Caracal, Ancillary shield booster empty]
+const SHIELD_EMPTY: &str = r#"%esf/1
+Caracal "Ancillary shield booster empty"
 
 Medium Ancillary Shield Booster
 "#;
 
 /* The fit from the report, which showed 0 for both layers at once. */
-const BOTH: &str = r#"
-[Vexor, Ancillary both layers]
-Medium Ancillary Armor Repairer, Nanite Repair Paste
+const BOTH: &str = r#"%esf/1
+Vexor "Ancillary both layers"
 
-Medium Ancillary Shield Booster, Cap Booster 100
+Medium Ancillary Shield Booster :Cap Booster 100
+
+Medium Ancillary Armor Repairer :Nanite Repair Paste
 "#;
 
 regression! {

@@ -3,12 +3,12 @@
 
 use crate::harness::all;
 
-const FIT: &str = r#"
-[Rorqual, Quantity with x in name]
+const FIT: &str = r#"%esf/1
+Rorqual "Quantity with x in name"
 
-'Excavator' Mining Drone x2
+2x 'Excavator' Mining Drone
 
-Meson Exotic Plasma L x100
+100x Meson Exotic Plasma L
 "#;
 
 regression! {

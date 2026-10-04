@@ -6,16 +6,12 @@
 
 use crate::harness::all;
 
-const STABLE: &str = r#"
-[Dominix, Capacitor stable]
-
-Cap Recharger II
-Cap Recharger II
-Cap Recharger II
-Cap Recharger II
-Cap Recharger II
+const STABLE: &str = r#"%esf/1
+Dominix "Capacitor stable"
 
 Heavy Energy Neutralizer I
+
+5x Cap Recharger II
 "#;
 
 regression! {

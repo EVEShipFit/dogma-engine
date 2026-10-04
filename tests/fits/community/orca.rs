@@ -1,30 +1,27 @@
 use crate::harness::all;
 
-const FIT: &str = r#"
-[Orca, 20240806 - Community Fit by Limal]
-Reinforced Bulkheads II
-Damage Control II
+const FIT: &str = r#"%esf/1
+Orca "20240806 - Community Fit by Limal"
 
-Drone Navigation Computer II
-Drone Navigation Computer II
+Large Industrial Core II
+Large Asteroid Ore Compressor I
+Mining Foreman Burst II :Mining Laser Field Enhancement Charge
+Shield Command Burst II :Shield Extension Charge
+Mining Foreman Burst II :Mining Laser Optimization Charge
+Small Tractor Beam II
+
+2x Drone Navigation Computer II
 Multispectrum Shield Hardener II
 Pith X-Type Thermal Shield Hardener
 Pith X-Type Kinetic Shield Hardener
 
-Large Industrial Core II
-Large Asteroid Ore Compressor I
-Mining Foreman Burst II, Mining Laser Field Enhancement Charge
-Shield Command Burst II, Shield Extension Charge
-Mining Foreman Burst II, Mining Laser Optimization Charge
-Small Tractor Beam II
+Reinforced Bulkheads II
+Damage Control II
 
-Large Drone Mining Augmentor II
-Large Drone Mining Augmentor II
+2x Large Drone Mining Augmentor II
 Large Drone Mining Augmentor I
 
-
-
-'Augmented' Mining Drone x5
+5x 'Augmented' Mining Drone
 "#;
 
 regression! {

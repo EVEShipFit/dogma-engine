@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Gila
 ship/capacitorStablePercentage               = 0.000000
@@ -137,49 +137,6 @@ character/inventionReverseEngineeringResearchSpeed = 0.850000
 character/reactionTimeMultiplier                   = 0.800000
 character/reactionSlotLimit                        = 10.000000
 
-low_1-3/type             = Drone Damage Amplifier II
-low_1-3/state            = online
-low_1-3/hp               = 50.000000
-low_1-3/damageMultiplier = 2.378633
-
-medium_1/type              = Multispectrum Shield Hardener II
-medium_1/state             = active
-medium_1/capacitorPeakLoad = 3.200000
-medium_1/cycleTime         = 10000.000000
-medium_1/heatDamage        = 2.550000
-
-medium_2/type  = Republic Fleet Large Cap Battery
-medium_2/state = online
-medium_2/cpu   = 30.000000
-
-medium_3/type              = 10MN Monopropellant Enduring Afterburner
-medium_3/state             = active
-medium_3/capacitorPeakLoad = 2.000000
-medium_3/cycleTime         = 7500.000000
-medium_3/capacitorNeed     = 15.000000
-medium_3/speedFactor       = 156.250000
-medium_3/duration          = 7500.000000
-medium_3/heatDamage        = 4.275000
-
-medium_4/type              = Multispectrum Shield Hardener II
-medium_4/state             = active
-medium_4/capacitorPeakLoad = 3.200000
-medium_4/cycleTime         = 10000.000000
-medium_4/heatDamage        = 2.550000
-
-medium_5/type  = Copasetic Compact Shield Boost Amplifier
-medium_5/state = online
-
-medium_6/type              = Pithum C-Type Medium Shield Booster
-medium_6/state             = active
-medium_6/shieldBoostRate   = 124.553057
-medium_6/capacitorPeakLoad = 31.141869
-medium_6/cycleTime         = 1734.000000
-medium_6/capacitorNeed     = 54.000000
-medium_6/shieldBonus       = 215.975000
-medium_6/duration          = 1734.000000
-medium_6/heatDamage        = 1.500000
-
 high_1-2/type                         = Upgraded 'Malkuth' Rapid Light Missile Launcher
 high_1-2/state                        = active
 high_1-2/damageVolley                 = 130.625000
@@ -220,6 +177,49 @@ high_4-5/charge/emDamage              = 130.625000
 high_4-5/charge/explosionDelay        = 7500.000000
 high_4-5/charge/aoeVelocity           = 255.000000
 high_4-5/charge/aoeCloudSize          = 30.000000
+
+medium_1/type              = Multispectrum Shield Hardener II
+medium_1/state             = active
+medium_1/capacitorPeakLoad = 3.200000
+medium_1/cycleTime         = 10000.000000
+medium_1/heatDamage        = 2.550000
+
+medium_2/type  = Republic Fleet Large Cap Battery
+medium_2/state = online
+medium_2/cpu   = 30.000000
+
+medium_3/type              = 10MN Monopropellant Enduring Afterburner
+medium_3/state             = active
+medium_3/capacitorPeakLoad = 2.000000
+medium_3/cycleTime         = 7500.000000
+medium_3/capacitorNeed     = 15.000000
+medium_3/speedFactor       = 156.250000
+medium_3/duration          = 7500.000000
+medium_3/heatDamage        = 4.275000
+
+medium_4/type              = Multispectrum Shield Hardener II
+medium_4/state             = active
+medium_4/capacitorPeakLoad = 3.200000
+medium_4/cycleTime         = 10000.000000
+medium_4/heatDamage        = 2.550000
+
+medium_5/type  = Copasetic Compact Shield Boost Amplifier
+medium_5/state = online
+
+medium_6/type              = Pithum C-Type Medium Shield Booster
+medium_6/state             = active
+medium_6/shieldBoostRate   = 124.553057
+medium_6/capacitorPeakLoad = 31.141869
+medium_6/cycleTime         = 1734.000000
+medium_6/capacitorNeed     = 54.000000
+medium_6/shieldBonus       = 215.975000
+medium_6/duration          = 1734.000000
+medium_6/heatDamage        = 1.500000
+
+low_1-3/type             = Drone Damage Amplifier II
+low_1-3/state            = online
+low_1-3/hp               = 50.000000
+low_1-3/damageMultiplier = 2.378633
 
 rig_1-2/type     = Medium Core Defense Operational Solidifier I
 rig_1-2/state    = online

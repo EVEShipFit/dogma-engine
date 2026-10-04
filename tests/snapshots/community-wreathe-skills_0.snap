@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Wreathe
 ship/capacitorStablePercentage               = 37.624648
@@ -77,12 +77,6 @@ ship/shipBonusSoEECS4                        = 0.000000
 ship/shipBonusSoEECS5                        = 0.000000
 ship/shipBonusAB3                            = 0.000000
 
-low_1-3/type  = Expanded Cargohold II
-low_1-3/state = online
-
-low_4-5/type  = Inertial Stabilizers II
-low_4-5/state = online
-
 medium_1-2/type  = Large Shield Extender I
 medium_1-2/state = online
 
@@ -97,22 +91,18 @@ medium_4/state = online
 medium_5/type  = EM Shield Amplifier I
 medium_5/state = online
 
+low_1-3/type  = Expanded Cargohold II
+low_1-3/state = online
+
+low_4-5/type  = Inertial Stabilizers II
+low_4-5/state = online
+
 rig_1-3/type  = Medium Hyperspatial Velocity Optimizer I
 rig_1-3/state = online
 
 ship                                     = resource Powergrid 303.000000 of 200.000000
 ship                                     = skill Minmatar Hauler needs 1 has 0
 ship                                     = skill Spaceship Command needs 3 has 0
-low_1/Expanded Cargohold II              = skill Hull Upgrades needs 2 has 0
-low_1/Expanded Cargohold II              = skill Mechanics needs 1 has 0
-low_2/Expanded Cargohold II              = skill Hull Upgrades needs 2 has 0
-low_2/Expanded Cargohold II              = skill Mechanics needs 1 has 0
-low_3/Expanded Cargohold II              = skill Hull Upgrades needs 2 has 0
-low_3/Expanded Cargohold II              = skill Mechanics needs 1 has 0
-low_4/Inertial Stabilizers II            = skill Hull Upgrades needs 2 has 0
-low_4/Inertial Stabilizers II            = skill Mechanics needs 1 has 0
-low_5/Inertial Stabilizers II            = skill Hull Upgrades needs 2 has 0
-low_5/Inertial Stabilizers II            = skill Mechanics needs 1 has 0
 medium_1/Large Shield Extender I         = skill Shield Upgrades needs 1 has 0
 medium_1/Large Shield Extender I         = skill Power Grid Management needs 2 has 0
 medium_1/Large Shield Extender I         = skill Science needs 1 has 0
@@ -127,3 +117,13 @@ medium_4/Thermal Shield Amplifier I      = skill Science needs 1 has 0
 medium_5/EM Shield Amplifier I           = skill Shield Upgrades needs 1 has 0
 medium_5/EM Shield Amplifier I           = skill Power Grid Management needs 2 has 0
 medium_5/EM Shield Amplifier I           = skill Science needs 1 has 0
+low_1/Expanded Cargohold II              = skill Hull Upgrades needs 2 has 0
+low_1/Expanded Cargohold II              = skill Mechanics needs 1 has 0
+low_2/Expanded Cargohold II              = skill Hull Upgrades needs 2 has 0
+low_2/Expanded Cargohold II              = skill Mechanics needs 1 has 0
+low_3/Expanded Cargohold II              = skill Hull Upgrades needs 2 has 0
+low_3/Expanded Cargohold II              = skill Mechanics needs 1 has 0
+low_4/Inertial Stabilizers II            = skill Hull Upgrades needs 2 has 0
+low_4/Inertial Stabilizers II            = skill Mechanics needs 1 has 0
+low_5/Inertial Stabilizers II            = skill Hull Upgrades needs 2 has 0
+low_5/Inertial Stabilizers II            = skill Mechanics needs 1 has 0

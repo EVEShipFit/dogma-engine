@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                      = Astrahus
 ship/capacitorStablePercentage                 = 0.000000
@@ -78,11 +78,11 @@ character/inventionReverseEngineeringResearchSpeed = 0.850000
 character/reactionTimeMultiplier                   = 0.800000
 character/reactionSlotLimit                        = 10.000000
 
-low_1/type  = Standup Layered Armor Plating I
-low_1/state = online
-
-low_2/type  = Standup Ballistic Control System I
-low_2/state = online
+high_1/type              = Standup Heavy Energy Neutralizer I
+high_1/state             = active
+high_1/capacitorPeakLoad = 60.000000
+high_1/cycleTime         = 15000.000000
+high_1/capacitorNeed     = 900.000000
 
 medium_1/type  = Standup Cap Battery I
 medium_1/state = online
@@ -93,11 +93,11 @@ medium_2/capacitorPeakLoad = 127.500000
 medium_2/cycleTime         = 20000.000000
 medium_2/capacitorNeed     = 2550.000000
 
-high_1/type              = Standup Heavy Energy Neutralizer I
-high_1/state             = active
-high_1/capacitorPeakLoad = 60.000000
-high_1/cycleTime         = 15000.000000
-high_1/capacitorNeed     = 900.000000
+low_1/type  = Standup Layered Armor Plating I
+low_1/state = online
+
+low_2/type  = Standup Ballistic Control System I
+low_2/state = online
 
 rig_1/type                              = Standup M-Set Missile Precision I
 rig_1/state                             = online

@@ -6,8 +6,9 @@
 use std::collections::BTreeMap;
 
 use esf_dogma_engine::{Fit, Mutation, Slot, State};
+use esf_format::eft::Error;
 
-use crate::harness::{load, save};
+use crate::harness::{load_eft, save_eft};
 
 /* Every rack, with a gap in one of them, a charge, a module that is off, and
  * a section for drones, for cargo and for what the character carries. */
@@ -59,8 +60,8 @@ Standup Einherji I x9
 ";
 
 fn round_trip(eft: &str) {
-    let fit = load(eft).unwrap();
-    assert_eq!(save(&fit).unwrap(), eft);
+    let fit = load_eft(eft).unwrap();
+    assert_eq!(save_eft(&fit).unwrap(), eft);
 }
 
 #[test]
@@ -75,11 +76,11 @@ fn round_trips_a_structure() {
 
 #[test]
 fn names_the_fit_after_the_ship_when_it_has_no_name() {
-    let mut fit = load("[Rifter, My Rifter]\n200mm AutoCannon II").unwrap();
+    let mut fit = load_eft("[Rifter, My Rifter]\n200mm AutoCannon II").unwrap();
     fit.name = None;
 
     assert_eq!(
-        save(&fit).unwrap(),
+        save_eft(&fit).unwrap(),
         "[Rifter, Rifter]\n200mm AutoCannon II\n"
     );
 }
@@ -89,7 +90,7 @@ fn names_the_fit_after_the_ship_when_it_has_no_name() {
 #[test]
 fn only_writes_a_state_a_module_can_reach() {
     let eft = "[Rifter, States]\n\n\n\nSmall Projectile Ambit Extension I\n";
-    let mut fit = load(eft).unwrap();
+    let mut fit = load_eft(eft).unwrap();
 
     for state in [
         State::Offline,
@@ -102,33 +103,32 @@ fn only_writes_a_state_a_module_can_reach() {
             State::Offline => "Small Projectile Ambit Extension I /offline\n",
             _ => "Small Projectile Ambit Extension I\n",
         };
-        assert_eq!(save(&fit).unwrap(), format!("[Rifter, States]\n{expected}"));
+        assert_eq!(
+            save_eft(&fit).unwrap(),
+            format!("[Rifter, States]\n{expected}")
+        );
     }
 }
 
 #[test]
 fn writes_a_state_a_module_is_not_in_by_itself() {
     let eft = "[Rifter, States]\n\n1MN Afterburner II\n";
-    let mut fit = load(eft).unwrap();
+    let mut fit = load_eft(eft).unwrap();
 
     fit.items[0].state = State::Online;
     assert_eq!(
-        save(&fit).unwrap(),
+        save_eft(&fit).unwrap(),
         "[Rifter, States]\n1MN Afterburner II /online\n"
     );
 
     fit.items[0].state = State::Overload;
     assert_eq!(
-        save(&fit).unwrap(),
+        save_eft(&fit).unwrap(),
         "[Rifter, States]\n1MN Afterburner II /overload\n"
     );
 }
 
-/* Which of the mutaplasmids of an item was used cannot be told from the fit,
- * so the export answers one that could have rolled these values. */
-#[test]
-fn writes_a_mutation_that_rolls_the_same_values() {
-    let eft = "\
+const MUTATIONS: &str = "\
 [Tristan, Mutations]
 
 Warp Scrambler II [1]
@@ -144,10 +144,26 @@ Hobgoblin II x2
   armorHP 110, damageMultiplier 2.2, falloff 2100, hp 250, maxRange 2200, maxVelocity 3500, shieldCapacity 62, trackingSpeed 2.3
 ";
 
-    let fit = load(eft).unwrap();
-    let again = load(&save(&fit).unwrap()).unwrap();
+/* Which of the mutaplasmids of an item was used cannot be told from the fit,
+ * so the export answers one that could have rolled these values. */
+#[test]
+fn writes_a_mutation_that_rolls_the_same_values() {
+    let fit = load_eft(MUTATIONS).unwrap();
+    let again = load_eft(&save_eft(&fit).unwrap()).unwrap();
 
     assert_eq!(rolls(&again), rolls(&fit));
+}
+
+#[test]
+fn rejects_a_mutation_missing_a_roll() {
+    let eft = MUTATIONS.replace("capacitorNeed 7.5, ", "");
+    assert_eq!(
+        load_eft(&eft).unwrap_err(),
+        Error::MissingRoll {
+            mutation: "[1] Warp Scrambler II".to_string(),
+            attribute_id: 6,
+        }
+    );
 }
 
 /* Mutations do not compare, so the type and what it rolled stand in for them. */
@@ -162,14 +178,14 @@ fn rolls(fit: &Fit) -> Vec<String> {
  * the item written as what it mutated into. */
 #[test]
 fn drops_a_mutation_without_a_mutaplasmid() {
-    let mut fit = load("[Rifter, Mutations]\n\nWarp Scrambler II\n").unwrap();
+    let mut fit = load_eft("[Rifter, Mutations]\n\nWarp Scrambler II\n").unwrap();
     fit.items[0].mutation = Some(Mutation {
         base: 587,
         attributes: BTreeMap::new(),
     });
 
     assert_eq!(
-        save(&fit).unwrap(),
+        save_eft(&fit).unwrap(),
         "[Rifter, Mutations]\nWarp Scrambler II\n"
     );
 }
@@ -177,10 +193,10 @@ fn drops_a_mutation_without_a_mutaplasmid() {
 /* EFT has no tube, so a launched squadron reads back as one in the bay. */
 #[test]
 fn writes_a_fighter_in_a_tube_as_one_in_the_bay() {
-    let mut fit = load("[Thanatos, Fighters]\n\nTemplar II x6\n").unwrap();
+    let mut fit = load_eft("[Thanatos, Fighters]\n\nTemplar II x6\n").unwrap();
     fit.items[0].slot = Slot::FighterTube(0);
 
-    let again = load(&save(&fit).unwrap()).unwrap();
+    let again = load_eft(&save_eft(&fit).unwrap()).unwrap();
     assert_eq!(again.items[0].slot, Slot::FighterBay);
     assert_eq!(again.items[0].quantity, 6);
 }

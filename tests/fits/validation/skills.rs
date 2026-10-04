@@ -3,14 +3,16 @@
 
 use crate::harness::{all, none};
 
-const FIT: &str = r#"
-[Rifter, Skills]
-200mm AutoCannon II, Barrage S
+const FIT: &str = r#"%esf/1
+Rifter "Skills"
+
+200mm AutoCannon II :Barrage S
 "#;
 
 /* The specialization is trained, but nothing it rests on is. */
-const PREREQUISITES: &str = r#"
-[Rifter, Prerequisites]
+const PREREQUISITES: &str = r#"%esf/1
+Rifter "Prerequisites"
+
 200mm AutoCannon II
 "#;
 

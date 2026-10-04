@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Omen
 ship/maxTargetsCharacter                     = 25.000000
@@ -148,6 +148,52 @@ outgoing_effect_1/effect               = warpDisrupt
 outgoing_effect_1/maxRange             = 24000.000000
 outgoing_effect_1/warpScrambleStrength = 1.000000
 
+high_1-5/type                         = Focused Medium Pulse Laser II
+high_1-5/state                        = active
+high_1-5/damageVolley                 = 160.620940
+high_1-5/speedWithReload              = 1778.750501
+high_1-5/speedOfReload                = 0.010000
+high_1-5/damagePerSecondWithReload    = 90.299871
+high_1-5/damagePerSecondWithoutReload = 90.300378
+high_1-5/capacitorPeakLoad            = 2.108233
+high_1-5/cycleTime                    = 1778.740501
+high_1-5/capacitorNeed                = 3.750000
+high_1-5/power                        = 124.031250
+high_1-5/cpu                          = 21.750000
+high_1-5/speed                        = 1778.740501
+high_1-5/maxRange                     = 9983.373087
+high_1-5/damageMultiplier             = 4.537315
+high_1-5/falloff                      = 5000.000000
+high_1-5/trackingSpeed                = 25.199999
+high_1-5/entityFlyRange               = 250.000000
+high_1-5/heatDamage                   = 0.450000
+high_1-5/charge/type                  = Conflagration M
+high_1-5/charge/damageMultiplier      = 1.100000
+
+medium_1/type              = 50MN Quad LiF Restrained Microwarpdrive
+medium_1/state             = active
+medium_1/capacitorPeakLoad = 13.500000
+medium_1/cycleTime         = 10000.000000
+medium_1/capacitorNeed     = 135.000000
+medium_1/speedFactor       = 631.250000
+medium_1/heatDamage        = 8.550000
+
+medium_2/type              = Warp Disruptor II
+medium_2/state             = active
+medium_2/capacitorPeakLoad = 4.500000
+medium_2/cycleTime         = 5000.000000
+medium_2/capacitorNeed     = 22.500000
+medium_2/heatDamage        = 3.750000
+
+medium_3/type                     = Medium F-RX Compact Capacitor Booster
+medium_3/state                    = active
+medium_3/capacitorInjectionAmount = 800.000000
+medium_3/chargeAmount             = 1.333333
+medium_3/capacitorPeakLoad        = -62.745098
+medium_3/cycleTime                = 12750.000000
+medium_3/heatDamage               = 3.225000
+medium_3/charge/type              = Navy Cap Booster 800
+
 low_1/type         = 800mm Crystalline Carbonide Restrained Plates
 low_1/state        = online
 low_1/massAddition = 810000.000000
@@ -174,52 +220,6 @@ low_6/explosiveDamageResistanceBonus = -25.000000
 low_6/kineticDamageResistanceBonus   = -25.000000
 low_6/thermalDamageResistanceBonus   = -25.000000
 
-medium_1/type              = 50MN Quad LiF Restrained Microwarpdrive
-medium_1/state             = active
-medium_1/capacitorPeakLoad = 13.500000
-medium_1/cycleTime         = 10000.000000
-medium_1/capacitorNeed     = 135.000000
-medium_1/speedFactor       = 631.250000
-medium_1/heatDamage        = 8.550000
-
-medium_2/type              = Warp Disruptor II
-medium_2/state             = active
-medium_2/capacitorPeakLoad = 4.500000
-medium_2/cycleTime         = 5000.000000
-medium_2/capacitorNeed     = 22.500000
-medium_2/heatDamage        = 3.750000
-
-medium_3/type                     = Medium F-RX Compact Capacitor Booster
-medium_3/state                    = active
-medium_3/capacitorInjectionAmount = 800.000000
-medium_3/chargeAmount             = 1.333333
-medium_3/capacitorPeakLoad        = -62.745098
-medium_3/cycleTime                = 12750.000000
-medium_3/heatDamage               = 3.225000
-medium_3/charge/type              = Navy Cap Booster 800
-
-high_1-5/type                         = Focused Medium Pulse Laser II
-high_1-5/state                        = active
-high_1-5/damageVolley                 = 160.620940
-high_1-5/speedWithReload              = 1778.750501
-high_1-5/speedOfReload                = 0.010000
-high_1-5/damagePerSecondWithReload    = 90.299871
-high_1-5/damagePerSecondWithoutReload = 90.300378
-high_1-5/capacitorPeakLoad            = 2.108233
-high_1-5/cycleTime                    = 1778.740501
-high_1-5/capacitorNeed                = 3.750000
-high_1-5/power                        = 124.031250
-high_1-5/cpu                          = 21.750000
-high_1-5/speed                        = 1778.740501
-high_1-5/maxRange                     = 9983.373087
-high_1-5/damageMultiplier             = 4.537315
-high_1-5/falloff                      = 5000.000000
-high_1-5/trackingSpeed                = 25.199999
-high_1-5/entityFlyRange               = 250.000000
-high_1-5/heatDamage                   = 0.450000
-high_1-5/charge/type                  = Conflagration M
-high_1-5/charge/damageMultiplier      = 1.100000
-
 rig_1-2/type     = Medium Energy Locus Coordinator II
 rig_1-2/state    = online
 rig_1-2/drawback = 5.000000
@@ -228,26 +228,26 @@ rig_3/type     = Medium Polycarbon Engine Housing I
 rig_3/state    = online
 rig_3/drawback = -5.000000
 
-dronebay_1-2/type                         = Warrior II
-dronebay_1-2/state                        = active
-dronebay_1-2/damageVolley                 = 64.349998
-dronebay_1-2/speedWithReload              = 4000.000000
-dronebay_1-2/damagePerSecondWithoutReload = 16.087499
-dronebay_1-2/hp                           = 195.000000
-dronebay_1-2/maxVelocity                  = 6300.000000
-dronebay_1-2/maxRange                     = 2625.000000
-dronebay_1-2/damageMultiplier             = 3.217500
-dronebay_1-2/shieldCapacity               = 150.000000
-dronebay_1-2/armorHP                      = 135.000000
+dronebay_1-3/type                         = Hammerhead II
+dronebay_1-3/state                        = active
+dronebay_1-3/damageVolley                 = 126.719997
+dronebay_1-3/speedWithReload              = 4000.000000
+dronebay_1-3/damagePerSecondWithoutReload = 31.679999
+dronebay_1-3/hp                           = 600.000000
+dronebay_1-3/maxVelocity                  = 2520.000000
+dronebay_1-3/maxRange                     = 5250.000000
+dronebay_1-3/damageMultiplier             = 3.960000
+dronebay_1-3/shieldCapacity               = 150.000000
+dronebay_1-3/armorHP                      = 270.000000
 
-dronebay_3-5/type                         = Hammerhead II
-dronebay_3-5/state                        = active
-dronebay_3-5/damageVolley                 = 126.719997
-dronebay_3-5/speedWithReload              = 4000.000000
-dronebay_3-5/damagePerSecondWithoutReload = 31.679999
-dronebay_3-5/hp                           = 600.000000
-dronebay_3-5/maxVelocity                  = 2520.000000
-dronebay_3-5/maxRange                     = 5250.000000
-dronebay_3-5/damageMultiplier             = 3.960000
-dronebay_3-5/shieldCapacity               = 150.000000
-dronebay_3-5/armorHP                      = 270.000000
+dronebay_4-5/type                         = Warrior II
+dronebay_4-5/state                        = active
+dronebay_4-5/damageVolley                 = 64.349998
+dronebay_4-5/speedWithReload              = 4000.000000
+dronebay_4-5/damagePerSecondWithoutReload = 16.087499
+dronebay_4-5/hp                           = 195.000000
+dronebay_4-5/maxVelocity                  = 6300.000000
+dronebay_4-5/maxRange                     = 2625.000000
+dronebay_4-5/damageMultiplier             = 3.217500
+dronebay_4-5/shieldCapacity               = 150.000000
+dronebay_4-5/armorHP                      = 135.000000

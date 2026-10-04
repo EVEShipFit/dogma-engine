@@ -5,20 +5,23 @@ use esf_dogma_engine::Spool;
 
 use crate::harness::{Skills, all};
 
-const NERGAL: &str = r#"
-[Nergal, Spool]
-Light Entropic Disintegrator II, Occult S
+const NERGAL: &str = r#"%esf/1
+Nergal "Spool"
+
+Light Entropic Disintegrator II :Occult S
 "#;
 
-const LESHAK: &str = r#"
-[Leshak, Spool]
-Supratidal Entropic Disintegrator II, Occult L
+const LESHAK: &str = r#"%esf/1
+Leshak "Spool"
+
+Supratidal Entropic Disintegrator II :Occult L
 "#;
 
 /* A repairer spools too, and only the two Triglavian logistics cruisers take
  * the one that does. */
-const ZARMAZD: &str = r#"
-[Zarmazd, Spool]
+const ZARMAZD: &str = r#"%esf/1
+Zarmazd "Spool"
+
 Heavy Mutadaptive Remote Armor Repairer II
 "#;
 

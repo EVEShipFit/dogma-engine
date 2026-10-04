@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Stabber
 ship/capacitorStablePercentage               = 0.000000
@@ -143,48 +143,20 @@ character/inventionReverseEngineeringResearchSpeed = 0.850000
 character/reactionTimeMultiplier                   = 0.800000
 character/reactionSlotLimit                        = 10.000000
 
-outgoing_effect_1/type                  = Warp Disruptor II
-outgoing_effect_1/effect                = warpDisrupt
-outgoing_effect_1/maxRange              = 24000.000000
-outgoing_effect_1/warpScrambleStrength  = 1.000000
-outgoing_effect_2/type                  = Medium Infectious Scoped Energy Neutralizer
+outgoing_effect_1/type                  = Medium Infectious Scoped Energy Neutralizer
+outgoing_effect_1/effect                = capacitorPeakLoadTaken
+outgoing_effect_1/capacitorTransferRate = 13.750000
+outgoing_effect_1/maxRange              = 9000.000000
+outgoing_effect_1/falloffEffectiveness  = 4500.000000
+outgoing_effect_2/type                  = Small Infectious Scoped Energy Neutralizer
 outgoing_effect_2/effect                = capacitorPeakLoadTaken
-outgoing_effect_2/capacitorTransferRate = 13.750000
-outgoing_effect_2/maxRange              = 9000.000000
-outgoing_effect_2/falloffEffectiveness  = 4500.000000
-outgoing_effect_3/type                  = Small Infectious Scoped Energy Neutralizer
-outgoing_effect_3/effect                = capacitorPeakLoadTaken
-outgoing_effect_3/capacitorTransferRate = 8.333333
-outgoing_effect_3/maxRange              = 4500.000000
-outgoing_effect_3/falloffEffectiveness  = 2250.000000
-
-low_1/type  = Tracking Enhancer II
-low_1/state = online
-
-low_2/type  = Damage Control II
-low_2/state = online
-
-low_3-4/type  = Gyrostabilizer II
-low_3-4/state = online
-
-medium_1/type              = 50MN Cold-Gas Enduring Microwarpdrive
-medium_1/state             = active
-medium_1/capacitorPeakLoad = 9.750000
-medium_1/cycleTime         = 10000.000000
-medium_1/capacitorNeed     = 97.500000
-medium_1/speedFactor       = 631.250000
-medium_1/heatDamage        = 8.550000
-
-medium_2-3/type  = Large Shield Extender II
-medium_2-3/state = online
-medium_2-3/power = 120.000000
-
-medium_4/type              = Warp Disruptor II
-medium_4/state             = active
-medium_4/capacitorPeakLoad = 4.500000
-medium_4/cycleTime         = 5000.000000
-medium_4/capacitorNeed     = 22.500000
-medium_4/heatDamage        = 3.750000
+outgoing_effect_2/capacitorTransferRate = 8.333333
+outgoing_effect_2/maxRange              = 4500.000000
+outgoing_effect_2/falloffEffectiveness  = 2250.000000
+outgoing_effect_3/type                  = Warp Disruptor II
+outgoing_effect_3/effect                = warpDisrupt
+outgoing_effect_3/maxRange              = 24000.000000
+outgoing_effect_3/warpScrambleStrength  = 1.000000
 
 high_1-2/type                         = 220mm Vulcan AutoCannon II
 high_1-2/state                        = active
@@ -245,6 +217,34 @@ high_5-6/barrageFalloff               = 33523.875000
 high_5-6/heatDamage                   = 0.525000
 high_5-6/charge/type                  = Barrage M
 high_5-6/charge/damageMultiplier      = 1.100000
+
+medium_1/type              = 50MN Cold-Gas Enduring Microwarpdrive
+medium_1/state             = active
+medium_1/capacitorPeakLoad = 9.750000
+medium_1/cycleTime         = 10000.000000
+medium_1/capacitorNeed     = 97.500000
+medium_1/speedFactor       = 631.250000
+medium_1/heatDamage        = 8.550000
+
+medium_2-3/type  = Large Shield Extender II
+medium_2-3/state = online
+medium_2-3/power = 120.000000
+
+medium_4/type              = Warp Disruptor II
+medium_4/state             = active
+medium_4/capacitorPeakLoad = 4.500000
+medium_4/cycleTime         = 5000.000000
+medium_4/capacitorNeed     = 22.500000
+medium_4/heatDamage        = 3.750000
+
+low_1/type  = Tracking Enhancer II
+low_1/state = online
+
+low_2/type  = Damage Control II
+low_2/state = online
+
+low_3-4/type  = Gyrostabilizer II
+low_3-4/state = online
 
 rig_1/type  = Medium Ancillary Current Router I
 rig_1/state = online

@@ -3,23 +3,21 @@
 
 use crate::harness::all;
 
-const COMBAT: &str = r#"
-[Tristan, No charge]
+const COMBAT: &str = r#"%esf/1
+Tristan "No charge"
 
 Small EMP Smartbomb I
 Civilian Gatling Autocannon
-125mm Gatling AutoCannon II, EMP S
+125mm Gatling AutoCannon II :EMP S
 
-
-
-Hobgoblin II x2
+2x Hobgoblin II
 "#;
 
-const MINING: &str = r#"
-[Venture, No charge]
+const MINING: &str = r#"%esf/1
+Venture "No charge"
 
 Miner II
-Modulated Deep Core Miner II, Veldspar Mining Crystal II
+Modulated Deep Core Miner II :Veldspar Mining Crystal II
 "#;
 
 regression! {

@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Rifter
 ship/capacitorStablePercentage               = 0.000000
@@ -70,13 +70,6 @@ ship/shipBonusSoEECS4                        = 0.000000
 ship/shipBonusSoEECS5                        = 0.000000
 ship/shipBonusAB3                            = 0.000000
 
-medium_1/type              = Medium Shield Booster II
-medium_1/state             = active
-medium_1/shieldBoostRate   = 41.600000
-medium_1/capacitorPeakLoad = 20.000000
-medium_1/cycleTime         = 3000.000000
-medium_1/shieldBonus       = 124.800000
-
 high_1/type                 = 200mm AutoCannon II
 high_1/state                = active
 high_1/speedWithReload      = 37083.332009
@@ -87,16 +80,23 @@ high_1/maxRange             = 960.000000
 high_1/barrageDmgMultiplier = 3.465000
 high_1/barrageFalloff       = 5160.000000
 
+medium_1/type              = Medium Shield Booster II
+medium_1/state             = active
+medium_1/shieldBoostRate   = 41.600000
+medium_1/capacitorPeakLoad = 20.000000
+medium_1/cycleTime         = 3000.000000
+medium_1/shieldBonus       = 124.800000
+
 booster_1/type  = Standard Blue Pill Booster
 booster_1/state = offline
 
 ship                                 = skill Minmatar Frigate needs 1 has 0
 ship                                 = skill Spaceship Command needs 1 has 0
-medium_1/Medium Shield Booster II    = skill Shield Operation needs 3 has 0
-medium_1/Medium Shield Booster II    = skill Power Grid Management needs 1 has 0
 high_1/200mm AutoCannon II           = skill Small Projectile Turret needs 5 has 0
 high_1/200mm AutoCannon II           = skill Gunnery needs 2 has 0
 high_1/200mm AutoCannon II           = skill Small Autocannon Specialization needs 1 has 0
 high_1/200mm AutoCannon II           = skill Motion Prediction needs 3 has 0
+medium_1/Medium Shield Booster II    = skill Shield Operation needs 3 has 0
+medium_1/Medium Shield Booster II    = skill Power Grid Management needs 1 has 0
 booster_1/Standard Blue Pill Booster = skill Biology needs 1 has 0
 booster_1/Standard Blue Pill Booster = skill Science needs 1 has 0

@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Buzzard
 ship/capacitorStablePercentage               = 0.000000
@@ -81,13 +81,22 @@ ship/shipBonusSoEECS4                        = 0.000000
 ship/shipBonusSoEECS5                        = 0.000000
 ship/shipBonusAB3                            = 0.000000
 
-low_1-2/type  = Inertial Stabilizers II
-low_1-2/state = online
+high_1/type                      = Sisters Core Probe Launcher
+high_1/state                     = active
+high_1/speedWithReload           = 2750.000000
+high_1/speedOfReload             = 1250.000000
+high_1/chargeAmount              = 8.000000
+high_1/charge/type               = Sisters Core Scanner Probe
+high_1/charge/baseSensorStrength = 48.400000
 
-low_3/type              = Warp Core Stabilizer II
-low_3/state             = active
-low_3/capacitorPeakLoad = 0.484848
-low_3/cycleTime         = 165000.000000
+high_2/type              = Interdiction Nullifier II
+high_2/state             = active
+high_2/capacitorPeakLoad = 0.303030
+high_2/cycleTime         = 165000.000000
+
+high_3/type                    = Covert Ops Cloaking Device II
+high_3/state                   = active
+high_3/moduleReactivationDelay = 5000.000000
 
 medium_1/type                  = Relic Analyzer II
 medium_1/state                 = active
@@ -125,22 +134,13 @@ medium_5/state             = active
 medium_5/capacitorPeakLoad = 4.500000
 medium_5/cycleTime         = 10000.000000
 
-high_1/type                      = Sisters Core Probe Launcher
-high_1/state                     = active
-high_1/speedWithReload           = 2750.000000
-high_1/speedOfReload             = 1250.000000
-high_1/chargeAmount              = 8.000000
-high_1/charge/type               = Sisters Core Scanner Probe
-high_1/charge/baseSensorStrength = 48.400000
+low_1-2/type  = Inertial Stabilizers II
+low_1-2/state = online
 
-high_2/type              = Interdiction Nullifier II
-high_2/state             = active
-high_2/capacitorPeakLoad = 0.303030
-high_2/cycleTime         = 165000.000000
-
-high_3/type                    = Covert Ops Cloaking Device II
-high_3/state                   = active
-high_3/moduleReactivationDelay = 5000.000000
+low_3/type              = Warp Core Stabilizer II
+low_3/state             = active
+low_3/capacitorPeakLoad = 0.484848
+low_3/cycleTime         = 165000.000000
 
 rig_1/type  = Small Ancillary Current Router II
 rig_1/state = online
@@ -155,12 +155,14 @@ ship                                     = skill Spaceship Command needs 3 has 0
 ship                                     = skill Electronics Upgrades needs 5 has 0
 ship                                     = skill CPU Management needs 2 has 0
 ship                                     = skill Power Grid Management needs 2 has 0
-low_1/Inertial Stabilizers II            = skill Hull Upgrades needs 2 has 0
-low_1/Inertial Stabilizers II            = skill Mechanics needs 1 has 0
-low_2/Inertial Stabilizers II            = skill Hull Upgrades needs 2 has 0
-low_2/Inertial Stabilizers II            = skill Mechanics needs 1 has 0
-low_3/Warp Core Stabilizer II            = skill Warp Drive Operation needs 4 has 0
-low_3/Warp Core Stabilizer II            = skill Navigation needs 1 has 0
+high_1/Sisters Core Probe Launcher       = skill Astrometrics needs 1 has 0
+high_1/Sisters Core Probe Launcher       = skill Science needs 3 has 0
+high_1/charge/Sisters Core Scanner Probe = skill Astrometrics needs 1 has 0
+high_1/charge/Sisters Core Scanner Probe = skill Science needs 3 has 0
+high_2/Interdiction Nullifier II         = skill Warp Drive Operation needs 5 has 0
+high_2/Interdiction Nullifier II         = skill Navigation needs 1 has 0
+high_3/Covert Ops Cloaking Device II     = skill Cloaking needs 4 has 0
+high_3/Covert Ops Cloaking Device II     = skill CPU Management needs 4 has 0
 medium_1/Relic Analyzer II               = skill Archaeology needs 5 has 0
 medium_1/Relic Analyzer II               = skill Science needs 3 has 0
 medium_1/Relic Analyzer II               = skill Survey needs 3 has 0
@@ -176,11 +178,9 @@ medium_4/Sensor Booster II               = skill CPU Management needs 2 has 0
 medium_5/5MN Y-T8 Compact Microwarpdrive = skill High Speed Maneuvering needs 1 has 0
 medium_5/5MN Y-T8 Compact Microwarpdrive = skill Navigation needs 3 has 0
 medium_5/5MN Y-T8 Compact Microwarpdrive = skill Afterburner needs 3 has 0
-high_1/Sisters Core Probe Launcher       = skill Astrometrics needs 1 has 0
-high_1/Sisters Core Probe Launcher       = skill Science needs 3 has 0
-high_1/charge/Sisters Core Scanner Probe = skill Astrometrics needs 1 has 0
-high_1/charge/Sisters Core Scanner Probe = skill Science needs 3 has 0
-high_2/Interdiction Nullifier II         = skill Warp Drive Operation needs 5 has 0
-high_2/Interdiction Nullifier II         = skill Navigation needs 1 has 0
-high_3/Covert Ops Cloaking Device II     = skill Cloaking needs 4 has 0
-high_3/Covert Ops Cloaking Device II     = skill CPU Management needs 4 has 0
+low_1/Inertial Stabilizers II            = skill Hull Upgrades needs 2 has 0
+low_1/Inertial Stabilizers II            = skill Mechanics needs 1 has 0
+low_2/Inertial Stabilizers II            = skill Hull Upgrades needs 2 has 0
+low_2/Inertial Stabilizers II            = skill Mechanics needs 1 has 0
+low_3/Warp Core Stabilizer II            = skill Warp Drive Operation needs 4 has 0
+low_3/Warp Core Stabilizer II            = skill Navigation needs 1 has 0

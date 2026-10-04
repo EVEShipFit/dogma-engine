@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Omen
 ship/capacitorStablePercentage               = 0.000000
@@ -93,33 +93,6 @@ outgoing_effect_1/maxRange             = 10000.000000
 outgoing_effect_1/falloffEffectiveness = 0.000000
 outgoing_effect_1/remoteResistanceID   = 2115.000000
 
-low_1-3/type  = Extruded Compact Heat Sink
-low_1-3/state = online
-
-low_4-5/type  = Compact Multispectrum Energized Membrane
-low_4-5/state = online
-
-low_6/type              = Medium ACM Compact Armor Repairer
-low_6/state             = active
-low_6/armorRepairRate   = 34.339638
-low_6/capacitorPeakLoad = 13.333333
-low_6/cycleTime         = 12000.000000
-low_6/power             = 130.680000
-low_6/armorDamageAmount = 412.075653
-
-medium_1/type              = 10MN Y-S8 Compact Afterburner
-medium_1/state             = active
-medium_1/capacitorPeakLoad = 8.000000
-medium_1/cycleTime         = 10000.000000
-
-medium_2/type  = Large Compact Pb-Acid Cap Battery
-medium_2/state = online
-
-medium_3/type              = X5 Enduring Stasis Webifier
-medium_3/state             = active
-medium_3/capacitorPeakLoad = 0.400000
-medium_3/cycleTime         = 5000.000000
-
 high_1-5/type                         = Focused Anode Pulse Particle Stream I
 high_1-5/state                        = active
 high_1-5/damageVolley                 = 76.672297
@@ -134,6 +107,33 @@ high_1-5/maxRange                     = 5434.000000
 high_1-5/damageMultiplier             = 2.777982
 high_1-5/entityFlyRange               = 250.000000
 high_1-5/charge/type                  = Imperial Navy Multifrequency M
+
+medium_1/type              = 10MN Y-S8 Compact Afterburner
+medium_1/state             = active
+medium_1/capacitorPeakLoad = 8.000000
+medium_1/cycleTime         = 10000.000000
+
+medium_2/type  = Large Compact Pb-Acid Cap Battery
+medium_2/state = online
+
+medium_3/type              = X5 Enduring Stasis Webifier
+medium_3/state             = active
+medium_3/capacitorPeakLoad = 0.400000
+medium_3/cycleTime         = 5000.000000
+
+low_1-3/type  = Extruded Compact Heat Sink
+low_1-3/state = online
+
+low_4-5/type  = Compact Multispectrum Energized Membrane
+low_4-5/state = online
+
+low_6/type              = Medium ACM Compact Armor Repairer
+low_6/state             = active
+low_6/armorRepairRate   = 34.339638
+low_6/capacitorPeakLoad = 13.333333
+low_6/cycleTime         = 12000.000000
+low_6/power             = 130.680000
+low_6/armorDamageAmount = 412.075653
 
 rig_1/type  = Medium EM Armor Reinforcer I
 rig_1/state = online
@@ -154,26 +154,6 @@ ship                                           = skill Amarr Cruiser needs 1 has
 ship                                           = skill Spaceship Command needs 2 has 0
 ship                                           = skill Amarr Destroyer needs 3 has 0
 ship                                           = skill Amarr Frigate needs 3 has 0
-low_1/Extruded Compact Heat Sink               = skill Weapon Upgrades needs 1 has 0
-low_1/Extruded Compact Heat Sink               = skill Gunnery needs 2 has 0
-low_2/Extruded Compact Heat Sink               = skill Weapon Upgrades needs 1 has 0
-low_2/Extruded Compact Heat Sink               = skill Gunnery needs 2 has 0
-low_3/Extruded Compact Heat Sink               = skill Weapon Upgrades needs 1 has 0
-low_3/Extruded Compact Heat Sink               = skill Gunnery needs 2 has 0
-low_4/Compact Multispectrum Energized Membrane = skill Hull Upgrades needs 3 has 0
-low_4/Compact Multispectrum Energized Membrane = skill Mechanics needs 1 has 0
-low_5/Compact Multispectrum Energized Membrane = skill Hull Upgrades needs 3 has 0
-low_5/Compact Multispectrum Energized Membrane = skill Mechanics needs 1 has 0
-low_6/Medium ACM Compact Armor Repairer        = skill Repair Systems needs 1 has 0
-low_6/Medium ACM Compact Armor Repairer        = skill Mechanics needs 2 has 0
-medium_1/10MN Y-S8 Compact Afterburner         = skill Afterburner needs 1 has 0
-medium_1/10MN Y-S8 Compact Afterburner         = skill Navigation needs 1 has 0
-medium_2/Large Compact Pb-Acid Cap Battery     = skill Energy Grid Upgrades needs 2 has 0
-medium_2/Large Compact Pb-Acid Cap Battery     = skill Power Grid Management needs 2 has 0
-medium_2/Large Compact Pb-Acid Cap Battery     = skill Science needs 1 has 0
-medium_3/X5 Enduring Stasis Webifier           = skill Propulsion Jamming needs 1 has 0
-medium_3/X5 Enduring Stasis Webifier           = skill CPU Management needs 3 has 0
-medium_3/X5 Enduring Stasis Webifier           = skill Navigation needs 2 has 0
 high_1/Focused Anode Pulse Particle Stream I   = skill Medium Energy Turret needs 1 has 0
 high_1/Focused Anode Pulse Particle Stream I   = skill Gunnery needs 3 has 0
 high_1/Focused Anode Pulse Particle Stream I   = skill Small Energy Turret needs 3 has 0
@@ -189,5 +169,25 @@ high_4/Focused Anode Pulse Particle Stream I   = skill Small Energy Turret needs
 high_5/Focused Anode Pulse Particle Stream I   = skill Medium Energy Turret needs 1 has 0
 high_5/Focused Anode Pulse Particle Stream I   = skill Gunnery needs 3 has 0
 high_5/Focused Anode Pulse Particle Stream I   = skill Small Energy Turret needs 3 has 0
+medium_1/10MN Y-S8 Compact Afterburner         = skill Afterburner needs 1 has 0
+medium_1/10MN Y-S8 Compact Afterburner         = skill Navigation needs 1 has 0
+medium_2/Large Compact Pb-Acid Cap Battery     = skill Energy Grid Upgrades needs 2 has 0
+medium_2/Large Compact Pb-Acid Cap Battery     = skill Power Grid Management needs 2 has 0
+medium_2/Large Compact Pb-Acid Cap Battery     = skill Science needs 1 has 0
+medium_3/X5 Enduring Stasis Webifier           = skill Propulsion Jamming needs 1 has 0
+medium_3/X5 Enduring Stasis Webifier           = skill CPU Management needs 3 has 0
+medium_3/X5 Enduring Stasis Webifier           = skill Navigation needs 2 has 0
+low_1/Extruded Compact Heat Sink               = skill Weapon Upgrades needs 1 has 0
+low_1/Extruded Compact Heat Sink               = skill Gunnery needs 2 has 0
+low_2/Extruded Compact Heat Sink               = skill Weapon Upgrades needs 1 has 0
+low_2/Extruded Compact Heat Sink               = skill Gunnery needs 2 has 0
+low_3/Extruded Compact Heat Sink               = skill Weapon Upgrades needs 1 has 0
+low_3/Extruded Compact Heat Sink               = skill Gunnery needs 2 has 0
+low_4/Compact Multispectrum Energized Membrane = skill Hull Upgrades needs 3 has 0
+low_4/Compact Multispectrum Energized Membrane = skill Mechanics needs 1 has 0
+low_5/Compact Multispectrum Energized Membrane = skill Hull Upgrades needs 3 has 0
+low_5/Compact Multispectrum Energized Membrane = skill Mechanics needs 1 has 0
+low_6/Medium ACM Compact Armor Repairer        = skill Repair Systems needs 1 has 0
+low_6/Medium ACM Compact Armor Repairer        = skill Mechanics needs 2 has 0
 dronebay/Acolyte I                             = skill Light Drone Operation needs 1 has 0
 dronebay/Acolyte I                             = skill Drones needs 1 has 0

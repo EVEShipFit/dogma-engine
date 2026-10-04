@@ -3,12 +3,11 @@
 
 use crate::harness::all;
 
-const FIT: &str = r#"
-[Rifter, Stacking per operator]
+const FIT: &str = r#"%esf/1
+Rifter "Stacking per operator"
 
 Damage Control II
-EM Energized Membrane II
-EM Energized Membrane II
+2x EM Energized Membrane II
 "#;
 
 regression! {

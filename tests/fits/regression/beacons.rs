@@ -4,28 +4,30 @@
 
 use crate::harness::{all, beacon};
 
-const RIFTER: &str = r#"
-[Rifter, Beacons]
-Damage Control II
-Small Armor Repairer II
-Overdrive Injector System II
+const RIFTER: &str = r#"%esf/1
+Rifter "Beacons"
+
+200mm AutoCannon II :Republic Fleet EMP S
+Rocket Launcher II :Scourge Rage Rocket
 
 Small Shield Extender II
 1MN Afterburner II
-Small Capacitor Booster II, Navy Cap Booster 400
+Small Capacitor Booster II :Navy Cap Booster 400
 
-200mm AutoCannon II, Republic Fleet EMP S
-Rocket Launcher II, Scourge Rage Rocket
+Damage Control II
+Small Armor Repairer II
+Overdrive Injector System II
 "#;
 
-const DRONE_BOAT: &str = r#"
-[Vexor, Drones]
-Damage Control II
-Drone Damage Amplifier II
+const DRONE_BOAT: &str = r#"%esf/1
+Vexor "Drones"
 
 10MN Afterburner II
 
-Hobgoblin II x5
+Damage Control II
+Drone Damage Amplifier II
+
+5x Hobgoblin II
 "#;
 
 regression! {
