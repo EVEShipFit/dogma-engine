@@ -2411,6 +2411,273 @@ impl core::fmt::Debug for Category<'_> {
       ds.finish()
   }
 }
+pub enum MarketGroupOffset {}
+#[derive(Copy, Clone, PartialEq)]
+
+pub struct MarketGroup<'a> {
+  pub _tab: flatbuffers::Table<'a>,
+}
+
+impl<'a> flatbuffers::Follow<'a> for MarketGroup<'a> {
+  type Inner = MarketGroup<'a>;
+  #[inline]
+  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+    Self { _tab: flatbuffers::Table::new(buf, loc) }
+  }
+}
+
+impl<'a> MarketGroup<'a> {
+  pub const VT_ID: flatbuffers::VOffsetT = 4;
+  pub const VT_NAME: flatbuffers::VOffsetT = 6;
+  pub const VT_PARENT_GROUP_ID: flatbuffers::VOffsetT = 8;
+
+  #[inline]
+  pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+    MarketGroup { _tab: table }
+  }
+  #[allow(unused_mut)]
+  pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+    _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
+    args: &'args MarketGroupArgs<'args>
+  ) -> flatbuffers::WIPOffset<MarketGroup<'bldr>> {
+    let mut builder = MarketGroupBuilder::new(_fbb);
+    builder.add_parent_group_id(args.parent_group_id);
+    if let Some(x) = args.name { builder.add_name(x); }
+    builder.add_id(args.id);
+    builder.finish()
+  }
+
+
+  #[inline]
+  pub fn id(&self) -> i32 {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<i32>(MarketGroup::VT_ID, Some(0)).unwrap()}
+  }
+  #[inline]
+  pub fn key_compare_less_than(&self, o: &MarketGroup) -> bool {
+    self.id() < o.id()
+  }
+
+  #[inline]
+  pub fn key_compare_with_value(&self, val: i32) -> ::core::cmp::Ordering {
+    let key = self.id();
+    key.cmp(&val)
+  }
+  #[inline]
+  pub fn name(&self) -> &'a str {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(MarketGroup::VT_NAME, None).unwrap()}
+  }
+  #[inline]
+  pub fn parent_group_id(&self) -> i32 {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<i32>(MarketGroup::VT_PARENT_GROUP_ID, Some(0)).unwrap()}
+  }
+}
+
+impl flatbuffers::Verifiable for MarketGroup<'_> {
+  #[inline]
+  fn run_verifier(
+    v: &mut flatbuffers::Verifier, pos: usize
+  ) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+    use self::flatbuffers::Verifiable;
+    v.visit_table(pos)?
+     .visit_field::<i32>("id", Self::VT_ID, false)?
+     .visit_field::<flatbuffers::ForwardsUOffset<&str>>("name", Self::VT_NAME, true)?
+     .visit_field::<i32>("parent_group_id", Self::VT_PARENT_GROUP_ID, false)?
+     .finish();
+    Ok(())
+  }
+}
+pub struct MarketGroupArgs<'a> {
+    pub id: i32,
+    pub name: Option<flatbuffers::WIPOffset<&'a str>>,
+    pub parent_group_id: i32,
+}
+impl<'a> Default for MarketGroupArgs<'a> {
+  #[inline]
+  fn default() -> Self {
+    MarketGroupArgs {
+      id: 0,
+      name: None, // required field
+      parent_group_id: 0,
+    }
+  }
+}
+
+pub struct MarketGroupBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+  fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+  start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+}
+impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> MarketGroupBuilder<'a, 'b, A> {
+  #[inline]
+  pub fn add_id(&mut self, id: i32) {
+    self.fbb_.push_slot::<i32>(MarketGroup::VT_ID, id, 0);
+  }
+  #[inline]
+  pub fn add_name(&mut self, name: flatbuffers::WIPOffset<&'b  str>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(MarketGroup::VT_NAME, name);
+  }
+  #[inline]
+  pub fn add_parent_group_id(&mut self, parent_group_id: i32) {
+    self.fbb_.push_slot::<i32>(MarketGroup::VT_PARENT_GROUP_ID, parent_group_id, 0);
+  }
+  #[inline]
+  pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> MarketGroupBuilder<'a, 'b, A> {
+    let start = _fbb.start_table();
+    MarketGroupBuilder {
+      fbb_: _fbb,
+      start_: start,
+    }
+  }
+  #[inline]
+  pub fn finish(self) -> flatbuffers::WIPOffset<MarketGroup<'a>> {
+    let o = self.fbb_.end_table(self.start_);
+    self.fbb_.required(o, MarketGroup::VT_NAME,"name");
+    flatbuffers::WIPOffset::new(o.value())
+  }
+}
+
+impl core::fmt::Debug for MarketGroup<'_> {
+  fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+    let mut ds = f.debug_struct("MarketGroup");
+      ds.field("id", &self.id());
+      ds.field("name", &self.name());
+      ds.field("parent_group_id", &self.parent_group_id());
+      ds.finish()
+  }
+}
+pub enum MetaGroupOffset {}
+#[derive(Copy, Clone, PartialEq)]
+
+pub struct MetaGroup<'a> {
+  pub _tab: flatbuffers::Table<'a>,
+}
+
+impl<'a> flatbuffers::Follow<'a> for MetaGroup<'a> {
+  type Inner = MetaGroup<'a>;
+  #[inline]
+  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+    Self { _tab: flatbuffers::Table::new(buf, loc) }
+  }
+}
+
+impl<'a> MetaGroup<'a> {
+  pub const VT_ID: flatbuffers::VOffsetT = 4;
+  pub const VT_NAME: flatbuffers::VOffsetT = 6;
+
+  #[inline]
+  pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+    MetaGroup { _tab: table }
+  }
+  #[allow(unused_mut)]
+  pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+    _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
+    args: &'args MetaGroupArgs<'args>
+  ) -> flatbuffers::WIPOffset<MetaGroup<'bldr>> {
+    let mut builder = MetaGroupBuilder::new(_fbb);
+    if let Some(x) = args.name { builder.add_name(x); }
+    builder.add_id(args.id);
+    builder.finish()
+  }
+
+
+  #[inline]
+  pub fn id(&self) -> i32 {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<i32>(MetaGroup::VT_ID, Some(0)).unwrap()}
+  }
+  #[inline]
+  pub fn key_compare_less_than(&self, o: &MetaGroup) -> bool {
+    self.id() < o.id()
+  }
+
+  #[inline]
+  pub fn key_compare_with_value(&self, val: i32) -> ::core::cmp::Ordering {
+    let key = self.id();
+    key.cmp(&val)
+  }
+  #[inline]
+  pub fn name(&self) -> &'a str {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(MetaGroup::VT_NAME, None).unwrap()}
+  }
+}
+
+impl flatbuffers::Verifiable for MetaGroup<'_> {
+  #[inline]
+  fn run_verifier(
+    v: &mut flatbuffers::Verifier, pos: usize
+  ) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+    use self::flatbuffers::Verifiable;
+    v.visit_table(pos)?
+     .visit_field::<i32>("id", Self::VT_ID, false)?
+     .visit_field::<flatbuffers::ForwardsUOffset<&str>>("name", Self::VT_NAME, true)?
+     .finish();
+    Ok(())
+  }
+}
+pub struct MetaGroupArgs<'a> {
+    pub id: i32,
+    pub name: Option<flatbuffers::WIPOffset<&'a str>>,
+}
+impl<'a> Default for MetaGroupArgs<'a> {
+  #[inline]
+  fn default() -> Self {
+    MetaGroupArgs {
+      id: 0,
+      name: None, // required field
+    }
+  }
+}
+
+pub struct MetaGroupBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+  fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+  start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+}
+impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> MetaGroupBuilder<'a, 'b, A> {
+  #[inline]
+  pub fn add_id(&mut self, id: i32) {
+    self.fbb_.push_slot::<i32>(MetaGroup::VT_ID, id, 0);
+  }
+  #[inline]
+  pub fn add_name(&mut self, name: flatbuffers::WIPOffset<&'b  str>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(MetaGroup::VT_NAME, name);
+  }
+  #[inline]
+  pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> MetaGroupBuilder<'a, 'b, A> {
+    let start = _fbb.start_table();
+    MetaGroupBuilder {
+      fbb_: _fbb,
+      start_: start,
+    }
+  }
+  #[inline]
+  pub fn finish(self) -> flatbuffers::WIPOffset<MetaGroup<'a>> {
+    let o = self.fbb_.end_table(self.start_);
+    self.fbb_.required(o, MetaGroup::VT_NAME,"name");
+    flatbuffers::WIPOffset::new(o.value())
+  }
+}
+
+impl core::fmt::Debug for MetaGroup<'_> {
+  fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+    let mut ds = f.debug_struct("MetaGroup");
+      ds.field("id", &self.id());
+      ds.field("name", &self.name());
+      ds.finish()
+  }
+}
 pub enum DogmaAttributeOffset {}
 #[derive(Copy, Clone, PartialEq)]
 
@@ -2437,6 +2704,8 @@ impl<'a> DogmaAttribute<'a> {
   pub const VT_UNIT_ID: flatbuffers::VOffsetT = 18;
   pub const VT_MIN_ATTRIBUTE_ID: flatbuffers::VOffsetT = 20;
   pub const VT_MAX_ATTRIBUTE_ID: flatbuffers::VOffsetT = 22;
+  pub const VT_CATEGORY_ID: flatbuffers::VOffsetT = 24;
+  pub const VT_ICON_ID: flatbuffers::VOffsetT = 26;
 
   #[inline]
   pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -2448,6 +2717,8 @@ impl<'a> DogmaAttribute<'a> {
     args: &'args DogmaAttributeArgs<'args>
   ) -> flatbuffers::WIPOffset<DogmaAttribute<'bldr>> {
     let mut builder = DogmaAttributeBuilder::new(_fbb);
+    builder.add_icon_id(args.icon_id);
+    builder.add_category_id(args.category_id);
     builder.add_max_attribute_id(args.max_attribute_id);
     builder.add_min_attribute_id(args.min_attribute_id);
     builder.add_unit_id(args.unit_id);
@@ -2542,6 +2813,20 @@ impl<'a> DogmaAttribute<'a> {
     // which contains a valid value in this slot
     unsafe { self._tab.get::<i32>(DogmaAttribute::VT_MAX_ATTRIBUTE_ID, Some(0)).unwrap()}
   }
+  #[inline]
+  pub fn category_id(&self) -> i32 {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<i32>(DogmaAttribute::VT_CATEGORY_ID, Some(0)).unwrap()}
+  }
+  #[inline]
+  pub fn icon_id(&self) -> i32 {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<i32>(DogmaAttribute::VT_ICON_ID, Some(0)).unwrap()}
+  }
 }
 
 impl flatbuffers::Verifiable for DogmaAttribute<'_> {
@@ -2561,6 +2846,8 @@ impl flatbuffers::Verifiable for DogmaAttribute<'_> {
      .visit_field::<i32>("unit_id", Self::VT_UNIT_ID, false)?
      .visit_field::<i32>("min_attribute_id", Self::VT_MIN_ATTRIBUTE_ID, false)?
      .visit_field::<i32>("max_attribute_id", Self::VT_MAX_ATTRIBUTE_ID, false)?
+     .visit_field::<i32>("category_id", Self::VT_CATEGORY_ID, false)?
+     .visit_field::<i32>("icon_id", Self::VT_ICON_ID, false)?
      .finish();
     Ok(())
   }
@@ -2576,6 +2863,8 @@ pub struct DogmaAttributeArgs<'a> {
     pub unit_id: i32,
     pub min_attribute_id: i32,
     pub max_attribute_id: i32,
+    pub category_id: i32,
+    pub icon_id: i32,
 }
 impl<'a> Default for DogmaAttributeArgs<'a> {
   #[inline]
@@ -2591,6 +2880,8 @@ impl<'a> Default for DogmaAttributeArgs<'a> {
       unit_id: 0,
       min_attribute_id: 0,
       max_attribute_id: 0,
+      category_id: 0,
+      icon_id: 0,
     }
   }
 }
@@ -2641,6 +2932,14 @@ impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> DogmaAttributeBuilder<'a, 'b, A
     self.fbb_.push_slot::<i32>(DogmaAttribute::VT_MAX_ATTRIBUTE_ID, max_attribute_id, 0);
   }
   #[inline]
+  pub fn add_category_id(&mut self, category_id: i32) {
+    self.fbb_.push_slot::<i32>(DogmaAttribute::VT_CATEGORY_ID, category_id, 0);
+  }
+  #[inline]
+  pub fn add_icon_id(&mut self, icon_id: i32) {
+    self.fbb_.push_slot::<i32>(DogmaAttribute::VT_ICON_ID, icon_id, 0);
+  }
+  #[inline]
   pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> DogmaAttributeBuilder<'a, 'b, A> {
     let start = _fbb.start_table();
     DogmaAttributeBuilder {
@@ -2669,6 +2968,275 @@ impl core::fmt::Debug for DogmaAttribute<'_> {
       ds.field("unit_id", &self.unit_id());
       ds.field("min_attribute_id", &self.min_attribute_id());
       ds.field("max_attribute_id", &self.max_attribute_id());
+      ds.field("category_id", &self.category_id());
+      ds.field("icon_id", &self.icon_id());
+      ds.finish()
+  }
+}
+pub enum DogmaUnitOffset {}
+#[derive(Copy, Clone, PartialEq)]
+
+pub struct DogmaUnit<'a> {
+  pub _tab: flatbuffers::Table<'a>,
+}
+
+impl<'a> flatbuffers::Follow<'a> for DogmaUnit<'a> {
+  type Inner = DogmaUnit<'a>;
+  #[inline]
+  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+    Self { _tab: flatbuffers::Table::new(buf, loc) }
+  }
+}
+
+impl<'a> DogmaUnit<'a> {
+  pub const VT_ID: flatbuffers::VOffsetT = 4;
+  pub const VT_NAME: flatbuffers::VOffsetT = 6;
+  pub const VT_DISPLAY_NAME: flatbuffers::VOffsetT = 8;
+
+  #[inline]
+  pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+    DogmaUnit { _tab: table }
+  }
+  #[allow(unused_mut)]
+  pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+    _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
+    args: &'args DogmaUnitArgs<'args>
+  ) -> flatbuffers::WIPOffset<DogmaUnit<'bldr>> {
+    let mut builder = DogmaUnitBuilder::new(_fbb);
+    if let Some(x) = args.display_name { builder.add_display_name(x); }
+    if let Some(x) = args.name { builder.add_name(x); }
+    builder.add_id(args.id);
+    builder.finish()
+  }
+
+
+  #[inline]
+  pub fn id(&self) -> i32 {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<i32>(DogmaUnit::VT_ID, Some(0)).unwrap()}
+  }
+  #[inline]
+  pub fn key_compare_less_than(&self, o: &DogmaUnit) -> bool {
+    self.id() < o.id()
+  }
+
+  #[inline]
+  pub fn key_compare_with_value(&self, val: i32) -> ::core::cmp::Ordering {
+    let key = self.id();
+    key.cmp(&val)
+  }
+  #[inline]
+  pub fn name(&self) -> &'a str {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(DogmaUnit::VT_NAME, None).unwrap()}
+  }
+  #[inline]
+  pub fn display_name(&self) -> Option<&'a str> {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(DogmaUnit::VT_DISPLAY_NAME, None)}
+  }
+}
+
+impl flatbuffers::Verifiable for DogmaUnit<'_> {
+  #[inline]
+  fn run_verifier(
+    v: &mut flatbuffers::Verifier, pos: usize
+  ) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+    use self::flatbuffers::Verifiable;
+    v.visit_table(pos)?
+     .visit_field::<i32>("id", Self::VT_ID, false)?
+     .visit_field::<flatbuffers::ForwardsUOffset<&str>>("name", Self::VT_NAME, true)?
+     .visit_field::<flatbuffers::ForwardsUOffset<&str>>("display_name", Self::VT_DISPLAY_NAME, false)?
+     .finish();
+    Ok(())
+  }
+}
+pub struct DogmaUnitArgs<'a> {
+    pub id: i32,
+    pub name: Option<flatbuffers::WIPOffset<&'a str>>,
+    pub display_name: Option<flatbuffers::WIPOffset<&'a str>>,
+}
+impl<'a> Default for DogmaUnitArgs<'a> {
+  #[inline]
+  fn default() -> Self {
+    DogmaUnitArgs {
+      id: 0,
+      name: None, // required field
+      display_name: None,
+    }
+  }
+}
+
+pub struct DogmaUnitBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+  fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+  start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+}
+impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> DogmaUnitBuilder<'a, 'b, A> {
+  #[inline]
+  pub fn add_id(&mut self, id: i32) {
+    self.fbb_.push_slot::<i32>(DogmaUnit::VT_ID, id, 0);
+  }
+  #[inline]
+  pub fn add_name(&mut self, name: flatbuffers::WIPOffset<&'b  str>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(DogmaUnit::VT_NAME, name);
+  }
+  #[inline]
+  pub fn add_display_name(&mut self, display_name: flatbuffers::WIPOffset<&'b  str>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(DogmaUnit::VT_DISPLAY_NAME, display_name);
+  }
+  #[inline]
+  pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> DogmaUnitBuilder<'a, 'b, A> {
+    let start = _fbb.start_table();
+    DogmaUnitBuilder {
+      fbb_: _fbb,
+      start_: start,
+    }
+  }
+  #[inline]
+  pub fn finish(self) -> flatbuffers::WIPOffset<DogmaUnit<'a>> {
+    let o = self.fbb_.end_table(self.start_);
+    self.fbb_.required(o, DogmaUnit::VT_NAME,"name");
+    flatbuffers::WIPOffset::new(o.value())
+  }
+}
+
+impl core::fmt::Debug for DogmaUnit<'_> {
+  fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+    let mut ds = f.debug_struct("DogmaUnit");
+      ds.field("id", &self.id());
+      ds.field("name", &self.name());
+      ds.field("display_name", &self.display_name());
+      ds.finish()
+  }
+}
+pub enum DogmaAttributeCategoryOffset {}
+#[derive(Copy, Clone, PartialEq)]
+
+pub struct DogmaAttributeCategory<'a> {
+  pub _tab: flatbuffers::Table<'a>,
+}
+
+impl<'a> flatbuffers::Follow<'a> for DogmaAttributeCategory<'a> {
+  type Inner = DogmaAttributeCategory<'a>;
+  #[inline]
+  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+    Self { _tab: flatbuffers::Table::new(buf, loc) }
+  }
+}
+
+impl<'a> DogmaAttributeCategory<'a> {
+  pub const VT_ID: flatbuffers::VOffsetT = 4;
+  pub const VT_NAME: flatbuffers::VOffsetT = 6;
+
+  #[inline]
+  pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+    DogmaAttributeCategory { _tab: table }
+  }
+  #[allow(unused_mut)]
+  pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+    _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
+    args: &'args DogmaAttributeCategoryArgs<'args>
+  ) -> flatbuffers::WIPOffset<DogmaAttributeCategory<'bldr>> {
+    let mut builder = DogmaAttributeCategoryBuilder::new(_fbb);
+    if let Some(x) = args.name { builder.add_name(x); }
+    builder.add_id(args.id);
+    builder.finish()
+  }
+
+
+  #[inline]
+  pub fn id(&self) -> i32 {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<i32>(DogmaAttributeCategory::VT_ID, Some(0)).unwrap()}
+  }
+  #[inline]
+  pub fn key_compare_less_than(&self, o: &DogmaAttributeCategory) -> bool {
+    self.id() < o.id()
+  }
+
+  #[inline]
+  pub fn key_compare_with_value(&self, val: i32) -> ::core::cmp::Ordering {
+    let key = self.id();
+    key.cmp(&val)
+  }
+  #[inline]
+  pub fn name(&self) -> &'a str {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(DogmaAttributeCategory::VT_NAME, None).unwrap()}
+  }
+}
+
+impl flatbuffers::Verifiable for DogmaAttributeCategory<'_> {
+  #[inline]
+  fn run_verifier(
+    v: &mut flatbuffers::Verifier, pos: usize
+  ) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+    use self::flatbuffers::Verifiable;
+    v.visit_table(pos)?
+     .visit_field::<i32>("id", Self::VT_ID, false)?
+     .visit_field::<flatbuffers::ForwardsUOffset<&str>>("name", Self::VT_NAME, true)?
+     .finish();
+    Ok(())
+  }
+}
+pub struct DogmaAttributeCategoryArgs<'a> {
+    pub id: i32,
+    pub name: Option<flatbuffers::WIPOffset<&'a str>>,
+}
+impl<'a> Default for DogmaAttributeCategoryArgs<'a> {
+  #[inline]
+  fn default() -> Self {
+    DogmaAttributeCategoryArgs {
+      id: 0,
+      name: None, // required field
+    }
+  }
+}
+
+pub struct DogmaAttributeCategoryBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+  fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+  start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+}
+impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> DogmaAttributeCategoryBuilder<'a, 'b, A> {
+  #[inline]
+  pub fn add_id(&mut self, id: i32) {
+    self.fbb_.push_slot::<i32>(DogmaAttributeCategory::VT_ID, id, 0);
+  }
+  #[inline]
+  pub fn add_name(&mut self, name: flatbuffers::WIPOffset<&'b  str>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(DogmaAttributeCategory::VT_NAME, name);
+  }
+  #[inline]
+  pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> DogmaAttributeCategoryBuilder<'a, 'b, A> {
+    let start = _fbb.start_table();
+    DogmaAttributeCategoryBuilder {
+      fbb_: _fbb,
+      start_: start,
+    }
+  }
+  #[inline]
+  pub fn finish(self) -> flatbuffers::WIPOffset<DogmaAttributeCategory<'a>> {
+    let o = self.fbb_.end_table(self.start_);
+    self.fbb_.required(o, DogmaAttributeCategory::VT_NAME,"name");
+    flatbuffers::WIPOffset::new(o.value())
+  }
+}
+
+impl core::fmt::Debug for DogmaAttributeCategory<'_> {
+  fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+    let mut ds = f.debug_struct("DogmaAttributeCategory");
+      ds.field("id", &self.id());
+      ds.field("name", &self.name());
       ds.finish()
   }
 }
@@ -2708,6 +3276,7 @@ impl<'a> DogmaEffect<'a> {
   pub const VT_RESISTANCE_ATTRIBUTE_ID: flatbuffers::VOffsetT = 38;
   pub const VT_TRACKING_SPEED_ATTRIBUTE_ID: flatbuffers::VOffsetT = 40;
   pub const VT_MODIFIERS: flatbuffers::VOffsetT = 42;
+  pub const VT_ICON_ID: flatbuffers::VOffsetT = 44;
 
   #[inline]
   pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -2719,6 +3288,7 @@ impl<'a> DogmaEffect<'a> {
     args: &'args DogmaEffectArgs<'args>
   ) -> flatbuffers::WIPOffset<DogmaEffect<'bldr>> {
     let mut builder = DogmaEffectBuilder::new(_fbb);
+    builder.add_icon_id(args.icon_id);
     if let Some(x) = args.modifiers { builder.add_modifiers(x); }
     builder.add_tracking_speed_attribute_id(args.tracking_speed_attribute_id);
     builder.add_resistance_attribute_id(args.resistance_attribute_id);
@@ -2893,6 +3463,13 @@ impl<'a> DogmaEffect<'a> {
     // which contains a valid value in this slot
     unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, Modifier>>>(DogmaEffect::VT_MODIFIERS, None)}
   }
+  #[inline]
+  pub fn icon_id(&self) -> i32 {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<i32>(DogmaEffect::VT_ICON_ID, Some(0)).unwrap()}
+  }
 }
 
 impl flatbuffers::Verifiable for DogmaEffect<'_> {
@@ -2922,6 +3499,7 @@ impl flatbuffers::Verifiable for DogmaEffect<'_> {
      .visit_field::<i32>("resistance_attribute_id", Self::VT_RESISTANCE_ATTRIBUTE_ID, false)?
      .visit_field::<i32>("tracking_speed_attribute_id", Self::VT_TRACKING_SPEED_ATTRIBUTE_ID, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, Modifier>>>("modifiers", Self::VT_MODIFIERS, false)?
+     .visit_field::<i32>("icon_id", Self::VT_ICON_ID, false)?
      .finish();
     Ok(())
   }
@@ -2947,6 +3525,7 @@ pub struct DogmaEffectArgs<'a> {
     pub resistance_attribute_id: i32,
     pub tracking_speed_attribute_id: i32,
     pub modifiers: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, Modifier>>>,
+    pub icon_id: i32,
 }
 impl<'a> Default for DogmaEffectArgs<'a> {
   #[inline]
@@ -2972,6 +3551,7 @@ impl<'a> Default for DogmaEffectArgs<'a> {
       resistance_attribute_id: 0,
       tracking_speed_attribute_id: 0,
       modifiers: None,
+      icon_id: 0,
     }
   }
 }
@@ -3062,6 +3642,10 @@ impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> DogmaEffectBuilder<'a, 'b, A> {
     self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(DogmaEffect::VT_MODIFIERS, modifiers);
   }
   #[inline]
+  pub fn add_icon_id(&mut self, icon_id: i32) {
+    self.fbb_.push_slot::<i32>(DogmaEffect::VT_ICON_ID, icon_id, 0);
+  }
+  #[inline]
   pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> DogmaEffectBuilder<'a, 'b, A> {
     let start = _fbb.start_table();
     DogmaEffectBuilder {
@@ -3100,6 +3684,7 @@ impl core::fmt::Debug for DogmaEffect<'_> {
       ds.field("resistance_attribute_id", &self.resistance_attribute_id());
       ds.field("tracking_speed_attribute_id", &self.tracking_speed_attribute_id());
       ds.field("modifiers", &self.modifiers());
+      ds.field("icon_id", &self.icon_id());
       ds.finish()
   }
 }
@@ -3574,6 +4159,11 @@ impl<'a> Sde<'a> {
   pub const VT_DOGMA_EFFECTS: flatbuffers::VOffsetT = 14;
   pub const VT_MUTAPLASMIDS: flatbuffers::VOffsetT = 16;
   pub const VT_DBUFF_COLLECTIONS: flatbuffers::VOffsetT = 18;
+  pub const VT_MARKET_GROUPS: flatbuffers::VOffsetT = 20;
+  pub const VT_META_GROUPS: flatbuffers::VOffsetT = 22;
+  pub const VT_DOGMA_UNITS: flatbuffers::VOffsetT = 24;
+  pub const VT_DOGMA_ATTRIBUTE_CATEGORIES: flatbuffers::VOffsetT = 26;
+  pub const VT_RELEASE_DATE: flatbuffers::VOffsetT = 28;
 
   #[inline]
   pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -3585,6 +4175,11 @@ impl<'a> Sde<'a> {
     args: &'args SdeArgs<'args>
   ) -> flatbuffers::WIPOffset<Sde<'bldr>> {
     let mut builder = SdeBuilder::new(_fbb);
+    if let Some(x) = args.release_date { builder.add_release_date(x); }
+    if let Some(x) = args.dogma_attribute_categories { builder.add_dogma_attribute_categories(x); }
+    if let Some(x) = args.dogma_units { builder.add_dogma_units(x); }
+    if let Some(x) = args.meta_groups { builder.add_meta_groups(x); }
+    if let Some(x) = args.market_groups { builder.add_market_groups(x); }
     if let Some(x) = args.dbuff_collections { builder.add_dbuff_collections(x); }
     if let Some(x) = args.mutaplasmids { builder.add_mutaplasmids(x); }
     if let Some(x) = args.dogma_effects { builder.add_dogma_effects(x); }
@@ -3653,6 +4248,41 @@ impl<'a> Sde<'a> {
     // which contains a valid value in this slot
     unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DbuffCollection>>>>(Sde::VT_DBUFF_COLLECTIONS, None)}
   }
+  #[inline]
+  pub fn market_groups(&self) -> Option<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<MarketGroup<'a>>>> {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<MarketGroup>>>>(Sde::VT_MARKET_GROUPS, None)}
+  }
+  #[inline]
+  pub fn meta_groups(&self) -> Option<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<MetaGroup<'a>>>> {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<MetaGroup>>>>(Sde::VT_META_GROUPS, None)}
+  }
+  #[inline]
+  pub fn dogma_units(&self) -> Option<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DogmaUnit<'a>>>> {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DogmaUnit>>>>(Sde::VT_DOGMA_UNITS, None)}
+  }
+  #[inline]
+  pub fn dogma_attribute_categories(&self) -> Option<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DogmaAttributeCategory<'a>>>> {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DogmaAttributeCategory>>>>(Sde::VT_DOGMA_ATTRIBUTE_CATEGORIES, None)}
+  }
+  #[inline]
+  pub fn release_date(&self) -> Option<&'a str> {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(Sde::VT_RELEASE_DATE, None)}
+  }
 }
 
 impl flatbuffers::Verifiable for Sde<'_> {
@@ -3670,6 +4300,11 @@ impl flatbuffers::Verifiable for Sde<'_> {
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<DogmaEffect>>>>("dogma_effects", Self::VT_DOGMA_EFFECTS, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<Mutaplasmid>>>>("mutaplasmids", Self::VT_MUTAPLASMIDS, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<DbuffCollection>>>>("dbuff_collections", Self::VT_DBUFF_COLLECTIONS, false)?
+     .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<MarketGroup>>>>("market_groups", Self::VT_MARKET_GROUPS, false)?
+     .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<MetaGroup>>>>("meta_groups", Self::VT_META_GROUPS, false)?
+     .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<DogmaUnit>>>>("dogma_units", Self::VT_DOGMA_UNITS, false)?
+     .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<DogmaAttributeCategory>>>>("dogma_attribute_categories", Self::VT_DOGMA_ATTRIBUTE_CATEGORIES, false)?
+     .visit_field::<flatbuffers::ForwardsUOffset<&str>>("release_date", Self::VT_RELEASE_DATE, false)?
      .finish();
     Ok(())
   }
@@ -3683,6 +4318,11 @@ pub struct SdeArgs<'a> {
     pub dogma_effects: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DogmaEffect<'a>>>>>,
     pub mutaplasmids: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<Mutaplasmid<'a>>>>>,
     pub dbuff_collections: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DbuffCollection<'a>>>>>,
+    pub market_groups: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<MarketGroup<'a>>>>>,
+    pub meta_groups: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<MetaGroup<'a>>>>>,
+    pub dogma_units: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DogmaUnit<'a>>>>>,
+    pub dogma_attribute_categories: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DogmaAttributeCategory<'a>>>>>,
+    pub release_date: Option<flatbuffers::WIPOffset<&'a str>>,
 }
 impl<'a> Default for SdeArgs<'a> {
   #[inline]
@@ -3696,6 +4336,11 @@ impl<'a> Default for SdeArgs<'a> {
       dogma_effects: None,
       mutaplasmids: None,
       dbuff_collections: None,
+      market_groups: None,
+      meta_groups: None,
+      dogma_units: None,
+      dogma_attribute_categories: None,
+      release_date: None,
     }
   }
 }
@@ -3738,6 +4383,26 @@ impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> SdeBuilder<'a, 'b, A> {
     self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Sde::VT_DBUFF_COLLECTIONS, dbuff_collections);
   }
   #[inline]
+  pub fn add_market_groups(&mut self, market_groups: flatbuffers::WIPOffset<flatbuffers::Vector<'b , flatbuffers::ForwardsUOffset<MarketGroup<'b >>>>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Sde::VT_MARKET_GROUPS, market_groups);
+  }
+  #[inline]
+  pub fn add_meta_groups(&mut self, meta_groups: flatbuffers::WIPOffset<flatbuffers::Vector<'b , flatbuffers::ForwardsUOffset<MetaGroup<'b >>>>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Sde::VT_META_GROUPS, meta_groups);
+  }
+  #[inline]
+  pub fn add_dogma_units(&mut self, dogma_units: flatbuffers::WIPOffset<flatbuffers::Vector<'b , flatbuffers::ForwardsUOffset<DogmaUnit<'b >>>>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Sde::VT_DOGMA_UNITS, dogma_units);
+  }
+  #[inline]
+  pub fn add_dogma_attribute_categories(&mut self, dogma_attribute_categories: flatbuffers::WIPOffset<flatbuffers::Vector<'b , flatbuffers::ForwardsUOffset<DogmaAttributeCategory<'b >>>>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Sde::VT_DOGMA_ATTRIBUTE_CATEGORIES, dogma_attribute_categories);
+  }
+  #[inline]
+  pub fn add_release_date(&mut self, release_date: flatbuffers::WIPOffset<&'b  str>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Sde::VT_RELEASE_DATE, release_date);
+  }
+  #[inline]
   pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> SdeBuilder<'a, 'b, A> {
     let start = _fbb.start_table();
     SdeBuilder {
@@ -3763,6 +4428,11 @@ impl core::fmt::Debug for Sde<'_> {
       ds.field("dogma_effects", &self.dogma_effects());
       ds.field("mutaplasmids", &self.mutaplasmids());
       ds.field("dbuff_collections", &self.dbuff_collections());
+      ds.field("market_groups", &self.market_groups());
+      ds.field("meta_groups", &self.meta_groups());
+      ds.field("dogma_units", &self.dogma_units());
+      ds.field("dogma_attribute_categories", &self.dogma_attribute_categories());
+      ds.field("release_date", &self.release_date());
       ds.finish()
   }
 }

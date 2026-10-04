@@ -21,10 +21,6 @@ pub mod eve {
 pub enum NamesOffset {}
 #[derive(Copy, Clone, PartialEq)]
 
-/// Name lookup, in a file of its own.
-///
-/// An EFT-fit can be written in any of the eight languages EVE supports, so a
-/// name has to be matchable back to a type.
 pub struct Names<'a> {
   pub _tab: flatbuffers::Table<'a>,
 }
@@ -41,6 +37,7 @@ impl<'a> Names<'a> {
   pub const VT_BUILD_NUMBER: flatbuffers::VOffsetT = 4;
   pub const VT_NAMES: flatbuffers::VOffsetT = 6;
   pub const VT_TYPE_IDS: flatbuffers::VOffsetT = 8;
+  pub const VT_RELEASE_DATE: flatbuffers::VOffsetT = 10;
 
   #[inline]
   pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -52,6 +49,7 @@ impl<'a> Names<'a> {
     args: &'args NamesArgs<'args>
   ) -> flatbuffers::WIPOffset<Names<'bldr>> {
     let mut builder = NamesBuilder::new(_fbb);
+    if let Some(x) = args.release_date { builder.add_release_date(x); }
     if let Some(x) = args.type_ids { builder.add_type_ids(x); }
     if let Some(x) = args.names { builder.add_names(x); }
     builder.add_build_number(args.build_number);
@@ -66,9 +64,7 @@ impl<'a> Names<'a> {
     // which contains a valid value in this slot
     unsafe { self._tab.get::<i32>(Names::VT_BUILD_NUMBER, Some(0)).unwrap()}
   }
-  /// Every name of every type, in every language, lowercased and sorted by
-  /// UTF-8 bytes. Lowercasing is per code point and locale-independent, so
-  /// that a fit does not have to match the case.
+  /// Lowercased per code point, locale-independent; sorted by UTF-8 bytes.
   #[inline]
   pub fn names(&self) -> flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<&'a str>> {
     // Safety:
@@ -83,6 +79,13 @@ impl<'a> Names<'a> {
     // which contains a valid value in this slot
     unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, i32>>>(Names::VT_TYPE_IDS, None).unwrap()}
   }
+  #[inline]
+  pub fn release_date(&self) -> Option<&'a str> {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(Names::VT_RELEASE_DATE, None)}
+  }
 }
 
 impl flatbuffers::Verifiable for Names<'_> {
@@ -95,6 +98,7 @@ impl flatbuffers::Verifiable for Names<'_> {
      .visit_field::<i32>("build_number", Self::VT_BUILD_NUMBER, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<&'_ str>>>>("names", Self::VT_NAMES, true)?
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, i32>>>("type_ids", Self::VT_TYPE_IDS, true)?
+     .visit_field::<flatbuffers::ForwardsUOffset<&str>>("release_date", Self::VT_RELEASE_DATE, false)?
      .finish();
     Ok(())
   }
@@ -103,6 +107,7 @@ pub struct NamesArgs<'a> {
     pub build_number: i32,
     pub names: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<&'a str>>>>,
     pub type_ids: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, i32>>>,
+    pub release_date: Option<flatbuffers::WIPOffset<&'a str>>,
 }
 impl<'a> Default for NamesArgs<'a> {
   #[inline]
@@ -111,6 +116,7 @@ impl<'a> Default for NamesArgs<'a> {
       build_number: 0,
       names: None, // required field
       type_ids: None, // required field
+      release_date: None,
     }
   }
 }
@@ -131,6 +137,10 @@ impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> NamesBuilder<'a, 'b, A> {
   #[inline]
   pub fn add_type_ids(&mut self, type_ids: flatbuffers::WIPOffset<flatbuffers::Vector<'b , i32>>) {
     self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Names::VT_TYPE_IDS, type_ids);
+  }
+  #[inline]
+  pub fn add_release_date(&mut self, release_date: flatbuffers::WIPOffset<&'b  str>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Names::VT_RELEASE_DATE, release_date);
   }
   #[inline]
   pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> NamesBuilder<'a, 'b, A> {
@@ -155,6 +165,7 @@ impl core::fmt::Debug for Names<'_> {
       ds.field("build_number", &self.build_number());
       ds.field("names", &self.names());
       ds.field("type_ids", &self.type_ids());
+      ds.field("release_date", &self.release_date());
       ds.finish()
   }
 }

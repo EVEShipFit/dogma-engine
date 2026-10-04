@@ -1,6 +1,6 @@
 ---
 source: tests/harness/case.rs
-expression: "calculate_fit(eft_fit, skills, edit)"
+expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Scorpion
 ship/capacitorStablePercentage               = 100.000000
@@ -128,6 +128,6 @@ dronebay_1-5/type             = Hornet EC-300
 dronebay_1-5/state            = active
 dronebay_1-5/hp               = 62.500000
 dronebay_1-5/maxVelocity      = 4000.000000
-dronebay_1-5/damageMultiplier = 1.500000
+dronebay_1-5/damageMultiplier = 1.725000
 dronebay_1-5/shieldCapacity   = 125.000000
 dronebay_1-5/armorHP          = 62.500000

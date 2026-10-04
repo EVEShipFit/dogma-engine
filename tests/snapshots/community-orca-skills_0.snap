@@ -104,6 +104,7 @@ ship/shipBonusSoEECS4                                          = 0.000000
 ship/shipBonusSoEECS5                                          = 0.000000
 ship/shipBonusAB3                                              = 0.000000
 ship/miningScannerUpgrade                                      = 2.000000
+ship/remoteCapacitorImpedance                                  = 0.000001
 
 buff_1/type  = Shield HP Bonus
 buff_1/value = 10.000000
