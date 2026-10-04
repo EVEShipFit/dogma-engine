@@ -33,6 +33,16 @@ pub fn fold_case(name: &str) -> String {
     name.chars().map(fold_char).collect()
 }
 
+/// Items in the order of their keys; equal keys keep their order.
+pub fn sort_by_text<T>(items: Vec<T>, key: impl Fn(&T) -> String) -> Vec<T> {
+    let mut keys: Vec<(String, usize)> = items.iter().map(key).zip(0..).collect();
+    keys.sort_unstable();
+    let mut items: Vec<Option<T>> = items.into_iter().map(Some).collect();
+    keys.into_iter()
+        .filter_map(|(_, index)| items[index].take())
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

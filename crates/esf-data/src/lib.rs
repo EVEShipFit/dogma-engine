@@ -12,7 +12,7 @@ mod info;
 mod sde;
 
 pub use error::Error;
-pub use fold::{fold_case, fold_char};
+pub use fold::{fold_case, fold_char, sort_by_text};
 pub use info::{Info, InfoEsf, InfoExport, InfoName};
 pub use sde::{InfoNameSde, InfoSde, Names, Sde, eve};
 

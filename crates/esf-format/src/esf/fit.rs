@@ -1,6 +1,6 @@
 //! Turning esf/1 fits into fits the dogma engine calculates, and back.
 
-use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::collections::BTreeSet;
 
 use esf_data::{InfoEsf, fold_case};
 use esf_dogma_engine::{
@@ -39,12 +39,8 @@ fn slot_rack(slot: Slot) -> Option<(Location, u8)> {
     }
 }
 
-fn next_index(
-    counters: &mut HashMap<Location, u32>,
-    rack: Location,
-    count: u32,
-) -> Result<u8, Error> {
-    let counter = counters.entry(rack).or_default();
+fn next_index(counters: &mut [u32; 6], rack: Location, count: u32) -> Result<u8, Error> {
+    let counter = &mut counters[rack.number() as usize - 1];
     let index = u8::try_from(*counter)
         .map_err(|_| Error::new(format!("too many {} slots", rack.name())))?;
     *counter += count;
@@ -79,7 +75,7 @@ pub fn to_fit(info: &impl InfoEsf, fit: &EsfFit) -> Result<Fit, Error> {
     };
 
     let mut items = Vec::new();
-    let mut counters: HashMap<Location, u32> = HashMap::new();
+    let mut counters = [0; 6];
     let mut tubes = 0;
 
     for entry in &fit.entries {
@@ -243,21 +239,28 @@ fn entry(info: &impl InfoEsf, item: &FitItem) -> Entry {
 
 /// Turn a fit the dogma engine calculates into an esf/1 fit.
 pub fn from_fit(info: &impl InfoEsf, fit: &Fit) -> Result<EsfFit, Error> {
-    let mut racks: BTreeMap<Location, BTreeMap<u8, &FitItem>> = BTreeMap::new();
+    let mut racks: Vec<(Location, [Option<&FitItem>; 256])> = Vec::new();
     let mut entries = Vec::new();
 
     for item in fit.items.iter().filter(|item| item.quantity > 0) {
-        match slot_rack(item.slot) {
-            Some((rack, index)) => {
-                racks.entry(rack).or_default().insert(index, item);
+        let Some((rack, index)) = slot_rack(item.slot) else {
+            entries.push(entry(info, item));
+            continue;
+        };
+        let at = match racks.iter().position(|(location, _)| *location == rack) {
+            Some(at) => at,
+            None => {
+                racks.push((rack, [None; 256]));
+                racks.len() - 1
             }
-            None => entries.push(entry(info, item)),
-        }
+        };
+        racks[at].1[usize::from(index)] = Some(item);
     }
 
     for (rack, slots) in racks {
         let mut position = 0;
-        for (index, item) in slots {
+        let slots = (0..=u8::MAX).zip(slots);
+        for (index, item) in slots.filter_map(|(index, item)| Some((index, item?))) {
             if index > position {
                 entries.push(Entry {
                     count: Some(u32::from(index - position)),
@@ -269,7 +272,7 @@ pub fn from_fit(info: &impl InfoEsf, fit: &Fit) -> Result<EsfFit, Error> {
                 count: None,
                 ..entry(info, item)
             });
-            position = index + 1;
+            position = index.saturating_add(1);
         }
     }
 

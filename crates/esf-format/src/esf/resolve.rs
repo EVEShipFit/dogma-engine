@@ -1,7 +1,5 @@
 //! Resolving names against the SDE, and the rules that need it.
 
-use std::collections::{BTreeMap, HashSet};
-
 use esf_data::{InfoEsf, fold_case};
 
 use super::lookup::{Kind, Lookup};
@@ -78,7 +76,7 @@ pub(super) struct Fit<'b> {
     pub mode: Option<i32>,
     pub cargo_only: bool,
     pub items: Vec<Item<'b>>,
-    pub racks: BTreeMap<Location, Vec<Run>>,
+    pub racks: Vec<(Location, Vec<Run>)>,
 }
 
 fn pick(candidates: Vec<i32>, given: &str, what: &str, line: usize) -> Result<i32, Error> {
@@ -100,7 +98,7 @@ fn resolve_hull<'b, I: InfoEsf>(block: &'b Block, lookup: &Lookup<I>) -> Result<
         mode: None,
         cargo_only: true,
         items: Vec::new(),
-        racks: BTreeMap::new(),
+        racks: Vec::new(),
     };
     let Some(name) = &block.hull else {
         return Ok(fit);
@@ -260,12 +258,11 @@ fn resolve_line<'b, I: InfoEsf>(
         item.mutaplasmid = Some(pick(matches, given, "mutaplasmid", number)?);
     }
 
-    let mut seen = HashSet::new();
     for (name, value) in &line.overrides {
         let Some(attribute_id) = lookup.info.attribute_name_to_id_ignoring_case(name) else {
             return error(format!("unknown attribute {name:?}"));
         };
-        if !seen.insert(attribute_id) {
+        if item.overrides.iter().any(|(seen, _)| *seen == attribute_id) {
             return error(format!("attribute {name:?} is overridden twice"));
         }
         let number: f64 = value.parse().unwrap_or(f64::INFINITY);
@@ -283,9 +280,9 @@ fn check_cycles(fits: &[Fit]) -> Result<(), Error> {
         fits: &[Fit],
         fit: usize,
         path: &mut Vec<usize>,
-        done: &mut HashSet<usize>,
+        done: &mut [bool],
     ) -> Result<(), Error> {
-        if done.contains(&fit) {
+        if done[fit] {
             return Ok(());
         }
         path.push(fit);
@@ -299,34 +296,41 @@ fn check_cycles(fits: &[Fit]) -> Result<(), Error> {
             visit(fits, reference, path, done)?;
         }
         path.pop();
-        done.insert(fit);
+        done[fit] = true;
         Ok(())
     }
 
-    let mut done = HashSet::new();
+    let mut done = vec![false; fits.len()];
     (0..fits.len()).try_for_each(|fit| visit(fits, fit, &mut Vec::new(), &mut done))
 }
 
 /// Assign the slots of one rack: pinned items first, then the others in order.
 fn layout(items: &[Item], indexes: &[usize]) -> Result<Vec<Run>, Error> {
-    let mut pinned: BTreeMap<u32, usize> = BTreeMap::new();
+    let mut pinned: Vec<(u32, usize)> = Vec::new();
     for &index in indexes {
         let Some(slot) = items[index].line.index else {
             continue;
         };
-        if pinned.insert(slot, index).is_some() {
+        let at = pinned.partition_point(|(pin, _)| *pin < slot);
+        if pinned.get(at).is_some_and(|(pin, _)| *pin == slot) {
             return Err(Error::at(
                 items[index].line.number,
                 format!("slot {slot} is pinned twice"),
             ));
         }
+        pinned.insert(at, (slot, index));
     }
 
-    let mut runs: Vec<Run> = pinned
-        .iter()
-        .map(|(slot, index)| (*slot, 1, Some(*index)))
-        .collect();
+    let mut runs: Vec<Run> = Vec::new();
+    let mut pins = pinned.iter().peekable();
     let mut position = 1u32;
+    let place = |runs: &mut Vec<Run>, position: &mut u32, start: u32, length: u32, index| {
+        if start > *position {
+            runs.push((*position, start - *position, None));
+        }
+        runs.push((start, length, Some(index)));
+        *position = start.saturating_add(length);
+    };
     for &index in indexes {
         let line = items[index].line;
         if line.index.is_some() {
@@ -334,31 +338,20 @@ fn layout(items: &[Item], indexes: &[usize]) -> Result<Vec<Run>, Error> {
         }
         let mut remaining = line.count.unwrap_or(1);
         while remaining > 0 {
-            while pinned.contains_key(&position) {
-                position += 1;
+            while let Some((pin, pin_index)) = pins.next_if(|(pin, _)| *pin <= position) {
+                place(&mut runs, &mut position, *pin, 1, *pin_index);
             }
-            let room = pinned
-                .range(position..)
-                .next()
-                .map_or(remaining, |(pin, _)| pin - position);
+            let room = pins.peek().map_or(remaining, |(pin, _)| pin - position);
             let take = remaining.min(room);
-            runs.push((position, take, Some(index)));
-            position = position.saturating_add(take);
+            let start = position;
+            place(&mut runs, &mut position, start, take, index);
             remaining -= take;
         }
     }
-    runs.sort_by_key(|run| run.0);
-
-    let mut filled = Vec::new();
-    let mut position = 1;
-    for (start, length, index) in runs {
-        if start > position {
-            filled.push((position, start - position, None));
-        }
-        filled.push((start, length, index));
-        position = start + length;
+    for (pin, pin_index) in pins {
+        place(&mut runs, &mut position, *pin, 1, *pin_index);
     }
-    Ok(filled)
+    Ok(runs)
 }
 
 pub(super) fn resolve<'b, I: InfoEsf>(
@@ -378,9 +371,15 @@ pub(super) fn resolve<'b, I: InfoEsf>(
             .map(|line| resolve_line(line, &fits[index], &fits, lookup))
             .collect::<Result<Vec<_>, _>>()?;
 
-        let mut plugged = HashSet::new();
-        for item in items.iter().filter(|item| item.place.is_plugged()) {
-            if !plugged.insert(item.type_id) {
+        let plugged: Vec<&Item> = items
+            .iter()
+            .filter(|item| item.place.is_plugged())
+            .collect();
+        for (at, item) in plugged.iter().enumerate() {
+            if plugged[..at]
+                .iter()
+                .any(|other| other.type_id == item.type_id)
+            {
                 return Err(Error::at(
                     item.line.number,
                     format!("{:?} is plugged in twice", item.line.name),
@@ -402,7 +401,7 @@ pub(super) fn resolve<'b, I: InfoEsf>(
                 .filter(|index| fit.items[*index].place == Place::At(rack))
                 .collect();
             if !indexes.is_empty() {
-                fit.racks.insert(rack, layout(&fit.items, &indexes)?);
+                fit.racks.push((rack, layout(&fit.items, &indexes)?));
             }
         }
     }

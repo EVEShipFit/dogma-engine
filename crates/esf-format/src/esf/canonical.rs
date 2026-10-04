@@ -1,8 +1,6 @@
 //! Canonical form, and writing a fit back to text.
 
-use std::collections::BTreeMap;
-
-use esf_data::{InfoEsf, fold_case};
+use esf_data::{InfoEsf, fold_case, sort_by_text};
 
 use super::lookup::{Kind, Lookup};
 use super::model::{Entry, Error, EsfFit, Location, State};
@@ -216,22 +214,23 @@ fn line<I: InfoEsf>(lookup: &Lookup<I>, fits: &[Fit], fit: &Fit, item: &Item) ->
         }
     }
 
-    let mut overrides: BTreeMap<i32, f64> = item.overrides.iter().copied().collect();
+    let mut overrides = item.overrides.clone();
     if let (Some(mutaplasmid), Some(type_id)) = (item.mutaplasmid, item.type_id) {
         entry.mutaplasmid = Some(mutaplasmid);
         for attribute_id in lookup.rollable(mutaplasmid) {
-            overrides
-                .entry(attribute_id)
-                .or_insert_with(|| lookup.base_value(type_id, attribute_id));
+            if !overrides.iter().any(|(given, _)| *given == attribute_id) {
+                overrides.push((attribute_id, lookup.base_value(type_id, attribute_id)));
+            }
         }
     }
-    entry.overrides = overrides
-        .into_iter()
-        .map(|(attribute_id, value)| (attribute_id, if value == 0.0 { 0.0 } else { value }))
-        .collect();
-    entry.overrides.sort_by_cached_key(|(attribute_id, _)| {
+    for (_, value) in &mut overrides {
+        if *value == 0.0 {
+            *value = 0.0;
+        }
+    }
+    entry.overrides = sort_by_text(overrides, |(attribute_id, _)| {
         let name = lookup.attribute_name(*attribute_id).unwrap_or_default();
-        (fold_case(name), name)
+        format!("{}\0{name}", fold_case(name))
     });
 
     if line.state.is_some() && line.state != default_state(lookup, item) {
@@ -279,7 +278,12 @@ fn collapse(lines: Vec<(bool, Entry)>) -> Vec<Entry> {
 }
 
 fn rack<I: InfoEsf>(lookup: &Lookup<I>, fits: &[Fit], fit: &Fit, rack: Location) -> Vec<Entry> {
-    let mut runs = fit.racks.get(&rack).cloned().unwrap_or_default();
+    let mut runs = fit
+        .racks
+        .iter()
+        .find(|(location, _)| *location == rack)
+        .map(|(_, runs)| runs.clone())
+        .unwrap_or_default();
     while runs
         .last()
         .is_some_and(|(_, _, index)| index.is_none_or(|index| fit.items[index].type_id.is_none()))
@@ -305,7 +309,7 @@ fn rack<I: InfoEsf>(lookup: &Lookup<I>, fits: &[Fit], fit: &Fit, rack: Location)
 }
 
 fn sorted<I: InfoEsf>(lookup: &Lookup<I>, fits: &[Fit], fit: &Fit, items: &[&Item]) -> Vec<Entry> {
-    let mut lines: Vec<((String, String), bool, Entry)> = items
+    let lines: Vec<(String, bool, Entry)> = items
         .iter()
         .map(|item| {
             let mut entry = line(lookup, fits, fit, item);
@@ -320,10 +324,10 @@ fn sorted<I: InfoEsf>(lookup: &Lookup<I>, fits: &[Fit], fit: &Fit, items: &[&Ite
                 line_text(lookup, &entry, Naming::Shortest).unwrap_or_default()
             };
             let name = fold_case(lookup.name(item.type_id.unwrap_or_default()));
-            ((name, text), repeatable, entry)
+            (format!("{name}\0{text}"), repeatable, entry)
         })
         .collect();
-    lines.sort_by(|left, right| left.0.cmp(&right.0));
+    let lines = sort_by_text(lines, |(key, _, _)| key.clone());
     collapse(
         lines
             .into_iter()
@@ -378,19 +382,19 @@ fn groups() -> Vec<Place> {
 }
 
 pub(super) fn canonical_fit<I: InfoEsf>(lookup: &Lookup<I>, fits: &[Fit], fit: &Fit) -> EsfFit {
-    let mut grouped: BTreeMap<Place, Vec<&Item>> = BTreeMap::new();
-    for item in fit.items.iter().filter(|item| !item.place.is_rack()) {
-        let group = match item.place {
-            Place::At(Location::Bay) if item.kind == Kind::Fighter => Place::Fighters,
-            Place::At(Location::Bay) => Place::Drones,
-            place => place,
-        };
-        grouped.entry(group).or_default().push(item);
-    }
+    let group_of = |item: &Item| match item.place {
+        Place::At(Location::Bay) if item.kind == Kind::Fighter => Place::Fighters,
+        Place::At(Location::Bay) => Place::Drones,
+        place => place,
+    };
 
     let mut entries = Vec::new();
     for group in groups() {
-        let items = grouped.remove(&group).unwrap_or_default();
+        let items: Vec<&Item> = fit
+            .items
+            .iter()
+            .filter(|item| !item.place.is_rack() && group_of(item) == group)
+            .collect();
         entries.extend(match group {
             Place::At(location) if location.is_rack() => rack(lookup, fits, fit, location),
             Place::Fighters => fighters(lookup, fits, fit, &items),

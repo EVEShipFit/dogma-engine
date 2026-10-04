@@ -4,7 +4,7 @@ use std::sync::OnceLock;
 
 use super::eve;
 use crate::Error;
-use crate::fold::{fold_case, fold_char};
+use crate::fold::{fold_case, fold_char, sort_by_text};
 
 /// Compare two names case-insensitively without allocating.
 fn compare_folded(left: &str, right: &str) -> Ordering {
@@ -18,9 +18,12 @@ fn compare_folded(left: &str, right: &str) -> Ordering {
 }
 
 /// Names sorted case-insensitively, published first, then lowest id.
-fn sorted_names(mut entries: Vec<(&str, bool, i32)>) -> Vec<(&str, bool, i32)> {
-    entries.sort_by_cached_key(|entry| (fold_case(entry.0), !entry.1, entry.2));
-    entries
+fn sorted_names(entries: Vec<(&str, bool, i32)>) -> Vec<(&str, bool, i32)> {
+    sort_by_text(entries, |(name, published, _)| {
+        let mut key = fold_case(name);
+        key.push(if *published { '\0' } else { '\u{1}' });
+        key
+    })
 }
 
 fn find_name(names: &[(&str, bool, i32)], name: &str) -> Option<i32> {
