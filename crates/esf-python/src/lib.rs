@@ -134,6 +134,23 @@ fn save_esi_fitting<'py>(py: Python<'py>, fit: &Bound<'py, PyAny>) -> PyResult<B
     Ok(pythonize(py, &fitting)?)
 }
 
+/// Set a fit loaded from EFT or an ESI fitting to the states EVE gives it on
+/// import. Set the skills of the character first.
+#[pyfunction]
+fn post_load<'py>(py: Python<'py>, fit: &Bound<'py, PyAny>) -> PyResult<Bound<'py, PyAny>> {
+    let sde = sde()?;
+
+    let mut fit: Fit =
+        depythonize(fit).map_err(|error| PyValueError::new_err(error.to_string()))?;
+
+    py.detach(|| {
+        let info = InfoSde::new(sde);
+        esf_format::post_load(&info, &mut fit);
+    });
+
+    Ok(pythonize(py, &fit)?)
+}
+
 /// Load the fit of the ship that died from a killmail, as ESI returns it.
 #[pyfunction]
 fn load_killmail<'py>(
@@ -285,6 +302,7 @@ fn _esf_dogma_engine(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_function(wrap_pyfunction!(save_eft, module)?)?;
     module.add_function(wrap_pyfunction!(load_esi_fitting, module)?)?;
     module.add_function(wrap_pyfunction!(save_esi_fitting, module)?)?;
+    module.add_function(wrap_pyfunction!(post_load, module)?)?;
     module.add_function(wrap_pyfunction!(load_killmail, module)?)?;
     module.add_function(wrap_pyfunction!(load_link, module)?)?;
     module.add_function(wrap_pyfunction!(load_esf, module)?)?;

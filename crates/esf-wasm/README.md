@@ -32,6 +32,7 @@ import wasmInit, {
   save_eft,
   load_esi_fitting,
   save_esi_fitting,
+  post_load,
   load_killmail,
   load_link,
   calculate,
@@ -60,6 +61,8 @@ const eft = save_eft(fit);
 /* Or if you have a fitting a character saved in game, as ESI returns it (and the other way around): */
 const fromEsi = load_esi_fitting(fitting);
 const toEsi = save_esi_fitting(fit);
+/* Neither EFT nor ESI has states; with the skills set, this sets the ones EVE gives an imported fit: */
+const settled = post_load({ ...fromEsi, character: { skills } });
 /* Or if you have a killmail, as ESI returns it, for the fit of the ship that died: */
 const fromKillmail = load_killmail(killmail);
 /* Or if you have an EVEShip.fit link, `<version>:<payload>`, with the payload gunzipped and unbase64'd: */

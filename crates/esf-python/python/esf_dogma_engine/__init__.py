@@ -33,6 +33,11 @@ An ESI fitting, as a character saves it in game, goes both ways too::
     fit = dogma.load_esi_fitting(fitting)
     fitting = dogma.save_esi_fitting(fit)
 
+Neither carries states; once `character` holds the skills, `post_load` sets
+the ones EVE gives an imported fit::
+
+    fit = dogma.post_load(fit)
+
 And a killmail, as ESI returns it, gives the fit of the ship that died::
 
     fit = dogma.load_killmail(killmail)
@@ -69,6 +74,7 @@ from ._esf_dogma_engine import (
     load_link,
     load_names,
     load_sde,
+    post_load,
     save_eft,
     save_esf,
     save_esf_link,
@@ -104,6 +110,7 @@ __all__ = [
     "load_names_from_file",
     "load_sde",
     "load_sde_from_file",
+    "post_load",
     "save_eft",
     "save_esf",
     "save_esf_link",

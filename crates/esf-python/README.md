@@ -51,6 +51,8 @@ eft = dogma.save_eft(fit)
 # Or if you have a fitting a character saved in game, as ESI returns it (and the other way around):
 from_esi = dogma.load_esi_fitting(fitting)
 to_esi = dogma.save_esi_fitting(fit)
+# Neither EFT nor ESI has states; with the skills set, this sets the ones EVE gives an imported fit:
+settled = dogma.post_load({**from_esi, "character": {"skills": skills}})
 # Or if you have a killmail, as ESI returns it, for the fit of the ship that died:
 from_killmail = dogma.load_killmail(killmail)
 # Or if you have an EVEShip.fit link, `<version>:<payload>`, with the payload gunzipped and unbase64'd:
