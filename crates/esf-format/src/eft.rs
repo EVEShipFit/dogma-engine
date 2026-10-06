@@ -313,6 +313,49 @@ fn mutate(
     ))
 }
 
+fn stack_item(
+    info: &impl InfoName,
+    mutations: &HashMap<u32, MutationSection>,
+    line: &str,
+    (type_name, quantity, reference): (&str, u32, Option<u32>),
+) -> Result<(i32, u32, Option<Mutation>), Error> {
+    if reference.is_some() && quantity != 1 {
+        return Err(Error::InvalidMutation(line.trim().to_string()));
+    }
+
+    let base_type_id = type_name_to_id(info, type_name)?;
+    let (type_id, mutation) = mutate(info, mutations, reference, type_name, base_type_id)?;
+    Ok((type_id, quantity, mutation))
+}
+
+fn stack_slot(are_drones: bool, are_fighters: bool) -> (Slot, State) {
+    match (are_drones, are_fighters) {
+        (true, _) => (Slot::DroneBay, State::Active),
+        (_, true) => (Slot::FighterBay, State::Offline),
+        _ => (Slot::Cargo, State::Offline),
+    }
+}
+
+fn stack_fit_item(
+    type_id: i32,
+    slot: Slot,
+    quantity: u32,
+    state: State,
+    mutation: Option<Mutation>,
+) -> FitItem {
+    FitItem {
+        type_id,
+        slot,
+        quantity,
+        state,
+        charge: None,
+        mutation,
+        fighter_abilities: None,
+        booster_side_effects: BTreeSet::new(),
+        spool: None,
+    }
+}
+
 /// Load a fit from EFT text. The fit has no skills.
 ///
 /// Modules are active, unless the line ends in `/offline`. As an EVEShip.fit
@@ -320,7 +363,8 @@ fn mutate(
 /// booster goes in the slot its type is made for. A section where
 /// every line ends in `x<quantity>` goes in the drone bay if it holds only
 /// drones, in the fighter bay if it holds only fighters, and in the cargo hold
-/// otherwise.
+/// otherwise. A single `x<quantity>` line among modules is placed by its own
+/// type.
 ///
 /// A mutated module or drone is written the way PyFa writes it: the line of
 /// its base type ends in `[<n>]`, and a section describes each mutation as
@@ -378,18 +422,34 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
                     let (mut line, reference) = split_mutation_reference(line);
                     let mut state = State::Active;
 
-                    if line.starts_with("[Empty") {
-                        let rack = match line {
-                            "[Empty High slot]" => EFFECT_HI_POWER,
-                            "[Empty Med slot]" => EFFECT_MED_POWER,
-                            "[Empty Low slot]" => EFFECT_LO_POWER,
-                            "[Empty Rig slot]" => EFFECT_RIG_SLOT,
-                            "[Empty Subsystem slot]" => EFFECT_SUBSYSTEM,
-                            "[Empty Service slot]" => EFFECT_SERVICE_SLOT,
+                    let lowercase = line.to_lowercase();
+                    if lowercase.starts_with("[empty") {
+                        let rack = match lowercase.as_str() {
+                            "[empty high slot]" => EFFECT_HI_POWER,
+                            "[empty med slot]" => EFFECT_MED_POWER,
+                            "[empty low slot]" => EFFECT_LO_POWER,
+                            "[empty rig slot]" => EFFECT_RIG_SLOT,
+                            "[empty subsystem slot]" => EFFECT_SUBSYSTEM,
+                            "[empty service slot]" => EFFECT_SERVICE_SLOT,
                             _ => return Err(Error::InvalidEmptySlot(line.to_string())),
                         };
 
                         next_index(&mut rack_indexes, rack);
+                        continue;
+                    }
+
+                    if let Some((type_name, quantity, _)) = parse_quantity(line)
+                        && info.type_name_to_id(line).is_none()
+                    {
+                        let (type_id, quantity, mutation) =
+                            stack_item(info, &mutations, line, (type_name, quantity, reference))?;
+                        let category_id = info.get_type(type_id).map(|r#type| r#type.category_id());
+                        let (slot, state) = stack_slot(
+                            category_id == Some(CATEGORY_DRONE),
+                            category_id == Some(CATEGORY_FIGHTER),
+                        );
+                        fit.items
+                            .push(stack_fit_item(type_id, slot, quantity, state, mutation));
                         continue;
                     }
 
@@ -456,14 +516,8 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
                 let mut are_drones = true;
                 let mut are_fighters = true;
 
-                for (line, (type_name, quantity, reference)) in section.iter().zip(quantities) {
-                    if reference.is_some() && quantity != 1 {
-                        return Err(Error::InvalidMutation(line.trim().to_string()));
-                    }
-
-                    let base_type_id = type_name_to_id(info, type_name)?;
-                    let (type_id, mutation) =
-                        mutate(info, &mutations, reference, type_name, base_type_id)?;
+                for (line, stack) in section.iter().zip(quantities) {
+                    let (type_id, quantity, mutation) = stack_item(info, &mutations, line, stack)?;
 
                     let category_id = info.get_type(type_id).map(|r#type| r#type.category_id());
                     are_drones = are_drones && category_id == Some(CATEGORY_DRONE);
@@ -472,24 +526,11 @@ pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
                     items.push((type_id, quantity, mutation));
                 }
 
-                let (slot, state) = match (are_drones, are_fighters) {
-                    (true, _) => (Slot::DroneBay, State::Active),
-                    (_, true) => (Slot::FighterBay, State::Offline),
-                    _ => (Slot::Cargo, State::Offline),
-                };
+                let (slot, state) = stack_slot(are_drones, are_fighters);
 
                 for (type_id, quantity, mutation) in items {
-                    fit.items.push(FitItem {
-                        type_id,
-                        slot,
-                        quantity,
-                        state,
-                        charge: None,
-                        mutation,
-                        fighter_abilities: None,
-                        booster_side_effects: BTreeSet::new(),
-                        spool: None,
-                    });
+                    fit.items
+                        .push(stack_fit_item(type_id, slot, quantity, state, mutation));
                 }
             }
         }
@@ -911,6 +952,13 @@ mod tests {
             error("[Rifter, Test]\n\nNot A Drone x5"),
             Error::UnknownType("Not A Drone".to_string())
         );
+    }
+
+    #[test]
+    fn empty_slot_in_any_case() {
+        let fit = load_eft(&Names, "[Rifter, Test]\n[Empty Low Slot]\n[EMPTY MED SLOT]").unwrap();
+
+        assert!(fit.items.is_empty());
     }
 
     #[test]
