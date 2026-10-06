@@ -431,6 +431,12 @@ impl Item {
             self.max_state = ItemState::Active;
         }
 
+        /* A subsystem is always online. */
+        if matches!(self.slot, Some(Slot::Subsystem(_))) {
+            self.max_state = ItemState::Online;
+            self.state = ItemState::Online;
+        }
+
         if self.state > self.max_state {
             self.state = self.max_state;
         }
