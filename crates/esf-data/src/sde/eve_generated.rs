@@ -2678,6 +2678,148 @@ impl core::fmt::Debug for MetaGroup<'_> {
       ds.finish()
   }
 }
+pub enum FighterAbilityOffset {}
+#[derive(Copy, Clone, PartialEq)]
+
+pub struct FighterAbility<'a> {
+  pub _tab: flatbuffers::Table<'a>,
+}
+
+impl<'a> flatbuffers::Follow<'a> for FighterAbility<'a> {
+  type Inner = FighterAbility<'a>;
+  #[inline]
+  unsafe fn follow(buf: &'a [u8], loc: usize) -> Self::Inner {
+    Self { _tab: flatbuffers::Table::new(buf, loc) }
+  }
+}
+
+impl<'a> FighterAbility<'a> {
+  pub const VT_ID: flatbuffers::VOffsetT = 4;
+  pub const VT_NAME: flatbuffers::VOffsetT = 6;
+  pub const VT_EFFECT_ID: flatbuffers::VOffsetT = 8;
+
+  #[inline]
+  pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
+    FighterAbility { _tab: table }
+  }
+  #[allow(unused_mut)]
+  pub fn create<'bldr: 'args, 'args: 'mut_bldr, 'mut_bldr, A: flatbuffers::Allocator + 'bldr>(
+    _fbb: &'mut_bldr mut flatbuffers::FlatBufferBuilder<'bldr, A>,
+    args: &'args FighterAbilityArgs<'args>
+  ) -> flatbuffers::WIPOffset<FighterAbility<'bldr>> {
+    let mut builder = FighterAbilityBuilder::new(_fbb);
+    builder.add_effect_id(args.effect_id);
+    if let Some(x) = args.name { builder.add_name(x); }
+    builder.add_id(args.id);
+    builder.finish()
+  }
+
+
+  #[inline]
+  pub fn id(&self) -> i32 {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<i32>(FighterAbility::VT_ID, Some(0)).unwrap()}
+  }
+  #[inline]
+  pub fn key_compare_less_than(&self, o: &FighterAbility) -> bool {
+    self.id() < o.id()
+  }
+
+  #[inline]
+  pub fn key_compare_with_value(&self, val: i32) -> ::core::cmp::Ordering {
+    let key = self.id();
+    key.cmp(&val)
+  }
+  #[inline]
+  pub fn name(&self) -> &'a str {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(FighterAbility::VT_NAME, None).unwrap()}
+  }
+  #[inline]
+  pub fn effect_id(&self) -> i32 {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<i32>(FighterAbility::VT_EFFECT_ID, Some(0)).unwrap()}
+  }
+}
+
+impl flatbuffers::Verifiable for FighterAbility<'_> {
+  #[inline]
+  fn run_verifier(
+    v: &mut flatbuffers::Verifier, pos: usize
+  ) -> Result<(), flatbuffers::InvalidFlatbuffer> {
+    use self::flatbuffers::Verifiable;
+    v.visit_table(pos)?
+     .visit_field::<i32>("id", Self::VT_ID, false)?
+     .visit_field::<flatbuffers::ForwardsUOffset<&str>>("name", Self::VT_NAME, true)?
+     .visit_field::<i32>("effect_id", Self::VT_EFFECT_ID, false)?
+     .finish();
+    Ok(())
+  }
+}
+pub struct FighterAbilityArgs<'a> {
+    pub id: i32,
+    pub name: Option<flatbuffers::WIPOffset<&'a str>>,
+    pub effect_id: i32,
+}
+impl<'a> Default for FighterAbilityArgs<'a> {
+  #[inline]
+  fn default() -> Self {
+    FighterAbilityArgs {
+      id: 0,
+      name: None, // required field
+      effect_id: 0,
+    }
+  }
+}
+
+pub struct FighterAbilityBuilder<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> {
+  fbb_: &'b mut flatbuffers::FlatBufferBuilder<'a, A>,
+  start_: flatbuffers::WIPOffset<flatbuffers::TableUnfinishedWIPOffset>,
+}
+impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> FighterAbilityBuilder<'a, 'b, A> {
+  #[inline]
+  pub fn add_id(&mut self, id: i32) {
+    self.fbb_.push_slot::<i32>(FighterAbility::VT_ID, id, 0);
+  }
+  #[inline]
+  pub fn add_name(&mut self, name: flatbuffers::WIPOffset<&'b  str>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(FighterAbility::VT_NAME, name);
+  }
+  #[inline]
+  pub fn add_effect_id(&mut self, effect_id: i32) {
+    self.fbb_.push_slot::<i32>(FighterAbility::VT_EFFECT_ID, effect_id, 0);
+  }
+  #[inline]
+  pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> FighterAbilityBuilder<'a, 'b, A> {
+    let start = _fbb.start_table();
+    FighterAbilityBuilder {
+      fbb_: _fbb,
+      start_: start,
+    }
+  }
+  #[inline]
+  pub fn finish(self) -> flatbuffers::WIPOffset<FighterAbility<'a>> {
+    let o = self.fbb_.end_table(self.start_);
+    self.fbb_.required(o, FighterAbility::VT_NAME,"name");
+    flatbuffers::WIPOffset::new(o.value())
+  }
+}
+
+impl core::fmt::Debug for FighterAbility<'_> {
+  fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+    let mut ds = f.debug_struct("FighterAbility");
+      ds.field("id", &self.id());
+      ds.field("name", &self.name());
+      ds.field("effect_id", &self.effect_id());
+      ds.finish()
+  }
+}
 pub enum DogmaAttributeOffset {}
 #[derive(Copy, Clone, PartialEq)]
 
@@ -4164,6 +4306,7 @@ impl<'a> Sde<'a> {
   pub const VT_DOGMA_UNITS: flatbuffers::VOffsetT = 24;
   pub const VT_DOGMA_ATTRIBUTE_CATEGORIES: flatbuffers::VOffsetT = 26;
   pub const VT_RELEASE_DATE: flatbuffers::VOffsetT = 28;
+  pub const VT_FIGHTER_ABILITIES: flatbuffers::VOffsetT = 30;
 
   #[inline]
   pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -4175,6 +4318,7 @@ impl<'a> Sde<'a> {
     args: &'args SdeArgs<'args>
   ) -> flatbuffers::WIPOffset<Sde<'bldr>> {
     let mut builder = SdeBuilder::new(_fbb);
+    if let Some(x) = args.fighter_abilities { builder.add_fighter_abilities(x); }
     if let Some(x) = args.release_date { builder.add_release_date(x); }
     if let Some(x) = args.dogma_attribute_categories { builder.add_dogma_attribute_categories(x); }
     if let Some(x) = args.dogma_units { builder.add_dogma_units(x); }
@@ -4283,6 +4427,13 @@ impl<'a> Sde<'a> {
     // which contains a valid value in this slot
     unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<&str>>(Sde::VT_RELEASE_DATE, None)}
   }
+  #[inline]
+  pub fn fighter_abilities(&self) -> Option<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<FighterAbility<'a>>>> {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<FighterAbility>>>>(Sde::VT_FIGHTER_ABILITIES, None)}
+  }
 }
 
 impl flatbuffers::Verifiable for Sde<'_> {
@@ -4305,6 +4456,7 @@ impl flatbuffers::Verifiable for Sde<'_> {
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<DogmaUnit>>>>("dogma_units", Self::VT_DOGMA_UNITS, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<DogmaAttributeCategory>>>>("dogma_attribute_categories", Self::VT_DOGMA_ATTRIBUTE_CATEGORIES, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<&str>>("release_date", Self::VT_RELEASE_DATE, false)?
+     .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<FighterAbility>>>>("fighter_abilities", Self::VT_FIGHTER_ABILITIES, false)?
      .finish();
     Ok(())
   }
@@ -4323,6 +4475,7 @@ pub struct SdeArgs<'a> {
     pub dogma_units: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DogmaUnit<'a>>>>>,
     pub dogma_attribute_categories: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DogmaAttributeCategory<'a>>>>>,
     pub release_date: Option<flatbuffers::WIPOffset<&'a str>>,
+    pub fighter_abilities: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<FighterAbility<'a>>>>>,
 }
 impl<'a> Default for SdeArgs<'a> {
   #[inline]
@@ -4341,6 +4494,7 @@ impl<'a> Default for SdeArgs<'a> {
       dogma_units: None,
       dogma_attribute_categories: None,
       release_date: None,
+      fighter_abilities: None,
     }
   }
 }
@@ -4403,6 +4557,10 @@ impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> SdeBuilder<'a, 'b, A> {
     self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Sde::VT_RELEASE_DATE, release_date);
   }
   #[inline]
+  pub fn add_fighter_abilities(&mut self, fighter_abilities: flatbuffers::WIPOffset<flatbuffers::Vector<'b , flatbuffers::ForwardsUOffset<FighterAbility<'b >>>>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Sde::VT_FIGHTER_ABILITIES, fighter_abilities);
+  }
+  #[inline]
   pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> SdeBuilder<'a, 'b, A> {
     let start = _fbb.start_table();
     SdeBuilder {
@@ -4433,6 +4591,7 @@ impl core::fmt::Debug for Sde<'_> {
       ds.field("dogma_units", &self.dogma_units());
       ds.field("dogma_attribute_categories", &self.dogma_attribute_categories());
       ds.field("release_date", &self.release_date());
+      ds.field("fighter_abilities", &self.fighter_abilities());
       ds.finish()
   }
 }
