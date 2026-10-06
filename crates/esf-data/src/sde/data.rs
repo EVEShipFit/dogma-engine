@@ -60,6 +60,9 @@ fn find_name(names: &[(&str, bool, i32)], name: &str) -> Option<i32> {
     (compare_folded(entry.0, name) == Ordering::Equal).then_some(entry.2)
 }
 
+/// The lowest major version of `sde.dat` this crate reads.
+pub const MIN_SDE_VERSION: i32 = 12;
+
 /// Reader for `sde.dat`, everything needed to calculate a fit.
 ///
 /// It borrows the bytes it reads from instead of copying them.
@@ -79,6 +82,12 @@ impl<'a> Sde<'a> {
     /// Check the bytes are a valid SDE, and index the attributes and effects.
     pub fn new(bytes: &'a [u8]) -> Result<Sde<'a>, Error> {
         let sde = eve::root_as_sde(bytes).map_err(Error::InvalidSde)?;
+        if sde.major_version() < MIN_SDE_VERSION {
+            return Err(Error::SdeTooOld {
+                found: sde.major_version(),
+                needed: MIN_SDE_VERSION,
+            });
+        }
 
         let mut attribute_ids = HashMap::new();
         if let Some(attributes) = sde.dogma_attributes() {
@@ -212,5 +221,41 @@ impl<'a> Sde<'a> {
             )
         });
         find_name(attribute_names, name)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn sde_bytes(major_version: i32) -> Vec<u8> {
+        let mut builder = flatbuffers::FlatBufferBuilder::new();
+        let sde = eve::Sde::create(
+            &mut builder,
+            &eve::SdeArgs {
+                major_version,
+                ..Default::default()
+            },
+        );
+        eve::finish_sde_buffer(&mut builder, sde);
+        builder.finished_data().to_vec()
+    }
+
+    #[test]
+    fn rejects_an_sde_too_old() {
+        let bytes = sde_bytes(MIN_SDE_VERSION - 1);
+        assert_eq!(
+            Sde::new(&bytes).err(),
+            Some(Error::SdeTooOld {
+                found: MIN_SDE_VERSION - 1,
+                needed: MIN_SDE_VERSION,
+            })
+        );
+    }
+
+    #[test]
+    fn accepts_an_sde_new_enough() {
+        assert!(Sde::new(&sde_bytes(MIN_SDE_VERSION)).is_ok());
+        assert!(Sde::new(&sde_bytes(MIN_SDE_VERSION + 1)).is_ok());
     }
 }

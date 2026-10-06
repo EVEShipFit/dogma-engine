@@ -4358,6 +4358,7 @@ impl<'a> Sde<'a> {
   pub const VT_DOGMA_ATTRIBUTE_CATEGORIES: flatbuffers::VOffsetT = 26;
   pub const VT_RELEASE_DATE: flatbuffers::VOffsetT = 28;
   pub const VT_FIGHTER_ABILITIES: flatbuffers::VOffsetT = 30;
+  pub const VT_MAJOR_VERSION: flatbuffers::VOffsetT = 32;
 
   #[inline]
   pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -4369,6 +4370,7 @@ impl<'a> Sde<'a> {
     args: &'args SdeArgs<'args>
   ) -> flatbuffers::WIPOffset<Sde<'bldr>> {
     let mut builder = SdeBuilder::new(_fbb);
+    builder.add_major_version(args.major_version);
     if let Some(x) = args.fighter_abilities { builder.add_fighter_abilities(x); }
     if let Some(x) = args.release_date { builder.add_release_date(x); }
     if let Some(x) = args.dogma_attribute_categories { builder.add_dogma_attribute_categories(x); }
@@ -4485,6 +4487,13 @@ impl<'a> Sde<'a> {
     // which contains a valid value in this slot
     unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<FighterAbility>>>>(Sde::VT_FIGHTER_ABILITIES, None)}
   }
+  #[inline]
+  pub fn major_version(&self) -> i32 {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<i32>(Sde::VT_MAJOR_VERSION, Some(0)).unwrap()}
+  }
 }
 
 impl flatbuffers::Verifiable for Sde<'_> {
@@ -4508,6 +4517,7 @@ impl flatbuffers::Verifiable for Sde<'_> {
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<DogmaAttributeCategory>>>>("dogma_attribute_categories", Self::VT_DOGMA_ATTRIBUTE_CATEGORIES, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<&str>>("release_date", Self::VT_RELEASE_DATE, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, flatbuffers::ForwardsUOffset<FighterAbility>>>>("fighter_abilities", Self::VT_FIGHTER_ABILITIES, false)?
+     .visit_field::<i32>("major_version", Self::VT_MAJOR_VERSION, false)?
      .finish();
     Ok(())
   }
@@ -4527,6 +4537,7 @@ pub struct SdeArgs<'a> {
     pub dogma_attribute_categories: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<DogmaAttributeCategory<'a>>>>>,
     pub release_date: Option<flatbuffers::WIPOffset<&'a str>>,
     pub fighter_abilities: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, flatbuffers::ForwardsUOffset<FighterAbility<'a>>>>>,
+    pub major_version: i32,
 }
 impl<'a> Default for SdeArgs<'a> {
   #[inline]
@@ -4546,6 +4557,7 @@ impl<'a> Default for SdeArgs<'a> {
       dogma_attribute_categories: None,
       release_date: None,
       fighter_abilities: None,
+      major_version: 0,
     }
   }
 }
@@ -4612,6 +4624,10 @@ impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> SdeBuilder<'a, 'b, A> {
     self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Sde::VT_FIGHTER_ABILITIES, fighter_abilities);
   }
   #[inline]
+  pub fn add_major_version(&mut self, major_version: i32) {
+    self.fbb_.push_slot::<i32>(Sde::VT_MAJOR_VERSION, major_version, 0);
+  }
+  #[inline]
   pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> SdeBuilder<'a, 'b, A> {
     let start = _fbb.start_table();
     SdeBuilder {
@@ -4643,6 +4659,7 @@ impl core::fmt::Debug for Sde<'_> {
       ds.field("dogma_attribute_categories", &self.dogma_attribute_categories());
       ds.field("release_date", &self.release_date());
       ds.field("fighter_abilities", &self.fighter_abilities());
+      ds.field("major_version", &self.major_version());
       ds.finish()
   }
 }
