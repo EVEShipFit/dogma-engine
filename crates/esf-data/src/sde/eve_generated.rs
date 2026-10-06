@@ -1778,6 +1778,7 @@ impl<'a> Type<'a> {
   pub const VT_DOGMA_ATTRIBUTES: flatbuffers::VOffsetT = 30;
   pub const VT_DOGMA_EFFECTS: flatbuffers::VOffsetT = 32;
   pub const VT_FIGHTER_ABILITIES: flatbuffers::VOffsetT = 34;
+  pub const VT_MODE_TYPE_IDS: flatbuffers::VOffsetT = 36;
 
   #[inline]
   pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -1789,6 +1790,7 @@ impl<'a> Type<'a> {
     args: &'args TypeArgs<'args>
   ) -> flatbuffers::WIPOffset<Type<'bldr>> {
     let mut builder = TypeBuilder::new(_fbb);
+    if let Some(x) = args.mode_type_ids { builder.add_mode_type_ids(x); }
     if let Some(x) = args.fighter_abilities { builder.add_fighter_abilities(x); }
     if let Some(x) = args.dogma_effects { builder.add_dogma_effects(x); }
     if let Some(x) = args.dogma_attributes { builder.add_dogma_attributes(x); }
@@ -1932,6 +1934,13 @@ impl<'a> Type<'a> {
     // which contains a valid value in this slot
     unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, TypeFighterAbility>>>(Type::VT_FIGHTER_ABILITIES, None)}
   }
+  #[inline]
+  pub fn mode_type_ids(&self) -> Option<flatbuffers::Vector<'a, i32>> {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, i32>>>(Type::VT_MODE_TYPE_IDS, None)}
+  }
 }
 
 impl flatbuffers::Verifiable for Type<'_> {
@@ -1957,6 +1966,7 @@ impl flatbuffers::Verifiable for Type<'_> {
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, TypeDogmaAttribute>>>("dogma_attributes", Self::VT_DOGMA_ATTRIBUTES, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, TypeDogmaEffect>>>("dogma_effects", Self::VT_DOGMA_EFFECTS, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, TypeFighterAbility>>>("fighter_abilities", Self::VT_FIGHTER_ABILITIES, false)?
+     .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, i32>>>("mode_type_ids", Self::VT_MODE_TYPE_IDS, false)?
      .finish();
     Ok(())
   }
@@ -1978,6 +1988,7 @@ pub struct TypeArgs<'a> {
     pub dogma_attributes: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, TypeDogmaAttribute>>>,
     pub dogma_effects: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, TypeDogmaEffect>>>,
     pub fighter_abilities: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, TypeFighterAbility>>>,
+    pub mode_type_ids: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, i32>>>,
 }
 impl<'a> Default for TypeArgs<'a> {
   #[inline]
@@ -1999,6 +2010,7 @@ impl<'a> Default for TypeArgs<'a> {
       dogma_attributes: None,
       dogma_effects: None,
       fighter_abilities: None,
+      mode_type_ids: None,
     }
   }
 }
@@ -2073,6 +2085,10 @@ impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> TypeBuilder<'a, 'b, A> {
     self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Type::VT_FIGHTER_ABILITIES, fighter_abilities);
   }
   #[inline]
+  pub fn add_mode_type_ids(&mut self, mode_type_ids: flatbuffers::WIPOffset<flatbuffers::Vector<'b , i32>>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Type::VT_MODE_TYPE_IDS, mode_type_ids);
+  }
+  #[inline]
   pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> TypeBuilder<'a, 'b, A> {
     let start = _fbb.start_table();
     TypeBuilder {
@@ -2107,6 +2123,7 @@ impl core::fmt::Debug for Type<'_> {
       ds.field("dogma_attributes", &self.dogma_attributes());
       ds.field("dogma_effects", &self.dogma_effects());
       ds.field("fighter_abilities", &self.fighter_abilities());
+      ds.field("mode_type_ids", &self.mode_type_ids());
       ds.finish()
   }
 }
@@ -2130,6 +2147,7 @@ impl<'a> Group<'a> {
   pub const VT_NAME: flatbuffers::VOffsetT = 6;
   pub const VT_CATEGORY_ID: flatbuffers::VOffsetT = 8;
   pub const VT_PUBLISHED: flatbuffers::VOffsetT = 10;
+  pub const VT_TYPE_IDS: flatbuffers::VOffsetT = 12;
 
   #[inline]
   pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -2141,6 +2159,7 @@ impl<'a> Group<'a> {
     args: &'args GroupArgs<'args>
   ) -> flatbuffers::WIPOffset<Group<'bldr>> {
     let mut builder = GroupBuilder::new(_fbb);
+    if let Some(x) = args.type_ids { builder.add_type_ids(x); }
     builder.add_category_id(args.category_id);
     if let Some(x) = args.name { builder.add_name(x); }
     builder.add_id(args.id);
@@ -2187,6 +2206,13 @@ impl<'a> Group<'a> {
     // which contains a valid value in this slot
     unsafe { self._tab.get::<bool>(Group::VT_PUBLISHED, Some(false)).unwrap()}
   }
+  #[inline]
+  pub fn type_ids(&self) -> Option<flatbuffers::Vector<'a, i32>> {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, i32>>>(Group::VT_TYPE_IDS, None)}
+  }
 }
 
 impl flatbuffers::Verifiable for Group<'_> {
@@ -2200,6 +2226,7 @@ impl flatbuffers::Verifiable for Group<'_> {
      .visit_field::<flatbuffers::ForwardsUOffset<&str>>("name", Self::VT_NAME, true)?
      .visit_field::<i32>("category_id", Self::VT_CATEGORY_ID, false)?
      .visit_field::<bool>("published", Self::VT_PUBLISHED, false)?
+     .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, i32>>>("type_ids", Self::VT_TYPE_IDS, false)?
      .finish();
     Ok(())
   }
@@ -2209,6 +2236,7 @@ pub struct GroupArgs<'a> {
     pub name: Option<flatbuffers::WIPOffset<&'a str>>,
     pub category_id: i32,
     pub published: bool,
+    pub type_ids: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, i32>>>,
 }
 impl<'a> Default for GroupArgs<'a> {
   #[inline]
@@ -2218,6 +2246,7 @@ impl<'a> Default for GroupArgs<'a> {
       name: None, // required field
       category_id: 0,
       published: false,
+      type_ids: None,
     }
   }
 }
@@ -2244,6 +2273,10 @@ impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> GroupBuilder<'a, 'b, A> {
     self.fbb_.push_slot::<bool>(Group::VT_PUBLISHED, published, false);
   }
   #[inline]
+  pub fn add_type_ids(&mut self, type_ids: flatbuffers::WIPOffset<flatbuffers::Vector<'b , i32>>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Group::VT_TYPE_IDS, type_ids);
+  }
+  #[inline]
   pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> GroupBuilder<'a, 'b, A> {
     let start = _fbb.start_table();
     GroupBuilder {
@@ -2266,6 +2299,7 @@ impl core::fmt::Debug for Group<'_> {
       ds.field("name", &self.name());
       ds.field("category_id", &self.category_id());
       ds.field("published", &self.published());
+      ds.field("type_ids", &self.type_ids());
       ds.finish()
   }
 }
@@ -2430,6 +2464,7 @@ impl<'a> MarketGroup<'a> {
   pub const VT_ID: flatbuffers::VOffsetT = 4;
   pub const VT_NAME: flatbuffers::VOffsetT = 6;
   pub const VT_PARENT_GROUP_ID: flatbuffers::VOffsetT = 8;
+  pub const VT_TYPE_IDS: flatbuffers::VOffsetT = 10;
 
   #[inline]
   pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -2441,6 +2476,7 @@ impl<'a> MarketGroup<'a> {
     args: &'args MarketGroupArgs<'args>
   ) -> flatbuffers::WIPOffset<MarketGroup<'bldr>> {
     let mut builder = MarketGroupBuilder::new(_fbb);
+    if let Some(x) = args.type_ids { builder.add_type_ids(x); }
     builder.add_parent_group_id(args.parent_group_id);
     if let Some(x) = args.name { builder.add_name(x); }
     builder.add_id(args.id);
@@ -2479,6 +2515,13 @@ impl<'a> MarketGroup<'a> {
     // which contains a valid value in this slot
     unsafe { self._tab.get::<i32>(MarketGroup::VT_PARENT_GROUP_ID, Some(0)).unwrap()}
   }
+  #[inline]
+  pub fn type_ids(&self) -> Option<flatbuffers::Vector<'a, i32>> {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, i32>>>(MarketGroup::VT_TYPE_IDS, None)}
+  }
 }
 
 impl flatbuffers::Verifiable for MarketGroup<'_> {
@@ -2491,6 +2534,7 @@ impl flatbuffers::Verifiable for MarketGroup<'_> {
      .visit_field::<i32>("id", Self::VT_ID, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<&str>>("name", Self::VT_NAME, true)?
      .visit_field::<i32>("parent_group_id", Self::VT_PARENT_GROUP_ID, false)?
+     .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, i32>>>("type_ids", Self::VT_TYPE_IDS, false)?
      .finish();
     Ok(())
   }
@@ -2499,6 +2543,7 @@ pub struct MarketGroupArgs<'a> {
     pub id: i32,
     pub name: Option<flatbuffers::WIPOffset<&'a str>>,
     pub parent_group_id: i32,
+    pub type_ids: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, i32>>>,
 }
 impl<'a> Default for MarketGroupArgs<'a> {
   #[inline]
@@ -2507,6 +2552,7 @@ impl<'a> Default for MarketGroupArgs<'a> {
       id: 0,
       name: None, // required field
       parent_group_id: 0,
+      type_ids: None,
     }
   }
 }
@@ -2527,6 +2573,10 @@ impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> MarketGroupBuilder<'a, 'b, A> {
   #[inline]
   pub fn add_parent_group_id(&mut self, parent_group_id: i32) {
     self.fbb_.push_slot::<i32>(MarketGroup::VT_PARENT_GROUP_ID, parent_group_id, 0);
+  }
+  #[inline]
+  pub fn add_type_ids(&mut self, type_ids: flatbuffers::WIPOffset<flatbuffers::Vector<'b , i32>>) {
+    self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(MarketGroup::VT_TYPE_IDS, type_ids);
   }
   #[inline]
   pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> MarketGroupBuilder<'a, 'b, A> {
@@ -2550,6 +2600,7 @@ impl core::fmt::Debug for MarketGroup<'_> {
       ds.field("id", &self.id());
       ds.field("name", &self.name());
       ds.field("parent_group_id", &self.parent_group_id());
+      ds.field("type_ids", &self.type_ids());
       ds.finish()
   }
 }

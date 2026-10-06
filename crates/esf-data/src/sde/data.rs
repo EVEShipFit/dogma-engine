@@ -72,7 +72,6 @@ pub struct Sde<'a> {
     /// the borrowed names mean building it allocates one vector and no more.
     type_names: OnceLock<Vec<(&'a str, bool, i32)>>,
     attribute_names: OnceLock<Vec<(&'a str, bool, i32)>>,
-    group_types: OnceLock<HashMap<i32, Vec<i32>>>,
     base_mutaplasmids: OnceLock<HashMap<i32, Vec<i32>>>,
 }
 
@@ -108,7 +107,6 @@ impl<'a> Sde<'a> {
             effect_positions,
             type_names: OnceLock::new(),
             attribute_names: OnceLock::new(),
-            group_types: OnceLock::new(),
             base_mutaplasmids: OnceLock::new(),
         })
     }
@@ -121,21 +119,6 @@ impl<'a> Sde<'a> {
     /// Every type, lowest id first.
     pub fn types(&self) -> impl Iterator<Item = eve::Type<'a>> {
         self.sde.types().into_iter().flatten()
-    }
-
-    /// The ids of the types in a group, lowest first.
-    pub fn group_type_ids(&self, group_id: i32) -> &[i32] {
-        let group_types = self.group_types.get_or_init(|| {
-            let mut group_types: HashMap<i32, Vec<i32>> = HashMap::new();
-            for r#type in self.types() {
-                group_types
-                    .entry(r#type.group_id())
-                    .or_default()
-                    .push(r#type.id());
-            }
-            group_types
-        });
-        group_types.get(&group_id).map_or(&[], Vec::as_slice)
     }
 
     /// A type by id.

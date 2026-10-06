@@ -85,8 +85,12 @@ impl InfoEsf for InfoSde<'_> {
         self.sde.attribute_name_to_id_ignoring_case(name)
     }
 
-    fn group_type_ids(&self, group_id: i32) -> impl Iterator<Item = i32> {
-        self.sde.group_type_ids(group_id).iter().copied()
+    fn mode_type_ids(&self, hull: i32) -> impl Iterator<Item = i32> {
+        self.sde
+            .get_type(hull)
+            .and_then(|r#type| r#type.mode_type_ids())
+            .into_iter()
+            .flatten()
     }
 
     fn mutaplasmids_of(&self, base: i32) -> &[i32] {
