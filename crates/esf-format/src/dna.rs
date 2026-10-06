@@ -17,6 +17,10 @@ pub enum Error {
     NoShip,
     /// A type id or quantity is not a number.
     InvalidNumber(String),
+    /// No type has this id.
+    UnknownTypeId(i32),
+    /// The type exists, but is not a ship or structure.
+    NotAShip(i32),
 }
 
 impl fmt::Display for Error {
@@ -24,13 +28,17 @@ impl fmt::Display for Error {
         match self {
             Error::NoShip => write!(f, "the DNA has no ship"),
             Error::InvalidNumber(field) => write!(f, "{field} is not a number"),
+            Error::UnknownTypeId(type_id) => write!(f, "unknown type id {type_id}"),
+            Error::NotAShip(type_id) => write!(f, "type id {type_id} is not a ship"),
         }
     }
 }
 
 impl std::error::Error for Error {}
 
+const CATEGORY_SHIP: i32 = 6;
 const CATEGORY_DRONE: i32 = 18;
+const CATEGORY_STRUCTURE: i32 = 65;
 const CATEGORY_FIGHTER: i32 = 87;
 
 const SLOTS_PER_RACK: u8 = 8;
@@ -48,7 +56,7 @@ fn number<T: std::str::FromStr>(field: &str) -> Result<T, Error> {
 /// cargo. A module fills the next free slots of its rack, up to eight; drones
 /// and fighters go in their bay, and anything else in the cargo, charges and
 /// implants too. A DNA without its closing `::` was cut short, and its last
-/// item is left out, as are types the SDE does not know.
+/// item is left out.
 pub fn load_dna(info: &impl Info, dna: &str) -> Result<Fit, Error> {
     let dna = dna.trim();
     let dna = dna.strip_prefix("fitting:").unwrap_or(dna);
@@ -73,9 +81,9 @@ pub fn load_dna(info: &impl Info, dna: &str) -> Result<Fit, Error> {
         let type_id: i32 = number(type_id)?;
         let quantity: u32 = number(quantity)?;
 
-        let Some(r#type) = info.get_type(type_id) else {
-            continue;
-        };
+        let r#type = info
+            .get_type(type_id)
+            .ok_or(Error::UnknownTypeId(type_id))?;
 
         let rack = info
             .get_dogma_effects(type_id)
@@ -110,5 +118,11 @@ pub fn load_dna(info: &impl Info, dna: &str) -> Result<Fit, Error> {
     }
 
     let ship_type_id = ship_type_id.ok_or(Error::NoShip)?;
+    let ship = info
+        .get_type(ship_type_id)
+        .ok_or(Error::UnknownTypeId(ship_type_id))?;
+    if !matches!(ship.category_id(), CATEGORY_SHIP | CATEGORY_STRUCTURE) {
+        return Err(Error::NotAShip(ship_type_id));
+    }
     Ok(fit(None, ship_type_id, to_fit_items(&ByInfo(info), listed)))
 }
