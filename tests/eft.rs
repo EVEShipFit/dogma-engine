@@ -144,6 +144,15 @@ Hobgoblin II x2
   armorHP 110, damageMultiplier 2.2, falloff 2100, hp 250, maxRange 2200, maxVelocity 3500, shieldCapacity 62, trackingSpeed 2.3
 ";
 
+#[test]
+fn reads_a_stack_between_modules() {
+    let fit = load_eft("[Tristan, Stacks]\nDamage Control II\nHobgoblin II x1\n").unwrap();
+
+    assert_eq!(fit.items[0].slot, Slot::Low(0));
+    assert_eq!(fit.items[1].slot, Slot::DroneBay);
+    assert_eq!(fit.items[1].quantity, 1);
+}
+
 /* Which of the mutaplasmids of an item was used cannot be told from the fit,
  * so the export answers one that could have rolled these values. */
 #[test]
