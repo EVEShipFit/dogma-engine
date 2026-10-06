@@ -103,7 +103,8 @@ def load_dna(dna: str) -> Fit:
 
     Raises:
         RuntimeError: the SDE is not loaded.
-        ValueError: the DNA has no ship, or a type or quantity is not a number.
+        ValueError: the DNA has no ship, its ship is not a ship or structure,
+            a type or quantity is not a number, or a type is unknown.
     """
 
 def load_link(version: str, payload: str) -> Fit:

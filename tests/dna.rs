@@ -108,9 +108,38 @@ fn fills_a_rack_up_to_eight_slots() {
 }
 
 #[test]
-fn skips_an_unknown_type() {
+fn rejects_an_unknown_type() {
     let dna = format!("{}:999999999;1::", id("Rifter"));
-    assert!(load_dna(&info(), &dna).unwrap().items.is_empty());
+    assert_eq!(
+        load_dna(&info(), &dna).unwrap_err(),
+        Error::UnknownTypeId(999999999)
+    );
+}
+
+#[test]
+fn rejects_an_unknown_ship() {
+    assert_eq!(
+        load_dna(&info(), "999999999::").unwrap_err(),
+        Error::UnknownTypeId(999999999)
+    );
+}
+
+#[test]
+fn rejects_a_ship_that_is_not_a_ship() {
+    let dna = dna("Damage Control II", &[]);
+    assert_eq!(
+        load_dna(&info(), &dna).unwrap_err(),
+        Error::NotAShip(id("Damage Control II"))
+    );
+}
+
+#[test]
+fn takes_a_structure() {
+    let dna = dna("Astrahus", &[]);
+    assert_eq!(
+        load_dna(&info(), &dna).unwrap().ship.type_id,
+        id("Astrahus")
+    );
 }
 
 #[test]
