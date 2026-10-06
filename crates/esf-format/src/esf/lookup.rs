@@ -140,23 +140,8 @@ impl<'a, I: InfoEsf> Lookup<'a, I> {
             })
     }
 
-    /// The hull a tactical mode belongs to.
-    fn mode_hull(&self, mode: i32) -> Option<i32> {
-        let words: Vec<&str> = self.name(mode).split(' ').collect();
-        (1..words.len()).rev().find_map(|count| {
-            self.info
-                .type_name_to_id(&words[..count].join(" "))
-                .filter(|hull| self.category(*hull) == CATEGORY_SHIP)
-        })
-    }
-
     pub fn modes(&self, hull: i32) -> Vec<i32> {
-        let prefix = format!("{} ", self.name(hull));
-        self.info
-            .group_type_ids(GROUP_SHIP_MODIFIERS)
-            .filter(|mode| self.name(*mode).starts_with(&prefix))
-            .filter(|mode| self.mode_hull(*mode) == Some(hull))
-            .collect()
+        self.info.mode_type_ids(hull).collect()
     }
 
     /// A tactical mode's name without the hull's name.
