@@ -230,6 +230,7 @@ npm ci
 ```
 
 - `sde.dat` holds everything needed to calculate a fit.
+  Its major version must be at least `MIN_SDE_VERSION`; an older one is refused on load.
 - `names.dat` holds the type names in the other seven languages EVE supports.
   It is optional.
 

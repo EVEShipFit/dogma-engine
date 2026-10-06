@@ -16,7 +16,7 @@ mod data;
 mod info;
 mod names;
 
-pub use data::Sde;
+pub use data::{MIN_SDE_VERSION, Sde};
 pub use info::{InfoNameSde, InfoSde};
 pub use names::Names;
 

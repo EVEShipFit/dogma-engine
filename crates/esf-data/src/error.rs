@@ -18,6 +18,13 @@ pub enum Error {
         /// The build of the names file.
         names: i32,
     },
+    /// The SDE is older than this dogma-engine needs.
+    SdeTooOld {
+        /// The major version of the SDE.
+        found: i32,
+        /// The lowest major version this dogma-engine reads.
+        needed: i32,
+    },
 }
 
 impl fmt::Display for Error {
@@ -28,6 +35,12 @@ impl fmt::Display for Error {
             Error::BuildMismatch { sde, names } => {
                 write!(f, "SDE is build {sde} but the names are build {names}")
             }
+            Error::SdeTooOld { found, needed } => {
+                write!(
+                    f,
+                    "SDE is major version {found} but at least {needed} is needed"
+                )
+            }
         }
     }
 }
@@ -36,7 +49,7 @@ impl std::error::Error for Error {
     fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
         match self {
             Error::InvalidSde(error) | Error::InvalidNames(error) => Some(error),
-            Error::BuildMismatch { .. } => None,
+            Error::BuildMismatch { .. } | Error::SdeTooOld { .. } => None,
         }
     }
 }

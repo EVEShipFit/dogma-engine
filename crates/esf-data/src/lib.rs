@@ -14,7 +14,7 @@ mod sde;
 pub use error::Error;
 pub use fold::{fold_case, fold_char, sort_by_text};
 pub use info::{Info, InfoEsf, InfoExport, InfoName};
-pub use sde::{InfoNameSde, InfoSde, Names, Sde, eve};
+pub use sde::{InfoNameSde, InfoSde, MIN_SDE_VERSION, Names, Sde, eve};
 
 /// The traits hand out flatbuffers types; implementing them needs this exact
 /// version.
