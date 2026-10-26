@@ -3,7 +3,8 @@ source: tests/harness/case.rs
 expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Omen
-ship/maxTargetsCharacter                     = 0.000000
+ship/maxTargetsCharacter                     = 2.000000
+ship/maxTargets                              = 2.000000
 ship/scanStrength                            = 15.000000
 ship/passiveShieldEffectiveRechargeRate      = 3.783251
 ship/passiveShieldRechargeRate               = 2.400000

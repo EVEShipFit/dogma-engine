@@ -4,7 +4,8 @@ expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Rifter
 ship/capacitorStablePercentage               = 0.000000
-ship/maxTargetsCharacter                     = 0.000000
+ship/maxTargetsCharacter                     = 2.000000
+ship/maxTargets                              = 2.000000
 ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 8.000000
 ship/passiveShieldEffectiveRechargeRate      = 1.986207

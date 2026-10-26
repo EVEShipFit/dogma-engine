@@ -138,8 +138,7 @@ impl PassOne {
             mode.set_attributes(info);
         }
 
-        /* This carries no attributes, but pass 2 still wants its category. */
-        objects.char.set_type_ids(info);
+        objects.char.set_attributes(info);
 
         /* What is aimed at the fit brings its own values; the type behind it
          * is only read for the category the stacking penalty needs. */
