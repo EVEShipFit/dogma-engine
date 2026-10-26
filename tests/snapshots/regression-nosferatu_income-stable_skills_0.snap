@@ -4,7 +4,8 @@ expression: "calculate_fit(text, skills, edit)"
 ---
 ship/type                                    = Punisher
 ship/capacitorStablePercentage               = 70.823170
-ship/maxTargetsCharacter                     = 0.000000
+ship/maxTargetsCharacter                     = 2.000000
+ship/maxTargets                              = 2.000000
 ship/upgradeFree                             = 400.000000
 ship/scanStrength                            = 10.000000
 ship/passiveShieldEffectiveRechargeRate      = 1.931034
