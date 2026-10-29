@@ -225,6 +225,10 @@ impl Item {
         matches!(self.slot, Some(Slot::Implant(_) | Slot::Booster(_)))
     }
 
+    pub fn is_owner_modifiable(&self) -> bool {
+        self.is_fighter() || self.slot == Some(Slot::DroneBay)
+    }
+
     pub fn is_calculated(&self) -> bool {
         self.is_in_ship()
             || self.is_fighter()

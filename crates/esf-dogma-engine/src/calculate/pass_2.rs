@@ -582,14 +582,9 @@ impl Pass for PassTwo {
                         .enumerate()
                         .filter(|(_, (item, _))| !location_only || in_location(item))
                     {
-                        /* An owner modifier reaches what the character owns
-                         * outside the ship's racks: drones, fighters, and the
-                         * charges in its modules. A fitted module that
-                         * requires the skill is not one of them; otherwise a
-                         * drone damage bonus would also land on the hybrid
-                         * damage of a Federation Navy 'Argyreos' Magnetic
-                         * Field Stabilizer, which requires Drones. */
-                        if skills.contains(&skill_type_id) && (location_only || !item.is_module()) {
+                        if skills.contains(&skill_type_id)
+                            && (location_only || item.is_owner_modifiable())
+                        {
                             item.add_effect(
                                 info,
                                 Object::Item(index),
