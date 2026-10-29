@@ -491,7 +491,6 @@ impl Pass for PassTwo {
             skill.collect_effects(info, Object::Skill(index), structure_fit, &mut effects);
         }
 
-        let ship_skills = objects.ship.required_skills();
         let item_skills: Vec<_> = objects
             .items
             .iter()
@@ -564,16 +563,6 @@ impl Pass for PassTwo {
                         true => item.is_on_char(),
                         false => item.is_in_ship(),
                     };
-
-                    if !char_location && ship_skills.contains(&skill_type_id) {
-                        objects.ship.add_effect(
-                            info,
-                            Object::Ship,
-                            effect.target_attribute_id,
-                            category_id,
-                            &effect,
-                        );
-                    }
 
                     for (index, (item, (skills, charge_skills))) in objects
                         .items
