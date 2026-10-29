@@ -203,10 +203,8 @@ medium_4/speedFactor       = 156.250000
 medium_4/duration          = 7500.000000
 medium_4/heatDamage        = 4.275000
 
-low_1-2/type             = Drone Damage Amplifier II
-low_1-2/state            = online
-low_1-2/hp               = 75.000000
-low_1-2/damageMultiplier = 3.194312
+low_1-2/type  = Drone Damage Amplifier II
+low_1-2/state = online
 
 low_3/type              = Medium Armor Repairer II
 low_3/state             = active

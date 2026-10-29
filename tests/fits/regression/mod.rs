@@ -17,6 +17,7 @@ mod mutations;
 mod no_charge;
 mod no_cycle_time;
 mod nosferatu_income;
+mod owner_bonus_not_on_modules;
 mod projection;
 mod quantity_with_x_in_name;
 mod reactive_armor_hardener;

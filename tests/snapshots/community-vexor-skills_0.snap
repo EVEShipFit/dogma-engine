@@ -134,9 +134,8 @@ medium_4/state             = active
 medium_4/capacitorPeakLoad = 8.000000
 medium_4/cycleTime         = 10000.000000
 
-low_1-2/type             = Drone Damage Amplifier II
-low_1-2/state            = online
-low_1-2/damageMultiplier = 1.419694
+low_1-2/type  = Drone Damage Amplifier II
+low_1-2/state = online
 
 low_3/type              = Medium Armor Repairer II
 low_3/state             = active

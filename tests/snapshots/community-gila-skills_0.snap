@@ -141,9 +141,8 @@ medium_6/shieldBonus       = 215.975000
 medium_6/duration          = 1734.000000
 medium_6/heatDamage        = 2.000000
 
-low_1-3/type             = Drone Damage Amplifier II
-low_1-3/state            = online
-low_1-3/damageMultiplier = 1.585755
+low_1-3/type  = Drone Damage Amplifier II
+low_1-3/state = online
 
 rig_1-2/type  = Medium Core Defense Operational Solidifier I
 rig_1-2/state = online

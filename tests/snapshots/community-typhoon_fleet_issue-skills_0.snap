@@ -138,9 +138,8 @@ medium_5/cycleTime         = 10000.000000
 low_1-3/type  = Ballistic Control System II
 low_1-3/state = online
 
-low_4-5/type             = Drone Damage Amplifier II
-low_4-5/state            = online
-low_4-5/damageMultiplier = 1.419694
+low_4-5/type  = Drone Damage Amplifier II
+low_4-5/state = online
 
 low_6/type  = Ballistic Control System II
 low_6/state = online
