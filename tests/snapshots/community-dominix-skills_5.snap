@@ -165,11 +165,8 @@ medium_5/capacitorPeakLoad = 1.200000
 medium_5/cycleTime         = 10000.000000
 medium_5/heatDamage        = 2.550000
 
-low_1-4/type             = Drone Damage Amplifier II
-low_1-4/state            = online
-low_1-4/hp               = 75.000000
-low_1-4/damageMultiplier = 3.774911
-low_1-4/falloff          = 1.569332
+low_1-4/type  = Drone Damage Amplifier II
+low_1-4/state = online
 
 low_5-7/type  = Omnidirectional Tracking Enhancer II
 low_5-7/state = online

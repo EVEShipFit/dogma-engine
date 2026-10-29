@@ -582,7 +582,9 @@ impl Pass for PassTwo {
                         .enumerate()
                         .filter(|(_, (item, _))| !location_only || in_location(item))
                     {
-                        if skills.contains(&skill_type_id) {
+                        if skills.contains(&skill_type_id)
+                            && (location_only || item.is_owner_modifiable())
+                        {
                             item.add_effect(
                                 info,
                                 Object::Item(index),
