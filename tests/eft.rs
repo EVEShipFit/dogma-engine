@@ -1,11 +1,9 @@
 //! What an EFT export holds, and what it drops.
 //!
-//! A fit that came from an EFT has to come back out as the same text; the
-//! cases below each add one thing EFT writes in its own way.
+//! A fit that came from an EFT as EVE writes it has to come back out as the
+//! same text.
 
-use std::collections::BTreeMap;
-
-use esf_dogma_engine::{Fit, Mutation, Slot, State};
+use esf_dogma_engine::{Slot, State};
 use esf_format::eft::Error;
 
 use crate::harness::{load_eft, save_eft};
@@ -110,21 +108,27 @@ fn only_writes_a_state_a_module_can_reach() {
     }
 }
 
+/* EVE skips a line with any state but "/offline". */
 #[test]
-fn writes_a_state_a_module_is_not_in_by_itself() {
-    let eft = "[Rifter, States]\n\n1MN Afterburner II\n";
+fn writes_no_state_but_offline() {
+    let eft = "[Rifter, States]\n1MN Afterburner II\n";
     let mut fit = load_eft(eft).unwrap();
 
-    fit.items[0].state = State::Online;
-    assert_eq!(
-        save_eft(&fit).unwrap(),
-        "[Rifter, States]\n1MN Afterburner II /online\n"
-    );
+    for state in [State::Online, State::Overload] {
+        fit.items[0].state = state;
+        assert_eq!(save_eft(&fit).unwrap(), eft);
+    }
+}
 
-    fit.items[0].state = State::Overload;
+/* EVE writes no line for an empty subsystem slot. */
+#[test]
+fn writes_no_empty_subsystem_slot() {
+    let mut fit = load_eft(EVERYTHING).unwrap();
+    fit.items.retain(|item| item.slot != Slot::Subsystem(0));
+
     assert_eq!(
         save_eft(&fit).unwrap(),
-        "[Rifter, States]\n1MN Afterburner II /overload\n"
+        EVERYTHING.replace("Loki Defensive - Augmented Durability\n", "")
     );
 }
 
@@ -153,14 +157,15 @@ fn reads_a_stack_between_modules() {
     assert_eq!(fit.items[1].quantity, 1);
 }
 
-/* Which of the mutaplasmids of an item was used cannot be told from the fit,
- * so the export answers one that could have rolled these values. */
+/* EVE cannot import a mutation, so it is written as the type it mutated. */
 #[test]
-fn writes_a_mutation_that_rolls_the_same_values() {
+fn writes_a_mutated_item_as_its_base_type() {
     let fit = load_eft(MUTATIONS).unwrap();
-    let again = load_eft(&save_eft(&fit).unwrap()).unwrap();
 
-    assert_eq!(rolls(&again), rolls(&fit));
+    assert_eq!(
+        save_eft(&fit).unwrap(),
+        "[Tristan, Mutations]\nWarp Scrambler II\n\nHobgoblin II x1\nHobgoblin II x2\n"
+    );
 }
 
 #[test]
@@ -172,30 +177,6 @@ fn rejects_a_mutation_missing_a_roll() {
             mutation: "[1] Warp Scrambler II".to_string(),
             attribute_id: 6,
         }
-    );
-}
-
-/* Mutations do not compare, so the type and what it rolled stand in for them. */
-fn rolls(fit: &Fit) -> Vec<String> {
-    fit.items
-        .iter()
-        .map(|item| format!("{} {:?}", item.type_id, item.mutation))
-        .collect()
-}
-
-/* Nothing names a mutaplasmid that rolls this, so the mutation is dropped and
- * the item written as what it mutated into. */
-#[test]
-fn drops_a_mutation_without_a_mutaplasmid() {
-    let mut fit = load_eft("[Rifter, Mutations]\n\nWarp Scrambler II\n").unwrap();
-    fit.items[0].mutation = Some(Mutation {
-        base: 587,
-        attributes: BTreeMap::new(),
-    });
-
-    assert_eq!(
-        save_eft(&fit).unwrap(),
-        "[Rifter, Mutations]\nWarp Scrambler II\n"
     );
 }
 
