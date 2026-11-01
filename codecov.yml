@@ -1,5 +1,7 @@
 ignore:
   - "crates/esf-data/src/sde/*_generated.rs"
+  - "crates/esf-python/**"
+  - "crates/esf-wasm/**"
 
 coverage:
   status:
