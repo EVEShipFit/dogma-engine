@@ -145,25 +145,12 @@ character/reactionSlotLimit                        = 11.000000
 
 incoming_effect_1/type               = Heavy Armor Maintenance Bot I
 incoming_effect_1/effect             = remoteArmorRepairRate
+incoming_effect_1/quantity           = 3
 incoming_effect_1/armorRepairRate    = 15.000000
 incoming_effect_1/maxRange           = 12500.000000
 incoming_effect_1/duration           = 5000.000000
 incoming_effect_1/armorDamageAmount  = 75.000000
 incoming_effect_1/remoteResistanceID = 2116.000000
-incoming_effect_2/type               = Heavy Armor Maintenance Bot I
-incoming_effect_2/effect             = remoteArmorRepairRate
-incoming_effect_2/armorRepairRate    = 15.000000
-incoming_effect_2/maxRange           = 12500.000000
-incoming_effect_2/duration           = 5000.000000
-incoming_effect_2/armorDamageAmount  = 75.000000
-incoming_effect_2/remoteResistanceID = 2116.000000
-incoming_effect_3/type               = Heavy Armor Maintenance Bot I
-incoming_effect_3/effect             = remoteArmorRepairRate
-incoming_effect_3/armorRepairRate    = 15.000000
-incoming_effect_3/maxRange           = 12500.000000
-incoming_effect_3/duration           = 5000.000000
-incoming_effect_3/armorDamageAmount  = 75.000000
-incoming_effect_3/remoteResistanceID = 2116.000000
 
 high_1/type                         = 425mm AutoCannon II
 high_1/state                        = active

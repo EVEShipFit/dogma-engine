@@ -67,19 +67,19 @@ fn collect(info: &impl Info, item: &Item, aims: impl Fn(&eve::DogmaEffect) -> bo
         let Some(effect) = info.get_dogma_effect(effect_id) else {
             continue;
         };
-        if !get_effect_category(effect.effect_category()).runs_at(item.state) || !aims(&effect) {
+        if item.quantity == 0
+            || !get_effect_category(effect.effect_category()).runs_at(item.state)
+            || !aims(&effect)
+        {
             continue;
         }
 
-        let projected = ProjectedEffect {
+        projection.effects.push(ProjectedEffect {
             type_id: item.type_id,
             effect_id,
             attributes: attributes_read(item, &effect),
-        };
-
-        projection
-            .effects
-            .extend(std::iter::repeat_n(projected, item.quantity as usize));
+            quantity: item.quantity,
+        });
     }
 
     projection

@@ -129,7 +129,7 @@ fn collect_projected_effects(
             },
             modifier: effect_modifier,
             operator,
-            source_quantity: 1,
+            source_quantity: item.quantity,
             target,
             target_attribute_id: modifier.modified_attribute_id(),
             resistance,

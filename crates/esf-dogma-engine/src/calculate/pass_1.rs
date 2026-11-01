@@ -145,6 +145,7 @@ impl PassOne {
          * is only read for the category the stacking penalty needs. */
         for projected in &fit.incoming.effects {
             let mut item = Item::new_projected(projected.type_id);
+            item.quantity = projected.quantity;
 
             item.set_type_ids(info);
             for (attribute_id, value) in &projected.attributes {
