@@ -30,3 +30,4 @@ mod structure_bonus;
 mod structure_stats;
 mod subsystem_online;
 mod tactical_modes;
+mod zero_cycle_time;

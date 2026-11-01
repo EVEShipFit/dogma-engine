@@ -56,6 +56,7 @@ pub fn attribute_capacitor_depletes_in(info: &impl Info, objects: &mut Objects) 
 
         /* Find all modules consuming or bringing in capacitor. */
         let mut modules = Vec::new();
+        let mut instant = false;
         for item in &objects.items {
             if !item.is_module() || !item.state.is_active() {
                 continue;
@@ -84,6 +85,11 @@ pub fn attribute_capacitor_depletes_in(info: &impl Info, objects: &mut Objects) 
                 .get()
                 .unwrap();
 
+            if duration <= 0.0 {
+                instant |= capacitor_peak_load != 0.0;
+                continue;
+            }
+
             modules.push(Module {
                 capacitor_need: capacitor_peak_load * duration / 1000.0 * item.quantity as f64,
                 duration,
@@ -105,7 +111,9 @@ pub fn attribute_capacitor_depletes_in(info: &impl Info, objects: &mut Objects) 
             .unwrap_or(0.0)
             - module_load;
 
-        if !modules.is_empty() || projected_load > 0.0 {
+        if instant {
+            depletes_in = 0.0;
+        } else if !modules.is_empty() || projected_load > 0.0 {
             let capacitor_capacity = attr_capacitor_capacity.value.get().unwrap();
             let recharge_rate = attr_recharge_rate.value.get().unwrap();
 
@@ -142,7 +150,9 @@ pub fn attribute_capacitor_depletes_in(info: &impl Info, objects: &mut Objects) 
                 }
 
                 /* Clamped after the whole step, so module order does not matter. */
-                capacitor = f64::min(capacitor, capacitor_capacity);
+                if capacitor > capacitor_capacity {
+                    capacitor = capacitor_capacity;
+                }
             }
 
             depletes_in = time_last;
