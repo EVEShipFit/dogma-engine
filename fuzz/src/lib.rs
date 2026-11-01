@@ -96,6 +96,9 @@ pub fn check_loaded(fit: Fit) {
 /// A mutation override above this may overflow to infinity.
 const HUGE_OVERRIDE: f64 = 1e15;
 
+/// A mutation override below this, zero included, may divide to infinity.
+const TINY_OVERRIDE: f64 = 1e-15;
+
 /// Calculates a fit, panics on a NaN or infinite number, and writes it back
 /// out to every format.
 pub fn check(fit: &Fit) {
@@ -114,13 +117,13 @@ fn calculate_and_save(fit: &Fit, finite: bool) {
         validate: true,
     };
     let calculation = calculate(&info, fit, &options);
-    let huge_override = fit
+    let extreme_override = fit
         .items
         .iter()
         .filter_map(|item| item.mutation.as_ref())
         .flat_map(|mutation| mutation.attributes.values())
-        .any(|value| value.abs() > HUGE_OVERRIDE);
-    if finite && !huge_override {
+        .any(|value| !(TINY_OVERRIDE..=HUGE_OVERRIDE).contains(&value.abs()));
+    if finite && !extreme_override {
         check_finite(&calculation, fit);
     }
 

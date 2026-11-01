@@ -176,7 +176,9 @@ fn mutated(u: &mut Unstructured, type_id: i32) -> Result<(i32, Mutation)> {
     let mutaplasmid = u.choose(&pools.mutaplasmids)?;
     let mut attributes = BTreeMap::new();
     for &(attribute_id, min, max) in &mutaplasmid.rolls {
-        if let Some(base) = attribute_value(mutaplasmid.base, attribute_id) {
+        if let Some(base) = attribute_value(mutaplasmid.base, attribute_id)
+            && base != 0.0
+        {
             attributes.insert(attribute_id, base * float(u, min, max)?);
         }
     }
@@ -209,6 +211,7 @@ fn attributes_of(u: &mut Unstructured, type_id: i32) -> Result<BTreeMap<i32, f64
             attributes
                 .iter()
                 .map(|attribute| (attribute.attribute_id(), f64::from(attribute.value())))
+                .filter(|&(_, value)| value != 0.0)
                 .collect()
         })
         .unwrap_or_default();
