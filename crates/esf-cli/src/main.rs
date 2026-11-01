@@ -1,5 +1,5 @@
 use std::collections::BTreeMap;
-use std::io::{IsTerminal, Read, Write};
+use std::io::{ErrorKind, IsTerminal, Read, Write};
 use std::path::{Path, PathBuf};
 
 use clap::{Parser, ValueEnum};
@@ -194,6 +194,16 @@ fn parse_reactive_armor(value: &str) -> Result<ReactiveArmor, String> {
 fn fail(message: String) -> ! {
     eprintln!("error: {message}");
     std::process::exit(1);
+}
+
+/// Write to stdout; a reader that stops early, like `head`, is not an error.
+fn emit(write: impl FnOnce(&mut dyn Write) -> std::io::Result<()>) {
+    let mut out = std::io::stdout().lock();
+    match write(&mut out).and_then(|()| out.flush()) {
+        Ok(()) => {}
+        Err(error) if error.kind() == ErrorKind::BrokenPipe => {}
+        Err(error) => fail(format!("stdout: {error}")),
+    }
 }
 
 fn read(path: &Path) -> Vec<u8> {
@@ -447,7 +457,12 @@ fn violation_rule(info: &InfoSde, rule: Rule) -> String {
     }
 }
 
-fn print_violations(info: &InfoSde, fit: &Fit, violations: &[Violation]) {
+fn print_violations(
+    out: &mut dyn Write,
+    info: &InfoSde,
+    fit: &Fit,
+    violations: &[Violation],
+) -> std::io::Result<()> {
     let targets: Vec<String> = violations
         .iter()
         .map(|violation| violation_target(info, fit, violation.target))
@@ -455,14 +470,22 @@ fn print_violations(info: &InfoSde, fit: &Fit, violations: &[Violation]) {
     let width = targets.iter().map(String::len).max().unwrap_or(0);
 
     for (target, violation) in targets.iter().zip(violations) {
-        println!(
+        writeln!(
+            out,
             "  {target:width$}  {}",
             violation_rule(info, violation.rule)
-        );
+        )?;
     }
+    Ok(())
 }
 
-fn print_table(info: &InfoSde, fit: &Fit, calculation: &Calculation, hide_empty: bool) {
+fn print_table(
+    out: &mut dyn Write,
+    info: &InfoSde,
+    fit: &Fit,
+    calculation: &Calculation,
+    hide_empty: bool,
+) -> std::io::Result<()> {
     let mut groups: Vec<(String, &ItemResult)> = Vec::new();
 
     groups.push((
@@ -506,7 +529,12 @@ fn print_table(info: &InfoSde, fit: &Fit, calculation: &Calculation, hide_empty:
 
     /* Above the ship, as they are why some of its numbers moved. */
     for buff in &calculation.buffs {
-        println!("== buff: {} ({:.4})", buff_name(info, buff.id), buff.value);
+        writeln!(
+            out,
+            "== buff: {} ({:.4})",
+            buff_name(info, buff.id),
+            buff.value
+        )?;
     }
 
     for (header, result) in groups {
@@ -514,14 +542,15 @@ fn print_table(info: &InfoSde, fit: &Fit, calculation: &Calculation, hide_empty:
             continue;
         }
 
-        println!("== {header}");
+        writeln!(out, "== {header}")?;
         for (attribute_id, attribute) in &result.attributes {
-            println!(
+            writeln!(
+                out,
                 "  {:width$}  {:>14.4} -> {:>14.4}",
                 attribute_name(info, *attribute_id),
                 attribute.base,
                 attribute.value
-            );
+            )?;
 
             for source in &attribute.sources {
                 let operator = serde_json::to_value(source.operator).unwrap();
@@ -536,7 +565,8 @@ fn print_table(info: &InfoSde, fit: &Fit, calculation: &Calculation, hide_empty:
                     true => "",
                     false => "  (not applied)",
                 };
-                println!(
+                writeln!(
+                    out,
                     "      {}{}: {} {:.4}{}{}",
                     source_label(info, fit, source.from),
                     quantity,
@@ -544,10 +574,11 @@ fn print_table(info: &InfoSde, fit: &Fit, calculation: &Calculation, hide_empty:
                     source.value,
                     penalty,
                     applied
-                );
+                )?;
             }
         }
     }
+    Ok(())
 }
 
 fn run_esf(info: &InfoSde, action: EsfAction, input: &[u8]) {
@@ -558,7 +589,7 @@ fn run_esf(info: &InfoSde, action: EsfAction, input: &[u8]) {
         EsfAction::Binary => esf::save_esf_binary(info, &fits),
     };
     let output = output.unwrap_or_else(|error| fail(error.to_string()));
-    std::io::stdout().write_all(&output).unwrap();
+    emit(|out| out.write_all(&output));
 }
 
 pub fn main() {
@@ -646,7 +677,7 @@ pub fn main() {
     }
     if args.eft {
         let eft = eft::save_eft(&info, &fit).unwrap_or_else(|error| fail(error.to_string()));
-        print!("{eft}");
+        emit(|out| out.write_all(eft.as_bytes()));
         return;
     }
 
@@ -664,10 +695,10 @@ pub fn main() {
         });
 
     if let Some(violations) = &calculation.violations {
-        match output {
-            Output::Json => println!("{}", serde_json::to_string(violations).unwrap()),
-            Output::Table => print_violations(&info, &fit, violations),
-        }
+        emit(|out| match output {
+            Output::Json => writeln!(out, "{}", serde_json::to_string(violations).unwrap()),
+            Output::Table => print_violations(out, &info, &fit, violations),
+        });
         return;
     }
 
@@ -678,8 +709,8 @@ pub fn main() {
     };
     filter.apply_all(&mut calculation);
 
-    match output {
-        Output::Json => println!("{}", serde_json::to_string(&calculation).unwrap()),
-        Output::Table => print_table(&info, &fit, &calculation, filter.is_active()),
-    }
+    emit(|out| match output {
+        Output::Json => writeln!(out, "{}", serde_json::to_string(&calculation).unwrap()),
+        Output::Table => print_table(out, &info, &fit, &calculation, filter.is_active()),
+    });
 }
