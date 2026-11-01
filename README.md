@@ -32,7 +32,6 @@ All identifiers are those from the SDE.
 - `name` (optional): name of the fit.
 - `ship`: the ship being fitted.
   - `type_id`: its type.
-    _Anything other than a ship, structure or container is not calculated: attributes keep their base values, and validation fails with `not_a_hull`._
   - `mode` (optional): type ID of the active mode, for ships that have modes.
     _Whether the mode belongs to the ship is not checked._
 - `items`: everything fitted or carried. Each item has:
