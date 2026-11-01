@@ -154,6 +154,7 @@ data class ProjectedEffect(
     val typeId: Int,
     val effectId: Int,
     val attributes: Map<Int, Double> = emptyMap(),
+    val quantity: Int = 1,
 )
 
 /** What one fit hands to another. */
