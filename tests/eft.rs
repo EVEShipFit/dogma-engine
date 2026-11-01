@@ -190,3 +190,48 @@ fn writes_a_fighter_in_a_tube_as_one_in_the_bay() {
     assert_eq!(again.items[0].slot, Slot::FighterBay);
     assert_eq!(again.items[0].quantity, 6);
 }
+
+#[test]
+fn explains_each_error() {
+    let cases = [
+        (Error::Empty, "empty EFT"),
+        (Error::InvalidHeader, "invalid EFT header"),
+        (
+            Error::InvalidEmptySlot("[Empty Odd slot]".to_string()),
+            "invalid empty slot [Empty Odd slot]",
+        ),
+        (Error::UnknownType("Odd".to_string()), "unknown type Odd"),
+        (Error::UnknownTypeId(1), "unknown type id 1"),
+        (
+            Error::NoSlot("Odd".to_string()),
+            "Odd does not fit in any slot",
+        ),
+        (Error::UnknownMutation(3), "unknown mutation [3]"),
+        (
+            Error::InvalidMutation("[1]".to_string()),
+            "invalid mutation [1]",
+        ),
+        (
+            Error::UnknownAttribute("odd".to_string()),
+            "unknown attribute odd",
+        ),
+        (
+            Error::MissingRoll {
+                mutation: "[1] Warp Scrambler II".to_string(),
+                attribute_id: 20,
+            },
+            "[1] Warp Scrambler II has no roll for attribute 20",
+        ),
+        (
+            Error::NotMutable {
+                item: "Rifter".to_string(),
+                mutaplasmid: "Odd Mutaplasmid".to_string(),
+            },
+            "Odd Mutaplasmid does not apply to Rifter",
+        ),
+    ];
+
+    for (error, message) in cases {
+        assert_eq!(error.to_string(), message);
+    }
+}
