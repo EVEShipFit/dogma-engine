@@ -2,6 +2,7 @@ package fit.eveship.dogma
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
@@ -12,6 +13,7 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.jsonPrimitive
 
 /** The state of an item, lowest first. */
@@ -234,6 +236,16 @@ sealed interface SourceRef {
     @Serializable @SerialName("buff") data class Buff(val id: Int) : SourceRef
 }
 
+/** Reads a JSON `null` as NaN, which is how the engine writes a non-finite value. */
+internal object NonFiniteDouble : KSerializer<Double> {
+    override val descriptor: SerialDescriptor = Double.serializer().descriptor
+
+    override fun serialize(encoder: Encoder, value: Double) = encoder.encodeDouble(value)
+
+    override fun deserialize(decoder: Decoder): Double =
+        (decoder as JsonDecoder).decodeJsonElement().jsonPrimitive.doubleOrNull ?: Double.NaN
+}
+
 /** One modifier on an attribute, and where it came from. */
 @Serializable
 data class Source(
@@ -241,7 +253,7 @@ data class Source(
     val effectId: Int?,
     val sourceAttributeId: Int?,
     val operator: EffectOperator,
-    val value: Double,
+    @Serializable(with = NonFiniteDouble::class) val value: Double,
     val quantity: Int,
     val penalty: Double?,
     val applied: Boolean,
@@ -250,8 +262,8 @@ data class Source(
 /** One attribute, before and after the effects on it. */
 @Serializable
 data class AttributeValue(
-    val base: Double,
-    val value: Double,
+    @Serializable(with = NonFiniteDouble::class) val base: Double,
+    @Serializable(with = NonFiniteDouble::class) val value: Double,
     val sources: List<Source> = emptyList(),
 )
 

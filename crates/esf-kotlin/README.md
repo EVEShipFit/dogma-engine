@@ -6,7 +6,7 @@ The input are several data-files provided by EVE Online, together with a ship fi
 The output are all the Dogma attributes of the ship, its items and the character.
 
 The engine is written in Rust; this package wraps it for the JVM, so every lookup happens inside Rust.
-The JAR carries the native library for Linux, macOS and Windows, on x86_64 and aarch64.
+The JAR carries the native library for Linux and macOS on x86_64 and aarch64, and Windows on x86_64.
 
 ## Usage
 

@@ -202,12 +202,11 @@ class DogmaEngineTest {
     }
 
     @Test
-    fun postLoadSetsStates() {
-        val fit = DogmaEngine.loadEft("[Rifter, My Rifter]\n200mm AutoCannon I\n")
+    fun postLoadOnlinesACloak() {
+        val fit = DogmaEngine.loadEft("[Rifter, Cloak]\n\n\nPrototype Cloaking Device I\n")
+        assertEquals(State.ACTIVE, fit.items[0].state)
 
-        val settled = DogmaEngine.postLoad(fit.copy(character = Character(mapOf(GUNNERY to 5))))
-
-        assertEquals(State.ACTIVE, settled.items[0].state)
+        assertEquals(State.ONLINE, DogmaEngine.postLoad(fit).items[0].state)
     }
 
     @Test

@@ -68,6 +68,10 @@ sourceSets.main {
     resources.srcDir(if (prebuilt != null) file(prebuilt) else hostNatives)
 }
 
+tasks.named<Jar>("sourcesJar") {
+    exclude("fit/eveship/dogma/natives/**")
+}
+
 tasks.test {
     useJUnitPlatform()
 }
