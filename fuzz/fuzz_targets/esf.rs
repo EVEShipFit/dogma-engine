@@ -3,26 +3,24 @@
 use esf_format::esf;
 use libfuzzer_sys::fuzz_target;
 
-fn load(data: &[u8]) {
+fn load(data: &[u8]) -> Result<(), esf::Error> {
     let info = esf_fuzz::info();
-    let Ok(fits) = esf::load_esf(&info, data) else {
-        return;
-    };
+    let fits = esf::load_esf(&info, data)?;
     let _ = esf::main_fit(&fits);
     for fit in &fits {
-        if let Ok(fit) = esf::to_fit(&info, fit) {
-            esf_fuzz::check_loaded(fit);
-        }
+        esf_fuzz::check_loaded(esf::to_fit(&info, fit)?);
     }
+    Ok(())
 }
 
 fuzz_target!(|data: &[u8]| {
-    match data.strip_prefix(b"link:") {
+    let result = match data.strip_prefix(b"link:") {
         Some(link) => {
-            if let Ok(decoded) = esf::decode_base64url(&String::from_utf8_lossy(link)) {
-                load(&decoded);
-            }
+            esf::decode_base64url(&String::from_utf8_lossy(link)).and_then(|data| load(&data))
         }
         None => load(data),
+    };
+    if let Err(error) = result {
+        drop(error.to_string());
     }
 });

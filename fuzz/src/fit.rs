@@ -333,13 +333,15 @@ fn incoming(u: &mut Unstructured) -> Result<Projection> {
 /// carry.
 pub fn fit(u: &mut Unstructured) -> Result<Fit> {
     let pools = &*POOLS;
-    let ship = pick(u, &pools.ships)?;
-    let modes: Vec<i32> = info().mode_type_ids(ship).collect();
-
-    let mut items = Vec::new();
-    for _ in 0..u.int_in_range(0..=20)? {
-        items.push(item(u)?);
-    }
+    let type_id = pick(u, &pools.ships)?;
+    let modes: Vec<i32> = info().mode_type_ids(type_id).collect();
+    let ship = Ship {
+        type_id,
+        mode: match modes.is_empty() || u.ratio(1, 4)? {
+            true => None,
+            false => Some(*u.choose(&modes)?),
+        },
+    };
 
     let skills = match u.int_in_range(0..=2)? {
         0 => BTreeMap::new(),
@@ -352,38 +354,41 @@ pub fn fit(u: &mut Unstructured) -> Result<Fit> {
             skills
         }
     };
+    let character = Character {
+        skills,
+        security_status: float(u, -10.0, 5.0)?,
+    };
+
+    let environment = Environment {
+        damage_profile: match u.arbitrary()? {
+            true => damage_profile(u)?,
+            false => DamageProfile::default(),
+        },
+        security: *u.choose(&[
+            Security::HighSec,
+            Security::LowSec,
+            Security::NullSec,
+            Security::Wormhole,
+        ])?,
+        reactive_armor: match u.int_in_range(0..=2)? {
+            0 => ReactiveArmor::DoNotAdapt,
+            1 => ReactiveArmor::DamageProfile,
+            _ => ReactiveArmor::Profile(damage_profile(u)?),
+        },
+    };
+    let incoming = incoming(u)?;
+
+    let mut items = Vec::new();
+    for _ in 0..u.int_in_range(0..=20)? {
+        items.push(item(u)?);
+    }
 
     Ok(Fit {
         name: None,
-        ship: Ship {
-            type_id: ship,
-            mode: match modes.is_empty() || u.ratio(1, 4)? {
-                true => None,
-                false => Some(*u.choose(&modes)?),
-            },
-        },
+        ship,
         items,
-        character: Character {
-            skills,
-            security_status: float(u, -10.0, 5.0)?,
-        },
-        environment: Environment {
-            damage_profile: match u.arbitrary()? {
-                true => damage_profile(u)?,
-                false => DamageProfile::default(),
-            },
-            security: *u.choose(&[
-                Security::HighSec,
-                Security::LowSec,
-                Security::NullSec,
-                Security::Wormhole,
-            ])?,
-            reactive_armor: match u.int_in_range(0..=2)? {
-                0 => ReactiveArmor::DoNotAdapt,
-                1 => ReactiveArmor::DamageProfile,
-                _ => ReactiveArmor::Profile(damage_profile(u)?),
-            },
-        },
-        incoming: incoming(u)?,
+        character,
+        environment,
+        incoming,
     })
 }

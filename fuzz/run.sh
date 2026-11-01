@@ -13,8 +13,7 @@ if [ ! -e "corpus/.seeded" ]; then
     touch corpus/.seeded
 fi
 
-seeds=""
-[ -d "seeds/$target" ] && seeds="seeds/$target"
+[ -d "seeds/$target" ] && cp -n "seeds/$target"/* "corpus/$target"/
 
-exec cargo +nightly fuzz run "$target" "corpus/$target" $seeds -- \
+exec cargo +nightly fuzz run "$target" "corpus/$target" -- \
     -max_total_time="$seconds" -fork="$jobs" -ignore_crashes=1
