@@ -1779,6 +1779,7 @@ impl<'a> Type<'a> {
   pub const VT_DOGMA_EFFECTS: flatbuffers::VOffsetT = 32;
   pub const VT_FIGHTER_ABILITIES: flatbuffers::VOffsetT = 34;
   pub const VT_MODE_TYPE_IDS: flatbuffers::VOffsetT = 36;
+  pub const VT_VARIATION_PARENT_TYPE_ID: flatbuffers::VOffsetT = 38;
 
   #[inline]
   pub unsafe fn init_from_table(table: flatbuffers::Table<'a>) -> Self {
@@ -1790,6 +1791,7 @@ impl<'a> Type<'a> {
     args: &'args TypeArgs<'args>
   ) -> flatbuffers::WIPOffset<Type<'bldr>> {
     let mut builder = TypeBuilder::new(_fbb);
+    builder.add_variation_parent_type_id(args.variation_parent_type_id);
     if let Some(x) = args.mode_type_ids { builder.add_mode_type_ids(x); }
     if let Some(x) = args.fighter_abilities { builder.add_fighter_abilities(x); }
     if let Some(x) = args.dogma_effects { builder.add_dogma_effects(x); }
@@ -1941,6 +1943,13 @@ impl<'a> Type<'a> {
     // which contains a valid value in this slot
     unsafe { self._tab.get::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'a, i32>>>(Type::VT_MODE_TYPE_IDS, None)}
   }
+  #[inline]
+  pub fn variation_parent_type_id(&self) -> i32 {
+    // Safety:
+    // Created from valid Table for this object
+    // which contains a valid value in this slot
+    unsafe { self._tab.get::<i32>(Type::VT_VARIATION_PARENT_TYPE_ID, Some(0)).unwrap()}
+  }
 }
 
 impl flatbuffers::Verifiable for Type<'_> {
@@ -1967,6 +1976,7 @@ impl flatbuffers::Verifiable for Type<'_> {
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, TypeDogmaEffect>>>("dogma_effects", Self::VT_DOGMA_EFFECTS, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, TypeFighterAbility>>>("fighter_abilities", Self::VT_FIGHTER_ABILITIES, false)?
      .visit_field::<flatbuffers::ForwardsUOffset<flatbuffers::Vector<'_, i32>>>("mode_type_ids", Self::VT_MODE_TYPE_IDS, false)?
+     .visit_field::<i32>("variation_parent_type_id", Self::VT_VARIATION_PARENT_TYPE_ID, false)?
      .finish();
     Ok(())
   }
@@ -1989,6 +1999,7 @@ pub struct TypeArgs<'a> {
     pub dogma_effects: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, TypeDogmaEffect>>>,
     pub fighter_abilities: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, TypeFighterAbility>>>,
     pub mode_type_ids: Option<flatbuffers::WIPOffset<flatbuffers::Vector<'a, i32>>>,
+    pub variation_parent_type_id: i32,
 }
 impl<'a> Default for TypeArgs<'a> {
   #[inline]
@@ -2011,6 +2022,7 @@ impl<'a> Default for TypeArgs<'a> {
       dogma_effects: None,
       fighter_abilities: None,
       mode_type_ids: None,
+      variation_parent_type_id: 0,
     }
   }
 }
@@ -2089,6 +2101,10 @@ impl<'a: 'b, 'b, A: flatbuffers::Allocator + 'a> TypeBuilder<'a, 'b, A> {
     self.fbb_.push_slot_always::<flatbuffers::WIPOffset<_>>(Type::VT_MODE_TYPE_IDS, mode_type_ids);
   }
   #[inline]
+  pub fn add_variation_parent_type_id(&mut self, variation_parent_type_id: i32) {
+    self.fbb_.push_slot::<i32>(Type::VT_VARIATION_PARENT_TYPE_ID, variation_parent_type_id, 0);
+  }
+  #[inline]
   pub fn new(_fbb: &'b mut flatbuffers::FlatBufferBuilder<'a, A>) -> TypeBuilder<'a, 'b, A> {
     let start = _fbb.start_table();
     TypeBuilder {
@@ -2124,6 +2140,7 @@ impl core::fmt::Debug for Type<'_> {
       ds.field("dogma_effects", &self.dogma_effects());
       ds.field("fighter_abilities", &self.fighter_abilities());
       ds.field("mode_type_ids", &self.mode_type_ids());
+      ds.field("variation_parent_type_id", &self.variation_parent_type_id());
       ds.finish()
   }
 }
