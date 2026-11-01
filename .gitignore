@@ -8,3 +8,6 @@ __pycache__/
 /pkg/
 /target/
 *.snap.new
+/crates/esf-kotlin/.gradle/
+/crates/esf-kotlin/.kotlin/
+/crates/esf-kotlin/build/

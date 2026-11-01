@@ -224,6 +224,11 @@ The Python variant is published on PyPI as
 [`eveshipfit-dogma-engine`](https://pypi.org/project/eveshipfit-dogma-engine/).
 How to use it is explained in [its README](./crates/esf-python/README.md).
 
+### Kotlin
+
+The Kotlin variant runs on the JVM, and is not published yet.
+How to build and use it is explained in [its README](./crates/esf-kotlin/README.md).
+
 ## Development
 
 Make sure you have [Rust installed](https://www.rust-lang.org/tools/install).
@@ -327,3 +332,13 @@ maturin build --release
 ```
 
 In the `target/wheels` folder is now a wheel to install.
+
+### Kotlin
+
+This is done with [Gradle](https://gradle.org/), which builds the Rust library for your platform first:
+
+```bash
+gradle -p crates/esf-kotlin test jar
+```
+
+In the `crates/esf-kotlin/build/libs` folder is now a JAR to use.
