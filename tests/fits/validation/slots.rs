@@ -40,5 +40,6 @@ validation! {
     slot_taken = TWO_MODULES, skills: all(5), edit: |fit| fit.items[1].slot = fit.items[0].slot;
     module_in_cargo = IN_CARGO, skills: all(5);
     module_in_fighter_tube = LASER, skills: all(5), edit: |fit| fit.items[0].slot = Slot::FighterTube(0);
+    module_in_drone_bay = ONE_MODULE, skills: all(5), edit: |fit| fit.items[0].slot = Slot::DroneBay;
     module_in_fighter_bay = LASER, skills: all(5), edit: |fit| fit.items[0].slot = Slot::FighterBay;
 }

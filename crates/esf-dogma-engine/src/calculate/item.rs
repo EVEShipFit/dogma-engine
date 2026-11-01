@@ -8,7 +8,7 @@ use strum_macros::EnumIter;
 use tsify::Tsify;
 
 use super::output::Source;
-use super::{CATEGORY_FIGHTER, Info};
+use super::{CATEGORY_DRONE, CATEGORY_FIGHTER, Info};
 use crate::fit::{FitItem, Slot, State};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -218,6 +218,10 @@ impl Item {
         self.is_module() || matches!(self.slot, Some(Slot::Service(_)))
     }
 
+    pub fn is_drone(&self) -> bool {
+        self.slot == Some(Slot::DroneBay) && self.category_id == CATEGORY_DRONE
+    }
+
     pub fn is_fighter(&self) -> bool {
         matches!(self.slot, Some(Slot::FighterTube(_) | Slot::FighterBay))
             && self.category_id == CATEGORY_FIGHTER
@@ -228,14 +232,11 @@ impl Item {
     }
 
     pub fn is_owner_modifiable(&self) -> bool {
-        self.is_fighter() || self.slot == Some(Slot::DroneBay)
+        self.is_fighter() || self.is_drone()
     }
 
     pub fn is_calculated(&self) -> bool {
-        self.is_in_ship()
-            || self.is_fighter()
-            || self.is_on_char()
-            || self.slot == Some(Slot::DroneBay)
+        self.is_in_ship() || self.is_fighter() || self.is_on_char() || self.is_drone()
     }
 
     pub fn new_charge(type_id: i32) -> Item {
