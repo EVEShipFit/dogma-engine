@@ -132,3 +132,41 @@ fn saves_an_implant_as_cargo_in_an_esi_fitting() {
 
     assert_eq!(flags, ["Cargo", "Cargo", "Cargo"]);
 }
+
+fn max_quantities(flags: &[i32], type_id: i32) -> EsiKillmail {
+    let items: Vec<_> = flags
+        .iter()
+        .map(|flag| {
+            serde_json::json!({
+                "flag": flag, "item_type_id": type_id,
+                "quantity_destroyed": u32::MAX, "quantity_dropped": 1
+            })
+        })
+        .collect();
+    serde_json::from_value(serde_json::json!({
+        "killmail_id": 1,
+        "victim": {"ship_type_id": 587, "items": items}
+    }))
+    .unwrap()
+}
+
+#[test]
+fn caps_a_quantity_that_does_not_fit() {
+    let fit = load_killmail(&info(), &max_quantities(&[5], 34));
+    assert_eq!(fit.items[0].quantity, u32::MAX);
+}
+
+#[test]
+fn caps_a_stack_that_does_not_fit() {
+    let fit = load_killmail(&info(), &max_quantities(&[5, 5], 34));
+    assert_eq!(fit.items.len(), 1);
+    assert_eq!(fit.items[0].quantity, u32::MAX);
+}
+
+#[test]
+fn caps_a_stack_that_does_not_fit_in_an_esi_fitting() {
+    let fit = load_killmail(&info(), &max_quantities(&[159, 160], 47141));
+    let fitting = save_esi_fitting(&info(), &fit);
+    assert_eq!(fitting.items.len(), 1);
+    assert_eq!(fitting.items[0].quantity, u32::MAX);
+}

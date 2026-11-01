@@ -177,7 +177,7 @@ pub(crate) fn to_fit_items(types: &dyn Types, listed: Vec<Listed>) -> Vec<FitIte
                     item.slot == slot && item.type_id == listed.type_id && item.state == state
                 });
                 match stack {
-                    Some(stack) => stack.quantity += listed.quantity,
+                    Some(stack) => stack.quantity = stack.quantity.saturating_add(listed.quantity),
                     None => items.push(item(listed.type_id, slot, listed.quantity, state, None)),
                 }
             }
