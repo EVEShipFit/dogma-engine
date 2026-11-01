@@ -291,6 +291,22 @@ cargo install cargo-insta
 cargo insta review
 ```
 
+## Fuzzing
+
+[fuzz](./fuzz) has a target per input format (`dna`, `eft`, `esf`, `esi`, `killmail`, `link`), `fit_json` for a `Fit` as JSON, and `fit` for the `Fit` struct itself.
+Each loads its input, calculates it, and writes it back out; a panic, or an input taking over 10 seconds, is a finding.
+So is a NaN or infinite value, except in `fit_json`: it takes any number, and a silly number gives NaN or infinity by right.
+Every run seeds the corpus with every fit of the regression tests.
+
+```bash
+cargo install cargo-fuzz
+fuzz/manage.py             # every target, spread over all CPUs
+fuzz/run.sh eft 600 4      # one target: seconds, jobs
+```
+
+`manage.py` stops a target after 60 minutes without new corpus (`--quiet`), and gives its CPUs to the others.
+Findings land in `fuzz/artifacts/<target>/`, logs in `fuzz/logs/`.
+
 ## Integration
 
 Every variant is built from the same Rust crates; the `flatc` step from [Development](#development) comes first.

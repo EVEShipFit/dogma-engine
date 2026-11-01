@@ -1,0 +1,25 @@
+%esf/1
+Hecate "Everything" /Sharpshooter
+
+2x 150mm Light AutoCannon II :Barrage S
+- @high
+Small Energy Nosferatu II
+
+5MN Y-T8 Compact Microwarpdrive +Unstable {capacitorNeed 45, cpu 21, power 14, signatureRadiusBonus 500, speedFactor 524}
+- @mid
+Warp Disruptor II
+
+Damage Control II !off
+Gyrostabilizer II !heat
+
+2x Hobgoblin II @bay
+3x Warrior II
+
+1000x Barrage S
+Damage Control II @cargo
+
+100x Nanite Repair Paste @fuel
+
+Zainou 'Gnome' Shield Management SM-703
+
+Standard Blue Pill Booster

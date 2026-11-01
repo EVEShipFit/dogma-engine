@@ -1,0 +1,9 @@
+v3:ship,587,States,
+module,High,1,2873,Online,
+module,Medium,1,438,Overload,
+module,Medium,2,3244,Offline,
+module,Low,1,2048,Passive,
+module,Low,2,519,Active,
+module,Rig,1,31055,Online,
+drone,2488,2,1
+cargo,185,100

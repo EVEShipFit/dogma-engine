@@ -96,8 +96,10 @@ jobs:
     - name: Check coding style
       run: |
         cargo fmt --check
+        cargo fmt --manifest-path fuzz/Cargo.toml --check
 
     - name: Check lints
       run: |
         cargo clippy --locked --workspace --all-targets -- -D warnings
         cargo clippy --locked -p esf-wasm --all-targets --target wasm32-unknown-unknown -- -D warnings
+        cargo clippy --manifest-path fuzz/Cargo.toml --all-targets -- -D warnings

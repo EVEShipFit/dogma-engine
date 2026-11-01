@@ -1,0 +1,1 @@
+{"ship":{"type_id":587},"items":[{"type_id":4403,"slot":{"type":"low","index":0},"state":"active"}],"environment":{"damage_profile":{"kinetic":3,"thermal":1},"reactive_armor":"damage_profile"}}

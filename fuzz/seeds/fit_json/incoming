@@ -1,0 +1,1 @@
+{"ship":{"type_id":587},"items":[{"type_id":2873,"slot":{"type":"high","index":0},"state":"active"}],"character":{"security_status":-2.5},"environment":{"security":"low_sec"},"incoming":{"buffs":[{"id":10,"value":-8.0}],"effects":[{"type_id":527,"effect_id":6426,"attributes":{"20":-60.0}}]}}
