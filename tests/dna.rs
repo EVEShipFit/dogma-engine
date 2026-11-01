@@ -155,3 +155,17 @@ fn needs_numbers() {
         Error::InvalidNumber("x".to_string())
     );
 }
+
+#[test]
+fn explains_each_error() {
+    let cases = [
+        (Error::NoShip, "the DNA has no ship"),
+        (Error::InvalidNumber("x".to_string()), "x is not a number"),
+        (Error::UnknownTypeId(1), "unknown type id 1"),
+        (Error::NotAShip(2), "type id 2 is not a ship"),
+    ];
+
+    for (error, message) in cases {
+        assert_eq!(error.to_string(), message);
+    }
+}

@@ -105,3 +105,23 @@ fn refuses_what_is_not_a_fit() {
     );
     assert!(matches!(link("eft", "not a fit"), Err(Error::Eft(_))));
 }
+
+#[test]
+fn explains_each_error() {
+    let cases = [
+        (
+            Error::UnknownVersion("v9".to_string()),
+            "unknown link version v9",
+        ),
+        (Error::Killmail, "a killmail link holds no fit"),
+        (Error::InvalidNumber("x".to_string()), "x is not a number"),
+        (
+            Error::Eft(esf_format::eft::Error::Empty),
+            "invalid EFT in link: empty EFT",
+        ),
+    ];
+
+    for (error, message) in cases {
+        assert_eq!(error.to_string(), message);
+    }
+}
