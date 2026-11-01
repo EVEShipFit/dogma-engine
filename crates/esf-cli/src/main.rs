@@ -428,6 +428,8 @@ fn violation_rule(info: &InfoSde, rule: Rule) -> String {
             allowed,
         } => format!("{used} of {}, {allowed} allowed", type_name(info, type_id)),
         Rule::NotAHull => "not a ship, structure or container".to_string(),
+        Rule::NotAMode => "the mode is not a tactical mode".to_string(),
+        Rule::NotASkill { type_id } => format!("{} is not a skill", type_name(info, type_id)),
         Rule::ChargeGroup => "a charge the module does not take".to_string(),
         Rule::ChargeSize { module, charge } => {
             format!("charge size {charge}, module takes {module}")

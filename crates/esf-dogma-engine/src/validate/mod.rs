@@ -7,7 +7,7 @@ use tsify::Tsify;
 
 use esf_data::{Info, eve};
 
-use crate::calculate::{Calculation, ItemResult, is_hull};
+use crate::calculate::{Calculation, ItemResult, is_hull, is_mode, is_skill};
 use crate::fit::{Fit, FitItem, Slot};
 
 mod charge;
@@ -133,6 +133,13 @@ pub enum Rule {
     },
     /// The hull is not a ship, structure or container.
     NotAHull,
+    /// The mode is not a tactical mode.
+    NotAMode,
+    /// A type among the character's skills that is not a skill.
+    NotASkill {
+        /// The type id given as skill.
+        type_id: i32,
+    },
     /// A charge of a group the module does not take.
     ChargeGroup,
     /// A charge of another size than the module takes.
@@ -232,12 +239,31 @@ pub(crate) fn validate(info: &impl Info, fit: &Fit, calculation: &Calculation) -
     let context = Context::new(info, fit, calculation);
 
     let mut found = Vec::new();
+    kind(info, fit, &mut found);
     resource::validate(&context, &mut found);
     slot::validate(&context, &mut found);
     item::validate(&context, &mut found);
     charge::validate(&context, &mut found);
     skill::validate(&context, &mut found);
     found
+}
+
+fn kind(info: &impl Info, fit: &Fit, found: &mut Vec<Violation>) {
+    if fit.ship.mode.is_some_and(|mode| !is_mode(info, mode)) {
+        found.push(Violation {
+            target: Target::Ship,
+            rule: Rule::NotAMode,
+        });
+    }
+
+    for type_id in fit.character.skills.keys() {
+        if !is_skill(info, *type_id) {
+            found.push(Violation {
+                target: Target::Ship,
+                rule: Rule::NotASkill { type_id: *type_id },
+            });
+        }
+    }
 }
 
 /// The fit and its calculation side by side, with what the SDE says about

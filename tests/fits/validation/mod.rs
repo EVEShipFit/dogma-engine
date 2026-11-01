@@ -3,6 +3,7 @@
 mod charges;
 mod hull;
 mod items;
+mod kind;
 mod resources;
 mod skills;
 mod slots;

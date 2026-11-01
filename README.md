@@ -147,6 +147,8 @@ Each violation has:
     This is what keeps a second propulsion module from running: an afterburner and a microwarpdrive share a group.
   - `max_type`: `used` of `type_id` are fitted, where `allowed` may be.
   - `not_a_hull`: the ship is not a ship, structure or container; it is the only violation reported then.
+  - `not_a_mode`: the `mode` is not a tactical mode.
+  - `not_a_skill`: `type_id` among the skills is not a skill.
   - `charge_group`: a charge of a group the module does not take.
   - `charge_size`: a charge of size `charge` where the `module` takes another.
 

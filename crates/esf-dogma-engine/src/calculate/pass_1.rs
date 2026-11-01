@@ -5,7 +5,7 @@ use super::attribute_ids::{
     ATTRIBUTE_RADIUS_ID, ATTRIBUTE_SKILL_LEVEL_ID, ATTRIBUTE_VOLUME_ID,
 };
 use super::item::{Attribute, Item};
-use super::{Info, Objects, Projected};
+use super::{Info, Objects, Projected, is_mode, is_skill};
 use crate::fit::{DamageProfile, Fit, Mutation, ReactiveArmor, Security, Spool};
 use crate::projection::ProjectedBuff;
 
@@ -112,7 +112,8 @@ fn normalized(profile: DamageProfile) -> [f64; 4] {
 
 impl PassOne {
     pub fn pass(info: &impl Info, fit: &Fit) -> Objects {
-        let mut objects = Objects::new(fit.ship.type_id, fit.ship.mode);
+        let mode = fit.ship.mode.filter(|mode| is_mode(info, *mode));
+        let mut objects = Objects::new(fit.ship.type_id, mode);
 
         objects.ship.set_attributes(info);
         /* Only ships with a bonus that scales with it carry the attribute. */
@@ -159,6 +160,9 @@ impl PassOne {
         objects.buffs = resolve(info, &fit.incoming.buffs);
 
         for (skill_id, skill_level) in &fit.character.skills {
+            if !is_skill(info, *skill_id) {
+                continue;
+            }
             let mut skill = Item::new_fake(*skill_id);
 
             skill.set_attributes(info);
