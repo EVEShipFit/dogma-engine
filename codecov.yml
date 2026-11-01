@@ -1,0 +1,18 @@
+ignore:
+  - "crates/esf-data/src/sde/*_generated.rs"
+
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 1%
+        informational: true
+    patch:
+      default:
+        target: 80%
+        informational: true
+
+comment:
+  layout: "condensed_header, diff, files"
+  require_changes: true
