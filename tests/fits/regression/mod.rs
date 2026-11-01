@@ -16,6 +16,7 @@ mod location_bonus_not_on_drones;
 mod mutations;
 mod no_charge;
 mod no_cycle_time;
+mod no_recharge;
 mod nosferatu_income;
 mod owner_bonus_not_on_modules;
 mod projection;
