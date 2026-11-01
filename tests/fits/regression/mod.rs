@@ -26,6 +26,7 @@ mod reactive_armor_hardener;
 mod rig_offline;
 mod security_status;
 mod ship_in_drone_bay;
+mod ship_in_slot;
 mod spool;
 mod stacking_per_operator;
 mod structure_bonus;

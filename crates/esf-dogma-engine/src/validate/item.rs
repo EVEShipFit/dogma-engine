@@ -1,6 +1,9 @@
 use esf_data::Info;
 
-use super::{Context, GroupLimit, Item, Rule, SlotKind, Violation};
+use super::{
+    CATEGORY_STRUCTURE, CATEGORY_STRUCTURE_MODULE, Context, GroupLimit, Item, Rule, SlotKind,
+    Violation,
+};
 use crate::fit::State;
 
 /// The attributes naming the ship types an item may go on.
@@ -54,8 +57,6 @@ const GROUP_LIMITS: [(GroupLimit, &str); 3] = [
 /// Anything bigger than this is a capital module, and only a capital ship
 /// takes one.
 const CAPITAL_VOLUME: f64 = 3500.0;
-const STRUCTURE_CATEGORY_ID: i32 = 65;
-const STRUCTURE_MODULE_CATEGORY_ID: i32 = 66;
 
 /// A fighter squadron has no category telling a structure's apart from a
 /// carrier's; these attributes do, one per role.
@@ -146,7 +147,7 @@ fn capital_item<I: Info>(context: &Context<'_, I>, found: &mut Vec<Violation>) {
     if context.value(context.ship(), capital).unwrap_or(0.0) != 0.0 {
         return;
     }
-    if context.ship_category_id() == STRUCTURE_CATEGORY_ID {
+    if context.ship_category_id() == CATEGORY_STRUCTURE {
         return;
     }
 
@@ -167,14 +168,14 @@ fn standup<I: Info>(context: &Context<'_, I>, found: &mut Vec<Violation>) {
         .filter_map(|name| context.attribute_id(name))
         .collect();
 
-    let structure = context.ship_category_id() == STRUCTURE_CATEGORY_ID;
+    let structure = context.ship_category_id() == CATEGORY_STRUCTURE;
 
     for item in &context.items {
         if !item.is_on_hull() {
             continue;
         }
 
-        let standup = item.category_id == STRUCTURE_MODULE_CATEGORY_ID
+        let standup = item.category_id == CATEGORY_STRUCTURE_MODULE
             || markers
                 .iter()
                 .any(|attribute_id| context.amount(item.result, *attribute_id) != 0.0);

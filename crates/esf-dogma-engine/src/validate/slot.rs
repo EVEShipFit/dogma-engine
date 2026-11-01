@@ -1,6 +1,9 @@
 use esf_data::Info;
 
-use super::{CATEGORY_DRONE, CATEGORY_FIGHTER, Context, Item, Rule, SlotKind, Target, Violation};
+use super::{
+    CATEGORY_DRONE, CATEGORY_FIGHTER, CATEGORY_IMPLANT, Context, Item, Rule, SlotKind, Target,
+    Violation, is_module_category,
+};
 use crate::fit::Slot;
 
 /// A rack, and the ship attribute saying how many slots it has. A ship
@@ -47,6 +50,9 @@ pub(super) fn validate<I: Info>(context: &Context<'_, I>, found: &mut Vec<Violat
         {
             found.push(item.violation(Rule::WrongSlot { expected: rack }));
         }
+        if item.is_fitted() && !is_module_category(item.category_id) {
+            found.push(item.violation(Rule::NotAModule));
+        }
         if item.fit.slot == Slot::DroneBay && item.category_id != CATEGORY_DRONE {
             found.push(item.violation(Rule::NotADrone));
         }
@@ -54,6 +60,11 @@ pub(super) fn validate<I: Info>(context: &Context<'_, I>, found: &mut Vec<Violat
             && item.category_id != CATEGORY_FIGHTER
         {
             found.push(item.violation(Rule::NotAFighter));
+        }
+        if matches!(item.fit.slot, Slot::Implant(_) | Slot::Booster(_))
+            && item.category_id != CATEGORY_IMPLANT
+        {
+            found.push(item.violation(Rule::NotAnImplant));
         }
         if holds_one(item.fit.slot) && shares_slot(context, item) {
             found.push(item.violation(Rule::SlotTaken));
