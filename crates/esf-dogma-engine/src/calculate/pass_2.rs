@@ -69,7 +69,7 @@ fn get_target_object(domain: eve::ModifierDomain, origin: Object) -> Option<Obje
         eve::ModifierDomain::OtherID => match origin {
             Object::Item(index) => Some(Object::Charge(index)),
             Object::Charge(index) => Some(Object::Item(index)),
-            _ => None,
+            _ => panic!("Invalid origin for OtherID domain"),
         },
         /* On a structure fit the hull is the structure. */
         eve::ModifierDomain::StructureID => Some(Object::Ship),
