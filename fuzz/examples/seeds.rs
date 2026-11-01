@@ -48,7 +48,10 @@ fn main() {
         fs::create_dir_all(corpus.join(target)).unwrap();
     }
     let write = |target: &str, name: &str, data: &[u8]| {
-        fs::write(corpus.join(target).join(name), data).unwrap();
+        let path = corpus.join(target).join(name);
+        if fs::read(&path).ok().as_deref() != Some(data) {
+            fs::write(path, data).unwrap();
+        }
     };
 
     let info = esf_fuzz::info();

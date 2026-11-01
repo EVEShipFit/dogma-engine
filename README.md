@@ -307,7 +307,7 @@ Findings land in `fuzz/artifacts/<target>/`.
 A target is done when its corpus stops growing:
 
 ```bash
-find fuzz/corpus/eft -type f -newermt '-30 min' | wc -l
+fuzz/status.sh 60          # per target: corpus files added in the last 60 minutes
 ```
 
 ## Integration
