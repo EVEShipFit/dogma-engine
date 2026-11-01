@@ -55,6 +55,13 @@ doc = false
 bench = false
 
 [[bin]]
+name = "fit_json"
+path = "fuzz_targets/fit_json.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
 name = "killmail"
 path = "fuzz_targets/killmail.rs"
 test = false
@@ -64,13 +71,6 @@ bench = false
 [[bin]]
 name = "link"
 path = "fuzz_targets/link.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "fit_json"
-path = "fuzz_targets/fit_json.rs"
 test = false
 doc = false
 bench = false

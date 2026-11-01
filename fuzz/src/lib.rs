@@ -96,7 +96,7 @@ pub fn check_loaded(fit: Fit) {
 /// A mutation override above this may overflow to infinity.
 const HUGE_OVERRIDE: f64 = 1e15;
 
-/// Calculates a fit, panics on any NaN or infinite number, and writes it back
+/// Calculates a fit, panics on a NaN or infinite number, and writes it back
 /// out to every format.
 pub fn check(fit: &Fit) {
     calculate_and_save(fit, true);
@@ -141,7 +141,7 @@ fn check_finite(calculation: &Calculation, fit: &Fit) {
         .iter()
         .any(|item| item.type_id == *QA_IMMUNITY_MODULE);
     let mut problems = Vec::new();
-    let mut check = |path: String, value: f64| {
+    let mut flag = |path: String, value: f64| {
         if value.is_nan() || (value.is_infinite() && !immune) {
             problems.push(format!("{path} is {value}"));
         }
@@ -164,29 +164,29 @@ fn check_finite(calculation: &Calculation, fit: &Fit) {
     for (path, result) in results {
         for (attribute_id, attribute) in &result.attributes {
             let path = format!("{path}.attributes[{attribute_id}]");
-            check(format!("{path}.base"), attribute.base);
+            flag(format!("{path}.base"), attribute.base);
             if !(immune && attribute.value.is_nan() && QA_IMMUNITY_NAN.contains(attribute_id)) {
-                check(format!("{path}.value"), attribute.value);
+                flag(format!("{path}.value"), attribute.value);
             }
             for (index, source) in attribute.sources.iter().enumerate() {
                 let path = format!("{path}.sources[{index}]");
-                check(format!("{path}.value"), source.value);
+                flag(format!("{path}.value"), source.value);
                 if let Some(penalty) = source.penalty {
-                    check(format!("{path}.penalty"), penalty);
+                    flag(format!("{path}.penalty"), penalty);
                 }
             }
         }
     }
 
     for buff in &calculation.buffs {
-        check(format!("buffs[{}]", buff.id), buff.value);
+        flag(format!("buffs[{}]", buff.id), buff.value);
     }
     for buff in &calculation.outgoing.buffs {
-        check(format!("outgoing.buffs[{}]", buff.id), buff.value);
+        flag(format!("outgoing.buffs[{}]", buff.id), buff.value);
     }
     for (index, effect) in calculation.outgoing.effects.iter().enumerate() {
         for (attribute_id, value) in &effect.attributes {
-            check(
+            flag(
                 format!("outgoing.effects[{index}].attributes[{attribute_id}]"),
                 *value,
             );
@@ -198,8 +198,8 @@ fn check_finite(calculation: &Calculation, fit: &Fit) {
             used, available, ..
         } = violation.rule
         {
-            check(format!("violations[{index}].used"), used);
-            check(format!("violations[{index}].available"), available);
+            flag(format!("violations[{index}].used"), used);
+            flag(format!("violations[{index}].available"), available);
         }
     }
 

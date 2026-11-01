@@ -7,13 +7,11 @@ target=$1
 seconds=${2:-60}
 jobs=${3:-1}
 
-mkdir -p "corpus/$target"
-if [ ! -e "corpus/.seeded" ]; then
-    cargo run --quiet --release --example seeds
-    touch corpus/.seeded
-fi
-
-[ -d "seeds/$target" ] && cp -n "seeds/$target"/* "corpus/$target"/
+cargo run --quiet --release --example seeds
+for seed in "seeds/$target"/*; do
+    [ -e "$seed" ] || continue
+    [ -e "corpus/$target/${seed##*/}" ] || cp "$seed" "corpus/$target/"
+done
 
 extra=""
 [ "$target" = fit ] && extra="-len_control=0 -max_len=4096"

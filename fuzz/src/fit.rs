@@ -41,7 +41,6 @@ struct Pools {
     projectable: Vec<(i32, i32)>,
     buffs: Vec<i32>,
     mutaplasmids: Vec<Mutaplasmid>,
-    beacons: Vec<i32>,
 }
 
 static POOLS: LazyLock<Pools> = LazyLock::new(|| {
@@ -122,7 +121,6 @@ static POOLS: LazyLock<Pools> = LazyLock::new(|| {
             .filter(|id| info.get_dbuff_collection(*id).is_some())
             .collect(),
         mutaplasmids,
-        beacons: BEACONS.clone(),
     }
 });
 
@@ -178,8 +176,9 @@ fn mutated(u: &mut Unstructured, type_id: i32) -> Result<(i32, Mutation)> {
     let mutaplasmid = u.choose(&pools.mutaplasmids)?;
     let mut attributes = BTreeMap::new();
     for &(attribute_id, min, max) in &mutaplasmid.rolls {
-        let base = attribute_value(mutaplasmid.base, attribute_id).unwrap_or(0.0);
-        attributes.insert(attribute_id, base * float(u, min, max)?);
+        if let Some(base) = attribute_value(mutaplasmid.base, attribute_id) {
+            attributes.insert(attribute_id, base * float(u, min, max)?);
+        }
     }
     Ok((
         mutaplasmid.result,
@@ -336,9 +335,9 @@ fn incoming(u: &mut Unstructured) -> Result<Projection> {
     let pools = &*POOLS;
     let mut projection = Projection::default();
 
-    if !pools.beacons.is_empty() {
+    if !BEACONS.is_empty() {
         for _ in 0..u.int_in_range(0..=2)? {
-            projection.extend(beacon(&info(), pick(u, &pools.beacons)?));
+            projection.extend(beacon(&info(), pick(u, &BEACONS)?));
         }
     }
 
