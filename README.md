@@ -136,6 +136,7 @@ Each violation has:
   - `slots`: more items in the `slot` rack than the ship has, `used` of `available`.
     One of `high`, `medium`, `low`, `rig`, `subsystem`, `service`, `turret` or `launcher`; the last two are hardpoints a weapon takes on top of its slot.
   - `wrong_slot`: the item belongs in the `expected` rack.
+  - `not_a_drone`: something other than a drone in the drone bay.
   - `not_a_fighter`: something other than a fighter in a fighter tube or the fighter bay.
   - `slot_taken`: another item of the fit is in this slot too.
   - `wrong_slot_index`: an implant or booster outside the slot it occupies, which is `expected`.

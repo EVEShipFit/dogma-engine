@@ -389,6 +389,7 @@ class _PlainRule(TypedDict):
     """A rule that is broken or not, with nothing to say about by how much."""
 
     type: Literal[
+        "not_a_drone",
         "not_a_fighter",
         "slot_taken",
         "subsystem_taken",

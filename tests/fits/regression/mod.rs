@@ -25,6 +25,7 @@ mod quantity_with_x_in_name;
 mod reactive_armor_hardener;
 mod rig_offline;
 mod security_status;
+mod ship_in_drone_bay;
 mod spool;
 mod stacking_per_operator;
 mod structure_bonus;
