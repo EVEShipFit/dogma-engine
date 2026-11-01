@@ -153,6 +153,7 @@ fn dump_rule(info: &impl Info, rule: Rule) -> String {
             used,
             allowed,
         } => format!("max_type {} {used} of {allowed}", type_name(info, type_id)),
+        Rule::NotAHull => "not_a_hull".to_string(),
         Rule::ChargeGroup => "charge_group".to_string(),
         Rule::ChargeSize { module, charge } => {
             format!("charge_size {charge} module takes {module}")

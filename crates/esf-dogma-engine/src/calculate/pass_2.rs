@@ -9,7 +9,7 @@ use super::attribute_ids::{
 use super::item::{
     Attribute, Effect, EffectCategory, EffectOperator, Item, ItemState, Object, Origin,
 };
-use super::{Info, Objects, Pass};
+use super::{CATEGORY_STRUCTURE, Info, Objects, Pass};
 use crate::fit::Slot;
 use crate::projection::ProjectedBuff;
 
@@ -61,8 +61,6 @@ fn get_modifier_func(
         func => panic!("Unknown modifier func: {:?}", func),
     }
 }
-
-const STRUCTURE_CATEGORY_ID: i32 = 65;
 
 fn get_target_object(domain: eve::ModifierDomain, origin: Object) -> Option<Object> {
     match domain {
@@ -471,7 +469,7 @@ impl Pass for PassTwo {
 
         /* A structure is not the pilot's ship; only the structure skills, via
          * the structure domain, reach it. Implants and boosters not at all. */
-        let structure_fit = objects.ship.category_id == STRUCTURE_CATEGORY_ID;
+        let structure_fit = objects.ship.category_id == CATEGORY_STRUCTURE;
 
         for (index, item) in objects.items.iter_mut().enumerate() {
             if structure_fit && item.is_on_char() {

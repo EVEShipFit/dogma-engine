@@ -13,7 +13,7 @@ use serde::Deserialize;
 use tsify::Tsify;
 
 use crate::fit::Fit;
-use crate::projection::ProjectedBuff;
+use crate::projection::{ProjectedBuff, Projection};
 use crate::validate::validate;
 use esf_data::Info;
 use item::{Item, Object};
@@ -97,9 +97,29 @@ trait Pass {
     fn pass(info: &impl Info, objects: &mut Objects);
 }
 
+const CATEGORY_SHIP: i32 = 6;
+pub(crate) const CATEGORY_STRUCTURE: i32 = 65;
+const GROUP_CONTAINERS: [i32; 4] = [12, 340, 448, 649];
+
+/// Whether the type can be the hull of a fit: a ship, structure or container.
+pub(crate) fn is_hull(info: &impl Info, type_id: i32) -> bool {
+    info.get_type(type_id).is_some_and(|r#type| {
+        matches!(r#type.category_id(), CATEGORY_SHIP | CATEGORY_STRUCTURE)
+            || GROUP_CONTAINERS.contains(&r#type.group_id())
+    })
+}
+
 /// Calculate every attribute of the ship, its items and the character.
 pub fn calculate(info: &impl Info, fit: &Fit, options: &Options) -> Calculation {
-    let mut calculation = calculate_with_bursts(info, fit, options);
+    let mut calculation = if is_hull(info, fit.ship.type_id) {
+        calculate_with_bursts(info, fit, options)
+    } else {
+        let objects = pass_1::PassOne::pass(info, fit);
+        Calculation {
+            outgoing: Projection::default(),
+            ..Calculation::new(info, &objects)
+        }
+    };
 
     if options.validate {
         calculation.violations = Some(validate(info, fit, &calculation));
