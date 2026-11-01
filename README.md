@@ -99,7 +99,7 @@ Each result has:
   - `operator`: `pre_assign`, `pre_mul`, `pre_div`, `mod_add`, `mod_sub`, `post_mul`, `post_div`, `post_percent` or `post_assign`.
   - `value`: the value of the modifying attribute, or the strength of the buff.
   - `quantity`: how many times it counts. A stacking penalised stack is listed once per item instead.
-  - `penalty`: the stacking penalty factor it got, or `null` if not penalised.
+  - `penalty`: the stacking penalty factor it got, or `null` if not penalised. Only the eight strongest bonuses and the eight strongest maluses count; the rest get 0.
   - `applied`: false when the source's state is too low for the effect.
 
   How much each source added is not reported: multiplications compound and stacking penalties depend on order, so there is no single answer.
