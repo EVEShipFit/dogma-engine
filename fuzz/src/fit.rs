@@ -368,6 +368,7 @@ fn incoming(u: &mut Unstructured) -> Result<Projection> {
             type_id,
             effect_id,
             attributes: effect_attributes(u, type_id, effect_id)?,
+            quantity: u.int_in_range(1..=20)?,
         });
     }
     Ok(projection)
