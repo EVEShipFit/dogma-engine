@@ -82,6 +82,21 @@ jobs:
         pytest crates/esf-python/tests
         mypy
 
+    - name: Install Java
+      uses: actions/setup-java@v6
+      with:
+        distribution: temurin
+        java-version: "21"
+
+    - name: Install Gradle
+      uses: gradle/actions/setup-gradle@v6
+      with:
+        gradle-version: "9.8.2"
+
+    - name: Run Kotlin tests
+      run: |
+        gradle -p crates/esf-kotlin test
+
     - name: Run tests
       run: |
         cargo llvm-cov --locked --workspace --codecov --output-path codecov.json

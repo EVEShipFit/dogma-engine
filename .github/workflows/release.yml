@@ -142,6 +142,132 @@ jobs:
         name: wheels-sdist
         path: dist
 
+  jni:
+    name: Build JNI library (${{ matrix.platform.name }})
+    runs-on: ${{ matrix.platform.runner }}
+    timeout-minutes: 30
+
+    strategy:
+      matrix:
+        platform:
+        - runner: ubuntu-latest
+          name: linux-x86_64
+          target: x86_64-unknown-linux-gnu
+          library: libesf_dogma_engine_jni.so
+          # Runs on glibc 2.17 and up, like manylinux2014.
+          glibc: ".2.17"
+        - runner: ubuntu-24.04-arm
+          name: linux-aarch64
+          target: aarch64-unknown-linux-gnu
+          library: libesf_dogma_engine_jni.so
+          glibc: ".2.17"
+        - runner: macos-latest
+          name: macos-aarch64
+          target: aarch64-apple-darwin
+          library: libesf_dogma_engine_jni.dylib
+        - runner: macos-latest
+          name: macos-x86_64
+          target: x86_64-apple-darwin
+          library: libesf_dogma_engine_jni.dylib
+        - runner: windows-latest
+          name: windows-x86_64
+          target: x86_64-pc-windows-msvc
+          library: esf_dogma_engine_jni.dll
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+
+    - name: Install Rust toolchain
+      uses: actions-rust-lang/setup-rust-toolchain@v2
+      with:
+        toolchain: stable
+        target: ${{ matrix.platform.target }}
+
+    - name: Install Zig
+      if: matrix.platform.glibc
+      uses: mlugg/setup-zig@v2
+      with:
+        version: 0.15.2
+
+    - name: Install cargo-zigbuild
+      if: matrix.platform.glibc
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-zigbuild
+
+    - name: Build library
+      shell: bash
+      run: |
+        if [ -n "${{ matrix.platform.glibc }}" ]; then
+          cargo zigbuild --release --locked -p esf-kotlin --target ${{ matrix.platform.target }}${{ matrix.platform.glibc }}
+        else
+          cargo build --release --locked -p esf-kotlin --target ${{ matrix.platform.target }}
+        fi
+
+        mkdir -p natives/fit/eveship/dogma/natives/${{ matrix.platform.name }}
+        cp target/${{ matrix.platform.target }}/release/${{ matrix.platform.library }} natives/fit/eveship/dogma/natives/${{ matrix.platform.name }}/
+
+    - name: Upload library
+      uses: actions/upload-artifact@v7
+      with:
+        name: natives-${{ matrix.platform.name }}
+        path: natives
+
+  maven:
+    name: Publish to Maven Central
+    needs: [jni]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+
+    - name: Install Java
+      uses: actions/setup-java@v6
+      with:
+        distribution: temurin
+        java-version: "21"
+
+    - name: Install Gradle
+      uses: gradle/actions/setup-gradle@v6
+      with:
+        gradle-version: "9.8.2"
+
+    - name: Download libraries
+      uses: actions/download-artifact@v8
+      with:
+        pattern: natives-*
+        merge-multiple: true
+        path: natives
+
+    - name: Build JAR
+      run: |
+        # Remove the "v" from the version.
+        VERSION=$(echo ${{ github.ref_name }} | cut -b2-)
+        echo "Version: ${VERSION}"
+
+        gradle -p crates/esf-kotlin jar sourcesJar -Pversion=${VERSION} -Pnatives=${PWD}/natives
+
+    - name: Upload JAR
+      uses: actions/upload-artifact@v7
+      with:
+        name: jar
+        path: crates/esf-kotlin/build/libs
+
+    - name: Publish to Maven Central
+      env:
+        ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+        ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+        ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.MAVEN_SIGNING_KEY }}
+        ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.MAVEN_SIGNING_KEY_PASSWORD }}
+      run: |
+        # Remove the "v" from the version.
+        VERSION=$(echo ${{ github.ref_name }} | cut -b2-)
+
+        gradle -p crates/esf-kotlin publishAndReleaseToMavenCentral -Pversion=${VERSION} -Pnatives=${PWD}/natives
+
   pypi:
     name: Publish to PyPI
     needs: [wheels, sdist]

@@ -1,0 +1,24 @@
+[package]
+name = "esf-kotlin"
+# Published to Maven Central instead.
+publish = false
+description = "Library to calculate statistics for EVE Online ship fits"
+# Not the workspace version: the JAR takes its version from Gradle, and a
+# fixed value here keeps Cargo.lock stable across releases.
+version = "0.0.0"
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[lib]
+name = "esf_dogma_engine_jni"
+crate-type = ["cdylib"]
+
+[dependencies]
+esf-data.workspace = true
+esf-dogma-engine.workspace = true
+esf-format.workspace = true
+jni.workspace = true
+serde.workspace = true
+serde_json.workspace = true
