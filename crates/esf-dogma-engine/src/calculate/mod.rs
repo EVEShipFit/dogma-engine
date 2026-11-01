@@ -99,6 +99,7 @@ trait Pass {
 
 const CATEGORY_SHIP: i32 = 6;
 const CATEGORY_SKILL: i32 = 16;
+pub(crate) const CATEGORY_FIGHTER: i32 = 87;
 pub(crate) const CATEGORY_STRUCTURE: i32 = 65;
 const GROUP_CONTAINERS: [i32; 4] = [12, 340, 448, 649];
 const GROUP_SHIP_MODIFIERS: i32 = 1306;

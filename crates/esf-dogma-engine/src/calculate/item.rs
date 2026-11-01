@@ -8,6 +8,7 @@ use strum_macros::EnumIter;
 use tsify::Tsify;
 
 use super::output::Source;
+use super::{CATEGORY_FIGHTER, Info};
 use crate::fit::{FitItem, Slot, State};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -219,6 +220,7 @@ impl Item {
 
     pub fn is_fighter(&self) -> bool {
         matches!(self.slot, Some(Slot::FighterTube(_) | Slot::FighterBay))
+            && self.category_id == CATEGORY_FIGHTER
     }
 
     pub fn is_on_char(&self) -> bool {
@@ -254,7 +256,7 @@ impl Item {
         }
     }
 
-    pub fn new_fit(fit_item: &FitItem) -> Item {
+    pub fn new_fit(info: &impl Info, fit_item: &FitItem) -> Item {
         let mut item = Item {
             type_id: fit_item.type_id,
             group_id: 0,
@@ -273,9 +275,10 @@ impl Item {
             booster_side_effects: fit_item.booster_side_effects.clone(),
             mutation_base: fit_item.mutation.as_ref().map(|mutation| mutation.base),
         };
+        item.set_type_ids(info);
 
         match item.slot {
-            Some(Slot::DroneBay | Slot::FighterTube(_)) => {
+            Some(Slot::DroneBay | Slot::FighterTube(_)) if item.is_calculated() => {
                 if item.state != ItemState::Passive {
                     item.state = ItemState::Active;
                 }

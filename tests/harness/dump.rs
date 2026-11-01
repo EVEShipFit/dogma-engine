@@ -126,6 +126,7 @@ fn dump_rule(info: &impl Info, rule: Rule) -> String {
             available,
         } => format!("slots {slot:?} {used} of {available}"),
         Rule::WrongSlot { expected } => format!("wrong_slot {expected:?}"),
+        Rule::NotAFighter => "not_a_fighter".to_string(),
         Rule::SlotTaken => "slot_taken".to_string(),
         Rule::WrongSlotIndex { expected } => format!("wrong_slot_index {expected}"),
         Rule::SubsystemTaken => "subsystem_taken".to_string(),
