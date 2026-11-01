@@ -13,6 +13,4 @@ coverage:
         target: 80%
         informational: true
 
-comment:
-  layout: "condensed_header, diff, files"
-  require_changes: true
+comment: false
