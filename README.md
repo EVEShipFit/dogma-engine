@@ -300,15 +300,12 @@ Every run seeds the corpus with every fit of the regression tests.
 
 ```bash
 cargo install cargo-fuzz
-fuzz/run.sh eft 600 4      # target, seconds, jobs
+fuzz/manage.py             # every target, spread over all CPUs
+fuzz/run.sh eft 600 4      # one target: seconds, jobs
 ```
 
-Findings land in `fuzz/artifacts/<target>/`.
-A target is done when its corpus stops growing:
-
-```bash
-fuzz/status.sh 60          # per target: corpus files added in the last 60 minutes
-```
+`manage.py` stops a target after 60 minutes without new corpus (`--quiet`), and gives its CPUs to the others.
+Findings land in `fuzz/artifacts/<target>/`, logs in `fuzz/logs/`.
 
 ## Integration
 
