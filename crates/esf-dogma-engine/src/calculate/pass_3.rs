@@ -23,7 +23,7 @@ pub struct PassThree {}
 
 #[derive(Default)]
 struct Values {
-    unpenalized: Vec<f64>,
+    unpenalized: Vec<(f64, u32)>,
     /* Paired with the index into the recorded sources, to fill in the penalty once sorted. */
     positive: Vec<(f64, Option<usize>)>,
     negative: Vec<(f64, Option<usize>)>,
@@ -140,9 +140,9 @@ impl Attribute {
                 };
 
                 if !effect.penalty || !OPERATOR_HAS_PENALTY.contains(&effect.operator) {
-                    values
-                        .unpenalized
-                        .extend(std::iter::repeat_n(source_value, effect.quantity as usize));
+                    if effect.quantity > 0 {
+                        values.unpenalized.push((source_value, effect.quantity));
+                    }
                     if objects.sources {
                         sources.push(to_source(effect.quantity, None));
                     }
@@ -155,12 +155,17 @@ impl Attribute {
                 } else {
                     &mut values.positive
                 };
-                for _ in 0..effect.quantity {
+                let kept = effect.quantity.min(PENALTY_MAX_STACK as u32);
+                for _ in 0..kept {
                     let source_index = objects.sources.then(|| {
                         sources.push(to_source(1, None));
                         sources.len() - 1
                     });
                     bucket.push((source_value, source_index));
+                }
+                let dropped = effect.quantity - kept;
+                if dropped > 0 && objects.sources {
+                    sources.push(to_source(dropped, Some(0.0)));
                 }
             }
 
@@ -179,15 +184,17 @@ impl Attribute {
                         .is_some_and(|dogma_attribute| dogma_attribute.high_is_good());
 
                     current_value = if high_is_good {
-                        *values
+                        values
                             .unpenalized
                             .iter()
+                            .map(|(value, _)| *value)
                             .max_by(|x, y| x.partial_cmp(y).unwrap())
                             .unwrap()
                     } else {
-                        *values
+                        values
                             .unpenalized
                             .iter()
+                            .map(|(value, _)| *value)
                             .min_by(|x, y| x.partial_cmp(y).unwrap())
                             .unwrap()
                     };
@@ -201,8 +208,8 @@ impl Attribute {
                 | EffectOperator::PostMul
                 | EffectOperator::PostDiv
                 | EffectOperator::PostPercent => {
-                    for value in values.unpenalized {
-                        current_value *= 1.0 + value;
+                    for (value, quantity) in values.unpenalized {
+                        current_value *= (1.0 + value).powf(f64::from(quantity));
                     }
 
                     current_value =
@@ -212,8 +219,8 @@ impl Attribute {
                 }
 
                 EffectOperator::ModAdd | EffectOperator::ModSub => {
-                    for value in values.unpenalized {
-                        current_value += value;
+                    for (value, quantity) in values.unpenalized {
+                        current_value += value * f64::from(quantity);
                     }
 
                     assert!(values.positive.is_empty());

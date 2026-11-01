@@ -86,7 +86,7 @@ pub struct Source {
     pub operator: EffectOperator,
     /// The source attribute's value, as pass 3 used it.
     pub value: f64,
-    /// A penalised stack is split into one entry per item, as each gets its own penalty.
+    /// A penalised stack is split into one entry per counted item, plus one for the rest.
     pub quantity: u32,
     /// The stacking penalty factor applied; `None` when not penalised.
     pub penalty: Option<f64>,
