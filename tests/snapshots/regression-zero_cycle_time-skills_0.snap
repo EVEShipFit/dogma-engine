@@ -1,0 +1,84 @@
+---
+source: tests/harness/case.rs
+expression: "calculate_fit(text, skills, edit)"
+---
+ship/type                                    = Tristan
+ship/capacitorStablePercentage               = 0.000000
+ship/maxTargetsCharacter                     = 2.000000
+ship/maxTargets                              = 2.000000
+ship/upgradeFree                             = 400.000000
+ship/scanStrength                            = 9.000000
+ship/passiveShieldEffectiveRechargeRate      = 1.931034
+ship/passiveShieldRechargeRate               = 1.400000
+ship/ehp                                     = 1970.320801
+ship/shieldThermalDamageEffectiveResonance   = 0.200000
+ship/shieldKineticDamageEffectiveResonance   = 0.150000
+ship/shieldExplosiveDamageEffectiveResonance = 0.125000
+ship/shieldEmDamageEffectiveResonance        = 0.250000
+ship/hullThermalDamageEffectiveResonance     = 0.167500
+ship/hullKineticDamageEffectiveResonance     = 0.167500
+ship/hullExplosiveDamageEffectiveResonance   = 0.167500
+ship/hullEmDamageEffectiveResonance          = 0.167500
+ship/armorThermalDamageEffectiveResonance    = 0.162500
+ship/armorKineticDamageEffectiveResonance    = 0.162500
+ship/armorExplosiveDamageEffectiveResonance  = 0.225000
+ship/armorEmDamageEffectiveResonance         = 0.125000
+ship/shieldEhp                               = 482.758615
+ship/hullEhp                                 = 820.895502
+ship/armorEhp                                = 666.666684
+ship/shieldDamageEffectiveResonance          = 0.725000
+ship/hullDamageEffectiveResonance            = 0.670000
+ship/armorDamageEffectiveResonance           = 0.675000
+ship/powerFree                               = 34.000000
+ship/cpuFree                                 = 94.000000
+ship/capacitorPeakDeltaPercentage            = non-finite
+ship/capacitorPeakDelta                      = non-finite
+ship/capacitorPeakLoad                       = non-finite
+ship/capacitorPeakRecharge                   = 5.000000
+ship/alignTime                               = 4.978682
+ship/powerLoad                               = 1.000000
+ship/cpuLoad                                 = 36.000000
+ship/shipBonusGF                             = 0.000000
+ship/shipBonus2AF                            = 0.000000
+ship/shipBonusGC                             = 0.000000
+ship/shipBonusCC                             = 0.000000
+ship/shipBonusMB                             = 0.000000
+ship/shipBonusCB                             = 0.000000
+ship/shipBonusAB                             = 0.000000
+ship/shipBonusMI                             = 0.000000
+ship/shipBonusAI                             = 0.000000
+ship/shipBonusCI                             = 0.000000
+ship/shipBonusGI                             = 0.000000
+ship/shipBonusGF2                            = 0.000000
+ship/shipBonusUF1                            = 0.000000
+ship/shipBonusUF2                            = 0.000000
+ship/shipBonusUC1                            = 0.000000
+ship/shipBonusUC2                            = 0.000000
+ship/shipBonusUB1                            = 0.000000
+ship/shipBonusUB2                            = 0.000000
+ship/shipBonusOreDestroyer1                  = 0.000000
+ship/shipBonusOreDestroyer2                  = 0.000000
+ship/shipBonusOreDestroyer3                  = 0.000000
+ship/shipBonusSoEECS1                        = 0.000000
+ship/shipBonusSoEECS2                        = 0.000000
+ship/shipBonusSoEECS3                        = 0.000000
+ship/shipBonusSoEECS4                        = 0.000000
+ship/shipBonusSoEECS5                        = 0.000000
+ship/shipBonusAB3                            = 0.000000
+
+outgoing_effect_1/type                      = Abyssal Warp Scrambler
+outgoing_effect_1/effect                    = warpScrambleBlockMWDWithNPCEffect
+outgoing_effect_1/maxRange                  = 9000.000000
+outgoing_effect_1/warpScrambleStrength      = 2.000000
+outgoing_effect_1/activationBlockedStrenght = 1.000000
+outgoing_effect_1/maxVelocityMultiplier     = 1.000000
+
+medium_1/type              = Abyssal Warp Scrambler
+medium_1/state             = active
+medium_1/capacitorPeakLoad = non-finite
+
+ship                            = skill Gallente Frigate needs 1 has 0
+ship                            = skill Spaceship Command needs 1 has 0
+medium_1/Abyssal Warp Scrambler = skill Propulsion Jamming needs 2 has 0
+medium_1/Abyssal Warp Scrambler = skill Navigation needs 2 has 0
+medium_1/Abyssal Warp Scrambler = skill CPU Management needs 3 has 0
