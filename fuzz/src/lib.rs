@@ -3,7 +3,7 @@
 use std::collections::BTreeMap;
 use std::sync::LazyLock;
 
-use esf_data::{InfoName, InfoNameSde, InfoSde, Names, Sde};
+use esf_data::{Info, InfoName, InfoNameSde, InfoSde, Names, Sde};
 use esf_dogma_engine::{Calculation, Fit, ItemResult, Options, Rule, calculate};
 use esf_format::{eft, esf, esi};
 
@@ -52,6 +52,22 @@ static QA_IMMUNITY_MODULE: LazyLock<i32> = LazyLock::new(|| {
     info_name()
         .type_name_to_id("QA Immunity Module")
         .expect("no QA Immunity Module in the SDE")
+});
+
+/// Attributes that are NaN when the QA Immunity Module is fitted.
+static QA_IMMUNITY_NAN: LazyLock<Vec<i32>> = LazyLock::new(|| {
+    [
+        "shieldEffectiveBoostRate",
+        "armorEffectiveRepairRate",
+        "hullEffectiveRepairRate",
+    ]
+    .iter()
+    .map(|name| {
+        info()
+            .attribute_name_to_id(name)
+            .unwrap_or_else(|| panic!("no attribute named {name}"))
+    })
+    .collect()
 });
 
 pub fn info() -> InfoSde<'static> {
@@ -127,7 +143,9 @@ fn check_finite(calculation: &Calculation, fit: &Fit) {
         for (attribute_id, attribute) in &result.attributes {
             let path = format!("{path}.attributes[{attribute_id}]");
             check(format!("{path}.base"), attribute.base);
-            check(format!("{path}.value"), attribute.value);
+            if !(immune && attribute.value.is_nan() && QA_IMMUNITY_NAN.contains(attribute_id)) {
+                check(format!("{path}.value"), attribute.value);
+            }
             for (index, source) in attribute.sources.iter().enumerate() {
                 let path = format!("{path}.sources[{index}]");
                 check(format!("{path}.value"), source.value);
