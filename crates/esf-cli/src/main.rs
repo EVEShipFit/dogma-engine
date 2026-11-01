@@ -581,7 +581,8 @@ pub fn main() {
     let info_name = InfoNameSde::new(&sde, names.as_ref()).unwrap();
 
     let mut fit = match input.trim_ascii_start().starts_with(b"[") {
-        true => eft::load_eft(&info_name, &String::from_utf8_lossy(&input)).unwrap(),
+        true => eft::load_eft(&info_name, &String::from_utf8_lossy(&input))
+            .unwrap_or_else(|error| fail(error.to_string())),
         false => {
             let info = InfoSde::new(&sde);
             esf::load_esf(&info, &input)
