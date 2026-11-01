@@ -358,6 +358,14 @@ fn fails_on_a_broken_esf_fit() {
 }
 
 #[test]
+fn fails_on_a_broken_eft_fit() {
+    let (code, message) = stderr(&[], "[Rifter, Test]\nNo Such Module\n");
+
+    assert_eq!(code, 1);
+    assert_eq!(message, "error: unknown type No Such Module\n");
+}
+
+#[test]
 fn fails_on_an_unknown_skill() {
     let (code, message) = stderr(&["--skill", "Rifter=3"], RIFTER);
 
