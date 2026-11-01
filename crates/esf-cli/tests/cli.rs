@@ -1,6 +1,6 @@
 //! The command line, run as a binary against the SDE in node_modules.
 
-use std::io::Write;
+use std::io::{ErrorKind, Read, Write};
 use std::path::{Path, PathBuf};
 use std::process::{Command, Output, Stdio};
 
@@ -42,7 +42,9 @@ fn run(args: &[&str], stdin: &[u8]) -> Output {
         .stderr(Stdio::piped())
         .spawn()
         .unwrap();
-    child.stdin.take().unwrap().write_all(stdin).unwrap();
+    if let Err(error) = child.stdin.take().unwrap().write_all(stdin) {
+        assert_eq!(error.kind(), ErrorKind::BrokenPipe);
+    }
     child.wait_with_output().unwrap()
 }
 
@@ -456,5 +458,31 @@ fn fails_on_a_bad_state() {
         let (code, message) = stderr(&["--state", state], RIFTER);
         assert_eq!(code, 1, "{state}");
         assert!(message.starts_with(expected), "{state}: {message}");
+    }
+}
+
+#[test]
+fn stops_quietly_when_the_reader_does() {
+    for output in ["table", "json"] {
+        let mut child = Command::new(env!("CARGO_BIN_EXE_esf-cli"))
+            .args(["-l", "5", "--sources", "-o", output])
+            .current_dir(workspace())
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .unwrap();
+        child
+            .stdin
+            .take()
+            .unwrap()
+            .write_all(RIFTER.as_bytes())
+            .unwrap();
+        let mut first = [0; 16];
+        child.stdout.take().unwrap().read_exact(&mut first).unwrap();
+
+        let result = child.wait_with_output().unwrap();
+        assert!(result.status.success(), "{output}");
+        assert_eq!(String::from_utf8_lossy(&result.stderr), "", "{output}");
     }
 }
