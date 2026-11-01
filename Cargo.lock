@@ -222,6 +222,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "esf-dotnet"
+version = "0.0.0"
+dependencies = [
+ "esf-data",
+ "esf-dogma-engine",
+ "esf-format",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "esf-format"
 version = "0.0.0-git"
 dependencies = [

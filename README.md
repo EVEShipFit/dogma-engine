@@ -4,6 +4,7 @@
 [![npm](https://img.shields.io/npm/v/%40eveshipfit%2Fdogma-engine.svg)](https://www.npmjs.com/package/@eveshipfit/dogma-engine)
 [![PyPI](https://img.shields.io/pypi/v/eveshipfit-dogma-engine.svg)](https://pypi.org/project/eveshipfit-dogma-engine/)
 [![Maven Central](https://img.shields.io/maven-central/v/fit.eveship/dogma-engine.svg)](https://central.sonatype.com/artifact/fit.eveship/dogma-engine)
+[![NuGet](https://img.shields.io/nuget/v/EveShipFit.DogmaEngine.svg)](https://www.nuget.org/packages/EveShipFit.DogmaEngine)
 [![CI](https://github.com/EVEShipFit/dogma-engine/actions/workflows/testing.yml/badge.svg)](https://github.com/EVEShipFit/dogma-engine/actions/workflows/testing.yml)
 [![docs.rs](https://img.shields.io/docsrs/esf-dogma-engine)](https://docs.rs/esf-dogma-engine)
 
@@ -158,7 +159,7 @@ Each violation has:
 
 ## Usage
 
-The engine is published for Rust, Javascript, Python and Kotlin, and all four give the same results.
+The engine is published for Rust, Javascript, Python, Kotlin and .NET, and all five give the same results.
 In each, you load `sde.dat` once, and then calculate as many fits as you like.
 
 Fits can also be loaded from other formats, and saved back to most of them:
@@ -230,6 +231,12 @@ How to use it is explained in [its README](./crates/esf-python/README.md).
 The Kotlin variant runs on the JVM, and is published on Maven Central as
 [`fit.eveship:dogma-engine`](https://central.sonatype.com/artifact/fit.eveship/dogma-engine).
 How to use it is explained in [its README](./crates/esf-kotlin/README.md).
+
+### .NET
+
+The .NET variant is published on NuGet as
+[`EveShipFit.DogmaEngine`](https://www.nuget.org/packages/EveShipFit.DogmaEngine).
+How to use it is explained in [its README](./crates/esf-dotnet/README.md).
 
 ## Development
 
@@ -360,3 +367,14 @@ gradle -p crates/esf-kotlin test jar
 ```
 
 In the `crates/esf-kotlin/build/libs` folder is now a JAR to use.
+
+### .NET
+
+This is done with the [.NET SDK](https://dotnet.microsoft.com/download), which builds the Rust library for your platform first:
+
+```bash
+dotnet test crates/esf-dotnet/tests
+dotnet pack crates/esf-dotnet/dotnet
+```
+
+In the `crates/esf-dotnet/dotnet/bin/Release` folder is now a NuGet package to use.

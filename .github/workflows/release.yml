@@ -142,8 +142,8 @@ jobs:
         name: wheels-sdist
         path: dist
 
-  jni:
-    name: Build JNI library (${{ matrix.platform.name }})
+  natives:
+    name: Build native libraries (${{ matrix.platform.name }})
     runs-on: ${{ matrix.platform.runner }}
     timeout-minutes: 30
 
@@ -152,27 +152,37 @@ jobs:
         platform:
         - runner: ubuntu-latest
           name: linux-x86_64
+          rid: linux-x64
           target: x86_64-unknown-linux-gnu
-          library: libesf_dogma_engine_jni.so
+          prefix: lib
+          extension: so
           # Runs on glibc 2.17 and up, like manylinux2014.
           glibc: ".2.17"
         - runner: ubuntu-24.04-arm
           name: linux-aarch64
+          rid: linux-arm64
           target: aarch64-unknown-linux-gnu
-          library: libesf_dogma_engine_jni.so
+          prefix: lib
+          extension: so
           glibc: ".2.17"
         - runner: macos-latest
           name: macos-aarch64
+          rid: osx-arm64
           target: aarch64-apple-darwin
-          library: libesf_dogma_engine_jni.dylib
+          prefix: lib
+          extension: dylib
         - runner: macos-latest
           name: macos-x86_64
+          rid: osx-x64
           target: x86_64-apple-darwin
-          library: libesf_dogma_engine_jni.dylib
+          prefix: lib
+          extension: dylib
         - runner: windows-latest
           name: windows-x86_64
+          rid: win-x64
           target: x86_64-pc-windows-msvc
-          library: esf_dogma_engine_jni.dll
+          prefix: ""
+          extension: dll
 
     steps:
     - name: Checkout
@@ -196,27 +206,38 @@ jobs:
       with:
         tool: cargo-zigbuild
 
-    - name: Build library
+    - name: Build libraries
       shell: bash
       run: |
         if [ -n "${{ matrix.platform.glibc }}" ]; then
-          cargo zigbuild --release --locked -p esf-kotlin --target ${{ matrix.platform.target }}${{ matrix.platform.glibc }}
+          cargo zigbuild --release --locked -p esf-kotlin -p esf-dotnet --target ${{ matrix.platform.target }}${{ matrix.platform.glibc }}
         else
-          cargo build --release --locked -p esf-kotlin --target ${{ matrix.platform.target }}
+          cargo build --release --locked -p esf-kotlin -p esf-dotnet --target ${{ matrix.platform.target }}
         fi
 
-        mkdir -p natives/fit/eveship/dogma/natives/${{ matrix.platform.name }}
-        cp target/${{ matrix.platform.target }}/release/${{ matrix.platform.library }} natives/fit/eveship/dogma/natives/${{ matrix.platform.name }}/
+        RELEASE=target/${{ matrix.platform.target }}/release/${{ matrix.platform.prefix }}esf_dogma_engine
 
-    - name: Upload library
+        mkdir -p jni/fit/eveship/dogma/natives/${{ matrix.platform.name }}
+        cp ${RELEASE}_jni.${{ matrix.platform.extension }} jni/fit/eveship/dogma/natives/${{ matrix.platform.name }}/
+
+        mkdir -p dotnet/${{ matrix.platform.rid }}/native
+        cp ${RELEASE}_dotnet.${{ matrix.platform.extension }} dotnet/${{ matrix.platform.rid }}/native/
+
+    - name: Upload JNI library
       uses: actions/upload-artifact@v7
       with:
-        name: natives-${{ matrix.platform.name }}
-        path: natives
+        name: natives-jni-${{ matrix.platform.name }}
+        path: jni
+
+    - name: Upload .NET library
+      uses: actions/upload-artifact@v7
+      with:
+        name: natives-dotnet-${{ matrix.platform.rid }}
+        path: dotnet
 
   maven:
     name: Publish to Maven Central
-    needs: [jni]
+    needs: [natives]
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -238,7 +259,7 @@ jobs:
     - name: Download libraries
       uses: actions/download-artifact@v8
       with:
-        pattern: natives-*
+        pattern: natives-jni-*
         merge-multiple: true
         path: natives
 
@@ -267,6 +288,52 @@ jobs:
         VERSION=$(echo ${{ github.ref_name }} | cut -b2-)
 
         gradle -p crates/esf-kotlin publishAndReleaseToMavenCentral -Pversion=${VERSION} -Pnatives=${PWD}/natives
+
+  nuget:
+    name: Publish to NuGet
+    needs: [natives]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+
+    - name: Install .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: "10.0.x"
+
+    - name: Download libraries
+      uses: actions/download-artifact@v8
+      with:
+        pattern: natives-dotnet-*
+        merge-multiple: true
+        path: natives
+
+    - name: Build package
+      run: |
+        # Remove the "v" from the version.
+        VERSION=$(echo ${{ github.ref_name }} | cut -b2-)
+        echo "Version: ${VERSION}"
+
+        dotnet pack crates/esf-dotnet/dotnet -c Release -p:Version=${VERSION} -p:Natives=${PWD}/natives -o dist
+
+    - name: Upload package
+      uses: actions/upload-artifact@v7
+      with:
+        name: nupkg
+        path: dist
+
+    - name: Authenticate with NuGet
+      id: nuget-auth
+      uses: NuGet/login@v1
+      with:
+        user: ${{ secrets.NUGET_USER }}
+
+    - name: Publish to NuGet
+      run: |
+        dotnet nuget push dist/*.nupkg --api-key ${{ steps.nuget-auth.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
 
   pypi:
     name: Publish to PyPI

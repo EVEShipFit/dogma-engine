@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <RootNamespace>EveShipFit.Dogma</RootNamespace>
+
+    <PackageId>EveShipFit.DogmaEngine</PackageId>
+    <Version>0.0.0</Version>
+    <Authors>EVEShipFit Team</Authors>
+    <Description>Library to calculate statistics for EVE Online ship fits</Description>
+    <PackageTags>eve-online;sde;dogma-engine</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/EVEShipFit/dogma-engine</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/EVEShipFit/dogma-engine</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <NativeName>esf_dogma_engine_dotnet</NativeName>
+    <NativeFile Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(NativeName).dll</NativeFile>
+    <NativeFile Condition="$([MSBuild]::IsOSPlatform('OSX'))">lib$(NativeName).dylib</NativeFile>
+    <NativeFile Condition="$([MSBuild]::IsOSPlatform('Linux'))">lib$(NativeName).so</NativeFile>
+    <NativesGlob Condition="'$(Natives)' != ''">$(Natives)/**</NativesGlob>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+
+  <!-- -p:Natives=<dir> packs prebuilt libraries for every platform, as runtimes/<rid>/native/. -->
+  <ItemGroup Condition="'$(Natives)' != ''">
+    <None Include="$(NativesGlob)" Pack="true" PackagePath="runtimes/" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Natives)' == ''">
+    <None Include="../../../target/debug/$(NativeFile)" Link="$(NativeFile)" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="runtimes/$(NETCoreSdkPortableRuntimeIdentifier)/native/" Visible="false" />
+  </ItemGroup>
+
+  <Target Name="CargoBuild" BeforeTargets="BeforeBuild" Condition="'$(Natives)' == ''">
+    <Exec Command="cargo build --locked -p esf-dotnet" WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
+
+</Project>
