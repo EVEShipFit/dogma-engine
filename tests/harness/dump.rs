@@ -204,6 +204,9 @@ fn dump_projection(info: &impl Info, projection: &Projection, what: &str) -> Vec
                 |effect| effect.name().to_string(),
             ),
         ));
+        if effect.quantity != 1 {
+            lines.push((format!("{name}/quantity"), effect.quantity.to_string()));
+        }
         for (attribute_id, value) in &effect.attributes {
             lines.push((
                 format!("{name}/{}", attribute_name(info, *attribute_id)),

@@ -181,6 +181,7 @@ class ProjectedEffect(_ProjectedEffectRequired, total=False):
     """An effect aimed at a fit, like a stasis webifier."""
 
     attributes: dict[int, float]
+    quantity: int
 
 
 class Projection(TypedDict, total=False):

@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "typescript")]
 use tsify::Tsify;
 
-use crate::fit::id_map;
+use crate::fit::{id_map, one};
 
 /// The external buffs and effects that can be applied to another ship.
 ///
@@ -49,6 +49,9 @@ pub struct ProjectedEffect {
         tsify(type = "Map<number, number> | Record<number, number>")
     )]
     pub attributes: BTreeMap<i32, f64>,
+    /// How many items aim it.
+    #[serde(default = "one")]
+    pub quantity: u32,
 }
 
 impl Projection {

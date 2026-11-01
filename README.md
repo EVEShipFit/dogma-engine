@@ -69,6 +69,7 @@ All identifiers are those from the SDE.
     - `type_id`: the type the effect belongs to; its category decides the stacking penalty.
     - `effect_id`: which effect, as `dogmaEffects` in the SDE numbers them.
     - `attributes`: the value per attribute ID the effect reads, worked out by the fit that aimed it.
+    - `quantity` (optional, default 1): how many items aim it, like the size of a drone stack.
 
 ### Options
 
@@ -98,7 +99,7 @@ Each result has:
   - `source_attribute_id`: the attribute on the source that holds `value`; `null` for a buff, which carries its own strength.
   - `operator`: `pre_assign`, `pre_mul`, `pre_div`, `mod_add`, `mod_sub`, `post_mul`, `post_div`, `post_percent` or `post_assign`.
   - `value`: the value of the modifying attribute, or the strength of the buff.
-  - `quantity`: how many times it counts. A stacking penalised stack is listed once per item instead.
+  - `quantity`: how many times it counts. A stacking penalised stack is listed once per counted item, plus once for the rest.
   - `penalty`: the stacking penalty factor it got, or `null` if not penalised. Only the eight strongest bonuses and the eight strongest maluses count; the rest get 0.
   - `applied`: false when the source's state is too low for the effect.
 

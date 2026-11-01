@@ -306,7 +306,7 @@ pub enum Security {
     Wormhole,
 }
 
-fn one() -> u32 {
+pub(crate) fn one() -> u32 {
     1
 }
 

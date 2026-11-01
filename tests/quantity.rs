@@ -5,7 +5,7 @@ use std::collections::BTreeMap;
 use esf_data::Info;
 use esf_dogma_engine::{Calculation, Fit, FitItem, Options, Slot};
 
-use crate::harness::{all, calculate, info};
+use crate::harness::{all, calculate, info, outgoing};
 
 const SOURCES: Options = Options {
     sources: true,
@@ -123,4 +123,32 @@ fn stack_is_its_items() {
     assert_eq!(fit.items.len(), 5);
     assert_eq!(stack.ship.attributes.len(), split.ship.attributes.len());
     assert_close(&ship_values(&stack), &ship_values(&split));
+}
+
+const HUGE_WEBS: &str = r#"%esf/1
+Vexor "Huge web drone stack"
+
+4294967295x 'Aergia' Hobgoblin SW-300
+"#;
+
+const TARGET: &str = r#"%esf/1
+Rupture "Target"
+
+10MN Afterburner II
+"#;
+
+#[test]
+fn huge_projected_stack() {
+    let projection = outgoing(HUGE_WEBS, all(5));
+    assert_eq!(projection.effects.len(), 1);
+    assert_eq!(projection.effects[0].quantity, u32::MAX);
+
+    let (_, calculation) = calculate(
+        TARGET,
+        all(5),
+        |fit| fit.incoming.extend(outgoing(HUGE_WEBS, all(5))),
+        &SOURCES,
+    );
+    let speed = info().attribute_name_to_id("maxVelocity").unwrap();
+    assert!(calculation.ship.attributes[&speed].value.is_finite());
 }
