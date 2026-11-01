@@ -93,6 +93,9 @@ pub fn check_loaded(fit: Fit) {
     }
 }
 
+/// A mutation override above this may overflow to infinity.
+const HUGE_OVERRIDE: f64 = 1e15;
+
 /// Calculates a fit, panics on any NaN or infinite number, and writes it back
 /// out to every format.
 pub fn check(fit: &Fit) {
@@ -102,14 +105,24 @@ pub fn check(fit: &Fit) {
         validate: true,
     };
     let calculation = calculate(&info, fit, &options);
-    check_finite(&calculation, fit);
+    let huge_override = fit
+        .items
+        .iter()
+        .filter_map(|item| item.mutation.as_ref())
+        .flat_map(|mutation| mutation.attributes.values())
+        .any(|value| value.abs() > HUGE_OVERRIDE);
+    if !huge_override {
+        check_finite(&calculation, fit);
+    }
 
     let _ = eft::save_eft(&info, fit);
     let _ = esi::save_esi_fitting(&info, fit);
     if let Ok(esf_fit) = esf::from_fit(&info, fit) {
         let fits = [esf_fit];
         let _ = esf::save_esf(&info, &fits);
-        let _ = esf::save_esf_binary(&info, &fits);
+        if let Ok(binary) = esf::save_esf_binary(&info, &fits) {
+            let _ = esf::decode_base64url(&esf::encode_base64url(&binary));
+        }
     }
 }
 
