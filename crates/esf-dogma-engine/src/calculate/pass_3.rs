@@ -64,6 +64,8 @@ impl Attribute {
         if let Some(value) = self.value.get() {
             return value;
         }
+        /* A modifier that reads the attribute it changes gets its base value. */
+        self.value.set(Some(self.base_value));
 
         let mut current_value = self.base_value;
         let mut sources = Vec::new();

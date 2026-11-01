@@ -20,5 +20,6 @@ mod fits;
 mod killmail;
 mod link;
 mod lookup;
+mod modifier_cycle;
 mod post_load;
 mod quantity;

@@ -54,8 +54,8 @@ static QA_IMMUNITY_MODULE: LazyLock<i32> = LazyLock::new(|| {
         .expect("no QA Immunity Module in the SDE")
 });
 
-/// Attributes that are NaN when the QA Immunity Module is fitted.
-static QA_IMMUNITY_NAN: LazyLock<Vec<i32>> = LazyLock::new(|| {
+/// Attributes that are NaN when the ship is immune to the damage profile.
+static IMMUNE_NAN: LazyLock<Vec<i32>> = LazyLock::new(|| {
     [
         "shieldEffectiveBoostRate",
         "armorEffectiveRepairRate",
@@ -69,6 +69,44 @@ static QA_IMMUNITY_NAN: LazyLock<Vec<i32>> = LazyLock::new(|| {
     })
     .collect()
 });
+
+/// Per ship layer, each damage profile attribute with its resonance attribute.
+static RESONANCES: LazyLock<Vec<Vec<(i32, i32)>>> = LazyLock::new(|| {
+    [
+        [
+            ("damageProfileEm", "shieldEmDamageResonance"),
+            ("damageProfileExplosive", "shieldExplosiveDamageResonance"),
+            ("damageProfileKinetic", "shieldKineticDamageResonance"),
+            ("damageProfileThermal", "shieldThermalDamageResonance"),
+        ],
+        [
+            ("damageProfileEm", "armorEmDamageResonance"),
+            ("damageProfileExplosive", "armorExplosiveDamageResonance"),
+            ("damageProfileKinetic", "armorKineticDamageResonance"),
+            ("damageProfileThermal", "armorThermalDamageResonance"),
+        ],
+        [
+            ("damageProfileEm", "emDamageResonance"),
+            ("damageProfileExplosive", "explosiveDamageResonance"),
+            ("damageProfileKinetic", "kineticDamageResonance"),
+            ("damageProfileThermal", "thermalDamageResonance"),
+        ],
+    ]
+    .iter()
+    .map(|layer| {
+        layer
+            .iter()
+            .map(|(profile, resonance)| (attribute_id(profile), attribute_id(resonance)))
+            .collect()
+    })
+    .collect()
+});
+
+fn attribute_id(name: &str) -> i32 {
+    info()
+        .attribute_name_to_id(name)
+        .unwrap_or_else(|| panic!("no attribute named {name}"))
+}
 
 pub fn info() -> InfoSde<'static> {
     InfoSde::new(&SDE)
@@ -138,13 +176,33 @@ fn calculate_and_save(fit: &Fit, finite: bool) {
     }
 }
 
+/// Whether a layer of the ship resists all of the damage profile.
+fn immune_layer(calculation: &Calculation) -> bool {
+    let value = |attribute_id| {
+        calculation
+            .ship
+            .attributes
+            .get(&attribute_id)
+            .map_or(1.0, |attribute| attribute.value)
+    };
+    RESONANCES.iter().any(|layer| {
+        layer
+            .iter()
+            .map(|(profile, resonance)| value(*profile) * value(*resonance))
+            .sum::<f64>()
+            == 0.0
+    })
+}
+
 fn check_finite(calculation: &Calculation, fit: &Fit) {
-    let immune = fit
+    let qa_immune = fit
         .items
         .iter()
         .any(|item| item.type_id == *QA_IMMUNITY_MODULE);
+    let hull_immune = immune_layer(calculation);
     let mut problems = Vec::new();
     let mut flag = |path: String, value: f64| {
+        let immune = qa_immune || (hull_immune && path.starts_with("ship."));
         if value.is_nan() || (value.is_infinite() && !immune) {
             problems.push(format!("{path} is {value}"));
         }
@@ -165,10 +223,11 @@ fn check_finite(calculation: &Calculation, fit: &Fit) {
     }
 
     for (path, result) in results {
+        let immune = qa_immune || (hull_immune && path == "ship");
         for (attribute_id, attribute) in &result.attributes {
             let path = format!("{path}.attributes[{attribute_id}]");
             flag(format!("{path}.base"), attribute.base);
-            if !(immune && attribute.value.is_nan() && QA_IMMUNITY_NAN.contains(attribute_id)) {
+            if !(immune && attribute.value.is_nan() && IMMUNE_NAN.contains(attribute_id)) {
                 flag(format!("{path}.value"), attribute.value);
             }
             for (index, source) in attribute.sources.iter().enumerate() {
