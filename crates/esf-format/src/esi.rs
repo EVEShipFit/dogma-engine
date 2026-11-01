@@ -78,7 +78,7 @@ pub fn save_esi_fitting(info: &impl Info, fit: &Fit) -> EsiFitting {
             .iter_mut()
             .find(|item| item.flag == flag && item.type_id == type_id);
         match listed {
-            Some(item) => item.quantity += quantity,
+            Some(item) => item.quantity = item.quantity.saturating_add(quantity),
             None => items.push(EsiFittingItem {
                 flag: flag.to_string(),
                 quantity,

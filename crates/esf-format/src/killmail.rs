@@ -64,7 +64,9 @@ pub fn load_killmail(info: &impl Info, killmail: &EsiKillmail) -> Fit {
         .iter()
         .filter_map(|item| {
             let place = place_of_flag(item.flag)?;
-            let quantity = item.quantity_destroyed + item.quantity_dropped;
+            let quantity = item
+                .quantity_destroyed
+                .saturating_add(item.quantity_dropped);
             Some(Listed::new(place, item.item_type_id, quantity))
         })
         .collect();
