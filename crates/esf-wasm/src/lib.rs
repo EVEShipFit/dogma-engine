@@ -11,12 +11,10 @@ use esf_format::killmail::EsiKillmail;
 
 /// The SDE is handed over once and then read straight out of WASM memory, so
 /// no lookup crosses back into JavaScript.
-static SDE_BYTES: OnceLock<Vec<u8>> = OnceLock::new();
 static SDE: OnceLock<Sde<'static>> = OnceLock::new();
 
 /// `names.dat` is only read for a name `sde.dat` does not know, so it stays
 /// optional; it is the bigger of the two files.
-static NAMES_BYTES: OnceLock<Vec<u8>> = OnceLock::new();
 static NAMES: OnceLock<Names<'static>> = OnceLock::new();
 
 fn sde() -> Result<&'static Sde<'static>, JsError> {
@@ -37,11 +35,11 @@ pub fn load_sde(bytes: Vec<u8>) -> Result<i32, JsError> {
         return Err(JsError::new("SDE is already loaded"));
     }
 
-    let bytes = SDE_BYTES.get_or_init(|| bytes);
-    let sde = Sde::new(bytes)?;
+    let sde = Sde::new(bytes.leak())?;
 
     let build_number = sde.build_number();
-    let _ = SDE.set(sde);
+    SDE.set(sde)
+        .map_err(|_| JsError::new("SDE is already loaded"))?;
 
     Ok(build_number)
 }
@@ -57,8 +55,7 @@ pub fn load_names(bytes: Vec<u8>) -> Result<i32, JsError> {
         return Err(JsError::new("names are already loaded"));
     }
 
-    let bytes = NAMES_BYTES.get_or_init(|| bytes);
-    let names = Names::new(bytes)?;
+    let names = Names::new(bytes.leak())?;
 
     /* Reject a mismatched pair here, rather than on every load_eft(). */
     let build_number = names.build_number();
@@ -70,7 +67,9 @@ pub fn load_names(bytes: Vec<u8>) -> Result<i32, JsError> {
         .into());
     }
 
-    let _ = NAMES.set(names);
+    NAMES
+        .set(names)
+        .map_err(|_| JsError::new("names are already loaded"))?;
 
     Ok(build_number)
 }
