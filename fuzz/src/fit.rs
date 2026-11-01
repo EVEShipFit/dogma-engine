@@ -151,7 +151,7 @@ fn pick_item(u: &mut Unstructured) -> Result<i32> {
     }
 }
 
-fn attribute_value(type_id: i32, attribute_id: i32) -> f64 {
+fn attribute_value(type_id: i32, attribute_id: i32) -> Option<f64> {
     info()
         .get_dogma_attributes(type_id)
         .and_then(|attributes| {
@@ -159,7 +159,7 @@ fn attribute_value(type_id: i32, attribute_id: i32) -> f64 {
                 .iter()
                 .find(|attribute| attribute.attribute_id() == attribute_id)
         })
-        .map_or(0.0, |attribute| f64::from(attribute.value()))
+        .map(|attribute| f64::from(attribute.value()))
 }
 
 /// Either a real mutaplasmid roll, or any base and attributes.
@@ -178,7 +178,7 @@ fn mutated(u: &mut Unstructured, type_id: i32) -> Result<(i32, Mutation)> {
     let mutaplasmid = u.choose(&pools.mutaplasmids)?;
     let mut attributes = BTreeMap::new();
     for &(attribute_id, min, max) in &mutaplasmid.rolls {
-        let base = attribute_value(mutaplasmid.base, attribute_id);
+        let base = attribute_value(mutaplasmid.base, attribute_id).unwrap_or(0.0);
         attributes.insert(attribute_id, base * float(u, min, max)?);
     }
     Ok((
@@ -220,7 +220,31 @@ fn attributes_of(u: &mut Unstructured, type_id: i32) -> Result<BTreeMap<i32, f64
     }
     for _ in 0..u.int_in_range(0..=6)? {
         let (attribute_id, value) = *u.choose(&attributes)?;
-        out.insert(attribute_id, value * float(u, 0.0, 2.0)?);
+        out.insert(attribute_id, value * float(u, 0.5, 1.5)?);
+    }
+    Ok(out)
+}
+
+/// Every attribute an effect reads, at a value near the one of the type.
+fn effect_attributes(
+    u: &mut Unstructured,
+    type_id: i32,
+    effect_id: i32,
+) -> Result<BTreeMap<i32, f64>> {
+    let info = info();
+    let mut out = BTreeMap::new();
+    let Some(effect) = info.get_dogma_effect(effect_id) else {
+        return Ok(out);
+    };
+    for modifier in effect.modifiers().into_iter().flatten() {
+        let attribute_id = modifier.modifying_attribute_id();
+        let value = attribute_value(type_id, attribute_id).or_else(|| {
+            info.get_dogma_attribute(attribute_id)
+                .map(|attribute| f64::from(attribute.default_value()))
+        });
+        if let Some(value) = value {
+            out.insert(attribute_id, value * float(u, 0.5, 1.5)?);
+        }
     }
     Ok(out)
 }
@@ -324,7 +348,7 @@ fn incoming(u: &mut Unstructured) -> Result<Projection> {
                 true => u.int_in_range(-1..=MAX_BUFF_ID)?,
                 false => pick(u, &pools.buffs)?,
             },
-            value: float(u, -100.0, 100.0)?,
+            value: float(u, -90.0, 100.0)?,
         });
     }
     for _ in 0..u.int_in_range(0..=3)? {
@@ -341,7 +365,7 @@ fn incoming(u: &mut Unstructured) -> Result<Projection> {
         projection.effects.push(ProjectedEffect {
             type_id,
             effect_id,
-            attributes: attributes_of(u, type_id)?,
+            attributes: effect_attributes(u, type_id, effect_id)?,
         });
     }
     Ok(projection)

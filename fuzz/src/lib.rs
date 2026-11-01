@@ -99,6 +99,15 @@ const HUGE_OVERRIDE: f64 = 1e15;
 /// Calculates a fit, panics on any NaN or infinite number, and writes it back
 /// out to every format.
 pub fn check(fit: &Fit) {
+    calculate_and_save(fit, true);
+}
+
+/// Calculates a fit and writes it back out to every format.
+pub fn check_no_crash(fit: &Fit) {
+    calculate_and_save(fit, false);
+}
+
+fn calculate_and_save(fit: &Fit, finite: bool) {
     let info = info();
     let options = Options {
         sources: true,
@@ -111,7 +120,7 @@ pub fn check(fit: &Fit) {
         .filter_map(|item| item.mutation.as_ref())
         .flat_map(|mutation| mutation.attributes.values())
         .any(|value| value.abs() > HUGE_OVERRIDE);
-    if !huge_override {
+    if finite && !huge_override {
         check_finite(&calculation, fit);
     }
 

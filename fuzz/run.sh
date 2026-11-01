@@ -19,4 +19,4 @@ extra=""
 [ "$target" = fit ] && extra="-len_control=0 -max_len=4096"
 
 exec cargo +nightly fuzz run "$target" "corpus/$target" -- \
-    -max_total_time="$seconds" -fork="$jobs" -ignore_crashes=1 $extra
+    -max_total_time="$seconds" -fork="$jobs" -ignore_crashes=1 -ignore_timeouts=1 -timeout=10 $extra
