@@ -15,5 +15,8 @@ fi
 
 [ -d "seeds/$target" ] && cp -n "seeds/$target"/* "corpus/$target"/
 
+extra=""
+[ "$target" = fit ] && extra="-len_control=0 -max_len=4096"
+
 exec cargo +nightly fuzz run "$target" "corpus/$target" -- \
-    -max_total_time="$seconds" -fork="$jobs" -ignore_crashes=1
+    -max_total_time="$seconds" -fork="$jobs" -ignore_crashes=1 $extra

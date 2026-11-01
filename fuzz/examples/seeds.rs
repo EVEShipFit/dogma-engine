@@ -3,8 +3,10 @@
 use std::fs;
 use std::path::Path;
 
-use esf_dogma_engine::{Fit, Slot};
+use esf_dogma_engine::{Character, Environment, Fit, Ship, Slot, beacon};
 use esf_format::{eft, esf, esi};
+
+const RIFTER: i32 = 587;
 
 fn esf_fits(source: &str) -> Vec<&str> {
     source
@@ -92,5 +94,25 @@ fn main() {
             }
         }
     }
-    println!("{count} fits written to {}", corpus.display());
+    for &type_id in esf_fuzz::fit::BEACONS.iter() {
+        let fit = Fit {
+            name: None,
+            ship: Ship {
+                type_id: RIFTER,
+                mode: None,
+            },
+            items: Vec::new(),
+            character: Character::default(),
+            environment: Environment::default(),
+            incoming: beacon(&info, type_id),
+        };
+        let json = serde_json::to_string(&fit).unwrap();
+        write("fit_json", &format!("beacon-{type_id}"), json.as_bytes());
+    }
+
+    println!(
+        "{count} fits and {} beacons written to {}",
+        esf_fuzz::fit::BEACONS.len(),
+        corpus.display()
+    );
 }

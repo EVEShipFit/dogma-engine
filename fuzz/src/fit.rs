@@ -9,11 +9,12 @@ use esf_data::eve::EffectCategory;
 use esf_data::{Info, InfoEsf};
 use esf_dogma_engine::{
     Character, Charge, DamageProfile, Environment, Fit, FitItem, Mutation, ProjectedBuff,
-    ProjectedEffect, Projection, ReactiveArmor, Security, Ship, Slot, Spool, State,
+    ProjectedEffect, Projection, ReactiveArmor, Security, Ship, Slot, Spool, State, beacon,
 };
 
 use crate::{SDE, info};
 
+const CATEGORY_CELESTIAL: i32 = 2;
 const CATEGORY_SHIP: i32 = 6;
 const CATEGORY_CHARGE: i32 = 8;
 const CATEGORY_SKILL: i32 = 16;
@@ -40,6 +41,7 @@ struct Pools {
     projectable: Vec<(i32, i32)>,
     buffs: Vec<i32>,
     mutaplasmids: Vec<Mutaplasmid>,
+    beacons: Vec<i32>,
 }
 
 static POOLS: LazyLock<Pools> = LazyLock::new(|| {
@@ -120,7 +122,17 @@ static POOLS: LazyLock<Pools> = LazyLock::new(|| {
             .filter(|id| info.get_dbuff_collection(*id).is_some())
             .collect(),
         mutaplasmids,
+        beacons: BEACONS.clone(),
     }
+});
+
+/// Celestials with effects, like wormhole and abyssal beacons.
+pub static BEACONS: LazyLock<Vec<i32>> = LazyLock::new(|| {
+    SDE.types()
+        .filter(|r#type| r#type.category_id() == CATEGORY_CELESTIAL)
+        .filter(|r#type| !effects_of(r#type.id()).is_empty())
+        .map(|r#type| r#type.id())
+        .collect()
 });
 
 fn pick(u: &mut Unstructured, pool: &[i32]) -> Result<i32> {
@@ -299,6 +311,12 @@ fn item(u: &mut Unstructured) -> Result<FitItem> {
 fn incoming(u: &mut Unstructured) -> Result<Projection> {
     let pools = &*POOLS;
     let mut projection = Projection::default();
+
+    if !pools.beacons.is_empty() {
+        for _ in 0..u.int_in_range(0..=2)? {
+            projection.extend(beacon(&info(), pick(u, &pools.beacons)?));
+        }
+    }
 
     for _ in 0..u.int_in_range(0..=3)? {
         projection.buffs.push(ProjectedBuff {
