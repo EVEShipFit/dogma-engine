@@ -23,7 +23,7 @@ impl Item {
         })
     }
 
-    fn set_type_ids(&mut self, info: &impl Info) {
+    pub(super) fn set_type_ids(&mut self, info: &impl Info) {
         if let Some(r#type) = info.get_type(self.type_id) {
             self.group_id = r#type.group_id();
             self.category_id = r#type.category_id();
@@ -180,7 +180,7 @@ impl PassOne {
         });
 
         for fit_item in &fit.items {
-            let mut item = Item::new_fit(fit_item);
+            let mut item = Item::new_fit(info, fit_item);
 
             if item.is_calculated() {
                 match &fit_item.mutation {

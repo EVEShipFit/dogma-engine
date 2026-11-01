@@ -1,0 +1,5 @@
+---
+source: tests/harness/case.rs
+expression: "validate_fit(text, skills, edit)"
+---
+fightertube_1/Dual Heavy Beam Laser I = not_a_fighter

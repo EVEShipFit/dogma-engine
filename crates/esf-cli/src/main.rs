@@ -418,6 +418,7 @@ fn violation_rule(info: &InfoSde, rule: Rule) -> String {
             available,
         } => format!("{} slots used {used} of {available}", label(slot)),
         Rule::WrongSlot { expected } => format!("belongs in a {} slot", label(expected)),
+        Rule::NotAFighter => "only a fighter goes here".to_string(),
         Rule::SlotTaken => "another item is in this slot".to_string(),
         Rule::WrongSlotIndex { expected } => format!("belongs in slot {expected}"),
         Rule::SubsystemTaken => "another subsystem covers the same part".to_string(),

@@ -1,6 +1,6 @@
 use esf_data::Info;
 
-use super::{Context, Item, Rule, SlotKind, Target, Violation};
+use super::{CATEGORY_FIGHTER, Context, Item, Rule, SlotKind, Target, Violation};
 use crate::fit::Slot;
 
 /// A rack, and the ship attribute saying how many slots it has. A ship
@@ -46,6 +46,11 @@ pub(super) fn validate<I: Info>(context: &Context<'_, I>, found: &mut Vec<Violat
             .filter(|rack| item.is_fitted() && item.rack() != Some(*rack))
         {
             found.push(item.violation(Rule::WrongSlot { expected: rack }));
+        }
+        if matches!(item.fit.slot, Slot::FighterTube(_) | Slot::FighterBay)
+            && item.category_id != CATEGORY_FIGHTER
+        {
+            found.push(item.violation(Rule::NotAFighter));
         }
         if holds_one(item.fit.slot) && shares_slot(context, item) {
             found.push(item.violation(Rule::SlotTaken));
