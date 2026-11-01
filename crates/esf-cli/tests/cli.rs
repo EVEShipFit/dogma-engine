@@ -398,3 +398,55 @@ fn rejects_bad_arguments() {
         assert!(message.contains(expected), "{args:?}: {message}");
     }
 }
+
+#[test]
+fn fails_on_a_missing_or_broken_file() {
+    let junk = TempFile::new("junk.dat", "junk");
+    let broken = TempFile::new("broken.json", "nope");
+    let not_a_skill = TempFile::new("not-a-skill.json", r#"{"x": 5}"#);
+    let cases: [(&[&str], String); 7] = [
+        (&["-e", "/nope"], "/nope: No such file".to_string()),
+        (&["-d", "/nope"], "/nope: No such file".to_string()),
+        (&["-f", "/nope"], "/nope: No such file".to_string()),
+        (
+            &["-d", junk.path()],
+            format!("{}: not a valid SDE file", junk.path()),
+        ),
+        (
+            &["-n", junk.path()],
+            format!("{}: not a valid names file", junk.path()),
+        ),
+        (
+            &["-f", broken.path()],
+            format!("{}: expected ident", broken.path()),
+        ),
+        (
+            &["-f", not_a_skill.path()],
+            format!("{}: skill id \"x\" is not a number", not_a_skill.path()),
+        ),
+    ];
+
+    for (args, expected) in cases {
+        let (code, message) = stderr(args, RIFTER);
+        assert_eq!(code, 1, "{args:?}");
+        assert!(
+            message.starts_with(&format!("error: {expected}")),
+            "{args:?}: {message}"
+        );
+    }
+}
+
+#[test]
+fn fails_on_a_bad_state() {
+    for (state, expected) in [
+        ("PPP", "error: state should be 24 letters"),
+        (
+            "XPPPPPPPPPPPPPPPPPPPPPPP",
+            "error: invalid state character: X",
+        ),
+    ] {
+        let (code, message) = stderr(&["--state", state], RIFTER);
+        assert_eq!(code, 1, "{state}");
+        assert!(message.starts_with(expected), "{state}: {message}");
+    }
+}

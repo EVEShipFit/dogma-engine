@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 use std::io::{IsTerminal, Read, Write};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use clap::{Parser, ValueEnum};
 
@@ -196,6 +196,10 @@ fn fail(message: String) -> ! {
     std::process::exit(1);
 }
 
+fn read(path: &Path) -> Vec<u8> {
+    std::fs::read(path).unwrap_or_else(|error| fail(format!("{}: {error}", path.display())))
+}
+
 /// Set the state of every module from a 24-letter string; 8 letters for each
 /// of the high, medium and low slots.
 ///
@@ -205,8 +209,8 @@ fn fail(message: String) -> ! {
 fn apply_state(fit: &mut Fit, state: &str) {
     let state: Vec<char> = state.chars().collect();
     if state.len() != 24 {
-        panic!(
-            "State should be 24 letters; 8 for each high/medium/low slot. P = Passive (Offline), O = Online, A = Active, V = Overload."
+        fail(
+            "state should be 24 letters; 8 for each high/medium/low slot. P = Passive (Offline), O = Online, A = Active, V = Overload.".to_string(),
         );
     }
 
@@ -224,7 +228,7 @@ fn apply_state(fit: &mut Fit, state: &str) {
                 'O' => State::Online,
                 'A' => State::Active,
                 'V' => State::Overload,
-                character => panic!("Invalid state character: {}", character),
+                character => fail(format!("invalid state character: {character}")),
             };
         }
     }
@@ -243,10 +247,15 @@ fn apply_skills(args: &Args, sde: &Sde, info_name: &InfoNameSde, fit: &mut Fit) 
     }
 
     if let Some(skills_filename) = &args.skills_filename {
-        let skills_file = std::fs::File::open(skills_filename).unwrap();
-        let skills_file: BTreeMap<String, u8> = serde_json::from_reader(skills_file).unwrap();
+        let skills_file: BTreeMap<String, u8> = serde_json::from_slice(&read(skills_filename))
+            .unwrap_or_else(|error| fail(format!("{}: {error}", skills_filename.display())));
         for (skill_id, level) in skills_file {
-            let skill_id = skill_id.parse::<i32>().unwrap();
+            let skill_id = skill_id.parse::<i32>().unwrap_or_else(|_| {
+                fail(format!(
+                    "{}: skill id {skill_id:?} is not a number",
+                    skills_filename.display()
+                ))
+            });
             skills.insert(skill_id, level);
         }
     }
@@ -557,16 +566,19 @@ pub fn main() {
 
     /* The fit can come either from stdin, or from eft-file parameter. */
     let input = match &args.eft_filename {
-        Some(filename) => std::fs::read(filename).unwrap(),
+        Some(filename) => read(filename),
         None => {
             let mut buffer = Vec::new();
-            std::io::stdin().read_to_end(&mut buffer).unwrap();
+            std::io::stdin()
+                .read_to_end(&mut buffer)
+                .unwrap_or_else(|error| fail(format!("stdin: {error}")));
             buffer
         }
     };
 
-    let sde_bytes = std::fs::read(&args.sde_filename).unwrap();
-    let sde = Sde::new(&sde_bytes).unwrap();
+    let sde_bytes = read(&args.sde_filename);
+    let sde = Sde::new(&sde_bytes)
+        .unwrap_or_else(|error| fail(format!("{}: {error}", args.sde_filename.display())));
 
     if let Some(action) = args.esf {
         run_esf(&InfoSde::new(&sde), action, &input);
@@ -576,9 +588,13 @@ pub fn main() {
     /* English names come from the SDE; the names file only widens that to the
      * other seven languages, so a missing one is not fatal. */
     let names_bytes = std::fs::read(&args.names_filename).ok();
-    let names = names_bytes.as_ref().map(|bytes| Names::new(bytes).unwrap());
+    let names = names_bytes.as_ref().map(|bytes| {
+        Names::new(bytes)
+            .unwrap_or_else(|error| fail(format!("{}: {error}", args.names_filename.display())))
+    });
 
-    let info_name = InfoNameSde::new(&sde, names.as_ref()).unwrap();
+    let info_name =
+        InfoNameSde::new(&sde, names.as_ref()).unwrap_or_else(|error| fail(error.to_string()));
 
     let mut fit = match input.trim_ascii_start().starts_with(b"[") {
         true => eft::load_eft(&info_name, &String::from_utf8_lossy(&input)).unwrap(),
