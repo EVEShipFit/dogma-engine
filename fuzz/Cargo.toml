@@ -1,0 +1,76 @@
+[package]
+name = "esf-fuzz"
+publish = false
+version = "0.0.0"
+edition = "2024"
+license = "MIT"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+arbitrary = "1"
+esf-data = { path = "../crates/esf-data" }
+esf-dogma-engine = { path = "../crates/esf-dogma-engine" }
+esf-format = { path = "../crates/esf-format" }
+libfuzzer-sys = "0.4"
+serde_json = "1.0"
+
+[workspace]
+members = ["."]
+
+[[bin]]
+name = "dna"
+path = "fuzz_targets/dna.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "eft"
+path = "fuzz_targets/eft.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "esf"
+path = "fuzz_targets/esf.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "esi"
+path = "fuzz_targets/esi.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fit"
+path = "fuzz_targets/fit.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "killmail"
+path = "fuzz_targets/killmail.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "link"
+path = "fuzz_targets/link.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fit_json"
+path = "fuzz_targets/fit_json.rs"
+test = false
+doc = false
+bench = false

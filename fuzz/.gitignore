@@ -1,0 +1,7 @@
+/artifacts/
+/corpus/
+/coverage/
+/target/
+Cargo.lock
+fuzz-*.log
+*.profraw

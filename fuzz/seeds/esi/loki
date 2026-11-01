@@ -1,0 +1,167 @@
+{
+  "ship_type_id": 29990,
+  "name": "C3 HAM",
+  "description": "",
+  "items": [
+    {
+      "flag": "LoSlot0",
+      "quantity": 1,
+      "type_id": 22291
+    },
+    {
+      "flag": "LoSlot1",
+      "quantity": 1,
+      "type_id": 22291
+    },
+    {
+      "flag": "SubSystemSlot0",
+      "quantity": 1,
+      "type_id": 45633
+    },
+    {
+      "flag": "SubSystemSlot1",
+      "quantity": 1,
+      "type_id": 45595
+    },
+    {
+      "flag": "SubSystemSlot2",
+      "quantity": 1,
+      "type_id": 45608
+    },
+    {
+      "flag": "SubSystemSlot3",
+      "quantity": 1,
+      "type_id": 45621
+    },
+    {
+      "flag": "MedSlot0",
+      "quantity": 1,
+      "type_id": 19203
+    },
+    {
+      "flag": "MedSlot1",
+      "quantity": 1,
+      "type_id": 19289
+    },
+    {
+      "flag": "MedSlot2",
+      "quantity": 1,
+      "type_id": 2281
+    },
+    {
+      "flag": "MedSlot3",
+      "quantity": 1,
+      "type_id": 17500
+    },
+    {
+      "flag": "MedSlot4",
+      "quantity": 1,
+      "type_id": 14142
+    },
+    {
+      "flag": "MedSlot5",
+      "quantity": 1,
+      "type_id": 41220
+    },
+    {
+      "flag": "MedSlot6",
+      "quantity": 1,
+      "type_id": 14108
+    },
+    {
+      "flag": "HiSlot0",
+      "quantity": 1,
+      "type_id": 25715
+    },
+    {
+      "flag": "HiSlot1",
+      "quantity": 1,
+      "type_id": 25715
+    },
+    {
+      "flag": "HiSlot2",
+      "quantity": 1,
+      "type_id": 25715
+    },
+    {
+      "flag": "HiSlot3",
+      "quantity": 1,
+      "type_id": 25715
+    },
+    {
+      "flag": "HiSlot4",
+      "quantity": 1,
+      "type_id": 25715
+    },
+    {
+      "flag": "HiSlot5",
+      "quantity": 1,
+      "type_id": 30836
+    },
+    {
+      "flag": "HiSlot6",
+      "quantity": 1,
+      "type_id": 11578
+    },
+    {
+      "flag": "HiSlot7",
+      "quantity": 1,
+      "type_id": 28756
+    },
+    {
+      "flag": "Cargo",
+      "quantity": 1,
+      "type_id": 33700
+    },
+    {
+      "flag": "Cargo",
+      "quantity": 150,
+      "type_id": 28668
+    },
+    {
+      "flag": "Cargo",
+      "quantity": 16,
+      "type_id": 30486
+    },
+    {
+      "flag": "Cargo",
+      "quantity": 16,
+      "type_id": 30488
+    },
+    {
+      "flag": "Cargo",
+      "quantity": 330,
+      "type_id": 2679
+    },
+    {
+      "flag": "Cargo",
+      "quantity": 9000,
+      "type_id": 13856
+    },
+    {
+      "flag": "Cargo",
+      "quantity": 9000,
+      "type_id": 24488
+    },
+    {
+      "flag": "DroneBay",
+      "quantity": 8,
+      "type_id": 2456
+    },
+    {
+      "flag": "RigSlot0",
+      "quantity": 1,
+      "type_id": 31748
+    },
+    {
+      "flag": "RigSlot1",
+      "quantity": 1,
+      "type_id": 31760
+    },
+    {
+      "flag": "RigSlot2",
+      "quantity": 1,
+      "type_id": 31588
+    }
+  ]
+}
