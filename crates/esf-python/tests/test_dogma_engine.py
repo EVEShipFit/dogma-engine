@@ -1,4 +1,6 @@
 import os
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -176,6 +178,23 @@ def test_bad_fit_raises_value_error() -> None:
 def test_loading_the_sde_twice_raises() -> None:
     with pytest.raises(RuntimeError):
         dogma.load_sde(b"")
+
+
+def test_a_failed_load_can_be_retried() -> None:
+    script = f"""
+import esf_dogma_engine as dogma
+
+for load, path in ((dogma.load_sde, {str(SDE)!r}), (dogma.load_names, {str(NAMES)!r})):
+    try:
+        load(b"")
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("loading nothing did not raise")
+    with open(path, "rb") as handle:
+        load(handle.read())
+"""
+    subprocess.run([sys.executable, "-c", script], check=True)
 
 
 def test_loads_an_eft() -> None:

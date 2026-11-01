@@ -12,12 +12,10 @@ use esf_format::killmail::EsiKillmail;
 
 /// The SDE is handed over once and then read straight out of Rust memory, so
 /// no lookup crosses back into Python.
-static SDE_BYTES: OnceLock<Vec<u8>> = OnceLock::new();
 static SDE: OnceLock<Sde<'static>> = OnceLock::new();
 
 /// `names.dat` is only read for a name `sde.dat` does not know, so it stays
 /// optional.
-static NAMES_BYTES: OnceLock<Vec<u8>> = OnceLock::new();
 static NAMES: OnceLock<Names<'static>> = OnceLock::new();
 
 fn sde() -> PyResult<&'static Sde<'static>> {
@@ -33,11 +31,11 @@ fn load_sde(bytes: Vec<u8>) -> PyResult<i32> {
         return Err(PyRuntimeError::new_err("SDE is already loaded"));
     }
 
-    let bytes = SDE_BYTES.get_or_init(|| bytes);
-    let sde = Sde::new(bytes).map_err(|error| PyValueError::new_err(error.to_string()))?;
+    let sde = Sde::new(bytes.leak()).map_err(|error| PyValueError::new_err(error.to_string()))?;
 
     let build_number = sde.build_number();
-    let _ = SDE.set(sde);
+    SDE.set(sde)
+        .map_err(|_| PyRuntimeError::new_err("SDE is already loaded"))?;
 
     Ok(build_number)
 }
@@ -52,8 +50,8 @@ fn load_names(bytes: Vec<u8>) -> PyResult<i32> {
         return Err(PyRuntimeError::new_err("names are already loaded"));
     }
 
-    let bytes = NAMES_BYTES.get_or_init(|| bytes);
-    let names = Names::new(bytes).map_err(|error| PyValueError::new_err(error.to_string()))?;
+    let names =
+        Names::new(bytes.leak()).map_err(|error| PyValueError::new_err(error.to_string()))?;
 
     /* Reject a mismatched pair here, rather than on every load_eft(). */
     let build_number = names.build_number();
@@ -65,7 +63,9 @@ fn load_names(bytes: Vec<u8>) -> PyResult<i32> {
         return Err(PyValueError::new_err(error.to_string()));
     }
 
-    let _ = NAMES.set(names);
+    NAMES
+        .set(names)
+        .map_err(|_| PyRuntimeError::new_err("names are already loaded"))?;
 
     Ok(build_number)
 }
