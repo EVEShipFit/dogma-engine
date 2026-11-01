@@ -427,6 +427,7 @@ fn violation_rule(info: &InfoSde, rule: Rule) -> String {
             used,
             allowed,
         } => format!("{used} of {}, {allowed} allowed", type_name(info, type_id)),
+        Rule::NotAHull => "not a ship, structure or container".to_string(),
         Rule::ChargeGroup => "a charge the module does not take".to_string(),
         Rule::ChargeSize { module, charge } => {
             format!("charge size {charge}, module takes {module}")

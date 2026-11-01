@@ -7,7 +7,7 @@ use tsify::Tsify;
 
 use esf_data::{Info, eve};
 
-use crate::calculate::{Calculation, ItemResult};
+use crate::calculate::{Calculation, ItemResult, is_hull};
 use crate::fit::{Fit, FitItem, Slot};
 
 mod charge;
@@ -131,6 +131,8 @@ pub enum Rule {
         /// How many may be.
         allowed: u32,
     },
+    /// The hull is not a ship, structure or container.
+    NotAHull,
     /// A charge of a group the module does not take.
     ChargeGroup,
     /// A charge of another size than the module takes.
@@ -220,6 +222,13 @@ pub enum GroupLimit {
 /// Violations come out grouped by the kind of rule, and within a kind in the
 /// order of `Fit::items`. An empty result means the fit breaks nothing.
 pub(crate) fn validate(info: &impl Info, fit: &Fit, calculation: &Calculation) -> Vec<Violation> {
+    if !is_hull(info, fit.ship.type_id) {
+        return vec![Violation {
+            target: Target::Ship,
+            rule: Rule::NotAHull,
+        }];
+    }
+
     let context = Context::new(info, fit, calculation);
 
     let mut found = Vec::new();

@@ -393,6 +393,7 @@ class _PlainRule(TypedDict):
         "subsystem_taken",
         "ship_restricted",
         "capital_item",
+        "not_a_hull",
         "charge_group",
     ]
 
