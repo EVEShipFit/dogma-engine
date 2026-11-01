@@ -656,4 +656,75 @@ mod tests {
         assert!(slot(r#"{"type": "high", "index": 300}"#).is_err());
         assert!(slot(r#"{"type": "nowhere", "index": 0}"#).is_err());
     }
+
+    #[test]
+    fn reads_every_slot() {
+        let slot = |json: &str| serde_json::from_str::<Slot>(json).unwrap();
+
+        assert_eq!(slot(r#"{"type": "low", "index": 1}"#), Slot::Low(1));
+        assert_eq!(slot(r#"{"type": "rig", "index": 2}"#), Slot::Rig(2));
+        assert_eq!(
+            slot(r#"{"type": "subsystem", "index": 3}"#),
+            Slot::Subsystem(3)
+        );
+        assert_eq!(slot(r#"{"type": "service", "index": 4}"#), Slot::Service(4));
+        assert_eq!(slot(r#"{"type": "cargo"}"#), Slot::Cargo);
+    }
+
+    #[test]
+    fn explains_a_bad_slot() {
+        let error = |json: &str| serde_json::from_str::<Slot>(json).unwrap_err().to_string();
+
+        assert_eq!(error(r#"{"type": "low"}"#), "missing field `index`");
+        assert_eq!(
+            error(r#"{"type": "implant", "index": 256}"#),
+            "`index` is out of range"
+        );
+    }
+
+    fn skills_from<K>(keys: impl IntoIterator<Item = K>) -> Result<BTreeMap<i32, u8>, String>
+    where
+        K: serde::de::IntoDeserializer<'static, serde::de::value::Error>,
+    {
+        let map = serde::de::value::MapDeserializer::<_, serde::de::value::Error>::new(
+            keys.into_iter().map(|key| (key, 5u8)),
+        );
+        id_map(map).map_err(|error| error.to_string())
+    }
+
+    #[test]
+    fn reads_ids_that_are_numbers() {
+        assert_eq!(skills_from([3300i64]), Ok(BTreeMap::from([(3300, 5)])));
+        assert_eq!(skills_from([3300u64]), Ok(BTreeMap::from([(3300, 5)])));
+    }
+
+    #[test]
+    fn explains_a_bad_id() {
+        assert_eq!(
+            skills_from([i64::MAX]),
+            Err(format!("expected an identifier, found {}", i64::MAX))
+        );
+        assert_eq!(
+            skills_from([u64::MAX]),
+            Err(format!("expected an identifier, found {}", u64::MAX))
+        );
+        assert_eq!(
+            skills_from(["Gunnery"]),
+            Err(r#"expected an identifier, found "Gunnery""#.to_string())
+        );
+        assert_eq!(
+            skills_from([true]),
+            Err("invalid type: boolean `true`, expected an identifier".to_string())
+        );
+    }
+
+    #[test]
+    fn explains_skills_that_are_not_a_map() {
+        let error = serde_json::from_str::<Character>(r#"{"skills": [3300]}"#).unwrap_err();
+
+        assert_eq!(
+            error.to_string(),
+            "invalid type: sequence, expected a map of identifiers at line 1 column 11"
+        );
+    }
 }
