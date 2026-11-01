@@ -15,6 +15,7 @@ mod implants;
 mod location_bonus_not_on_drones;
 mod module_in_fighter_tube;
 mod mutations;
+mod no_capacity;
 mod no_charge;
 mod no_cycle_time;
 mod no_recharge;
