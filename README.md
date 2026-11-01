@@ -3,6 +3,7 @@
 [![crates.io](https://img.shields.io/crates/v/esf-dogma-engine.svg)](https://crates.io/crates/esf-dogma-engine)
 [![npm](https://img.shields.io/npm/v/%40eveshipfit%2Fdogma-engine.svg)](https://www.npmjs.com/package/@eveshipfit/dogma-engine)
 [![PyPI](https://img.shields.io/pypi/v/eveshipfit-dogma-engine.svg)](https://pypi.org/project/eveshipfit-dogma-engine/)
+[![Maven Central](https://img.shields.io/maven-central/v/fit.eveship/dogma-engine.svg)](https://central.sonatype.com/artifact/fit.eveship/dogma-engine)
 [![CI](https://github.com/EVEShipFit/dogma-engine/actions/workflows/testing.yml/badge.svg)](https://github.com/EVEShipFit/dogma-engine/actions/workflows/testing.yml)
 [![docs.rs](https://img.shields.io/docsrs/esf-dogma-engine)](https://docs.rs/esf-dogma-engine)
 
@@ -157,7 +158,7 @@ Each violation has:
 
 ## Usage
 
-The engine is published for Rust, Javascript and Python, and all three give the same results.
+The engine is published for Rust, Javascript, Python and Kotlin, and all four give the same results.
 In each, you load `sde.dat` once, and then calculate as many fits as you like.
 
 Fits can also be loaded from other formats, and saved back to most of them:
@@ -226,8 +227,9 @@ How to use it is explained in [its README](./crates/esf-python/README.md).
 
 ### Kotlin
 
-The Kotlin variant runs on the JVM, and is not published yet.
-How to build and use it is explained in [its README](./crates/esf-kotlin/README.md).
+The Kotlin variant runs on the JVM, and is published on Maven Central as
+[`fit.eveship:dogma-engine`](https://central.sonatype.com/artifact/fit.eveship/dogma-engine).
+How to use it is explained in [its README](./crates/esf-kotlin/README.md).
 
 ## Development
 

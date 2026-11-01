@@ -214,8 +214,8 @@ jobs:
         name: natives-${{ matrix.platform.name }}
         path: natives
 
-  jar:
-    name: Build JAR
+  maven:
+    name: Publish to Maven Central
     needs: [jni]
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -255,6 +255,18 @@ jobs:
       with:
         name: jar
         path: crates/esf-kotlin/build/libs
+
+    - name: Publish to Maven Central
+      env:
+        ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+        ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+        ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.MAVEN_SIGNING_KEY }}
+        ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.MAVEN_SIGNING_KEY_PASSWORD }}
+      run: |
+        # Remove the "v" from the version.
+        VERSION=$(echo ${{ github.ref_name }} | cut -b2-)
+
+        gradle -p crates/esf-kotlin publishAndReleaseToMavenCentral -Pversion=${VERSION} -Pnatives=${PWD}/natives
 
   pypi:
     name: Publish to PyPI

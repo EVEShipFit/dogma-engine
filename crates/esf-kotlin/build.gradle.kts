@@ -1,9 +1,12 @@
+import com.vanniktech.maven.publish.JavadocJar
+import com.vanniktech.maven.publish.KotlinJvm
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     kotlin("jvm") version "2.4.21"
     kotlin("plugin.serialization") version "2.4.21"
     `java-library`
+    id("com.vanniktech.maven.publish") version "0.37.0"
 }
 
 repositories {
@@ -18,7 +21,6 @@ dependencies {
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
-    withSourcesJar()
 }
 
 kotlin {
@@ -66,6 +68,33 @@ val prebuilt = providers.gradleProperty("natives").orNull
 
 sourceSets.main {
     resources.srcDir(if (prebuilt != null) file(prebuilt) else hostNatives)
+}
+
+mavenPublishing {
+    configure(KotlinJvm(javadocJar = JavadocJar.Empty()))
+    publishToMavenCentral(automaticRelease = true)
+    signAllPublications()
+
+    pom {
+        name = "EVEShip.fit Dogma Engine"
+        description = "Library to calculate statistics for EVE Online ship fits"
+        url = "https://github.com/EVEShipFit/dogma-engine"
+        licenses {
+            license {
+                name = "MIT"
+                url = "https://github.com/EVEShipFit/dogma-engine/blob/main/LICENSE"
+            }
+        }
+        developers {
+            developer {
+                name = "EVEShipFit Team"
+                email = "info@eveship.fit"
+            }
+        }
+        scm {
+            url = "https://github.com/EVEShipFit/dogma-engine"
+        }
+    }
 }
 
 tasks.named<Jar>("sourcesJar") {
