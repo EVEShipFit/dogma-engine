@@ -394,6 +394,7 @@ class _PlainRule(TypedDict):
         "ship_restricted",
         "capital_item",
         "not_a_hull",
+        "not_a_mode",
         "charge_group",
     ]
 
@@ -427,6 +428,11 @@ class _SkillRule(TypedDict):
     type_id: int
     required: int
     level: int
+
+
+class _NotASkillRule(TypedDict):
+    type: Literal["not_a_skill"]
+    type_id: int
 
 
 class _RigSizeRule(TypedDict):
@@ -463,6 +469,7 @@ Rule = (
     | _WrongSlotRule
     | _WrongSlotIndexRule
     | _SkillRule
+    | _NotASkillRule
     | _RigSizeRule
     | _MaxGroupRule
     | _MaxTypeRule

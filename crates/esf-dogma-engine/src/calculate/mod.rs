@@ -98,8 +98,10 @@ trait Pass {
 }
 
 const CATEGORY_SHIP: i32 = 6;
+const CATEGORY_SKILL: i32 = 16;
 pub(crate) const CATEGORY_STRUCTURE: i32 = 65;
 const GROUP_CONTAINERS: [i32; 4] = [12, 340, 448, 649];
+const GROUP_SHIP_MODIFIERS: i32 = 1306;
 
 /// Whether the type can be the hull of a fit: a ship, structure or container.
 pub(crate) fn is_hull(info: &impl Info, type_id: i32) -> bool {
@@ -107,6 +109,18 @@ pub(crate) fn is_hull(info: &impl Info, type_id: i32) -> bool {
         matches!(r#type.category_id(), CATEGORY_SHIP | CATEGORY_STRUCTURE)
             || GROUP_CONTAINERS.contains(&r#type.group_id())
     })
+}
+
+/// Whether the type is a tactical mode.
+pub(crate) fn is_mode(info: &impl Info, type_id: i32) -> bool {
+    info.get_type(type_id)
+        .is_some_and(|r#type| r#type.group_id() == GROUP_SHIP_MODIFIERS)
+}
+
+/// Whether the type is a skill.
+pub(crate) fn is_skill(info: &impl Info, type_id: i32) -> bool {
+    info.get_type(type_id)
+        .is_some_and(|r#type| r#type.category_id() == CATEGORY_SKILL)
 }
 
 /// Calculate every attribute of the ship, its items and the character.
