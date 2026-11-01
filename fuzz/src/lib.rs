@@ -3,7 +3,7 @@
 use std::collections::BTreeMap;
 use std::sync::LazyLock;
 
-use esf_data::{InfoNameSde, InfoSde, Names, Sde};
+use esf_data::{InfoName, InfoNameSde, InfoSde, Names, Sde};
 use esf_dogma_engine::{Calculation, Fit, ItemResult, Options, Rule, calculate};
 use esf_format::{eft, esf, esi};
 
@@ -45,6 +45,13 @@ static ALL_SKILLS: LazyLock<BTreeMap<i32, u8>> = LazyLock::new(|| {
         .filter(|r#type| r#type.category_id() == SKILL_CATEGORY_ID)
         .map(|r#type| (r#type.id(), 5))
         .collect()
+});
+
+/// The type ID of the QA Immunity Module.
+static QA_IMMUNITY_MODULE: LazyLock<i32> = LazyLock::new(|| {
+    info_name()
+        .type_name_to_id("QA Immunity Module")
+        .expect("no QA Immunity Module in the SDE")
 });
 
 pub fn info() -> InfoSde<'static> {
@@ -91,15 +98,14 @@ pub fn check(fit: &Fit) {
 }
 
 fn check_finite(calculation: &Calculation, fit: &Fit) {
-    let fail = |path: String, value: f64| -> ! {
-        panic!(
-            "{path} is {value}\nfit: {}",
-            serde_json::to_string(fit).unwrap()
-        )
-    };
-    let check = |path: String, value: f64| {
-        if !value.is_finite() {
-            fail(path, value);
+    let immune = fit
+        .items
+        .iter()
+        .any(|item| item.type_id == *QA_IMMUNITY_MODULE);
+    let mut problems = Vec::new();
+    let mut check = |path: String, value: f64| {
+        if value.is_nan() || (value.is_infinite() && !immune) {
+            problems.push(format!("{path} is {value}"));
         }
     };
 
@@ -123,9 +129,10 @@ fn check_finite(calculation: &Calculation, fit: &Fit) {
             check(format!("{path}.base"), attribute.base);
             check(format!("{path}.value"), attribute.value);
             for (index, source) in attribute.sources.iter().enumerate() {
-                check(format!("{path}.sources[{index}].value"), source.value);
+                let path = format!("{path}.sources[{index}]");
+                check(format!("{path}.value"), source.value);
                 if let Some(penalty) = source.penalty {
-                    check(format!("{path}.sources[{index}].penalty"), penalty);
+                    check(format!("{path}.penalty"), penalty);
                 }
             }
         }
@@ -154,5 +161,13 @@ fn check_finite(calculation: &Calculation, fit: &Fit) {
             check(format!("violations[{index}].used"), used);
             check(format!("violations[{index}].available"), available);
         }
+    }
+
+    if !problems.is_empty() {
+        panic!(
+            "{}\nfit: {}",
+            problems.join("\n"),
+            serde_json::to_string(fit).unwrap()
+        );
     }
 }
