@@ -8,7 +8,9 @@ use tsify::Tsify;
 use esf_data::{Info, eve};
 
 use crate::calculate::{
-    CATEGORY_DRONE, CATEGORY_FIGHTER, Calculation, ItemResult, is_hull, is_mode, is_skill,
+    CATEGORY_DRONE, CATEGORY_FIGHTER, CATEGORY_IMPLANT, CATEGORY_STRUCTURE,
+    CATEGORY_STRUCTURE_MODULE, Calculation, ItemResult, is_hull, is_mode, is_module_category,
+    is_skill,
 };
 use crate::fit::{Fit, FitItem, Slot};
 
@@ -79,10 +81,14 @@ pub enum Rule {
         /// The rack the item asks for.
         expected: SlotKind,
     },
+    /// Something other than a module in a slot of the ship.
+    NotAModule,
     /// Something other than a drone in the drone bay.
     NotADrone,
     /// Something other than a fighter in a fighter tube or the fighter bay.
     NotAFighter,
+    /// Something other than an implant or booster in an implant or booster slot.
+    NotAnImplant,
     /// Another item of the fit is in this slot too.
     SlotTaken,
     /// An implant or booster in a slot other than the one it occupies. The

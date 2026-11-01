@@ -1,0 +1,5 @@
+---
+source: tests/harness/case.rs
+expression: "validate_fit(text, skills, edit)"
+---
+implant_1/Torrent = not_an_implant

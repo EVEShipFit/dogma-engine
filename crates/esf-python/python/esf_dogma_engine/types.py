@@ -392,6 +392,8 @@ class _PlainRule(TypedDict):
     type: Literal[
         "not_a_drone",
         "not_a_fighter",
+        "not_a_module",
+        "not_an_implant",
         "slot_taken",
         "subsystem_taken",
         "ship_restricted",

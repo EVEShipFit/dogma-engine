@@ -98,10 +98,14 @@ trait Pass {
 }
 
 const CATEGORY_SHIP: i32 = 6;
+const CATEGORY_MODULE: i32 = 7;
 const CATEGORY_SKILL: i32 = 16;
 pub(crate) const CATEGORY_DRONE: i32 = 18;
+pub(crate) const CATEGORY_IMPLANT: i32 = 20;
+const CATEGORY_SUBSYSTEM: i32 = 32;
 pub(crate) const CATEGORY_FIGHTER: i32 = 87;
 pub(crate) const CATEGORY_STRUCTURE: i32 = 65;
+pub(crate) const CATEGORY_STRUCTURE_MODULE: i32 = 66;
 const GROUP_CONTAINERS: [i32; 4] = [12, 340, 448, 649];
 const GROUP_SHIP_MODIFIERS: i32 = 1306;
 
@@ -111,6 +115,14 @@ pub(crate) fn is_hull(info: &impl Info, type_id: i32) -> bool {
         matches!(r#type.category_id(), CATEGORY_SHIP | CATEGORY_STRUCTURE)
             || GROUP_CONTAINERS.contains(&r#type.group_id())
     })
+}
+
+/// Whether the category is one of modules, subsystems or structure modules.
+pub(crate) fn is_module_category(category_id: i32) -> bool {
+    matches!(
+        category_id,
+        CATEGORY_MODULE | CATEGORY_SUBSYSTEM | CATEGORY_STRUCTURE_MODULE
+    )
 }
 
 /// Whether the type is a tactical mode.

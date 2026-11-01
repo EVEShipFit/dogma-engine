@@ -8,7 +8,7 @@ use strum_macros::EnumIter;
 use tsify::Tsify;
 
 use super::output::Source;
-use super::{CATEGORY_DRONE, CATEGORY_FIGHTER, Info};
+use super::{CATEGORY_DRONE, CATEGORY_FIGHTER, CATEGORY_IMPLANT, Info, is_module_category};
 use crate::fit::{FitItem, Slot, State};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -210,12 +210,13 @@ impl Item {
             Some(
                 Slot::High(_) | Slot::Medium(_) | Slot::Low(_) | Slot::Rig(_) | Slot::Subsystem(_)
             )
-        )
+        ) && is_module_category(self.category_id)
     }
 
     /* Drones are owned by the character, but not located in the ship. */
     pub fn is_in_ship(&self) -> bool {
-        self.is_module() || matches!(self.slot, Some(Slot::Service(_)))
+        self.is_module()
+            || (matches!(self.slot, Some(Slot::Service(_))) && is_module_category(self.category_id))
     }
 
     pub fn is_drone(&self) -> bool {
@@ -229,6 +230,7 @@ impl Item {
 
     pub fn is_on_char(&self) -> bool {
         matches!(self.slot, Some(Slot::Implant(_) | Slot::Booster(_)))
+            && self.category_id == CATEGORY_IMPLANT
     }
 
     pub fn is_owner_modifiable(&self) -> bool {
