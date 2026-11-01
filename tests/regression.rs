@@ -19,4 +19,5 @@ mod esi;
 mod fits;
 mod killmail;
 mod link;
+mod lookup;
 mod post_load;
