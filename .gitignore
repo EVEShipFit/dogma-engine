@@ -11,3 +11,5 @@ __pycache__/
 /crates/esf-kotlin/.gradle/
 /crates/esf-kotlin/.kotlin/
 /crates/esf-kotlin/build/
+/crates/esf-dotnet/*/bin/
+/crates/esf-dotnet/*/obj/

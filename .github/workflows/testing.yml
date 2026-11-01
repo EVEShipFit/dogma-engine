@@ -97,6 +97,17 @@ jobs:
       run: |
         gradle -p crates/esf-kotlin test
 
+    - name: Install .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: |
+          8.0.x
+          10.0.x
+
+    - name: Run .NET tests
+      run: |
+        dotnet test crates/esf-dotnet/tests
+
     - name: Run tests
       run: |
         cargo llvm-cov --locked --workspace --codecov --output-path codecov.json
