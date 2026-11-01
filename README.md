@@ -301,11 +301,14 @@ Every run seeds the corpus with every fit of the regression tests.
 ```bash
 cargo install cargo-fuzz
 fuzz/run.sh eft 600 4      # target, seconds, jobs
-fuzz/coverage.py           # line coverage per file, over all targets
-fuzz/coverage.py --missed esf-format/src/eft.rs
 ```
 
 Findings land in `fuzz/artifacts/<target>/`.
+A target is done when its corpus stops growing:
+
+```bash
+find fuzz/corpus/eft -type f -newermt '-30 min' | wc -l
+```
 
 ## Integration
 

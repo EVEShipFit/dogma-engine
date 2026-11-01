@@ -4,4 +4,3 @@
 /target/
 Cargo.lock
 fuzz-*.log
-*.profraw
