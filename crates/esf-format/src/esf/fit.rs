@@ -2,19 +2,40 @@
 
 use std::collections::BTreeSet;
 
-use esf_data::{InfoEsf, fold_case};
+use esf_data::InfoEsf;
 use esf_dogma_engine::{
     Character, Charge, Environment, Fit, FitItem, Mutation, Projection, Ship, Slot,
     State as EngineState,
 };
 
-use super::canonicalise;
-use super::lookup::{Kind, Lookup};
-use super::model::{Entry, Error, EsfFit, Location, State};
-use super::resolve::rack_of;
+use esf::{Entry, EsfFit, Kind, Location, State};
+
+use super::Error;
+use super::catalog::SdeCatalog;
+use super::lookup::Lookup;
 
 const ATTRIBUTE_IMPLANTNESS: i32 = 331;
 const ATTRIBUTE_BOOSTERNESS: i32 = 1087;
+
+fn rack_of(kind: Kind) -> Option<Location> {
+    match kind {
+        Kind::Sub => Some(Location::Sub),
+        Kind::High => Some(Location::High),
+        Kind::Mid => Some(Location::Mid),
+        Kind::Low => Some(Location::Low),
+        Kind::Rig => Some(Location::Rig),
+        Kind::Svc => Some(Location::Svc),
+        _ => None,
+    }
+}
+
+fn engine_id(id: u32) -> Result<i32, Error> {
+    i32::try_from(id).map_err(|_| Error::Fit(format!("ID {id} is out of range")))
+}
+
+fn esf_id(id: i32) -> Result<u32, Error> {
+    u32::try_from(id).map_err(|_| Error::Fit(format!("ID {id} is out of range")))
+}
 
 fn rack_slot(rack: Location, index: u8) -> Slot {
     match rack {
@@ -40,9 +61,8 @@ fn slot_rack(slot: Slot) -> Option<(Location, u8)> {
 }
 
 fn next_index(counters: &mut [u32; 6], rack: Location, count: u32) -> Result<u8, Error> {
-    let counter = &mut counters[rack.number() as usize - 1];
-    let index = u8::try_from(*counter)
-        .map_err(|_| Error::new(format!("too many {} slots", rack.name())))?;
+    let counter = &mut counters[rack as usize - 1];
+    let index = u8::try_from(*counter).map_err(|_| Error::Fit(format!("too many {rack} slots")))?;
     *counter += count;
     Ok(index)
 }
@@ -56,7 +76,7 @@ pub fn main_fit(fits: &[EsfFit]) -> Option<&EsfFit> {
                     .fit_name
                     .as_deref()
                     .zip(fit.name.as_deref())
-                    .is_some_and(|(left, right)| fold_case(left) == fold_case(right))
+                    .is_some_and(|(left, right)| esf::fold(left) == esf::fold(right))
         })
     };
     fits.iter().find(|fit| !carried(fit))
@@ -65,12 +85,10 @@ pub fn main_fit(fits: &[EsfFit]) -> Option<&EsfFit> {
 /// Turn a fit into one the dogma engine calculates, without skills.
 pub fn to_fit(info: &impl InfoEsf, fit: &EsfFit) -> Result<Fit, Error> {
     let lookup = Lookup { info };
-    let Some(hull) = fit
-        .hull
-        .filter(|hull| lookup.classify(*hull) == Kind::Hull && !lookup.is_container(*hull))
-    else {
-        return Err(Error::new(
-            "only a fit of a ship or structure can be calculated",
+    let hull = fit.hull.map(engine_id).transpose()?;
+    let Some(hull) = hull.filter(|hull| lookup.classify(*hull) == Kind::Hull) else {
+        return Err(Error::Fit(
+            "only a fit of a ship or structure can be calculated".to_string(),
         ));
     };
 
@@ -80,7 +98,7 @@ pub fn to_fit(info: &impl InfoEsf, fit: &EsfFit) -> Result<Fit, Error> {
 
     for entry in &fit.entries {
         let count = entry.count.unwrap_or(1);
-        let Some(type_id) = entry.type_id else {
+        let Some(type_id) = entry.type_id.map(engine_id).transpose()? else {
             if let Some(rack) = entry.location {
                 next_index(&mut counters, rack, count)?;
             }
@@ -102,23 +120,30 @@ pub fn to_fit(info: &impl InfoEsf, fit: &EsfFit) -> Result<Fit, Error> {
             slot: Slot::Cargo,
             quantity: count,
             state: EngineState::Offline,
-            charge: entry.charge.map(|type_id| Charge { type_id }),
+            charge: entry
+                .charge
+                .map(|type_id| engine_id(type_id).map(|type_id| Charge { type_id }))
+                .transpose()?,
             mutation: None,
             fighter_abilities: None,
             booster_side_effects: BTreeSet::new(),
             spool: None,
         };
-        if let Some(mutaplasmid) = entry.mutaplasmid {
+        let mutaplasmid = entry.mutaplasmid.map(engine_id).transpose()?;
+        if let Some(mutaplasmid) = mutaplasmid {
             item.type_id = lookup.mutated(mutaplasmid, type_id).ok_or_else(|| {
-                Error::new(format!(
+                Error::Fit(format!(
                     "mutaplasmid {mutaplasmid} does not apply to {type_id}"
                 ))
             })?;
         }
-        if entry.mutaplasmid.is_some() || !entry.overrides.is_empty() {
+        if mutaplasmid.is_some() || !entry.overrides.is_empty() {
+            let attributes = entry.overrides.iter().map(|&(attribute_id, value)| {
+                engine_id(attribute_id).map(|attribute_id| (attribute_id, value))
+            });
             item.mutation = Some(Mutation {
                 base: type_id,
-                attributes: entry.overrides.iter().copied().collect(),
+                attributes: attributes.collect::<Result<_, _>>()?,
             });
         }
 
@@ -135,7 +160,7 @@ pub fn to_fit(info: &impl InfoEsf, fit: &EsfFit) -> Result<Fit, Error> {
                 let first = next_index(&mut counters, rack, count)?;
                 for index in 0..count {
                     let index = u8::try_from(u32::from(first) + index)
-                        .map_err(|_| Error::new(format!("too many {} slots", rack.name())))?;
+                        .map_err(|_| Error::Fit(format!("too many {rack} slots")))?;
                     items.push(FitItem {
                         slot: rack_slot(rack, index),
                         quantity: 1,
@@ -185,7 +210,7 @@ pub fn to_fit(info: &impl InfoEsf, fit: &EsfFit) -> Result<Fit, Error> {
         name: fit.name.clone(),
         ship: Ship {
             type_id: hull,
-            mode: fit.mode,
+            mode: fit.mode.map(engine_id).transpose()?,
         },
         items,
         character: Character::default(),
@@ -194,11 +219,12 @@ pub fn to_fit(info: &impl InfoEsf, fit: &EsfFit) -> Result<Fit, Error> {
     })
 }
 
-fn entry(info: &impl InfoEsf, item: &FitItem) -> Entry {
+fn entry(info: &impl InfoEsf, item: &FitItem) -> Result<Entry, Error> {
+    let charge = item.charge.as_ref().map(|charge| charge.type_id);
     let mut entry = Entry {
-        type_id: Some(item.type_id),
+        type_id: Some(esf_id(item.type_id)?),
         count: Some(item.quantity),
-        charge: item.charge.as_ref().map(|charge| charge.type_id),
+        charge: charge.map(esf_id).transpose()?,
         ..Entry::default()
     };
 
@@ -206,14 +232,14 @@ fn entry(info: &impl InfoEsf, item: &FitItem) -> Entry {
         entry.overrides = mutation
             .attributes
             .iter()
-            .map(|(id, value)| (*id, *value))
-            .collect();
+            .map(|(id, value)| esf_id(*id).map(|id| (id, *value)))
+            .collect::<Result<_, _>>()?;
         if mutation.base != item.type_id
             && let Some(mutaplasmid) =
                 info.find_mutaplasmid(mutation.base, item.type_id, &mutation.attributes)
         {
-            entry.type_id = Some(mutation.base);
-            entry.mutaplasmid = Some(mutaplasmid);
+            entry.type_id = Some(esf_id(mutation.base)?);
+            entry.mutaplasmid = Some(esf_id(mutaplasmid)?);
         }
     }
 
@@ -234,7 +260,7 @@ fn entry(info: &impl InfoEsf, item: &FitItem) -> Entry {
         Slot::Cargo => entry.location = Some(Location::Cargo),
         _ => entry.state = state,
     }
-    entry
+    Ok(entry)
 }
 
 /// Turn a fit the dogma engine calculates into an esf/1 fit.
@@ -244,7 +270,7 @@ pub fn from_fit(info: &impl InfoEsf, fit: &Fit) -> Result<EsfFit, Error> {
 
     for item in fit.items.iter().filter(|item| item.quantity > 0) {
         let Some((rack, index)) = slot_rack(item.slot) else {
-            entries.push(entry(info, item));
+            entries.push(entry(info, item)?);
             continue;
         };
         let at = match racks.iter().position(|(location, _)| *location == rack) {
@@ -270,18 +296,20 @@ pub fn from_fit(info: &impl InfoEsf, fit: &Fit) -> Result<EsfFit, Error> {
             }
             entries.push(Entry {
                 count: None,
-                ..entry(info, item)
+                ..entry(info, item)?
             });
             position = index.saturating_add(1);
         }
     }
 
     let esf_fit = EsfFit {
-        hull: Some(fit.ship.type_id),
+        hull: Some(esf_id(fit.ship.type_id)?),
         name: fit.name.clone().filter(|name| !name.is_empty()),
-        mode: fit.ship.mode,
+        mode: fit.ship.mode.map(esf_id).transpose()?,
         entries,
     };
-    let mut fits = canonicalise(&Lookup { info }, &[esf_fit])?;
+    let catalog = SdeCatalog::new(info);
+    let text = esf::save(&[esf_fit], &catalog)?;
+    let mut fits = esf::load(text, &catalog)?;
     Ok(fits.remove(0))
 }

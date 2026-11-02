@@ -10,6 +10,8 @@ readme.workspace = true
 keywords.workspace = true
 
 [dependencies]
+elsa.workspace = true
+esf.workspace = true
 esf-data.workspace = true
 esf-dogma-engine.workspace = true
 serde.workspace = true

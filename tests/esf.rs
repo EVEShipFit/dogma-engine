@@ -25,8 +25,8 @@ Warp Disruptor II
 Damage Control II !off
 Gyrostabilizer II !heat
 
-2x Hobgoblin II @bay
 3x Warrior II
+2x Hobgoblin II @bay
 
 1000x Barrage S
 Damage Control II @cargo
@@ -82,8 +82,8 @@ fn calculates_what_the_engine_can_hold() {
             (Slot::Medium(2), 1, State::Active),
             (Slot::Low(0), 1, State::Offline),
             (Slot::Low(1), 1, State::Overload),
-            (Slot::DroneBay, 2, State::Offline),
             (Slot::DroneBay, 3, State::Active),
+            (Slot::DroneBay, 2, State::Offline),
             (Slot::Cargo, 1000, State::Offline),
             (Slot::Cargo, 1, State::Offline),
             (Slot::Cargo, 100, State::Offline),
