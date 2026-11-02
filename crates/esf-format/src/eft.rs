@@ -35,8 +35,6 @@ pub enum Error {
     /// or it describes another item than the line referring to it; or that
     /// line is a stack of more than one.
     InvalidMutation(String),
-    /// No attribute has this name.
-    UnknownAttribute(String),
     /// A mutation leaves out an attribute its mutaplasmid rolls.
     MissingRoll {
         /// The first line of the mutation.
@@ -64,7 +62,6 @@ impl fmt::Display for Error {
             Error::NoSlot(name) => write!(f, "{name} does not fit in any slot"),
             Error::UnknownMutation(reference) => write!(f, "unknown mutation [{reference}]"),
             Error::InvalidMutation(line) => write!(f, "invalid mutation {line}"),
-            Error::UnknownAttribute(name) => write!(f, "unknown attribute {name}"),
             Error::MissingRoll {
                 mutation,
                 attribute_id,
@@ -198,16 +195,15 @@ fn parse_mutation_attributes(
     let invalid = || Error::InvalidMutation(line.to_string());
 
     line.split(',')
-        .map(|pair| {
-            let (name, value) = pair
-                .trim()
-                .split_once(char::is_whitespace)
-                .ok_or_else(invalid)?;
-            let value = value.trim().parse().map_err(|_| invalid())?;
-            let attribute_id = info
-                .attribute_name_to_id(name)
-                .ok_or_else(|| Error::UnknownAttribute(name.to_string()))?;
-            Ok((attribute_id, value))
+        .filter_map(|pair| {
+            let Some((name, value)) = pair.trim().split_once(char::is_whitespace) else {
+                return Some(Err(invalid()));
+            };
+            let Ok(value) = value.trim().parse() else {
+                return Some(Err(invalid()));
+            };
+            let attribute_id = info.attribute_name_to_id(name)?;
+            Some(Ok((attribute_id, value)))
         })
         .collect()
 }
@@ -365,7 +361,7 @@ fn stack_fit_item(
 /// its base type ends in `[<n>]`, and a section describes each mutation as
 /// `[<n>] <Base Type>`, then `<Mutaplasmid>`, then the rolled
 /// `<attribute> <value>, ...`. Every attribute the mutaplasmid rolls must be
-/// there.
+/// there; names that are not an attribute are skipped.
 pub fn load_eft(info: &impl InfoName, eft: &str) -> Result<Fit, Error> {
     let eft_lines: Vec<&str> = eft.lines().collect();
 
@@ -918,12 +914,10 @@ mod tests {
     }
 
     #[test]
-    fn mutation_with_unknown_attribute() {
+    fn mutation_skips_unknown_attribute() {
         assert_eq!(
-            error(
-                "[Rifter, Test]\n\n[1] Warp Scrambler II\nUnstable Warp Scrambler Mutaplasmid\nspeed 5"
-            ),
-            Error::UnknownAttribute("speed".to_string())
+            parse_mutation_attributes(&Names, "cpu 30.5, speed 5"),
+            Ok(BTreeMap::from([(50, 30.5)]))
         );
     }
 

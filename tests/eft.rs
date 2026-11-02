@@ -180,6 +180,14 @@ fn rejects_a_mutation_missing_a_roll() {
     );
 }
 
+/* PyFa adds dpsIncreaseTurrets, which is no attribute. */
+#[test]
+fn reads_a_mutation_with_an_unknown_attribute() {
+    let eft = MUTATIONS.replace("cpu 30, ", "cpu 30, dpsIncreaseTurrets 1.2, ");
+    let mutation = load_eft(&eft).unwrap().items[0].mutation.clone().unwrap();
+    assert_eq!(mutation.attributes.len(), 3);
+}
+
 /* EFT has no tube, so a launched squadron reads back as one in the bay. */
 #[test]
 fn writes_a_fighter_in_a_tube_as_one_in_the_bay() {
@@ -210,10 +218,6 @@ fn explains_each_error() {
         (
             Error::InvalidMutation("[1]".to_string()),
             "invalid mutation [1]",
-        ),
-        (
-            Error::UnknownAttribute("odd".to_string()),
-            "unknown attribute odd",
         ),
         (
             Error::MissingRoll {
