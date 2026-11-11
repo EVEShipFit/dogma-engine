@@ -240,6 +240,11 @@ The .NET variant is published on NuGet as
 [`EveShipFit.DogmaEngine`](https://www.nuget.org/packages/EveShipFit.DogmaEngine).
 How to use it is explained in [its README](./crates/esf-dotnet/README.md).
 
+### MCP
+
+An MCP server, so AI assistants can calculate fits.
+How to use it is explained in [its README](./crates/esf-mcp/README.md).
+
 ## Development
 
 Make sure you have [Rust installed](https://www.rust-lang.org/tools/install).
