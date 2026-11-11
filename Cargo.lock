@@ -452,6 +452,7 @@ dependencies = [
 name = "esf-mcp"
 version = "0.0.0-git"
 dependencies = [
+ "base64",
  "clap",
  "dirs",
  "esf-data",
@@ -462,6 +463,7 @@ dependencies = [
  "schemars",
  "serde",
  "serde_json",
+ "sha2",
  "tar",
  "tokio",
  "ureq",

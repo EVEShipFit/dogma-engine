@@ -6,12 +6,12 @@ use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::time::{Duration, SystemTime};
 
-use esf_data::{Names, Sde};
+use base64::Engine;
+use esf_data::{MIN_SDE_VERSION, Names, Sde};
 use serde::Deserialize;
+use sha2::{Digest, Sha512};
 
 const PACKAGE_URL: &str = "https://registry.npmjs.org/@eveshipfit/sde";
-/// The major version of `@eveshipfit/sde` this engine reads.
-pub const SDE_MAJOR: u64 = 14;
 const CHECK_EVERY: Duration = Duration::from_secs(24 * 60 * 60);
 const CHECK_TIMEOUT: Duration = Duration::from_secs(10);
 const DOWNLOAD_TIMEOUT: Duration = Duration::from_secs(300);
@@ -31,6 +31,7 @@ struct PackageVersion {
 #[derive(Deserialize)]
 struct Dist {
     tarball: String,
+    integrity: String,
 }
 
 /// The directory holding the cached `sde.dat` and `names.dat`.
@@ -118,10 +119,10 @@ fn download_newest(cache_dir: &Path) -> Result<String, String> {
         .versions
         .into_iter()
         .filter_map(|(version, package)| Some((parse_version(&version)?, version, package)))
-        .filter(|((major, _, _), _, _)| *major == SDE_MAJOR)
+        .filter(|((major, _, _), _, _)| *major >= MIN_SDE_VERSION as u64)
         .max_by_key(|(parsed, _, _)| *parsed)
         .map(|(_, version, package)| (version, package))
-        .ok_or_else(|| format!("no version {SDE_MAJOR}.x is published"))?;
+        .ok_or_else(|| format!("no version {MIN_SDE_VERSION}.x or newer is published"))?;
 
     let target = cache_dir.join(&version);
     if has_files(&target) {
@@ -129,23 +130,40 @@ fn download_newest(cache_dir: &Path) -> Result<String, String> {
     }
 
     eprintln!("esf-mcp: downloading SDE {version}");
-    let response = agent(DOWNLOAD_TIMEOUT)
+    let mut tarball = Vec::new();
+    agent(DOWNLOAD_TIMEOUT)
         .get(&package.dist.tarball)
         .call()
+        .map_err(|error| error.to_string())?
+        .into_body()
+        .into_reader()
+        .read_to_end(&mut tarball)
         .map_err(|error| error.to_string())?;
+    check_integrity(&tarball, &package.dist.integrity)?;
 
     let staging = cache_dir.join(format!("{version}.partial-{}", std::process::id()));
     let _ = fs::remove_dir_all(&staging);
     fs::create_dir_all(&staging).map_err(|error| format!("{}: {error}", staging.display()))?;
-    let result = extract(response.into_body().into_reader(), &staging).and_then(|()| {
-        match fs::rename(&staging, &target) {
+    let result =
+        extract(tarball.as_slice(), &staging).and_then(|()| match fs::rename(&staging, &target) {
             Ok(()) => Ok(()),
             Err(_) if has_files(&target) => Ok(()),
             Err(error) => Err(format!("{}: {error}", target.display())),
-        }
-    });
+        });
     let _ = fs::remove_dir_all(&staging);
     result.map(|()| version)
+}
+
+/// Check bytes against an npm `sha512-<base64>` integrity.
+fn check_integrity(bytes: &[u8], integrity: &str) -> Result<(), String> {
+    let expected = integrity
+        .strip_prefix("sha512-")
+        .ok_or_else(|| format!("unsupported integrity {integrity}"))?;
+    let actual = base64::engine::general_purpose::STANDARD.encode(Sha512::digest(bytes));
+    match actual == expected {
+        true => Ok(()),
+        false => Err("the download does not match its integrity".to_string()),
+    }
 }
 
 fn extract(tarball: impl Read, staging: &Path) -> Result<(), String> {
@@ -198,11 +216,10 @@ mod tests {
     }
 
     #[test]
-    fn major_matches_the_workspace() {
-        let package: serde_json::Value =
-            serde_json::from_str(include_str!("../../../package.json")).unwrap();
-        let version = package["dependencies"]["@eveshipfit/sde"].as_str().unwrap();
-        let major = version.split('.').next().unwrap().parse::<u64>().unwrap();
-        assert_eq!(major, SDE_MAJOR);
+    fn checks_integrity() {
+        let integrity = "sha512-7iaw3Ur350mqGo7jwQrpkj9hiYB3Lkc/iBml1JQODbJ6wYX4oOHV+E+IvIh/1nsUNzLDBMxfqa2Ob1f1ACio/w==";
+        assert_eq!(check_integrity(b"test", integrity), Ok(()));
+        assert!(check_integrity(b"tset", integrity).is_err());
+        assert!(check_integrity(b"test", "sha1-abc").is_err());
     }
 }

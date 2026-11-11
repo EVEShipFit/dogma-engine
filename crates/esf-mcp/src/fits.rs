@@ -124,9 +124,10 @@ impl Game {
     /// Close names for the type an "unknown type" error names.
     fn unknown_type_hint(&self, error: &str) -> String {
         match error.split_once("unknown type ") {
-            Some((_, name)) => {
-                self.did_you_mean(name.lines().next().unwrap_or_default().trim_matches('"'))
-            }
+            Some((_, name)) => self.did_you_mean(
+                name.lines().next().unwrap_or_default().trim_matches('"'),
+                None,
+            ),
             None => String::new(),
         }
     }
@@ -196,7 +197,12 @@ impl Game {
                         .get_type(*type_id)
                         .is_some_and(|r#type| r#type.category_id() == CATEGORY_CELESTIAL)
                 })
-                .ok_or_else(|| format!("no beacon is named \"{name}\""))?;
+                .ok_or_else(|| {
+                    format!(
+                        "no beacon is named \"{name}\"{}",
+                        self.did_you_mean(name, Some("Celestial"))
+                    )
+                })?;
             fit.incoming.extend(beacon(&self.info, type_id));
         }
         Ok(())

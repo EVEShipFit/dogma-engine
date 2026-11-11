@@ -63,6 +63,9 @@ pub struct FitParams {
     pub fit: String,
     #[serde(flatten)]
     pub settings: Settings,
+    #[serde(flatten)]
+    #[schemars(skip)]
+    pub unknown: BTreeMap<String, Value>,
 }
 
 #[derive(Deserialize, JsonSchema)]
@@ -82,9 +85,13 @@ pub struct AttributesParams {
     pub sources: bool,
     #[serde(flatten)]
     pub settings: Settings,
+    #[serde(flatten)]
+    #[schemars(skip)]
+    pub unknown: BTreeMap<String, Value>,
 }
 
 #[derive(Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
 pub struct FindTypeParams {
     /// Words the name holds, ignoring case, like "200mm auto ii".
     pub query: String,
@@ -102,6 +109,9 @@ pub struct VariationsParams {
     pub fit: Option<String>,
     #[serde(flatten)]
     pub settings: Settings,
+    #[serde(flatten)]
+    #[schemars(skip)]
+    pub unknown: BTreeMap<String, Value>,
 }
 
 #[derive(Deserialize, JsonSchema)]
@@ -112,6 +122,9 @@ pub struct CompareParams {
     pub fit_b: String,
     #[serde(flatten)]
     pub settings: Settings,
+    #[serde(flatten)]
+    #[schemars(skip)]
+    pub unknown: BTreeMap<String, Value>,
 }
 
 #[derive(Deserialize, JsonSchema, Clone, Copy)]
@@ -123,6 +136,7 @@ pub enum ConvertTarget {
 }
 
 #[derive(Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
 pub struct ConvertParams {
     /// The fit, in esf/1, EFT, DNA, ESI fitting JSON or ESI killmail JSON.
     pub fit: String,
@@ -134,6 +148,14 @@ pub struct ConvertParams {
 pub struct Server {
     game: Arc<Game>,
     tool_router: ToolRouter<Self>,
+}
+
+/// An error naming options the tool does not take.
+fn known_options(unknown: &BTreeMap<String, Value>) -> Result<(), String> {
+    match unknown.keys().next() {
+        Some(name) => Err(format!("this tool takes no option \"{name}\"")),
+        None => Ok(()),
+    }
 }
 
 fn reply(result: Result<Value, String>) -> CallToolResult {
@@ -216,6 +238,7 @@ impl Server {
 
 impl Server {
     fn do_calculate(&self, params: &FitParams) -> Result<Value, String> {
+        known_options(&params.unknown)?;
         let game = &self.game;
         let fit = game.load_fit(&params.fit, &params.settings)?;
         let calculation = game.calculate(&fit, false);
@@ -231,6 +254,7 @@ impl Server {
     }
 
     fn do_attributes(&self, params: &AttributesParams) -> Result<Value, String> {
+        known_options(&params.unknown)?;
         let game = &self.game;
         let fit = game.load_fit(&params.fit, &params.settings)?;
         let calculation = game.calculate(&fit, params.sources);
@@ -302,6 +326,7 @@ impl Server {
     }
 
     fn do_variations(&self, params: &VariationsParams) -> Result<Value, String> {
+        known_options(&params.unknown)?;
         let game = &self.game;
         let type_id = game.require_type_id(&params.item)?;
         let mut family = game.variations(type_id);
@@ -420,6 +445,7 @@ impl Server {
     }
 
     fn do_compare(&self, params: &CompareParams) -> Result<Value, String> {
+        known_options(&params.unknown)?;
         let game = &self.game;
         let fit_a = game
             .load_fit(&params.fit_a, &params.settings)
@@ -698,6 +724,7 @@ Stasis Webifier II
         FitParams {
             fit: text.to_string(),
             settings: Settings::default(),
+            unknown: BTreeMap::new(),
         }
     }
 
@@ -721,6 +748,26 @@ Stasis Webifier II
     }
 
     #[test]
+    fn rejects_unknown_options() {
+        let params: FitParams =
+            serde_json::from_value(json!({"fit": RIFTER, "skill_level": 4, "skill_levels": 4}))
+                .unwrap();
+        let error = SERVER.do_calculate(&params).unwrap_err();
+        assert_eq!(error, "this tool takes no option \"skill_levels\"");
+    }
+
+    #[test]
+    fn suggests_beacons() {
+        let mut params = fit(RIFTER);
+        params.settings.beacon = Some("Class 6 Black Hole Efects".to_string());
+        let error = SERVER.do_calculate(&params).unwrap_err();
+        assert!(
+            error.contains("did you mean: Class 6 Black Hole Effects"),
+            "{error}"
+        );
+    }
+
+    #[test]
     fn reads_attributes() {
         let params = AttributesParams {
             fit: RIFTER.to_string(),
@@ -729,6 +776,7 @@ Stasis Webifier II
             changed_only: false,
             sources: true,
             settings: Settings::default(),
+            unknown: BTreeMap::new(),
         };
         let result = SERVER.do_attributes(&params).unwrap();
         assert_eq!(result["target"], "high 0: 200mm AutoCannon II");
@@ -761,6 +809,7 @@ Stasis Webifier II
             item: "Warp Scrambler II".to_string(),
             fit: None,
             settings: Settings::default(),
+            unknown: BTreeMap::new(),
         };
         let result = SERVER.do_variations(&params).unwrap();
         let names: Vec<&str> = result["variants"]
@@ -784,6 +833,7 @@ Stasis Webifier II
                 item: item.to_string(),
                 fit: Some(RIFTER.to_string()),
                 settings: Settings::default(),
+                unknown: BTreeMap::new(),
             };
             let result = SERVER.do_variations(&params).unwrap();
             assert_eq!(result["swapped"][0], spot, "{item}");
@@ -797,6 +847,7 @@ Stasis Webifier II
             fit_a: RIFTER.to_string(),
             fit_b: RIFTER_EFT.to_string(),
             settings: Settings::default(),
+            unknown: BTreeMap::new(),
         };
         let result = SERVER.do_compare(&params).unwrap();
         assert_eq!(result["only_in_a"]["Medium Shield Extender II"], 1);

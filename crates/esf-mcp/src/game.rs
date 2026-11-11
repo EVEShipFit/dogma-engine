@@ -180,14 +180,18 @@ impl Game {
 
     /// A type by name, or an error that suggests close names.
     pub fn require_type_id(&self, name: &str) -> Result<i32, String> {
-        self.find_type_id(name)
-            .ok_or_else(|| format!("no type is named \"{name}\"{}", self.did_you_mean(name)))
+        self.find_type_id(name).ok_or_else(|| {
+            format!(
+                "no type is named \"{name}\"{}",
+                self.did_you_mean(name, None)
+            )
+        })
     }
 
     /// "; did you mean: ..." with the closest names, or nothing.
-    pub fn did_you_mean(&self, name: &str) -> String {
+    pub fn did_you_mean(&self, name: &str, category: Option<&str>) -> String {
         let close: Vec<String> = self
-            .search(name, None, 5)
+            .search(name, category, 5)
             .into_iter()
             .map(|summary| summary.name)
             .collect();

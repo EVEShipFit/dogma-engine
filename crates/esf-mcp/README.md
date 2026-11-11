@@ -20,7 +20,7 @@ Skills default to all level 5.
 ## Install
 
 ```bash
-cargo install --git https://github.com/EVEShipFit/dogma-engine esf-mcp
+cargo install esf-mcp
 ```
 
 On first start it downloads the latest [`@eveshipfit/sde`](https://www.npmjs.com/package/@eveshipfit/sde) to the user's cache directory, and checks for a newer one once a day.
