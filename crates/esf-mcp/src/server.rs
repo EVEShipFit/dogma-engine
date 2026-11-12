@@ -144,6 +144,7 @@ pub struct ConvertParams {
     pub to: ConvertTarget,
 }
 
+/// The MCP tools and resources.
 #[derive(Clone)]
 pub struct Server {
     game: Arc<Game>,
@@ -169,6 +170,7 @@ fn reply(result: Result<Value, String>) -> CallToolResult {
 
 #[tool_router]
 impl Server {
+    /// A server answering from `game`.
     pub fn new(game: Game) -> Server {
         Server {
             game: Arc::new(game),

@@ -27,11 +27,12 @@ const UNIT_GROUP_ID: i32 = 115;
 const UNIT_TYPE_ID: i32 = 116;
 const UNIT_ATTRIBUTE_ID: i32 = 119;
 
+/// The SDE, with lookups by name.
 pub struct Game {
-    pub sde: &'static Sde<'static>,
-    pub info: InfoSde<'static>,
-    pub info_name: InfoNameSde<'static>,
-    pub skills: Vec<i32>,
+    pub(crate) sde: &'static Sde<'static>,
+    pub(crate) info: InfoSde<'static>,
+    pub(crate) info_name: InfoNameSde<'static>,
+    pub(crate) skills: Vec<i32>,
     groups: HashMap<i32, (&'static str, i32)>,
     categories: HashMap<i32, &'static str>,
     meta_groups: HashMap<i32, &'static str>,
@@ -55,6 +56,7 @@ pub struct TypeSummary {
 }
 
 impl Game {
+    /// Load an `sde.dat`, and optionally a `names.dat`.
     pub fn new(sde_bytes: Vec<u8>, names_bytes: Option<Vec<u8>>) -> Result<Game, String> {
         let sde_bytes: &'static [u8] = Box::leak(sde_bytes.into_boxed_slice());
         let sde: &'static Sde = Box::leak(Box::new(
@@ -138,28 +140,28 @@ impl Game {
         })
     }
 
-    pub fn type_name(&self, type_id: i32) -> String {
+    pub(crate) fn type_name(&self, type_id: i32) -> String {
         self.sde.get_type(type_id).map_or_else(
             || format!("type {type_id}"),
             |r#type| r#type.name().to_string(),
         )
     }
 
-    pub fn attribute_name(&self, attribute_id: i32) -> String {
+    pub(crate) fn attribute_name(&self, attribute_id: i32) -> String {
         self.sde.get_dogma_attribute(attribute_id).map_or_else(
             || format!("attribute {attribute_id}"),
             |attribute| attribute.name().to_string(),
         )
     }
 
-    pub fn effect_name(&self, effect_id: i32) -> String {
+    pub(crate) fn effect_name(&self, effect_id: i32) -> String {
         self.sde.get_dogma_effect(effect_id).map_or_else(
             || format!("effect {effect_id}"),
             |effect| effect.name().to_string(),
         )
     }
 
-    pub fn buff_name(&self, buff_id: i32) -> String {
+    pub(crate) fn buff_name(&self, buff_id: i32) -> String {
         self.sde
             .get_dbuff_collection(buff_id)
             .and_then(|buff| buff.display_name())
@@ -167,19 +169,19 @@ impl Game {
             .map_or_else(|| format!("buff {buff_id}"), str::to_string)
     }
 
-    pub fn group_name(&self, group_id: i32) -> String {
+    pub(crate) fn group_name(&self, group_id: i32) -> String {
         self.groups
             .get(&group_id)
             .map_or_else(|| format!("group {group_id}"), |(name, _)| name.to_string())
     }
 
     /// A type by name, in any language EVE supports.
-    pub fn find_type_id(&self, name: &str) -> Option<i32> {
+    pub(crate) fn find_type_id(&self, name: &str) -> Option<i32> {
         self.info_name.type_name_to_id(name.trim())
     }
 
     /// A type by name, or an error that suggests close names.
-    pub fn require_type_id(&self, name: &str) -> Result<i32, String> {
+    pub(crate) fn require_type_id(&self, name: &str) -> Result<i32, String> {
         self.find_type_id(name).ok_or_else(|| {
             format!(
                 "no type is named \"{name}\"{}",
@@ -189,7 +191,7 @@ impl Game {
     }
 
     /// "; did you mean: ..." with the closest names, or nothing.
-    pub fn did_you_mean(&self, name: &str, category: Option<&str>) -> String {
+    pub(crate) fn did_you_mean(&self, name: &str, category: Option<&str>) -> String {
         let close: Vec<String> = self
             .search(name, category, 5)
             .into_iter()
@@ -201,7 +203,7 @@ impl Game {
         }
     }
 
-    pub fn summarize_type(&self, type_id: i32) -> TypeSummary {
+    pub(crate) fn summarize_type(&self, type_id: i32) -> TypeSummary {
         let r#type = self.sde.get_type(type_id);
         let category_id = r#type
             .map(|r#type| r#type.category_id())
@@ -223,7 +225,7 @@ impl Game {
     }
 
     /// The rack a module goes in.
-    pub fn slot_of(&self, type_id: i32) -> Option<&'static str> {
+    pub(crate) fn slot_of(&self, type_id: i32) -> Option<&'static str> {
         let effects = self.info.get_dogma_effects(type_id)?;
         EFFECT_SLOTS.iter().find_map(|(effect_id, slot)| {
             effects
@@ -233,14 +235,19 @@ impl Game {
         })
     }
 
-    pub fn has_effect(&self, type_id: i32, effect_id: i32) -> bool {
+    pub(crate) fn has_effect(&self, type_id: i32, effect_id: i32) -> bool {
         self.info
             .get_dogma_effects(type_id)
             .is_some_and(|effects| effects.iter().any(|effect| effect.effect_id() == effect_id))
     }
 
     /// Published types by name: every word of `query`, else the closest names.
-    pub fn search(&self, query: &str, category: Option<&str>, limit: usize) -> Vec<TypeSummary> {
+    pub(crate) fn search(
+        &self,
+        query: &str,
+        category: Option<&str>,
+        limit: usize,
+    ) -> Vec<TypeSummary> {
         let query = fold_case(query.trim());
         let words: Vec<&str> = query.split_whitespace().collect();
         let category = category.map(fold_case);
@@ -290,7 +297,7 @@ impl Game {
     }
 
     /// Every published type in the variation family of `type_id`, itself included.
-    pub fn variations(&self, type_id: i32) -> Vec<i32> {
+    pub(crate) fn variations(&self, type_id: i32) -> Vec<i32> {
         let parent = self
             .sde
             .get_type(type_id)
@@ -303,12 +310,12 @@ impl Game {
         }
     }
 
-    pub fn meta_level(&self, type_id: i32) -> Option<f64> {
+    pub(crate) fn meta_level(&self, type_id: i32) -> Option<f64> {
         self.base_value(type_id, ATTRIBUTE_META_LEVEL)
     }
 
     /// The value an attribute of a type starts with, before anything modifies it.
-    pub fn base_value(&self, type_id: i32, attribute_id: i32) -> Option<f64> {
+    pub(crate) fn base_value(&self, type_id: i32, attribute_id: i32) -> Option<f64> {
         self.info
             .get_dogma_attributes(type_id)?
             .iter()
@@ -317,7 +324,7 @@ impl Game {
     }
 
     /// Every attribute of a type, as it starts.
-    pub fn info_attributes(&self, type_id: i32) -> Vec<(i32, f64)> {
+    pub(crate) fn info_attributes(&self, type_id: i32) -> Vec<(i32, f64)> {
         self.info
             .get_dogma_attributes(type_id)
             .into_iter()
@@ -327,7 +334,7 @@ impl Game {
     }
 
     /// A value as EVE shows it, with its unit.
-    pub fn display(&self, attribute_id: i32, value: f64) -> (f64, &'static str) {
+    pub(crate) fn display(&self, attribute_id: i32, value: f64) -> (f64, &'static str) {
         let unit_id = self
             .sde
             .get_dogma_attribute(attribute_id)
@@ -345,7 +352,7 @@ impl Game {
     }
 
     /// A value as EVE shows it, as one JSON value: a name for an id, else the number and unit.
-    pub fn display_value(&self, attribute_id: i32, value: f64) -> Value {
+    pub(crate) fn display_value(&self, attribute_id: i32, value: f64) -> Value {
         let unit_id = self
             .sde
             .get_dogma_attribute(attribute_id)
@@ -362,11 +369,11 @@ impl Game {
         }
     }
 
-    pub fn attribute_id(&self, name: &str) -> Option<i32> {
+    pub(crate) fn attribute_id(&self, name: &str) -> Option<i32> {
         self.sde.attribute_name_to_id(name)
     }
 
-    pub fn attribute_published(&self, attribute_id: i32) -> bool {
+    pub(crate) fn attribute_published(&self, attribute_id: i32) -> bool {
         attribute_id < 0
             || self
                 .sde
@@ -374,7 +381,7 @@ impl Game {
                 .is_some_and(|attribute| attribute.published())
     }
 
-    pub fn attribute_display_name(&self, attribute_id: i32) -> Option<&'static str> {
+    pub(crate) fn attribute_display_name(&self, attribute_id: i32) -> Option<&'static str> {
         self.sde
             .get_dogma_attribute(attribute_id)
             .and_then(|attribute| attribute.display_name())

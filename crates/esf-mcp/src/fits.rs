@@ -81,7 +81,7 @@ pub fn detect(text: &str) -> Format {
 
 impl Game {
     /// A fit without skills or environment, as written.
-    pub fn parse_fit(&self, text: &str) -> Result<(Fit, Format), String> {
+    pub(crate) fn parse_fit(&self, text: &str) -> Result<(Fit, Format), String> {
         let format = detect(text);
         let fit = match format {
             Format::Eft => eft::load_eft(&self.info_name, text).map_err(|error| {
@@ -133,7 +133,7 @@ impl Game {
     }
 
     /// A fit ready to calculate: skills and environment applied.
-    pub fn load_fit(&self, text: &str, settings: &Settings) -> Result<Fit, String> {
+    pub(crate) fn load_fit(&self, text: &str, settings: &Settings) -> Result<Fit, String> {
         let (mut fit, format) = self.parse_fit(text)?;
         self.apply(&mut fit, settings)?;
         if format != Format::Esf {
@@ -208,7 +208,7 @@ impl Game {
         Ok(())
     }
 
-    pub fn calculate(&self, fit: &Fit, sources: bool) -> Calculation {
+    pub(crate) fn calculate(&self, fit: &Fit, sources: bool) -> Calculation {
         let options = Options {
             sources,
             validate: true,
@@ -217,12 +217,12 @@ impl Game {
     }
 
     /// The fit as canonical esf/1 text.
-    pub fn to_esf(&self, fit: &Fit) -> Result<String, String> {
+    pub(crate) fn to_esf(&self, fit: &Fit) -> Result<String, String> {
         let esf_fit = esf::from_fit(&self.info, fit).map_err(|error| error.to_string())?;
         esf::save_esf(&self.info, &[esf_fit]).map_err(|error| error.to_string())
     }
 
-    pub fn item_label(&self, fit: &Fit, index: usize) -> String {
+    pub(crate) fn item_label(&self, fit: &Fit, index: usize) -> String {
         let item = &fit.items[index];
         format!(
             "{}: {}",
@@ -232,7 +232,7 @@ impl Game {
     }
 
     /// What a violation is about, without its numbers.
-    pub fn violation_kind(&self, violation: &Violation) -> String {
+    pub(crate) fn violation_kind(&self, violation: &Violation) -> String {
         let rule = serde_json::to_value(violation.rule).unwrap_or_default();
         format!(
             "{:?} {} {} {}",
@@ -240,7 +240,7 @@ impl Game {
         )
     }
 
-    pub fn violation(&self, fit: &Fit, violation: &Violation) -> String {
+    pub(crate) fn violation(&self, fit: &Fit, violation: &Violation) -> String {
         let target = match violation.target {
             Target::Ship => format!("ship {}", self.type_name(fit.ship.type_id)),
             Target::Item { index } => self.item_label(fit, index),
