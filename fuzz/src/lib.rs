@@ -3,7 +3,7 @@
 use std::collections::BTreeMap;
 use std::sync::LazyLock;
 
-use esf_data::{Info, InfoName, InfoNameSde, InfoSde, Names, Sde};
+use esf_data::{InfoName, InfoNameSde, Names, Sde};
 use esf_dogma_engine::{Calculation, Fit, ItemResult, Options, Rule, calculate};
 use esf_format::{eft, esf, esi};
 
@@ -11,14 +11,12 @@ pub mod fit;
 
 const SKILL_CATEGORY_ID: i32 = 16;
 
-fn read(variable: &str, default: &str) -> &'static [u8] {
+fn read(variable: &str, default: &str) -> Vec<u8> {
     let filename = std::env::var(variable).unwrap_or_else(|_| default.to_string());
-    let bytes =
-        std::fs::read(&filename).unwrap_or_else(|error| panic!("cannot read {filename}: {error}"));
-    Box::leak(bytes.into_boxed_slice())
+    std::fs::read(&filename).unwrap_or_else(|error| panic!("cannot read {filename}: {error}"))
 }
 
-pub static SDE: LazyLock<Sde<'static>> = LazyLock::new(|| {
+pub static SDE: LazyLock<Sde> = LazyLock::new(|| {
     let bytes = read(
         "ESF_SDE",
         concat!(
@@ -29,7 +27,7 @@ pub static SDE: LazyLock<Sde<'static>> = LazyLock::new(|| {
     Sde::new(bytes).unwrap()
 });
 
-static NAMES: LazyLock<Names<'static>> = LazyLock::new(|| {
+static NAMES: LazyLock<Names> = LazyLock::new(|| {
     let bytes = read(
         "ESF_NAMES",
         concat!(
@@ -108,8 +106,8 @@ fn attribute_id(name: &str) -> i32 {
         .unwrap_or_else(|| panic!("no attribute named {name}"))
 }
 
-pub fn info() -> InfoSde<'static> {
-    InfoSde::new(&SDE)
+pub fn info() -> &'static Sde {
+    &SDE
 }
 
 pub fn info_name() -> InfoNameSde<'static> {
@@ -126,7 +124,7 @@ pub fn check_loaded(fit: Fit) {
         fit.character.skills = skills;
         check(&fit);
 
-        esf_format::post_load(&info, &mut fit);
+        esf_format::post_load(info, &mut fit);
         check(&fit);
     }
 }
@@ -154,7 +152,7 @@ fn calculate_and_save(fit: &Fit, finite: bool) {
         sources: true,
         validate: true,
     };
-    let calculation = calculate(&info, fit, &options);
+    let calculation = calculate(info, fit, &options);
     let extreme_override = fit
         .items
         .iter()
@@ -165,12 +163,12 @@ fn calculate_and_save(fit: &Fit, finite: bool) {
         check_finite(&calculation, fit);
     }
 
-    let _ = eft::save_eft(&info, fit);
-    let _ = esi::save_esi_fitting(&info, fit);
-    if let Ok(esf_fit) = esf::from_fit(&info, fit) {
+    let _ = eft::save_eft(info, fit);
+    let _ = esi::save_esi_fitting(info, fit);
+    if let Ok(esf_fit) = esf::from_fit(info, fit) {
         let fits = [esf_fit];
-        let _ = esf::save_esf(&info, &fits);
-        if let Ok(binary) = esf::save_esf_binary(&info, &fits) {
+        let _ = esf::save_esf(info, &fits);
+        if let Ok(binary) = esf::save_esf_binary(info, &fits) {
             let _ = esf::decode_base64url(&esf::encode_base64url(&binary));
         }
     }

@@ -19,15 +19,14 @@
 //! languages EVE supports when importing. An export is always English.
 //!
 //! ```no_run
-//! use esf_data::{InfoNameSde, InfoSde, Sde};
+//! use esf_data::{InfoNameSde, Sde};
 //! use esf_format::eft::{load_eft, save_eft};
 //!
-//! let bytes = std::fs::read("sde.dat").unwrap();
-//! let sde = Sde::new(&bytes).unwrap();
+//! let sde = Sde::new(std::fs::read("sde.dat").unwrap()).unwrap();
 //! let info = InfoNameSde::new(&sde, None).unwrap();
 //!
 //! let fit = load_eft(&info, "[Rifter, My Rifter]\n200mm AutoCannon I").unwrap();
-//! let eft = save_eft(&InfoSde::new(&sde), &fit).unwrap();
+//! let eft = save_eft(&sde, &fit).unwrap();
 //! ```
 
 #![warn(missing_docs)]

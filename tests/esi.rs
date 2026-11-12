@@ -48,19 +48,19 @@ fn empty(name: Option<&str>) -> Fit {
 
 #[test]
 fn loads_a_fitting() {
-    snapshot_json("esi-loki", &load_esi_fitting(&info(), &read("loki")));
+    snapshot_json("esi-loki", &load_esi_fitting(info(), &read("loki")));
 }
 
 #[test]
 fn saves_a_fitting() {
     let fit = load(RIFTER).unwrap();
-    snapshot_json("esi-rifter", &save_esi_fitting(&info(), &fit));
+    snapshot_json("esi-rifter", &save_esi_fitting(info(), &fit));
 }
 
 #[test]
 fn round_trips_a_fitting() {
     let fitting = read("loki");
-    let again = save_esi_fitting(&info(), &load_esi_fitting(&info(), &fitting));
+    let again = save_esi_fitting(info(), &load_esi_fitting(info(), &fitting));
 
     assert_eq!(by_flag(again.items), by_flag(fitting.items.clone()));
     assert_eq!(again.name, fitting.name);
@@ -70,7 +70,7 @@ fn round_trips_a_fitting() {
 #[test]
 fn lists_a_charge_in_the_slot_of_its_module() {
     let fit = load("%esf/1\nRifter \"Gun\"\n\n200mm AutoCannon II :EMP S").unwrap();
-    let fitting = save_esi_fitting(&info(), &fit);
+    let fitting = save_esi_fitting(info(), &fit);
 
     let charge = fit.items[0].charge.as_ref().unwrap().type_id;
     assert_eq!(
@@ -89,7 +89,7 @@ fn lists_a_charge_in_the_slot_of_its_module() {
         ]
     );
 
-    let again = load_esi_fitting(&info(), &fitting);
+    let again = load_esi_fitting(info(), &fitting);
     assert_eq!(again.items.len(), 1);
     assert_eq!(again.items[0].charge.as_ref().unwrap().type_id, charge);
 }
@@ -98,10 +98,10 @@ fn lists_a_charge_in_the_slot_of_its_module() {
 #[test]
 fn puts_what_a_fitting_has_no_place_for_elsewhere() {
     let fit = load("%esf/1\nThanatos \"Fighters\"\n\n6x Templar II").unwrap();
-    let tube = save_esi_fitting(&info(), &fit);
+    let tube = save_esi_fitting(info(), &fit);
     assert_eq!(tube.items[0].flag, "FighterBay");
 
-    let implant = save_esi_fitting(&info(), &load(RIFTER).unwrap());
+    let implant = save_esi_fitting(info(), &load(RIFTER).unwrap());
     let ocular = implant.items.last().unwrap();
     assert_eq!(ocular.flag, "Cargo");
 }
@@ -120,20 +120,17 @@ fn skips_an_unknown_flag() {
         }],
     };
 
-    assert!(load_esi_fitting(&info(), &fitting).items.is_empty());
+    assert!(load_esi_fitting(info(), &fitting).items.is_empty());
 }
 
 #[test]
 fn cuts_the_name_to_what_esi_takes() {
     let long = "x".repeat(80);
-    assert_eq!(
-        save_esi_fitting(&info(), &empty(Some(&long))).name.len(),
-        50
-    );
+    assert_eq!(save_esi_fitting(info(), &empty(Some(&long))).name.len(), 50);
 }
 
 #[test]
 fn names_the_fitting_after_the_ship_when_it_has_no_name() {
-    assert_eq!(save_esi_fitting(&info(), &empty(None)).name, "Rifter");
-    assert_eq!(save_esi_fitting(&info(), &empty(Some(""))).name, "Rifter");
+    assert_eq!(save_esi_fitting(info(), &empty(None)).name, "Rifter");
+    assert_eq!(save_esi_fitting(info(), &empty(Some(""))).name, "Rifter");
 }

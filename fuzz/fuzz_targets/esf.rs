@@ -5,10 +5,10 @@ use libfuzzer_sys::fuzz_target;
 
 fn load(data: &[u8]) -> Result<(), esf::Error> {
     let info = esf_fuzz::info();
-    let fits = esf::load_esf(&info, data)?;
+    let fits = esf::load_esf(info, data)?;
     let _ = esf::main_fit(&fits);
     for fit in &fits {
-        esf_fuzz::check_loaded(esf::to_fit(&info, fit)?);
+        esf_fuzz::check_loaded(esf::to_fit(info, fit)?);
     }
     Ok(())
 }

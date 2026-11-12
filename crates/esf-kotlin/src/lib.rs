@@ -10,14 +10,14 @@ use jni::{Env, EnvUnowned, jni_mangle, jni_str};
 use serde::Serialize;
 use serde::de::DeserializeOwned;
 
-use esf_data::{InfoNameSde, InfoSde, Names, Sde};
+use esf_data::{InfoNameSde, Names, Sde};
 use esf_dogma_engine::{Fit, Options};
 use esf_format::esf;
 use esf_format::esi::EsiFitting;
 use esf_format::killmail::EsiKillmail;
 
-static SDE: OnceLock<Sde<'static>> = OnceLock::new();
-static NAMES: OnceLock<Names<'static>> = OnceLock::new();
+static SDE: OnceLock<Sde> = OnceLock::new();
+static NAMES: OnceLock<Names> = OnceLock::new();
 
 #[derive(Debug)]
 enum Error {
@@ -91,7 +91,7 @@ impl<T: Default> ErrorPolicy<T, Error> for Throw {
     }
 }
 
-fn sde() -> Result<&'static Sde<'static>, Error> {
+fn sde() -> Result<&'static Sde, Error> {
     SDE.get()
         .ok_or_else(|| Error::State("SDE is not loaded; call loadSde() first".to_string()))
 }
@@ -121,12 +121,6 @@ fn int(mut unowned_env: EnvUnowned, body: impl FnOnce(&mut Env) -> Result<jint, 
     unowned_env.with_env(body).resolve::<Throw>()
 }
 
-/* Leaked, as everything read from the SDE borrows it for the rest of the
- * process. */
-fn leak(env: &Env, bytes: &JByteArray) -> Result<&'static [u8], Error> {
-    Ok(Box::leak(env.convert_byte_array(bytes)?.into_boxed_slice()))
-}
-
 #[jni_mangle("fit.eveship.dogma.Native")]
 pub fn load_sde<'local>(
     unowned_env: EnvUnowned<'local>,
@@ -138,7 +132,7 @@ pub fn load_sde<'local>(
             return Err(Error::State("SDE is already loaded".to_string()));
         }
 
-        let sde = Sde::new(leak(env, &bytes)?).map_err(argument)?;
+        let sde = Sde::new(env.convert_byte_array(&bytes)?).map_err(argument)?;
         let build_number = sde.build_number();
         SDE.set(sde)
             .map_err(|_| Error::State("SDE is already loaded".to_string()))?;
@@ -159,7 +153,7 @@ pub fn load_names<'local>(
             return Err(Error::State("names are already loaded".to_string()));
         }
 
-        let names = Names::new(leak(env, &bytes)?).map_err(argument)?;
+        let names = Names::new(env.convert_byte_array(&bytes)?).map_err(argument)?;
         let build_number = names.build_number();
         if sde.build_number() != build_number {
             return Err(argument(esf_data::Error::BuildMismatch {
@@ -200,7 +194,7 @@ pub fn save_eft<'local>(
 ) -> JString<'local> {
     string(unowned_env, |env| {
         let fit: Fit = from_json(env, &fit)?;
-        esf_format::eft::save_eft(&InfoSde::new(sde()?), &fit).map_err(argument)
+        esf_format::eft::save_eft(sde()?, &fit).map_err(argument)
     })
 }
 
@@ -212,10 +206,7 @@ pub fn load_esi_fitting<'local>(
 ) -> JString<'local> {
     string(unowned_env, |env| {
         let fitting: EsiFitting = from_json(env, &fitting)?;
-        to_json(&esf_format::esi::load_esi_fitting(
-            &InfoSde::new(sde()?),
-            &fitting,
-        ))
+        to_json(&esf_format::esi::load_esi_fitting(sde()?, &fitting))
     })
 }
 
@@ -227,10 +218,7 @@ pub fn save_esi_fitting<'local>(
 ) -> JString<'local> {
     string(unowned_env, |env| {
         let fit: Fit = from_json(env, &fit)?;
-        to_json(&esf_format::esi::save_esi_fitting(
-            &InfoSde::new(sde()?),
-            &fit,
-        ))
+        to_json(&esf_format::esi::save_esi_fitting(sde()?, &fit))
     })
 }
 
@@ -242,7 +230,7 @@ pub fn post_load<'local>(
 ) -> JString<'local> {
     string(unowned_env, |env| {
         let mut fit: Fit = from_json(env, &fit)?;
-        esf_format::post_load(&InfoSde::new(sde()?), &mut fit);
+        esf_format::post_load(sde()?, &mut fit);
         to_json(&fit)
     })
 }
@@ -255,10 +243,7 @@ pub fn load_killmail<'local>(
 ) -> JString<'local> {
     string(unowned_env, |env| {
         let killmail: EsiKillmail = from_json(env, &killmail)?;
-        to_json(&esf_format::killmail::load_killmail(
-            &InfoSde::new(sde()?),
-            &killmail,
-        ))
+        to_json(&esf_format::killmail::load_killmail(sde()?, &killmail))
     })
 }
 
@@ -270,7 +255,7 @@ pub fn load_dna<'local>(
 ) -> JString<'local> {
     string(unowned_env, |env| {
         let dna = dna.try_to_string(env)?;
-        let fit = esf_format::dna::load_dna(&InfoSde::new(sde()?), &dna).map_err(argument)?;
+        let fit = esf_format::dna::load_dna(sde()?, &dna).map_err(argument)?;
         to_json(&fit)
     })
 }
@@ -292,16 +277,16 @@ pub fn load_link<'local>(
 }
 
 fn load_esf_fit(data: &[u8]) -> Result<Fit, Error> {
-    let info = InfoSde::new(sde()?);
+    let sde = sde()?;
 
-    let fits = esf::load_esf(&info, data).map_err(argument)?;
+    let fits = esf::load_esf(sde, data).map_err(argument)?;
     let fit = esf::main_fit(&fits).ok_or_else(|| argument("no fit stands on its own"))?;
-    esf::to_fit(&info, fit).map_err(argument)
+    esf::to_fit(sde, fit).map_err(argument)
 }
 
-fn to_esf_fit(info: &InfoSde, env: &Env, fit: &JString) -> Result<esf::EsfFit, Error> {
+fn to_esf_fit(sde: &Sde, env: &Env, fit: &JString) -> Result<esf::EsfFit, Error> {
     let fit: Fit = from_json(env, fit)?;
-    esf::from_fit(info, &fit).map_err(argument)
+    esf::from_fit(sde, &fit).map_err(argument)
 }
 
 #[jni_mangle("fit.eveship.dogma.Native")]
@@ -337,9 +322,9 @@ pub fn save_esf<'local>(
     fit: JString<'local>,
 ) -> JString<'local> {
     string(unowned_env, |env| {
-        let info = InfoSde::new(sde()?);
-        let esf_fit = to_esf_fit(&info, env, &fit)?;
-        esf::save_esf(&info, &[esf_fit]).map_err(argument)
+        let sde = sde()?;
+        let esf_fit = to_esf_fit(sde, env, &fit)?;
+        esf::save_esf(sde, &[esf_fit]).map_err(argument)
     })
 }
 
@@ -350,9 +335,9 @@ pub fn save_esf_link<'local>(
     fit: JString<'local>,
 ) -> JString<'local> {
     string(unowned_env, |env| {
-        let info = InfoSde::new(sde()?);
-        let esf_fit = to_esf_fit(&info, env, &fit)?;
-        let binary = esf::save_esf_binary(&info, &[esf_fit]).map_err(argument)?;
+        let sde = sde()?;
+        let esf_fit = to_esf_fit(sde, env, &fit)?;
+        let binary = esf::save_esf_binary(sde, &[esf_fit]).map_err(argument)?;
         Ok(esf::encode_base64url(&binary))
     })
 }
@@ -367,11 +352,7 @@ pub fn calculate<'local>(
     string(unowned_env, |env| {
         let fit: Fit = from_json(env, &fit)?;
         let options: Options = from_json(env, &options)?;
-        to_json(&esf_dogma_engine::calculate(
-            &InfoSde::new(sde()?),
-            &fit,
-            &options,
-        ))
+        to_json(&esf_dogma_engine::calculate(sde()?, &fit, &options))
     })
 }
 
@@ -382,6 +363,6 @@ pub fn beacon<'local>(
     type_id: jint,
 ) -> JString<'local> {
     string(unowned_env, |_env| {
-        to_json(&esf_dogma_engine::beacon(&InfoSde::new(sde()?), type_id))
+        to_json(&esf_dogma_engine::beacon(sde()?, type_id))
     })
 }

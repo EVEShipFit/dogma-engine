@@ -3,8 +3,7 @@ from .types import Calculation, EsiFitting, EsiKillmail, Fit, Options, Projectio
 def load_sde(bytes: bytes) -> int:
     """Load `sde.dat`. Returns the SDE build number.
 
-    Has to be called before `calculate`; calling it twice raises, as the first
-    buffer is borrowed for the rest of the session.
+    Has to be called before `calculate`; calling it twice raises.
 
     Raises:
         RuntimeError: the SDE was already loaded.

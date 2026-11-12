@@ -224,10 +224,10 @@ impl Server {
                 .and_then(|fit| match params.to {
                     ConvertTarget::Esf => game.to_esf(&fit),
                     ConvertTarget::Eft => {
-                        eft::save_eft(&game.info, &fit).map_err(|error| error.to_string())
+                        eft::save_eft(&game.sde, &fit).map_err(|error| error.to_string())
                     }
                     ConvertTarget::Esi => {
-                        serde_json::to_string_pretty(&esi::save_esi_fitting(&game.info, &fit))
+                        serde_json::to_string_pretty(&esi::save_esi_fitting(&game.sde, &fit))
                             .map_err(|error| error.to_string())
                     }
                 });

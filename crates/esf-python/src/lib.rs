@@ -4,7 +4,7 @@ use pyo3::exceptions::{PyRuntimeError, PyValueError};
 use pyo3::prelude::*;
 use pythonize::{depythonize, pythonize};
 
-use esf_data::{Error, InfoNameSde, InfoSde, Names, Sde};
+use esf_data::{Error, InfoNameSde, Names, Sde};
 use esf_dogma_engine::{Fit, Options};
 use esf_format::esf;
 use esf_format::esi::EsiFitting;
@@ -12,26 +12,25 @@ use esf_format::killmail::EsiKillmail;
 
 /// The SDE is handed over once and then read straight out of Rust memory, so
 /// no lookup crosses back into Python.
-static SDE: OnceLock<Sde<'static>> = OnceLock::new();
+static SDE: OnceLock<Sde> = OnceLock::new();
 
 /// `names.dat` is only read for a name `sde.dat` does not know, so it stays
 /// optional.
-static NAMES: OnceLock<Names<'static>> = OnceLock::new();
+static NAMES: OnceLock<Names> = OnceLock::new();
 
-fn sde() -> PyResult<&'static Sde<'static>> {
+fn sde() -> PyResult<&'static Sde> {
     SDE.get()
         .ok_or_else(|| PyRuntimeError::new_err("SDE is not loaded; call load_sde() first"))
 }
 
-/// Load `sde.dat`. Has to be called before `calculate`; calling it twice is an
-/// error, as the first buffer is borrowed for the rest of the session.
+/// Load `sde.dat`. Has to be called before `calculate`; calling it twice is an error.
 #[pyfunction]
 fn load_sde(bytes: Vec<u8>) -> PyResult<i32> {
     if SDE.get().is_some() {
         return Err(PyRuntimeError::new_err("SDE is already loaded"));
     }
 
-    let sde = Sde::new(bytes.leak()).map_err(|error| PyValueError::new_err(error.to_string()))?;
+    let sde = Sde::new(bytes).map_err(|error| PyValueError::new_err(error.to_string()))?;
 
     let build_number = sde.build_number();
     SDE.set(sde)
@@ -50,8 +49,7 @@ fn load_names(bytes: Vec<u8>) -> PyResult<i32> {
         return Err(PyRuntimeError::new_err("names are already loaded"));
     }
 
-    let names =
-        Names::new(bytes.leak()).map_err(|error| PyValueError::new_err(error.to_string()))?;
+    let names = Names::new(bytes).map_err(|error| PyValueError::new_err(error.to_string()))?;
 
     /* Reject a mismatched pair here, rather than on every load_eft(). */
     let build_number = names.build_number();
@@ -94,8 +92,7 @@ fn save_eft(py: Python<'_>, fit: &Bound<'_, PyAny>) -> PyResult<String> {
     let fit: Fit = depythonize(fit).map_err(|error| PyValueError::new_err(error.to_string()))?;
 
     py.detach(|| {
-        let info = InfoSde::new(sde);
-        esf_format::eft::save_eft(&info, &fit)
+        esf_format::eft::save_eft(sde, &fit)
             .map_err(|error| PyValueError::new_err(error.to_string()))
     })
 }
@@ -111,10 +108,7 @@ fn load_esi_fitting<'py>(
     let fitting: EsiFitting =
         depythonize(fitting).map_err(|error| PyValueError::new_err(error.to_string()))?;
 
-    let fit = py.detach(|| {
-        let info = InfoSde::new(sde);
-        esf_format::esi::load_esi_fitting(&info, &fitting)
-    });
+    let fit = py.detach(|| esf_format::esi::load_esi_fitting(sde, &fitting));
 
     Ok(pythonize(py, &fit)?)
 }
@@ -126,10 +120,7 @@ fn save_esi_fitting<'py>(py: Python<'py>, fit: &Bound<'py, PyAny>) -> PyResult<B
 
     let fit: Fit = depythonize(fit).map_err(|error| PyValueError::new_err(error.to_string()))?;
 
-    let fitting = py.detach(|| {
-        let info = InfoSde::new(sde);
-        esf_format::esi::save_esi_fitting(&info, &fit)
-    });
+    let fitting = py.detach(|| esf_format::esi::save_esi_fitting(sde, &fit));
 
     Ok(pythonize(py, &fitting)?)
 }
@@ -144,8 +135,7 @@ fn post_load<'py>(py: Python<'py>, fit: &Bound<'py, PyAny>) -> PyResult<Bound<'p
         depythonize(fit).map_err(|error| PyValueError::new_err(error.to_string()))?;
 
     py.detach(|| {
-        let info = InfoSde::new(sde);
-        esf_format::post_load(&info, &mut fit);
+        esf_format::post_load(sde, &mut fit);
     });
 
     Ok(pythonize(py, &fit)?)
@@ -162,10 +152,7 @@ fn load_killmail<'py>(
     let killmail: EsiKillmail =
         depythonize(killmail).map_err(|error| PyValueError::new_err(error.to_string()))?;
 
-    let fit = py.detach(|| {
-        let info = InfoSde::new(sde);
-        esf_format::killmail::load_killmail(&info, &killmail)
-    });
+    let fit = py.detach(|| esf_format::killmail::load_killmail(sde, &killmail));
 
     Ok(pythonize(py, &fit)?)
 }
@@ -176,8 +163,7 @@ fn load_dna(py: Python<'_>, dna: String) -> PyResult<Bound<'_, PyAny>> {
     let sde = sde()?;
 
     let fit = py.detach(|| {
-        let info = InfoSde::new(sde);
-        esf_format::dna::load_dna(&info, &dna)
+        esf_format::dna::load_dna(sde, &dna)
             .map_err(|error| PyValueError::new_err(error.to_string()))
     })?;
 
@@ -209,13 +195,11 @@ fn esf_error(error: esf::Error) -> PyErr {
     PyValueError::new_err(error.to_string())
 }
 
-fn load_esf_fit(sde: &'static Sde<'static>, data: &[u8]) -> PyResult<Fit> {
-    let info = InfoSde::new(sde);
-
-    let fits = esf::load_esf(&info, data).map_err(esf_error)?;
+fn load_esf_fit(sde: &'static Sde, data: &[u8]) -> PyResult<Fit> {
+    let fits = esf::load_esf(sde, data).map_err(esf_error)?;
     let fit =
         esf::main_fit(&fits).ok_or_else(|| PyValueError::new_err("no fit stands on its own"))?;
-    esf::to_fit(&info, fit).map_err(esf_error)
+    esf::to_fit(sde, fit).map_err(esf_error)
 }
 
 /// Load a fit from an esf/1 document, as text.
@@ -246,9 +230,8 @@ fn save_esf(py: Python<'_>, fit: &Bound<'_, PyAny>) -> PyResult<String> {
     let fit: Fit = depythonize(fit).map_err(|error| PyValueError::new_err(error.to_string()))?;
 
     py.detach(|| {
-        let info = InfoSde::new(sde);
-        let esf_fit = esf::from_fit(&info, &fit).map_err(esf_error)?;
-        esf::save_esf(&info, &[esf_fit]).map_err(esf_error)
+        let esf_fit = esf::from_fit(sde, &fit).map_err(esf_error)?;
+        esf::save_esf(sde, &[esf_fit]).map_err(esf_error)
     })
 }
 
@@ -260,9 +243,8 @@ fn save_esf_link(py: Python<'_>, fit: &Bound<'_, PyAny>) -> PyResult<String> {
     let fit: Fit = depythonize(fit).map_err(|error| PyValueError::new_err(error.to_string()))?;
 
     py.detach(|| {
-        let info = InfoSde::new(sde);
-        let esf_fit = esf::from_fit(&info, &fit).map_err(esf_error)?;
-        let binary = esf::save_esf_binary(&info, &[esf_fit]).map_err(esf_error)?;
+        let esf_fit = esf::from_fit(sde, &fit).map_err(esf_error)?;
+        let binary = esf::save_esf_binary(sde, &[esf_fit]).map_err(esf_error)?;
         Ok(esf::encode_base64url(&binary))
     })
 }
@@ -286,10 +268,7 @@ fn calculate<'py>(
         }
     };
 
-    let calculation = py.detach(|| {
-        let info = InfoSde::new(sde);
-        esf_dogma_engine::calculate(&info, &fit, &options)
-    });
+    let calculation = py.detach(|| esf_dogma_engine::calculate(sde, &fit, &options));
 
     Ok(pythonize(py, &calculation)?)
 }
@@ -300,10 +279,7 @@ fn calculate<'py>(
 fn beacon(py: Python<'_>, type_id: i32) -> PyResult<Bound<'_, PyAny>> {
     let sde = sde()?;
 
-    let projection = py.detach(|| {
-        let info = InfoSde::new(sde);
-        esf_dogma_engine::beacon(&info, type_id)
-    });
+    let projection = py.detach(|| esf_dogma_engine::beacon(sde, type_id));
 
     Ok(pythonize(py, &projection)?)
 }

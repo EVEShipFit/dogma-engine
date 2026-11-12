@@ -6,54 +6,48 @@ use super::{Names, Sde, eve};
 use crate::Error;
 use crate::info::{Info, InfoEsf, InfoExport, InfoName};
 
-/// [`Info`] answered from `sde.dat`.
-pub struct InfoSde<'a> {
-    sde: &'a Sde<'a>,
-}
-
 /// [`InfoName`] answered from `sde.dat`, and from `names.dat` when given, to
 /// also match names in the other languages EVE supports.
 pub struct InfoNameSde<'a> {
-    sde: &'a Sde<'a>,
-    names: Option<&'a Names<'a>>,
+    sde: &'a Sde,
+    names: Option<&'a Names>,
 }
 
-impl Info for InfoSde<'_> {
+impl Info for Sde {
     fn get_dogma_attributes(&self, type_id: i32) -> Option<Vector<'_, eve::TypeDogmaAttribute>> {
-        self.sde.get_type(type_id)?.dogma_attributes()
+        Sde::get_type(self, type_id)?.dogma_attributes()
     }
 
     fn get_dogma_attribute(&self, attribute_id: i32) -> Option<eve::DogmaAttribute<'_>> {
-        self.sde.get_dogma_attribute(attribute_id)
+        Sde::get_dogma_attribute(self, attribute_id)
     }
 
     fn get_dogma_effects(&self, type_id: i32) -> Option<Vector<'_, eve::TypeDogmaEffect>> {
-        self.sde.get_type(type_id)?.dogma_effects()
+        Sde::get_type(self, type_id)?.dogma_effects()
     }
 
     fn get_dogma_effect(&self, effect_id: i32) -> Option<eve::DogmaEffect<'_>> {
-        self.sde.get_dogma_effect(effect_id)
+        Sde::get_dogma_effect(self, effect_id)
     }
 
     fn get_type(&self, type_id: i32) -> Option<eve::Type<'_>> {
-        self.sde.get_type(type_id)
+        Sde::get_type(self, type_id)
     }
 
     fn get_dbuff_collection(&self, buff_id: i32) -> Option<eve::DbuffCollection<'_>> {
-        self.sde.get_dbuff_collection(buff_id)
+        Sde::get_dbuff_collection(self, buff_id)
     }
 
     fn attribute_name_to_id(&self, name: &str) -> Option<i32> {
-        self.sde.attribute_name_to_id(name)
+        Sde::attribute_name_to_id(self, name)
     }
 }
 
 /* Only a handful of mutaplasmids exist, and only a mutated item looks one up,
  * so a scan beats indexing them. */
-impl InfoExport for InfoSde<'_> {
+impl InfoExport for Sde {
     fn find_mutaplasmid(&self, base: i32, result: i32, rolls: &BTreeMap<i32, f64>) -> Option<i32> {
         let candidates = self
-            .sde
             .mutaplasmids()
             .filter(|mutaplasmid| makes(*mutaplasmid, base, result));
 
@@ -76,33 +70,32 @@ impl InfoExport for InfoSde<'_> {
     }
 }
 
-impl InfoEsf for InfoSde<'_> {
+impl InfoEsf for Sde {
     fn type_name_to_id(&self, name: &str) -> Option<i32> {
-        self.sde.type_name_to_id(name)
+        Sde::type_name_to_id(self, name)
     }
 
     fn attribute_name_to_id_ignoring_case(&self, name: &str) -> Option<i32> {
-        self.sde.attribute_name_to_id_ignoring_case(name)
+        Sde::attribute_name_to_id_ignoring_case(self, name)
     }
 
     fn mode_type_ids(&self, hull: i32) -> impl Iterator<Item = i32> {
-        self.sde
-            .get_type(hull)
+        Sde::get_type(self, hull)
             .and_then(|r#type| r#type.mode_type_ids())
             .into_iter()
             .flatten()
     }
 
     fn mutaplasmids_of(&self, base: i32) -> &[i32] {
-        self.sde.mutaplasmids_of(base)
+        Sde::mutaplasmids_of(self, base)
     }
 
     fn get_mutaplasmid(&self, type_id: i32) -> Option<eve::Mutaplasmid<'_>> {
-        self.sde.get_mutaplasmid(type_id)
+        Sde::get_mutaplasmid(self, type_id)
     }
 }
 
-impl InfoSde<'_> {
+impl Sde {
     /// Whether every attribute the mutaplasmid rolls has a value in `rolls`
     /// that it could have rolled. Its range is a factor of the unmutated
     /// value.
@@ -139,8 +132,7 @@ impl InfoSde<'_> {
 
     /// The value a type gives an attribute before anything modifies it.
     fn base_value(&self, type_id: i32, attribute_id: i32) -> Option<f64> {
-        self.sde
-            .get_type(type_id)?
+        Sde::get_type(self, type_id)?
             .dogma_attributes()?
             .iter()
             .find(|attribute| attribute.attribute_id() == attribute_id)
@@ -211,17 +203,10 @@ impl InfoName for InfoNameSde<'_> {
     }
 }
 
-impl<'a> InfoSde<'a> {
-    /// Answer [`Info`] from this SDE.
-    pub fn new(sde: &'a Sde<'a>) -> InfoSde<'a> {
-        InfoSde { sde }
-    }
-}
-
 impl<'a> InfoNameSde<'a> {
     /// The type ids in `names.dat` only mean anything against the SDE it was
     /// built from, so refuse a pair that does not match.
-    pub fn new(sde: &'a Sde<'a>, names: Option<&'a Names<'a>>) -> Result<InfoNameSde<'a>, Error> {
+    pub fn new(sde: &'a Sde, names: Option<&'a Names>) -> Result<InfoNameSde<'a>, Error> {
         if let Some(names) = names
             && sde.build_number() != names.build_number()
         {

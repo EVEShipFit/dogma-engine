@@ -2,7 +2,6 @@
 
 use std::collections::BTreeMap;
 
-use esf_data::Info;
 use esf_dogma_engine::{Calculation, Fit, FitItem, Options, Slot};
 
 use crate::harness::{all, calculate, info, outgoing};

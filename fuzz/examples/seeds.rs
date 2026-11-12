@@ -62,21 +62,20 @@ fn main() {
     for file in files {
         let source = fs::read_to_string(&file).unwrap();
         for text in esf_fits(&source) {
-            let Ok(fits) = esf::load_esf(&info, text.as_bytes()) else {
+            let Ok(fits) = esf::load_esf(info, text.as_bytes()) else {
                 continue;
             };
             let name = format!("seed-{count}");
             count += 1;
 
             write("esf", &name, text.as_bytes());
-            if let Ok(binary) = esf::save_esf_binary(&info, &fits) {
+            if let Ok(binary) = esf::save_esf_binary(info, &fits) {
                 write("esf", &format!("{name}-binary"), &binary);
                 let link = format!("link:{}", esf::encode_base64url(&binary));
                 write("esf", &format!("{name}-link"), link.as_bytes());
             }
 
-            let Some(fit) = esf::main_fit(&fits).and_then(|fit| esf::to_fit(&info, fit).ok())
-            else {
+            let Some(fit) = esf::main_fit(&fits).and_then(|fit| esf::to_fit(info, fit).ok()) else {
                 continue;
             };
             write(
@@ -85,13 +84,13 @@ fn main() {
                 serde_json::to_string(&fit).unwrap().as_bytes(),
             );
             write("dna", &name, dna(&fit).as_bytes());
-            let fitting = esi::save_esi_fitting(&info, &fit);
+            let fitting = esi::save_esi_fitting(info, &fit);
             write(
                 "esi",
                 &name,
                 serde_json::to_string(&fitting).unwrap().as_bytes(),
             );
-            if let Ok(text) = eft::save_eft(&info, &fit) {
+            if let Ok(text) = eft::save_eft(info, &fit) {
                 write("eft", &name, text.as_bytes());
                 write("link", &name, format!("eft:{text}").as_bytes());
             }
@@ -107,7 +106,7 @@ fn main() {
             items: Vec::new(),
             character: Character::default(),
             environment: Environment::default(),
-            incoming: beacon(&info, type_id),
+            incoming: beacon(info, type_id),
         };
         let json = serde_json::to_string(&fit).unwrap();
         write("fit_json", &format!("beacon-{type_id}"), json.as_bytes());

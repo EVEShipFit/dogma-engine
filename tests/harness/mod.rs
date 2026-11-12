@@ -6,7 +6,7 @@
 use std::path::PathBuf;
 use std::sync::LazyLock;
 
-use esf_data::{InfoName, InfoNameSde, InfoSde, Names, Sde};
+use esf_data::{InfoName, InfoNameSde, Names, Sde};
 use esf_dogma_engine::Projection;
 
 mod case;
@@ -25,7 +25,7 @@ pub fn beacon(name: &str) -> Projection {
         .type_name_to_id(name)
         .unwrap_or_else(|| panic!("no such beacon: {name}"));
 
-    esf_dogma_engine::beacon(&InfoSde::new(&SDE), type_id)
+    esf_dogma_engine::beacon(&*SDE, type_id)
 }
 
 /// Override with ESF_SDE and ESF_NAMES when the flatbuffers live elsewhere.
@@ -37,27 +37,26 @@ fn read(variable: &str, default: &str) -> Vec<u8> {
         .unwrap_or_else(|error| panic!("cannot read {}: {}", filename.display(), error))
 }
 
-static SDE_BYTES: LazyLock<Vec<u8>> = LazyLock::new(|| {
-    read(
+static SDE: LazyLock<Sde> = LazyLock::new(|| {
+    Sde::new(read(
         "ESF_SDE",
         concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../node_modules/@eveshipfit/sde/dist/sde.dat"
         ),
-    )
+    ))
+    .unwrap()
 });
-static NAMES_BYTES: LazyLock<Vec<u8>> = LazyLock::new(|| {
-    read(
+static NAMES: LazyLock<Names> = LazyLock::new(|| {
+    Names::new(read(
         "ESF_NAMES",
         concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/../node_modules/@eveshipfit/sde/dist/names.dat"
         ),
-    )
+    ))
+    .unwrap()
 });
-
-static SDE: LazyLock<Sde<'static>> = LazyLock::new(|| Sde::new(&SDE_BYTES).unwrap());
-static NAMES: LazyLock<Names<'static>> = LazyLock::new(|| Names::new(&NAMES_BYTES).unwrap());
 
 macro_rules! validation {
     ($($name:ident = $fit:ident, skills: $skills:expr $(, edit: $edit:expr)?;)*) => {

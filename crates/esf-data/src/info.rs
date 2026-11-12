@@ -9,7 +9,7 @@ use crate::sde::eve;
 
 /// What the dogma engine looks up while calculating a fit.
 ///
-/// [`InfoSde`](crate::InfoSde) answers these from `sde.dat`.
+/// [`Sde`](crate::Sde) answers these from `sde.dat`.
 pub trait Info {
     /// The attribute values a type starts with.
     fn get_dogma_attributes(&self, type_id: i32) -> Option<Vector<'_, eve::TypeDogmaAttribute>>;
@@ -29,7 +29,7 @@ pub trait Info {
 
 /// What an exporter looks up on top of [`Info`] to write a fit back out.
 ///
-/// [`InfoSde`](crate::InfoSde) answers it from `sde.dat`.
+/// [`Sde`](crate::Sde) answers it from `sde.dat`.
 pub trait InfoExport: Info {
     /// The type id of a mutaplasmid that turns `base` into `result` with
     /// these rolled attribute values. Several mutaplasmids may, differing

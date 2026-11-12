@@ -340,7 +340,7 @@ fn incoming(u: &mut Unstructured) -> Result<Projection> {
 
     if !BEACONS.is_empty() {
         for _ in 0..u.int_in_range(0..=2)? {
-            projection.extend(beacon(&info(), pick(u, &BEACONS)?));
+            projection.extend(beacon(info(), pick(u, &BEACONS)?));
         }
     }
 

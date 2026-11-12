@@ -4,7 +4,7 @@ use std::path::{Path, PathBuf};
 
 use clap::{Parser, ValueEnum};
 
-use esf_data::{Info, InfoName, InfoNameSde, InfoSde, Names, Sde};
+use esf_data::{InfoName, InfoNameSde, Names, Sde};
 use esf_dogma_engine::{
     Calculation, DamageProfile, Fit, ItemResult, Options, ReactiveArmor, Rule, Security, Slot,
     SourceRef, State, Target, Violation,
@@ -283,7 +283,7 @@ fn apply_skills(args: &Args, sde: &Sde, info_name: &InfoNameSde, fit: &mut Fit) 
 }
 
 struct Filter<'a> {
-    info: &'a InfoSde<'a>,
+    sde: &'a Sde,
     attributes: &'a [String],
     changed: bool,
 }
@@ -301,7 +301,7 @@ impl Filter<'_> {
             if self.attributes.is_empty() {
                 return true;
             }
-            let name = attribute_name(self.info, *attribute_id);
+            let name = attribute_name(self.sde, *attribute_id);
             self.attributes
                 .iter()
                 .any(|text| name.contains(text.as_str()))
@@ -323,20 +323,20 @@ impl Filter<'_> {
     }
 }
 
-fn attribute_name(info: &InfoSde, attribute_id: i32) -> String {
-    info.get_dogma_attribute(attribute_id).map_or_else(
+fn attribute_name(sde: &Sde, attribute_id: i32) -> String {
+    sde.get_dogma_attribute(attribute_id).map_or_else(
         || attribute_id.to_string(),
         |attribute| attribute.name().to_string(),
     )
 }
 
-fn type_name(info: &InfoSde, type_id: i32) -> String {
-    info.get_type(type_id)
+fn type_name(sde: &Sde, type_id: i32) -> String {
+    sde.get_type(type_id)
         .map_or_else(|| type_id.to_string(), |r#type| r#type.name().to_string())
 }
 
-fn buff_name(info: &InfoSde, buff_id: i32) -> String {
-    info.get_dbuff_collection(buff_id)
+fn buff_name(sde: &Sde, buff_id: i32) -> String {
+    sde.get_dbuff_collection(buff_id)
         .and_then(|buff| buff.display_name())
         .filter(|name| !name.is_empty())
         .map_or_else(|| format!("buff {buff_id}"), str::to_string)
@@ -359,39 +359,39 @@ fn slot_label(slot: Slot) -> String {
     }
 }
 
-fn source_label(info: &InfoSde, fit: &Fit, from: SourceRef) -> String {
+fn source_label(sde: &Sde, fit: &Fit, from: SourceRef) -> String {
     match from {
-        SourceRef::Ship => type_name(info, fit.ship.type_id),
+        SourceRef::Ship => type_name(sde, fit.ship.type_id),
         SourceRef::Mode => fit
             .ship
             .mode
-            .map_or_else(|| "mode".to_string(), |mode| type_name(info, mode)),
+            .map_or_else(|| "mode".to_string(), |mode| type_name(sde, mode)),
         SourceRef::Character => "character".to_string(),
-        SourceRef::Item { index } => type_name(info, fit.items[index].type_id),
+        SourceRef::Item { index } => type_name(sde, fit.items[index].type_id),
         SourceRef::Charge { index } => fit.items[index].charge.as_ref().map_or_else(
             || "charge".to_string(),
-            |charge| type_name(info, charge.type_id),
+            |charge| type_name(sde, charge.type_id),
         ),
-        SourceRef::Skill { type_id } => type_name(info, type_id),
-        SourceRef::Projected { index } => type_name(info, fit.incoming.effects[index].type_id),
-        SourceRef::Buff { id } => buff_name(info, id),
+        SourceRef::Skill { type_id } => type_name(sde, type_id),
+        SourceRef::Projected { index } => type_name(sde, fit.incoming.effects[index].type_id),
+        SourceRef::Buff { id } => buff_name(sde, id),
     }
 }
 
-fn violation_target(info: &InfoSde, fit: &Fit, target: Target) -> String {
+fn violation_target(sde: &Sde, fit: &Fit, target: Target) -> String {
     match target {
-        Target::Ship => format!("ship: {}", type_name(info, fit.ship.type_id)),
+        Target::Ship => format!("ship: {}", type_name(sde, fit.ship.type_id)),
         Target::Item { index } => format!(
             "{}: {}",
             slot_label(fit.items[index].slot),
-            type_name(info, fit.items[index].type_id)
+            type_name(sde, fit.items[index].type_id)
         ),
         Target::Charge { index } => format!(
             "{} charge: {}",
             slot_label(fit.items[index].slot),
             fit.items[index].charge.as_ref().map_or_else(
                 || "charge".to_string(),
-                |charge| type_name(info, charge.type_id),
+                |charge| type_name(sde, charge.type_id),
             )
         ),
     }
@@ -405,7 +405,7 @@ fn label(value: impl serde::Serialize) -> String {
         .unwrap_or_default()
 }
 
-fn violation_rule(info: &InfoSde, rule: Rule) -> String {
+fn violation_rule(sde: &Sde, rule: Rule) -> String {
     match rule {
         Rule::Resource {
             resource,
@@ -431,7 +431,7 @@ fn violation_rule(info: &InfoSde, rule: Rule) -> String {
             level,
         } => format!(
             "{} at {required}, trained to {level}",
-            type_name(info, type_id)
+            type_name(sde, type_id)
         ),
         Rule::RigSize { ship, item } => format!("rig size {item}, ship takes {ship}"),
         Rule::ShipRestricted => "cannot go on this ship".to_string(),
@@ -449,10 +449,10 @@ fn violation_rule(info: &InfoSde, rule: Rule) -> String {
             type_id,
             used,
             allowed,
-        } => format!("{used} of {}, {allowed} allowed", type_name(info, type_id)),
+        } => format!("{used} of {}, {allowed} allowed", type_name(sde, type_id)),
         Rule::NotAHull => "not a ship, structure or container".to_string(),
         Rule::NotAMode => "the mode is not a tactical mode".to_string(),
-        Rule::NotASkill { type_id } => format!("{} is not a skill", type_name(info, type_id)),
+        Rule::NotASkill { type_id } => format!("{} is not a skill", type_name(sde, type_id)),
         Rule::ChargeGroup => "a charge the module does not take".to_string(),
         Rule::ChargeSize { module, charge } => {
             format!("charge size {charge}, module takes {module}")
@@ -463,13 +463,13 @@ fn violation_rule(info: &InfoSde, rule: Rule) -> String {
 
 fn print_violations(
     out: &mut dyn Write,
-    info: &InfoSde,
+    sde: &Sde,
     fit: &Fit,
     violations: &[Violation],
 ) -> std::io::Result<()> {
     let targets: Vec<String> = violations
         .iter()
-        .map(|violation| violation_target(info, fit, violation.target))
+        .map(|violation| violation_target(sde, fit, violation.target))
         .collect();
     let width = targets.iter().map(String::len).max().unwrap_or(0);
 
@@ -477,7 +477,7 @@ fn print_violations(
         writeln!(
             out,
             "  {target:width$}  {}",
-            violation_rule(info, violation.rule)
+            violation_rule(sde, violation.rule)
         )?;
     }
     Ok(())
@@ -485,7 +485,7 @@ fn print_violations(
 
 fn print_table(
     out: &mut dyn Write,
-    info: &InfoSde,
+    sde: &Sde,
     fit: &Fit,
     calculation: &Calculation,
     hide_empty: bool,
@@ -493,11 +493,11 @@ fn print_table(
     let mut groups: Vec<(String, &ItemResult)> = Vec::new();
 
     groups.push((
-        format!("ship: {}", type_name(info, fit.ship.type_id)),
+        format!("ship: {}", type_name(sde, fit.ship.type_id)),
         &calculation.ship,
     ));
     if let (Some(mode), Some(result)) = (fit.ship.mode, &calculation.mode) {
-        groups.push((format!("mode: {}", type_name(info, mode)), result));
+        groups.push((format!("mode: {}", type_name(sde, mode)), result));
     }
     for (item, result) in fit.items.iter().zip(&calculation.items) {
         let quantity = match item.quantity {
@@ -507,7 +507,7 @@ fn print_table(
         let header = format!(
             "{}: {}{} ({})",
             slot_label(item.slot),
-            type_name(info, item.type_id),
+            type_name(sde, item.type_id),
             quantity,
             format!("{:?}", result.state).to_lowercase()
         );
@@ -517,7 +517,7 @@ fn print_table(
             let header = format!(
                 "{} charge: {}",
                 slot_label(item.slot),
-                type_name(info, charge.type_id)
+                type_name(sde, charge.type_id)
             );
             groups.push((header, charge_result));
         }
@@ -527,7 +527,7 @@ fn print_table(
     let width = groups
         .iter()
         .flat_map(|(_, result)| result.attributes.keys())
-        .map(|attribute_id| attribute_name(info, *attribute_id).len())
+        .map(|attribute_id| attribute_name(sde, *attribute_id).len())
         .max()
         .unwrap_or(0);
 
@@ -536,7 +536,7 @@ fn print_table(
         writeln!(
             out,
             "== buff: {} ({:.4})",
-            buff_name(info, buff.id),
+            buff_name(sde, buff.id),
             buff.value
         )?;
     }
@@ -551,7 +551,7 @@ fn print_table(
             writeln!(
                 out,
                 "  {:width$}  {:>14.4} -> {:>14.4}",
-                attribute_name(info, *attribute_id),
+                attribute_name(sde, *attribute_id),
                 attribute.base,
                 attribute.value
             )?;
@@ -572,7 +572,7 @@ fn print_table(
                 writeln!(
                     out,
                     "      {}{}: {} {:.4}{}{}",
-                    source_label(info, fit, source.from),
+                    source_label(sde, fit, source.from),
                     quantity,
                     operator.as_str().unwrap_or_default(),
                     source.value,
@@ -585,12 +585,12 @@ fn print_table(
     Ok(())
 }
 
-fn run_esf(info: &InfoSde, action: EsfAction, input: &[u8]) {
-    let fits = esf::load_esf(info, input).unwrap_or_else(|error| fail(error.to_string()));
+fn run_esf(sde: &Sde, action: EsfAction, input: &[u8]) {
+    let fits = esf::load_esf(sde, input).unwrap_or_else(|error| fail(error.to_string()));
     let output = match action {
         EsfAction::Check => return,
-        EsfAction::Canonical => esf::save_esf(info, &fits).map(String::into_bytes),
-        EsfAction::Binary => esf::save_esf_binary(info, &fits),
+        EsfAction::Canonical => esf::save_esf(sde, &fits).map(String::into_bytes),
+        EsfAction::Binary => esf::save_esf_binary(sde, &fits),
     };
     let output = output.unwrap_or_else(|error| fail(error.to_string()));
     emit(|out| out.write_all(&output));
@@ -611,19 +611,17 @@ pub fn main() {
         }
     };
 
-    let sde_bytes = read(&args.sde_filename);
-    let sde = Sde::new(&sde_bytes)
+    let sde = Sde::new(read(&args.sde_filename))
         .unwrap_or_else(|error| fail(format!("{}: {error}", args.sde_filename.display())));
 
     if let Some(action) = args.esf {
-        run_esf(&InfoSde::new(&sde), action, &input);
+        run_esf(&sde, action, &input);
         return;
     }
 
     /* English names come from the SDE; the names file only widens that to the
      * other seven languages, so a missing one is not fatal. */
-    let names_bytes = std::fs::read(&args.names_filename).ok();
-    let names = names_bytes.as_ref().map(|bytes| {
+    let names = std::fs::read(&args.names_filename).ok().map(|bytes| {
         Names::new(bytes)
             .unwrap_or_else(|error| fail(format!("{}: {error}", args.names_filename.display())))
     });
@@ -634,12 +632,9 @@ pub fn main() {
     let mut fit = match input.trim_ascii_start().starts_with(b"[") {
         true => eft::load_eft(&info_name, &String::from_utf8_lossy(&input))
             .unwrap_or_else(|error| fail(error.to_string())),
-        false => {
-            let info = InfoSde::new(&sde);
-            esf::load_esf(&info, &input)
-                .and_then(|fits| esf::to_fit(&info, &fits[0]))
-                .unwrap_or_else(|error| fail(error.to_string()))
-        }
+        false => esf::load_esf(&sde, &input)
+            .and_then(|fits| esf::to_fit(&sde, &fits[0]))
+            .unwrap_or_else(|error| fail(error.to_string())),
     };
 
     /* Without this the states from the EFT are used. */
@@ -674,13 +669,11 @@ pub fn main() {
         beacons.push(type_id);
     }
 
-    let info = InfoSde::new(&sde);
     for type_id in beacons {
-        fit.incoming
-            .extend(esf_dogma_engine::beacon(&info, type_id));
+        fit.incoming.extend(esf_dogma_engine::beacon(&sde, type_id));
     }
     if args.eft {
-        let eft = eft::save_eft(&info, &fit).unwrap_or_else(|error| fail(error.to_string()));
+        let eft = eft::save_eft(&sde, &fit).unwrap_or_else(|error| fail(error.to_string()));
         emit(|out| out.write_all(eft.as_bytes()));
         return;
     }
@@ -689,7 +682,7 @@ pub fn main() {
         sources: args.sources,
         validate: args.validate,
     };
-    let mut calculation = esf_dogma_engine::calculate(&info, &fit, &options);
+    let mut calculation = esf_dogma_engine::calculate(&sde, &fit, &options);
 
     let output = args
         .output
@@ -701,13 +694,13 @@ pub fn main() {
     if let Some(violations) = &calculation.violations {
         emit(|out| match output {
             Output::Json => writeln!(out, "{}", serde_json::to_string(violations).unwrap()),
-            Output::Table => print_violations(out, &info, &fit, violations),
+            Output::Table => print_violations(out, &sde, &fit, violations),
         });
         return;
     }
 
     let filter = Filter {
-        info: &info,
+        sde: &sde,
         attributes: &args.attributes,
         changed: args.changed,
     };
@@ -715,6 +708,6 @@ pub fn main() {
 
     emit(|out| match output {
         Output::Json => writeln!(out, "{}", serde_json::to_string(&calculation).unwrap()),
-        Output::Table => print_table(out, &info, &fit, &calculation, filter.is_active()),
+        Output::Table => print_table(out, &sde, &fit, &calculation, filter.is_active()),
     });
 }

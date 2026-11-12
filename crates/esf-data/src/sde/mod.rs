@@ -17,7 +17,7 @@ mod info;
 mod names;
 
 pub use data::{MIN_SDE_VERSION, Sde};
-pub use info::{InfoNameSde, InfoSde};
+pub use info::InfoNameSde;
 pub use names::Names;
 
 pub use eve_generated::eve;
