@@ -11,6 +11,8 @@ use esf_data::{MIN_SDE_VERSION, Names, Sde};
 use serde::Deserialize;
 use sha2::{Digest, Sha512};
 
+use crate::Game;
+
 const PACKAGE_URL: &str = "https://registry.npmjs.org/@eveshipfit/sde";
 const CHECK_EVERY: Duration = Duration::from_secs(24 * 60 * 60);
 const CHECK_TIMEOUT: Duration = Duration::from_secs(10);
@@ -34,8 +36,27 @@ struct Dist {
     integrity: String,
 }
 
+/// The game data from the cache, downloading the newest SDE when due.
+pub fn load(cache_dir: &Path) -> Result<Game, String> {
+    let dir = cached(cache_dir)?;
+    let loaded = read(&dir.join("sde.dat"))
+        .and_then(|sde| Game::new(sde, Some(read(&dir.join("names.dat"))?)));
+    match &loaded {
+        Ok(_) => prune(cache_dir, &dir),
+        Err(_) => {
+            let _ = fs::remove_dir_all(&dir);
+        }
+    }
+    loaded
+}
+
+/// The bytes of a file.
+pub fn read(path: &Path) -> Result<Vec<u8>, String> {
+    fs::read(path).map_err(|error| format!("{}: {error}", path.display()))
+}
+
 /// The directory holding the cached `sde.dat` and `names.dat`.
-pub fn cached(cache_dir: &Path) -> Result<PathBuf, String> {
+fn cached(cache_dir: &Path) -> Result<PathBuf, String> {
     fs::create_dir_all(cache_dir).map_err(|error| format!("{}: {error}", cache_dir.display()))?;
     let marker = cache_dir.join("current");
     let current = fs::read_to_string(&marker)
@@ -70,7 +91,7 @@ pub fn cached(cache_dir: &Path) -> Result<PathBuf, String> {
 }
 
 /// Remove every cached version but `keep`, and downloads abandoned long ago.
-pub fn prune(cache_dir: &Path, keep: &Path) {
+fn prune(cache_dir: &Path, keep: &Path) {
     for entry in fs::read_dir(cache_dir).into_iter().flatten().flatten() {
         let path = entry.path();
         if path == keep || !path.is_dir() {

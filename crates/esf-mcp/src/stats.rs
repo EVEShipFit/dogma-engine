@@ -63,7 +63,7 @@ fn prune(value: Value) -> Value {
 }
 
 impl Game {
-    pub fn stats(&self, fit: &Fit, calculation: &Calculation) -> Value {
+    pub(crate) fn stats(&self, fit: &Fit, calculation: &Calculation) -> Value {
         let ship = Reader {
             game: self,
             result: &calculation.ship,
@@ -211,7 +211,7 @@ impl Game {
     }
 
     /// What the fit holds, one line per item.
-    pub fn items(&self, fit: &Fit, calculation: &Calculation) -> Vec<Value> {
+    pub(crate) fn items(&self, fit: &Fit, calculation: &Calculation) -> Vec<Value> {
         fit.items
             .iter()
             .zip(&calculation.items)
@@ -234,7 +234,7 @@ impl Game {
             .collect()
     }
 
-    pub fn violations(&self, fit: &Fit, calculation: &Calculation) -> Vec<String> {
+    pub(crate) fn violations(&self, fit: &Fit, calculation: &Calculation) -> Vec<String> {
         calculation
             .violations
             .iter()
