@@ -5,11 +5,10 @@
 //! with the static data from `esf-data`.
 //!
 //! ```no_run
-//! use esf_data::{InfoSde, Sde};
+//! use esf_data::Sde;
 //! use esf_dogma_engine::{Fit, Options, calculate};
 //!
-//! let bytes = std::fs::read("sde.dat").unwrap();
-//! let sde = Sde::new(&bytes).unwrap();
+//! let sde = Sde::new(std::fs::read("sde.dat").unwrap()).unwrap();
 //!
 //! let fit: Fit = serde_json::from_str(
 //!     r#"{
@@ -19,7 +18,7 @@
 //! )
 //! .unwrap();
 //!
-//! let calculation = calculate(&InfoSde::new(&sde), &fit, &Options::default());
+//! let calculation = calculate(&sde, &fit, &Options::default());
 //! ```
 
 #![warn(missing_docs)]

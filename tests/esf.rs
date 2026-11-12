@@ -39,33 +39,33 @@ Standard Blue Pill Booster
 ";
 
 fn load(text: &str) -> Vec<EsfFit> {
-    load_esf(&info(), text.as_bytes()).unwrap()
+    load_esf(info(), text.as_bytes()).unwrap()
 }
 
 #[test]
 fn round_trips_canonical_text() {
-    assert_eq!(save_esf(&info(), &load(EVERYTHING)).unwrap(), EVERYTHING);
+    assert_eq!(save_esf(info(), &load(EVERYTHING)).unwrap(), EVERYTHING);
 }
 
 #[test]
 fn round_trips_binary() {
     let fits = load(EVERYTHING);
-    let binary = save_esf_binary(&info(), &fits).unwrap();
+    let binary = save_esf_binary(info(), &fits).unwrap();
     let link = encode_base64url(&binary);
 
-    let loaded = load_esf(&info(), &decode_base64url(&link).unwrap()).unwrap();
+    let loaded = load_esf(info(), &decode_base64url(&link).unwrap()).unwrap();
     assert_eq!(loaded, fits);
 }
 
 #[test]
 fn names_the_line_that_is_wrong() {
-    let error = load_esf(&info(), b"%esf/1\nRifter\nNo Such Module\n").unwrap_err();
+    let error = load_esf(info(), b"%esf/1\nRifter\nNo Such Module\n").unwrap_err();
     assert_eq!(error.to_string(), "line 3: unknown type \"No Such Module\"");
 }
 
 #[test]
 fn calculates_what_the_engine_can_hold() {
-    let fit = to_fit(&info(), &load(EVERYTHING)[0]).unwrap();
+    let fit = to_fit(info(), &load(EVERYTHING)[0]).unwrap();
 
     let slots: Vec<(Slot, u32, State)> = fit
         .items
@@ -109,11 +109,11 @@ fn calculates_what_the_engine_can_hold() {
  * the mutaplasmid, so the narrowest one that rolls these values comes back. */
 #[test]
 fn writes_back_what_the_engine_holds() {
-    let fit = to_fit(&info(), &load(EVERYTHING)[0]).unwrap();
-    let esf = from_fit(&info(), &fit).unwrap();
+    let fit = to_fit(info(), &load(EVERYTHING)[0]).unwrap();
+    let esf = from_fit(info(), &fit).unwrap();
 
     assert_eq!(
-        save_esf(&info(), &[esf]).unwrap(),
+        save_esf(info(), &[esf]).unwrap(),
         EVERYTHING
             .replace(
                 "\n100x Nanite Repair Paste @fuel\n",
@@ -140,10 +140,10 @@ Warrior II x3
 Republic Fleet EMP S x1000
 ";
     let fit = esf_format::eft::load_eft(&info_name(), eft).unwrap();
-    let esf = from_fit(&info(), &fit).unwrap();
+    let esf = from_fit(info(), &fit).unwrap();
 
     assert_eq!(
-        save_esf(&info(), &[esf]).unwrap(),
+        save_esf(info(), &[esf]).unwrap(),
         "\
 %esf/1
 Rifter \"From EFT\"
@@ -166,7 +166,7 @@ Gyrostabilizer II !off
 #[test]
 fn cannot_calculate_a_fit_without_a_ship() {
     let fits = load("%esf/1\n- \"Contract\"\nDamage Control II\n");
-    assert!(to_fit(&info(), &fits[0]).is_err());
+    assert!(to_fit(info(), &fits[0]).is_err());
 }
 
 #[test]

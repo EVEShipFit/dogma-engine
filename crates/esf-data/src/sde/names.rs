@@ -5,28 +5,34 @@ use crate::Error;
 ///
 /// Only an EFT import needs this; everything else can be answered from
 /// `sde.dat` alone, which is why it is a separate file.
-pub struct Names<'a> {
-    names: eve::Names<'a>,
+pub struct Names {
+    bytes: Vec<u8>,
 }
 
-impl<'a> Names<'a> {
+impl Names {
     /// Check the bytes are a valid names file.
-    pub fn new(bytes: &'a [u8]) -> Result<Names<'a>, Error> {
-        let names = eve::root_as_names(bytes).map_err(Error::InvalidNames)?;
-        Ok(Names { names })
+    pub fn new(bytes: Vec<u8>) -> Result<Names, Error> {
+        eve::root_as_names(&bytes).map_err(Error::InvalidNames)?;
+        Ok(Names { bytes })
+    }
+
+    fn root(&self) -> eve::Names<'_> {
+        // SAFETY: `new` verified these bytes, and nothing changes them after.
+        unsafe { eve::root_as_names_unchecked(&self.bytes) }
     }
 
     /// The EVE build the names were exported from; it has to match the SDE.
     pub fn build_number(&self) -> i32 {
-        self.names.build_number()
+        self.root().build_number()
     }
 
     /// Names are lowercased and sorted by UTF-8 bytes, which is what `str`
     /// compares by. Several types can share a name; this returns all of them,
     /// lowest id first. `names.dat` does not know which ones are published.
     pub fn type_name_to_ids(&self, name: &str) -> impl Iterator<Item = i32> {
-        let names = self.names.names();
-        let type_ids = self.names.type_ids();
+        let root = self.root();
+        let names = root.names();
+        let type_ids = root.type_ids();
         let wanted = name.to_lowercase();
 
         let mut low = 0;

@@ -1,4 +1,4 @@
-use esf_data::{InfoNameSde, InfoSde};
+use esf_data::InfoNameSde;
 use esf_dogma_engine::{Calculation, Fit, Options, Projection, Violation};
 use esf_format::{eft, esf};
 
@@ -29,11 +29,11 @@ fn assert_valid(text: &str, edit: fn(&mut Fit)) {
     let (fit, calculation) = calculate(text, super::all(5), edit, &VALIDATE);
     let violations = violations(&calculation);
 
-    let info = InfoSde::new(&SDE);
+    let sde = &*SDE;
     assert!(
         violations.is_empty(),
         "this fit breaks a rule, so EVE would not let you fly it:\n{}",
-        dump_violations(&info, &fit, violations)
+        dump_violations(sde, &fit, violations)
     );
 }
 
@@ -64,9 +64,9 @@ fn case(module_path: &str, name: &str) -> String {
 }
 
 pub fn load(text: &str) -> Result<Fit, esf::Error> {
-    let info = InfoSde::new(&SDE);
-    let fits = esf::load_esf(&info, text.as_bytes())?;
-    esf::to_fit(&info, esf::main_fit(&fits).unwrap())
+    let sde = &*SDE;
+    let fits = esf::load_esf(sde, text.as_bytes())?;
+    esf::to_fit(sde, esf::main_fit(&fits).unwrap())
 }
 
 pub fn load_eft(eft_fit: &str) -> Result<Fit, eft::Error> {
@@ -75,7 +75,7 @@ pub fn load_eft(eft_fit: &str) -> Result<Fit, eft::Error> {
 }
 
 pub fn save_eft(fit: &Fit) -> Result<String, eft::Error> {
-    eft::save_eft(&InfoSde::new(&SDE), fit)
+    eft::save_eft(&*SDE, fit)
 }
 
 /* esf/1 cannot express everything a fit can, so a case may edit the loaded fit. */
@@ -89,8 +89,8 @@ pub fn calculate(
     fit.character.skills = skills.levels;
     edit(&mut fit);
 
-    let info = InfoSde::new(&SDE);
-    let calculation = esf_dogma_engine::calculate(&info, &fit, options);
+    let sde = &*SDE;
+    let calculation = esf_dogma_engine::calculate(sde, &fit, options);
     (fit, calculation)
 }
 
@@ -103,15 +103,15 @@ pub fn outgoing(text: &str, skills: Skills) -> Projection {
 fn calculate_fit(text: &str, skills: Skills, edit: fn(&mut Fit)) -> String {
     let (fit, calculation) = calculate(text, skills, edit, &VALIDATE);
 
-    let info = InfoSde::new(&SDE);
-    dump(&info, &fit, &calculation, violations(&calculation))
+    let sde = &*SDE;
+    dump(sde, &fit, &calculation, violations(&calculation))
 }
 
 fn validate_fit(text: &str, skills: Skills, edit: fn(&mut Fit)) -> String {
     let (fit, calculation) = calculate(text, skills, edit, &VALIDATE);
 
-    let info = InfoSde::new(&SDE);
-    dump_violations(&info, &fit, violations(&calculation))
+    let sde = &*SDE;
+    dump_violations(sde, &fit, violations(&calculation))
 }
 
 /* Always set: everything here calculates with `VALIDATE`. */

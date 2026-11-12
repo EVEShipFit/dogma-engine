@@ -3,7 +3,7 @@ use std::sync::OnceLock;
 use tsify::{Ts, Tsify};
 use wasm_bindgen::prelude::*;
 
-use esf_data::{Error, InfoNameSde, InfoSde, Names, Sde};
+use esf_data::{Error, InfoNameSde, Names, Sde};
 use esf_dogma_engine::{Calculation, Fit, Options, Projection};
 use esf_format::esf;
 use esf_format::esi::EsiFitting;
@@ -11,13 +11,13 @@ use esf_format::killmail::EsiKillmail;
 
 /// The SDE is handed over once and then read straight out of WASM memory, so
 /// no lookup crosses back into JavaScript.
-static SDE: OnceLock<Sde<'static>> = OnceLock::new();
+static SDE: OnceLock<Sde> = OnceLock::new();
 
 /// `names.dat` is only read for a name `sde.dat` does not know, so it stays
 /// optional; it is the bigger of the two files.
-static NAMES: OnceLock<Names<'static>> = OnceLock::new();
+static NAMES: OnceLock<Names> = OnceLock::new();
 
-fn sde() -> Result<&'static Sde<'static>, JsError> {
+fn sde() -> Result<&'static Sde, JsError> {
     SDE.get()
         .ok_or_else(|| JsError::new("SDE is not loaded; call load_sde() first"))
 }
@@ -27,15 +27,14 @@ fn set_panic_hook() {
     std::panic::set_hook(Box::new(console_error_panic_hook::hook));
 }
 
-/// Load `sde.dat`. Has to be called before `calculate`; calling it twice is an
-/// error, as the first buffer is borrowed for the rest of the session.
+/// Load `sde.dat`. Has to be called before `calculate`; calling it twice is an error.
 #[wasm_bindgen]
 pub fn load_sde(bytes: Vec<u8>) -> Result<i32, JsError> {
     if SDE.get().is_some() {
         return Err(JsError::new("SDE is already loaded"));
     }
 
-    let sde = Sde::new(bytes.leak())?;
+    let sde = Sde::new(bytes)?;
 
     let build_number = sde.build_number();
     SDE.set(sde)
@@ -55,7 +54,7 @@ pub fn load_names(bytes: Vec<u8>) -> Result<i32, JsError> {
         return Err(JsError::new("names are already loaded"));
     }
 
-    let names = Names::new(bytes.leak())?;
+    let names = Names::new(bytes)?;
 
     /* Reject a mismatched pair here, rather than on every load_eft(). */
     let build_number = names.build_number();
@@ -92,9 +91,8 @@ pub fn save_eft(fit: Ts<Fit>) -> Result<String, JsError> {
     let sde = sde()?;
 
     let fit: Fit = fit.to_rust()?;
-    let info = InfoSde::new(sde);
 
-    esf_format::eft::save_eft(&info, &fit).map_err(|error| JsError::new(&error.to_string()))
+    esf_format::eft::save_eft(sde, &fit).map_err(|error| JsError::new(&error.to_string()))
 }
 
 /// Load a fit from an ESI fitting, the fits a character saves in game.
@@ -103,9 +101,8 @@ pub fn load_esi_fitting(fitting: Ts<EsiFitting>) -> Result<Ts<Fit>, JsError> {
     let sde = sde()?;
 
     let fitting: EsiFitting = fitting.to_rust()?;
-    let info = InfoSde::new(sde);
 
-    let fit = esf_format::esi::load_esi_fitting(&info, &fitting);
+    let fit = esf_format::esi::load_esi_fitting(sde, &fitting);
     Ok(fit.into_ts()?)
 }
 
@@ -115,9 +112,8 @@ pub fn save_esi_fitting(fit: Ts<Fit>) -> Result<Ts<EsiFitting>, JsError> {
     let sde = sde()?;
 
     let fit: Fit = fit.to_rust()?;
-    let info = InfoSde::new(sde);
 
-    let fitting = esf_format::esi::save_esi_fitting(&info, &fit);
+    let fitting = esf_format::esi::save_esi_fitting(sde, &fit);
     Ok(fitting.into_ts()?)
 }
 
@@ -128,9 +124,8 @@ pub fn post_load(fit: Ts<Fit>) -> Result<Ts<Fit>, JsError> {
     let sde = sde()?;
 
     let mut fit: Fit = fit.to_rust()?;
-    let info = InfoSde::new(sde);
 
-    esf_format::post_load(&info, &mut fit);
+    esf_format::post_load(sde, &mut fit);
     Ok(fit.into_ts()?)
 }
 
@@ -140,9 +135,8 @@ pub fn load_killmail(killmail: Ts<EsiKillmail>) -> Result<Ts<Fit>, JsError> {
     let sde = sde()?;
 
     let killmail: EsiKillmail = killmail.to_rust()?;
-    let info = InfoSde::new(sde);
 
-    let fit = esf_format::killmail::load_killmail(&info, &killmail);
+    let fit = esf_format::killmail::load_killmail(sde, &killmail);
     Ok(fit.into_ts()?)
 }
 
@@ -151,10 +145,8 @@ pub fn load_killmail(killmail: Ts<EsiKillmail>) -> Result<Ts<Fit>, JsError> {
 pub fn load_dna(dna: &str) -> Result<Ts<Fit>, JsError> {
     let sde = sde()?;
 
-    let info = InfoSde::new(sde);
-
     let fit =
-        esf_format::dna::load_dna(&info, dna).map_err(|error| JsError::new(&error.to_string()))?;
+        esf_format::dna::load_dna(sde, dna).map_err(|error| JsError::new(&error.to_string()))?;
     Ok(fit.into_ts()?)
 }
 
@@ -176,19 +168,19 @@ fn esf_error(error: esf::Error) -> JsError {
 }
 
 fn load_esf_fit(data: &[u8]) -> Result<Ts<Fit>, JsError> {
-    let info = InfoSde::new(sde()?);
+    let sde = sde()?;
 
-    let fits = esf::load_esf(&info, data).map_err(esf_error)?;
+    let fits = esf::load_esf(sde, data).map_err(esf_error)?;
     let fit = esf::main_fit(&fits).ok_or_else(|| JsError::new("no fit stands on its own"))?;
-    Ok(esf::to_fit(&info, fit).map_err(esf_error)?.into_ts()?)
+    Ok(esf::to_fit(sde, fit).map_err(esf_error)?.into_ts()?)
 }
 
-fn save_esf_fit(fit: Ts<Fit>) -> Result<(InfoSde<'static>, esf::EsfFit), JsError> {
-    let info = InfoSde::new(sde()?);
+fn save_esf_fit(fit: Ts<Fit>) -> Result<(&'static Sde, esf::EsfFit), JsError> {
+    let sde = sde()?;
 
     let fit: Fit = fit.to_rust()?;
-    let esf_fit = esf::from_fit(&info, &fit).map_err(esf_error)?;
-    Ok((info, esf_fit))
+    let esf_fit = esf::from_fit(sde, &fit).map_err(esf_error)?;
+    Ok((sde, esf_fit))
 }
 
 /// Load a fit from an esf/1 document, as text.
@@ -206,15 +198,15 @@ pub fn load_esf_link(link: &str) -> Result<Ts<Fit>, JsError> {
 /// Write a fit as an esf/1 document, as text.
 #[wasm_bindgen]
 pub fn save_esf(fit: Ts<Fit>) -> Result<String, JsError> {
-    let (info, esf_fit) = save_esf_fit(fit)?;
-    esf::save_esf(&info, &[esf_fit]).map_err(esf_error)
+    let (sde, esf_fit) = save_esf_fit(fit)?;
+    esf::save_esf(sde, &[esf_fit]).map_err(esf_error)
 }
 
 /// Write a fit as an esf/1 link: the binary form, in base64url.
 #[wasm_bindgen]
 pub fn save_esf_link(fit: Ts<Fit>) -> Result<String, JsError> {
-    let (info, esf_fit) = save_esf_fit(fit)?;
-    let binary = esf::save_esf_binary(&info, &[esf_fit]).map_err(esf_error)?;
+    let (sde, esf_fit) = save_esf_fit(fit)?;
+    let binary = esf::save_esf_binary(sde, &[esf_fit]).map_err(esf_error)?;
     Ok(esf::encode_base64url(&binary))
 }
 
@@ -229,9 +221,7 @@ pub fn calculate(fit: Ts<Fit>, options: Option<Ts<Options>>) -> Result<Ts<Calcul
         None => Options::default(),
     };
 
-    let info = InfoSde::new(sde);
-
-    let calculation = esf_dogma_engine::calculate(&info, &fit, &options);
+    let calculation = esf_dogma_engine::calculate(sde, &fit, &options);
     Ok(calculation.into_ts()?)
 }
 
@@ -241,8 +231,6 @@ pub fn calculate(fit: Ts<Fit>, options: Option<Ts<Options>>) -> Result<Ts<Calcul
 pub fn beacon(type_id: i32) -> Result<Ts<Projection>, JsError> {
     let sde = sde()?;
 
-    let info = InfoSde::new(sde);
-
-    let projection = esf_dogma_engine::beacon(&info, type_id);
+    let projection = esf_dogma_engine::beacon(sde, type_id);
     Ok(projection.into_ts()?)
 }

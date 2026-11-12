@@ -209,17 +209,17 @@ fn extract(tarball: impl Read, staging: &Path) -> Result<(), String> {
         files.insert(file, bytes);
     }
 
-    let (Some(sde), Some(names)) = (files.get("sde.dat"), files.get("names.dat")) else {
+    for (file, bytes) in &files {
+        fs::write(staging.join(file), bytes).map_err(|error| error.to_string())?;
+    }
+
+    let (Some(sde), Some(names)) = (files.remove("sde.dat"), files.remove("names.dat")) else {
         return Err(format!("the package lacks {FILES:?}"));
     };
     let sde = Sde::new(sde).map_err(|error| format!("sde.dat: {error}"))?;
     let names = Names::new(names).map_err(|error| format!("names.dat: {error}"))?;
     if sde.build_number() != names.build_number() {
         return Err("sde.dat and names.dat are of different builds".to_string());
-    }
-
-    for (file, bytes) in &files {
-        fs::write(staging.join(file), bytes).map_err(|error| error.to_string())?;
     }
     Ok(())
 }

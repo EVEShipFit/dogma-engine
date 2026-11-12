@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 
-use esf_data::{Info, InfoName, InfoNameSde, InfoSde, Names, Sde, eve, fold_case};
+use esf_data::{Info, InfoName, InfoNameSde, Names, Sde, fold_case};
 use serde::Serialize;
 use serde_json::{Value, json};
 
@@ -29,14 +29,13 @@ const UNIT_ATTRIBUTE_ID: i32 = 119;
 
 /// The SDE, with lookups by name.
 pub struct Game {
-    pub(crate) sde: &'static Sde<'static>,
-    pub(crate) info: InfoSde<'static>,
-    pub(crate) info_name: InfoNameSde<'static>,
+    pub(crate) sde: Sde,
+    names: Option<Names>,
     pub(crate) skills: Vec<i32>,
-    groups: HashMap<i32, (&'static str, i32)>,
-    categories: HashMap<i32, &'static str>,
-    meta_groups: HashMap<i32, &'static str>,
-    units: HashMap<i32, &'static str>,
+    groups: HashMap<i32, String>,
+    categories: HashMap<i32, String>,
+    meta_groups: HashMap<i32, String>,
+    units: HashMap<i32, String>,
     /// Every published type of a variation family, by the family's base type.
     variations: HashMap<i32, Vec<i32>>,
     /// Folded name, id and category of every published type.
@@ -58,44 +57,42 @@ pub struct TypeSummary {
 impl Game {
     /// Load an `sde.dat`, and optionally a `names.dat`.
     pub fn new(sde_bytes: Vec<u8>, names_bytes: Option<Vec<u8>>) -> Result<Game, String> {
-        let sde_bytes: &'static [u8] = Box::leak(sde_bytes.into_boxed_slice());
-        let sde: &'static Sde = Box::leak(Box::new(
-            Sde::new(sde_bytes).map_err(|error| format!("sde.dat: {error}"))?,
-        ));
-        let names: Option<&'static Names> = match names_bytes {
-            Some(bytes) => {
-                let bytes: &'static [u8] = Box::leak(bytes.into_boxed_slice());
-                let names = Names::new(bytes).map_err(|error| format!("names.dat: {error}"))?;
-                Some(Box::leak(Box::new(names)))
-            }
-            None => None,
-        };
-        let info_name = InfoNameSde::new(sde, names).map_err(|error| error.to_string())?;
+        let sde = Sde::new(sde_bytes).map_err(|error| format!("sde.dat: {error}"))?;
+        let names = names_bytes
+            .map(Names::new)
+            .transpose()
+            .map_err(|error| format!("names.dat: {error}"))?;
+        InfoNameSde::new(&sde, names.as_ref()).map_err(|error| error.to_string())?;
 
-        let root = eve::root_as_sde(sde_bytes).map_err(|error| error.to_string())?;
+        let root = sde.root();
         let groups = root
             .groups()
             .into_iter()
             .flatten()
-            .map(|group| (group.id(), (group.name(), group.category_id())))
+            .map(|group| (group.id(), group.name().to_string()))
             .collect();
         let categories = root
             .categories()
             .into_iter()
             .flatten()
-            .map(|category| (category.id(), category.name()))
+            .map(|category| (category.id(), category.name().to_string()))
             .collect();
         let meta_groups = root
             .meta_groups()
             .into_iter()
             .flatten()
-            .map(|meta_group| (meta_group.id(), meta_group.name()))
+            .map(|meta_group| (meta_group.id(), meta_group.name().to_string()))
             .collect();
         let units = root
             .dogma_units()
             .into_iter()
             .flatten()
-            .map(|unit| (unit.id(), unit.display_name().unwrap_or_default()))
+            .map(|unit| {
+                (
+                    unit.id(),
+                    unit.display_name().unwrap_or_default().to_string(),
+                )
+            })
             .collect();
 
         let mut variations: HashMap<i32, Vec<i32>> = HashMap::new();
@@ -128,8 +125,7 @@ impl Game {
 
         Ok(Game {
             sde,
-            info: InfoSde::new(sde),
-            info_name,
+            names,
             skills,
             groups,
             categories,
@@ -172,12 +168,17 @@ impl Game {
     pub(crate) fn group_name(&self, group_id: i32) -> String {
         self.groups
             .get(&group_id)
-            .map_or_else(|| format!("group {group_id}"), |(name, _)| name.to_string())
+            .map_or_else(|| format!("group {group_id}"), String::clone)
+    }
+
+    /// The SDE, and `names.dat` when loaded, to look types up by name.
+    pub(crate) fn info_name(&self) -> InfoNameSde<'_> {
+        InfoNameSde::new(&self.sde, self.names.as_ref()).expect("checked by Game::new")
     }
 
     /// A type by name, in any language EVE supports.
     pub(crate) fn find_type_id(&self, name: &str) -> Option<i32> {
-        self.info_name.type_name_to_id(name.trim())
+        self.info_name().type_name_to_id(name.trim())
     }
 
     /// A type by name, or an error that suggests close names.
@@ -212,21 +213,21 @@ impl Game {
         TypeSummary {
             name: self.type_name(type_id),
             type_id,
-            category: self.categories.get(&category_id).map_or_else(
-                || format!("category {category_id}"),
-                |name| name.to_string(),
-            ),
+            category: self
+                .categories
+                .get(&category_id)
+                .map_or_else(|| format!("category {category_id}"), String::clone),
             group: self.group_name(group_id),
             meta_group: r#type
                 .and_then(|r#type| self.meta_groups.get(&r#type.meta_group_id()))
-                .map(|name| name.to_string()),
+                .cloned(),
             slot: self.slot_of(type_id),
         }
     }
 
     /// The rack a module goes in.
     pub(crate) fn slot_of(&self, type_id: i32) -> Option<&'static str> {
-        let effects = self.info.get_dogma_effects(type_id)?;
+        let effects = self.sde.get_dogma_effects(type_id)?;
         EFFECT_SLOTS.iter().find_map(|(effect_id, slot)| {
             effects
                 .iter()
@@ -236,7 +237,7 @@ impl Game {
     }
 
     pub(crate) fn has_effect(&self, type_id: i32, effect_id: i32) -> bool {
-        self.info
+        self.sde
             .get_dogma_effects(type_id)
             .is_some_and(|effects| effects.iter().any(|effect| effect.effect_id() == effect_id))
     }
@@ -316,7 +317,7 @@ impl Game {
 
     /// The value an attribute of a type starts with, before anything modifies it.
     pub(crate) fn base_value(&self, type_id: i32, attribute_id: i32) -> Option<f64> {
-        self.info
+        self.sde
             .get_dogma_attributes(type_id)?
             .iter()
             .find(|attribute| attribute.attribute_id() == attribute_id)
@@ -325,7 +326,7 @@ impl Game {
 
     /// Every attribute of a type, as it starts.
     pub(crate) fn info_attributes(&self, type_id: i32) -> Vec<(i32, f64)> {
-        self.info
+        self.sde
             .get_dogma_attributes(type_id)
             .into_iter()
             .flatten()
@@ -334,13 +335,13 @@ impl Game {
     }
 
     /// A value as EVE shows it, with its unit.
-    pub(crate) fn display(&self, attribute_id: i32, value: f64) -> (f64, &'static str) {
+    pub(crate) fn display(&self, attribute_id: i32, value: f64) -> (f64, &str) {
         let unit_id = self
             .sde
             .get_dogma_attribute(attribute_id)
             .map(|attribute| attribute.unit_id())
             .unwrap_or_default();
-        let unit = self.units.get(&unit_id).copied().unwrap_or_default();
+        let unit = self.units.get(&unit_id).map_or("", String::as_str);
         let shown = match unit_id {
             UNIT_MILLISECONDS => value / 1000.0,
             UNIT_INVERSE_ABSOLUTE_PERCENT | UNIT_INVERSED_MODIFIER_PERCENT => (1.0 - value) * 100.0,
@@ -381,7 +382,7 @@ impl Game {
                 .is_some_and(|attribute| attribute.published())
     }
 
-    pub(crate) fn attribute_display_name(&self, attribute_id: i32) -> Option<&'static str> {
+    pub(crate) fn attribute_display_name(&self, attribute_id: i32) -> Option<&str> {
         self.sde
             .get_dogma_attribute(attribute_id)
             .and_then(|attribute| attribute.display_name())

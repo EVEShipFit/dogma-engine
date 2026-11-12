@@ -84,21 +84,21 @@ impl Game {
     pub(crate) fn parse_fit(&self, text: &str) -> Result<(Fit, Format), String> {
         let format = detect(text);
         let fit = match format {
-            Format::Eft => eft::load_eft(&self.info_name, text).map_err(|error| {
+            Format::Eft => eft::load_eft(&self.info_name(), text).map_err(|error| {
                 format!("EFT: {error}{}", self.unknown_type_hint(&error.to_string()))
             })?,
             Format::Dna => {
-                dna::load_dna(&self.info, text.trim()).map_err(|error| format!("DNA: {error}"))?
+                dna::load_dna(&self.sde, text.trim()).map_err(|error| format!("DNA: {error}"))?
             }
             Format::EsiFitting => {
                 let fitting: esi::EsiFitting =
                     serde_json::from_str(text).map_err(|error| format!("ESI fitting: {error}"))?;
-                esi::load_esi_fitting(&self.info, &fitting)
+                esi::load_esi_fitting(&self.sde, &fitting)
             }
             Format::Killmail => {
                 let killmail: killmail::EsiKillmail =
                     serde_json::from_str(text).map_err(|error| format!("killmail: {error}"))?;
-                killmail::load_killmail(&self.info, &killmail)
+                killmail::load_killmail(&self.sde, &killmail)
             }
             Format::Esf => {
                 let header = text.trim_start().starts_with("%esf/");
@@ -106,7 +106,7 @@ impl Game {
                     true => text.to_string(),
                     false => format!("%esf/1\n{text}"),
                 };
-                let fits = esf::load_esf(&self.info, text.as_bytes()).map_err(|error| {
+                let fits = esf::load_esf(&self.sde, text.as_bytes()).map_err(|error| {
                     let error = error.to_string();
                     let error = match header {
                         true => error,
@@ -115,7 +115,7 @@ impl Game {
                     format!("esf/1: {error}{}", self.unknown_type_hint(&error))
                 })?;
                 let main = esf::main_fit(&fits).ok_or("esf/1: the document holds no fit")?;
-                esf::to_fit(&self.info, main).map_err(|error| format!("esf/1: {error}"))?
+                esf::to_fit(&self.sde, main).map_err(|error| format!("esf/1: {error}"))?
             }
         };
         Ok((fit, format))
@@ -137,7 +137,7 @@ impl Game {
         let (mut fit, format) = self.parse_fit(text)?;
         self.apply(&mut fit, settings)?;
         if format != Format::Esf {
-            post_load(&self.info, &mut fit);
+            post_load(&self.sde, &mut fit);
         }
         Ok(fit)
     }
@@ -203,7 +203,7 @@ impl Game {
                         self.did_you_mean(name, Some("Celestial"))
                     )
                 })?;
-            fit.incoming.extend(beacon(&self.info, type_id));
+            fit.incoming.extend(beacon(&self.sde, type_id));
         }
         Ok(())
     }
@@ -213,13 +213,13 @@ impl Game {
             sources,
             validate: true,
         };
-        calculate(&self.info, fit, &options)
+        calculate(&self.sde, fit, &options)
     }
 
     /// The fit as canonical esf/1 text.
     pub(crate) fn to_esf(&self, fit: &Fit) -> Result<String, String> {
-        let esf_fit = esf::from_fit(&self.info, fit).map_err(|error| error.to_string())?;
-        esf::save_esf(&self.info, &[esf_fit]).map_err(|error| error.to_string())
+        let esf_fit = esf::from_fit(&self.sde, fit).map_err(|error| error.to_string())?;
+        esf::save_esf(&self.sde, &[esf_fit]).map_err(|error| error.to_string())
     }
 
     pub(crate) fn item_label(&self, fit: &Fit, index: usize) -> String {

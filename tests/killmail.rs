@@ -13,7 +13,7 @@ const CAPSULE: i32 = 138642919;
 fn killmail(id: i32) -> Fit {
     let killmail: EsiKillmail =
         serde_json::from_str(&input(&format!("killmail-{id}.json"))).unwrap();
-    load_killmail(&info(), &killmail)
+    load_killmail(info(), &killmail)
 }
 
 /* Fits do not compare, so their JSON stands in for them. */
@@ -106,7 +106,7 @@ fn leaves_out_what_a_fit_has_no_place_for() {
     )
     .unwrap();
 
-    let fit = load_killmail(&info(), &killmail);
+    let fit = load_killmail(info(), &killmail);
     assert_eq!(fit.items.len(), 1);
     assert_eq!(fit.items[0].type_id, 3467);
 }
@@ -115,7 +115,7 @@ fn leaves_out_what_a_fit_has_no_place_for() {
 fn round_trips_through_an_esi_fitting() {
     for id in [SHIP, STRUCTURE] {
         let fit = killmail(id);
-        let again = load_esi_fitting(&info(), &save_esi_fitting(&info(), &fit));
+        let again = load_esi_fitting(info(), &save_esi_fitting(info(), &fit));
         assert_eq!(json(&again), json(&fit), "killmail {id}");
     }
 }
@@ -123,7 +123,7 @@ fn round_trips_through_an_esi_fitting() {
 /* ESI fittings have no implants, so they go in the cargo. */
 #[test]
 fn saves_an_implant_as_cargo_in_an_esi_fitting() {
-    let fitting = save_esi_fitting(&info(), &killmail(CAPSULE));
+    let fitting = save_esi_fitting(info(), &killmail(CAPSULE));
     let flags: Vec<_> = fitting
         .items
         .iter()
@@ -152,21 +152,21 @@ fn max_quantities(flags: &[i32], type_id: i32) -> EsiKillmail {
 
 #[test]
 fn caps_a_quantity_that_does_not_fit() {
-    let fit = load_killmail(&info(), &max_quantities(&[5], 34));
+    let fit = load_killmail(info(), &max_quantities(&[5], 34));
     assert_eq!(fit.items[0].quantity, u32::MAX);
 }
 
 #[test]
 fn caps_a_stack_that_does_not_fit() {
-    let fit = load_killmail(&info(), &max_quantities(&[5, 5], 34));
+    let fit = load_killmail(info(), &max_quantities(&[5, 5], 34));
     assert_eq!(fit.items.len(), 1);
     assert_eq!(fit.items[0].quantity, u32::MAX);
 }
 
 #[test]
 fn caps_a_stack_that_does_not_fit_in_an_esi_fitting() {
-    let fit = load_killmail(&info(), &max_quantities(&[159, 160], 47141));
-    let fitting = save_esi_fitting(&info(), &fit);
+    let fit = load_killmail(info(), &max_quantities(&[159, 160], 47141));
+    let fitting = save_esi_fitting(info(), &fit);
     assert_eq!(fitting.items.len(), 1);
     assert_eq!(fitting.items[0].quantity, u32::MAX);
 }

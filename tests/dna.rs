@@ -1,6 +1,6 @@
 //! DNA, the fits EVE links to in chat.
 
-use esf_data::{Info, InfoName};
+use esf_data::InfoName;
 use esf_dogma_engine::{Fit, Slot};
 use esf_format::dna::{Error, load_dna};
 
@@ -57,7 +57,7 @@ fn loads_a_fit() {
             ("Small Armor Repairer II_", 1),
         ],
     );
-    snapshot_json("dna-rifter", &load_dna(&info(), &dna).unwrap());
+    snapshot_json("dna-rifter", &load_dna(info(), &dna).unwrap());
 }
 
 #[test]
@@ -66,8 +66,8 @@ fn reads_a_chat_link() {
     let link = format!("fitting:{dna}");
 
     assert_eq!(
-        items(&load_dna(&info(), &link).unwrap()),
-        items(&load_dna(&info(), &dna).unwrap())
+        items(&load_dna(info(), &link).unwrap()),
+        items(&load_dna(info(), &dna).unwrap())
     );
 }
 
@@ -77,7 +77,7 @@ fn leaves_out_the_last_item_of_a_link_cut_short() {
     let cut = &dna[..dna.len() - 4];
 
     assert_eq!(
-        items(&load_dna(&info(), cut).unwrap()),
+        items(&load_dna(info(), cut).unwrap()),
         [item("Damage Control II", Slot::Low(0), 1)]
     );
 }
@@ -90,7 +90,7 @@ fn puts_a_module_marked_for_cargo_in_the_cargo() {
     );
 
     assert_eq!(
-        items(&load_dna(&info(), &dna).unwrap()),
+        items(&load_dna(info(), &dna).unwrap()),
         [
             item("Damage Control II", Slot::Low(0), 1),
             item("Damage Control II", Slot::Cargo, 2),
@@ -101,7 +101,7 @@ fn puts_a_module_marked_for_cargo_in_the_cargo() {
 #[test]
 fn fills_a_rack_up_to_eight_slots() {
     let dna = dna("Rifter", &[("Damage Control II", 10)]);
-    let fit = load_dna(&info(), &dna).unwrap();
+    let fit = load_dna(info(), &dna).unwrap();
 
     assert_eq!(fit.items.len(), 8);
     assert_eq!(fit.items[7].slot, Slot::Low(7));
@@ -111,7 +111,7 @@ fn fills_a_rack_up_to_eight_slots() {
 fn rejects_an_unknown_type() {
     let dna = format!("{}:999999999;1::", id("Rifter"));
     assert_eq!(
-        load_dna(&info(), &dna).unwrap_err(),
+        load_dna(info(), &dna).unwrap_err(),
         Error::UnknownTypeId(999999999)
     );
 }
@@ -119,7 +119,7 @@ fn rejects_an_unknown_type() {
 #[test]
 fn rejects_an_unknown_ship() {
     assert_eq!(
-        load_dna(&info(), "999999999::").unwrap_err(),
+        load_dna(info(), "999999999::").unwrap_err(),
         Error::UnknownTypeId(999999999)
     );
 }
@@ -128,7 +128,7 @@ fn rejects_an_unknown_ship() {
 fn rejects_a_ship_that_is_not_a_ship() {
     let dna = dna("Damage Control II", &[]);
     assert_eq!(
-        load_dna(&info(), &dna).unwrap_err(),
+        load_dna(info(), &dna).unwrap_err(),
         Error::NotAShip(id("Damage Control II"))
     );
 }
@@ -136,22 +136,19 @@ fn rejects_a_ship_that_is_not_a_ship() {
 #[test]
 fn takes_a_structure() {
     let dna = dna("Astrahus", &[]);
-    assert_eq!(
-        load_dna(&info(), &dna).unwrap().ship.type_id,
-        id("Astrahus")
-    );
+    assert_eq!(load_dna(info(), &dna).unwrap().ship.type_id, id("Astrahus"));
 }
 
 #[test]
 fn needs_a_ship() {
     let dna = format!("{};1::", id("Damage Control II"));
-    assert_eq!(load_dna(&info(), &dna).unwrap_err(), Error::NoShip);
+    assert_eq!(load_dna(info(), &dna).unwrap_err(), Error::NoShip);
 }
 
 #[test]
 fn needs_numbers() {
     assert_eq!(
-        load_dna(&info(), "587:x;1::").unwrap_err(),
+        load_dna(info(), "587:x;1::").unwrap_err(),
         Error::InvalidNumber("x".to_string())
     );
 }

@@ -1,4 +1,4 @@
-use esf_data::{InfoNameSde, InfoSde};
+use esf_data::{InfoNameSde, Sde};
 use serde::Serialize;
 
 use super::{NAMES, SDE};
@@ -6,8 +6,8 @@ use super::{NAMES, SDE};
 const INPUT: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/formats");
 const SNAPSHOTS: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/snapshots");
 
-pub fn info() -> InfoSde<'static> {
-    InfoSde::new(&SDE)
+pub fn info() -> &'static Sde {
+    &SDE
 }
 
 pub fn info_name() -> InfoNameSde<'static> {

@@ -1,7 +1,6 @@
 //! A modifier that reads the attribute it changes, directly or through
 //! another item, still calculates.
 
-use esf_data::Info;
 use esf_dogma_engine::{Fit, Mutation, Options};
 
 use crate::harness::{all, calculate, info};

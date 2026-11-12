@@ -6,7 +6,7 @@ use esf_data::{Error, Names, Sde};
 
 #[test]
 fn refuses_what_is_not_an_sde() {
-    let error = Sde::new(b"").err().unwrap();
+    let error = Sde::new(Vec::new()).err().unwrap();
 
     assert!(matches!(error, Error::InvalidSde(_)));
     assert_eq!(error.to_string(), "not a valid SDE file");
@@ -15,7 +15,7 @@ fn refuses_what_is_not_an_sde() {
 
 #[test]
 fn refuses_what_is_not_a_names_file() {
-    let error = Names::new(b"").err().unwrap();
+    let error = Names::new(Vec::new()).err().unwrap();
 
     assert!(matches!(error, Error::InvalidNames(_)));
     assert_eq!(error.to_string(), "not a valid names file");

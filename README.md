@@ -184,12 +184,10 @@ cargo add esf-dogma-engine esf-data
 ```
 
 ```rust
-use esf_data::{InfoSde, Sde};
+use esf_data::Sde;
 use esf_dogma_engine::{Fit, Options, beacon, calculate};
 
-let bytes = std::fs::read("sde.dat")?;
-let sde = Sde::new(&bytes)?;
-let info = InfoSde::new(&sde);
+let sde = Sde::new(std::fs::read("sde.dat")?)?;
 
 let fit: Fit = serde_json::from_str(
     r#"{
@@ -206,14 +204,14 @@ let fit: Fit = serde_json::from_str(
     }"#,
 )?;
 
-let calculation = calculate(&info, &fit, &Options::default());
+let calculation = calculate(&sde, &fit, &Options::default());
 // Or if you want to know the source of the effects:
-let with_sources = calculate(&info, &fit, &Options { sources: true, ..Default::default() });
+let with_sources = calculate(&sde, &fit, &Options { sources: true, ..Default::default() });
 // Or if you have a beacon in space (like wormhole effects):
-let with_beacon = calculate(&info, &Fit { incoming: beacon(&info, beacon_type_id), ..fit }, &Options::default());
+let with_beacon = calculate(&sde, &Fit { incoming: beacon(&sde, beacon_type_id), ..fit }, &Options::default());
 
 // What EVE would not let you fly, in `violations` of the calculation:
-let validated = calculate(&info, &fit, &Options { validate: true, ..Default::default() });
+let validated = calculate(&sde, &fit, &Options { validate: true, ..Default::default() });
 ```
 
 ### Javascript (WebAssembly)

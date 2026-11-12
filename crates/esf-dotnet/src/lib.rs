@@ -4,14 +4,14 @@ use std::sync::OnceLock;
 use serde::Serialize;
 use serde::de::DeserializeOwned;
 
-use esf_data::{InfoNameSde, InfoSde, Names, Sde};
+use esf_data::{InfoNameSde, Names, Sde};
 use esf_dogma_engine::{Fit, Options};
 use esf_format::esf;
 use esf_format::esi::EsiFitting;
 use esf_format::killmail::EsiKillmail;
 
-static SDE: OnceLock<Sde<'static>> = OnceLock::new();
-static NAMES: OnceLock<Names<'static>> = OnceLock::new();
+static SDE: OnceLock<Sde> = OnceLock::new();
+static NAMES: OnceLock<Names> = OnceLock::new();
 
 enum Error {
     /// Thrown as `ArgumentException`.
@@ -117,7 +117,7 @@ unsafe fn text<'a>(data: *const u8, length: usize) -> Result<&'a str, Error> {
     std::str::from_utf8(unsafe { bytes(data, length) }).map_err(argument)
 }
 
-fn sde() -> Result<&'static Sde<'static>, Error> {
+fn sde() -> Result<&'static Sde, Error> {
     SDE.get()
         .ok_or_else(|| state("SDE is not loaded; call LoadSde() first"))
 }
@@ -136,12 +136,6 @@ fn to_json(value: &impl Serialize) -> Result<EsfResult, Error> {
     ))
 }
 
-/* Leaked, as everything read from the SDE borrows it for the rest of the
- * process. */
-fn leak(bytes: &[u8]) -> &'static [u8] {
-    Box::leak(bytes.to_vec().into_boxed_slice())
-}
-
 /// Load `sde.dat`; `value` is its build number.
 ///
 /// # Safety
@@ -155,7 +149,7 @@ pub unsafe extern "C" fn esf_load_sde(data: *const u8, length: usize) -> EsfResu
             return Err(state("SDE is already loaded"));
         }
 
-        let sde = Sde::new(leak(data)).map_err(argument)?;
+        let sde = Sde::new(data.to_vec()).map_err(argument)?;
         let build_number = sde.build_number();
         SDE.set(sde).map_err(|_| state("SDE is already loaded"))?;
 
@@ -177,7 +171,7 @@ pub unsafe extern "C" fn esf_load_names(data: *const u8, length: usize) -> EsfRe
             return Err(state("names are already loaded"));
         }
 
-        let names = Names::new(leak(data)).map_err(argument)?;
+        let names = Names::new(data.to_vec()).map_err(argument)?;
         let build_number = names.build_number();
         if sde.build_number() != build_number {
             return Err(argument(esf_data::Error::BuildMismatch {
@@ -217,55 +211,46 @@ text_function!(esf_load_eft, |eft| {
 text_function!(esf_save_eft, |fit| {
     let fit: Fit = from_json(fit)?;
     Ok(EsfResult::text(
-        esf_format::eft::save_eft(&InfoSde::new(sde()?), &fit).map_err(argument)?,
+        esf_format::eft::save_eft(sde()?, &fit).map_err(argument)?,
     ))
 });
 
 text_function!(esf_load_esi_fitting, |fitting| {
     let fitting: EsiFitting = from_json(fitting)?;
-    to_json(&esf_format::esi::load_esi_fitting(
-        &InfoSde::new(sde()?),
-        &fitting,
-    ))
+    to_json(&esf_format::esi::load_esi_fitting(sde()?, &fitting))
 });
 
 text_function!(esf_save_esi_fitting, |fit| {
     let fit: Fit = from_json(fit)?;
-    to_json(&esf_format::esi::save_esi_fitting(
-        &InfoSde::new(sde()?),
-        &fit,
-    ))
+    to_json(&esf_format::esi::save_esi_fitting(sde()?, &fit))
 });
 
 text_function!(esf_post_load, |fit| {
     let mut fit: Fit = from_json(fit)?;
-    esf_format::post_load(&InfoSde::new(sde()?), &mut fit);
+    esf_format::post_load(sde()?, &mut fit);
     to_json(&fit)
 });
 
 text_function!(esf_load_killmail, |killmail| {
     let killmail: EsiKillmail = from_json(killmail)?;
-    to_json(&esf_format::killmail::load_killmail(
-        &InfoSde::new(sde()?),
-        &killmail,
-    ))
+    to_json(&esf_format::killmail::load_killmail(sde()?, &killmail))
 });
 
 text_function!(esf_load_dna, |dna| {
-    to_json(&esf_format::dna::load_dna(&InfoSde::new(sde()?), dna).map_err(argument)?)
+    to_json(&esf_format::dna::load_dna(sde()?, dna).map_err(argument)?)
 });
 
 fn load_esf_fit(data: &[u8]) -> Result<Fit, Error> {
-    let info = InfoSde::new(sde()?);
+    let sde = sde()?;
 
-    let fits = esf::load_esf(&info, data).map_err(argument)?;
+    let fits = esf::load_esf(sde, data).map_err(argument)?;
     let fit = esf::main_fit(&fits).ok_or_else(|| argument("no fit stands on its own"))?;
-    esf::to_fit(&info, fit).map_err(argument)
+    esf::to_fit(sde, fit).map_err(argument)
 }
 
-fn to_esf_fit(info: &InfoSde, fit: &str) -> Result<esf::EsfFit, Error> {
+fn to_esf_fit(sde: &Sde, fit: &str) -> Result<esf::EsfFit, Error> {
     let fit: Fit = from_json(fit)?;
-    esf::from_fit(info, &fit).map_err(argument)
+    esf::from_fit(sde, &fit).map_err(argument)
 }
 
 text_function!(esf_load_esf, |esf_text| {
@@ -279,17 +264,17 @@ text_function!(esf_load_esf_link, |link| {
 });
 
 text_function!(esf_save_esf, |fit| {
-    let info = InfoSde::new(sde()?);
-    let esf_fit = to_esf_fit(&info, fit)?;
+    let sde = sde()?;
+    let esf_fit = to_esf_fit(sde, fit)?;
     Ok(EsfResult::text(
-        esf::save_esf(&info, &[esf_fit]).map_err(argument)?,
+        esf::save_esf(sde, &[esf_fit]).map_err(argument)?,
     ))
 });
 
 text_function!(esf_save_esf_link, |fit| {
-    let info = InfoSde::new(sde()?);
-    let esf_fit = to_esf_fit(&info, fit)?;
-    let binary = esf::save_esf_binary(&info, &[esf_fit]).map_err(argument)?;
+    let sde = sde()?;
+    let esf_fit = to_esf_fit(sde, fit)?;
+    let binary = esf::save_esf_binary(sde, &[esf_fit]).map_err(argument)?;
     Ok(EsfResult::text(esf::encode_base64url(&binary)))
 });
 
@@ -332,16 +317,12 @@ pub unsafe extern "C" fn esf_calculate(
     guard(|| {
         let fit: Fit = from_json(fit?)?;
         let options: Options = from_json(options?)?;
-        to_json(&esf_dogma_engine::calculate(
-            &InfoSde::new(sde()?),
-            &fit,
-            &options,
-        ))
+        to_json(&esf_dogma_engine::calculate(sde()?, &fit, &options))
     })
 }
 
 /// What a beacon in space hands to every fit in there with it.
 #[unsafe(no_mangle)]
 pub extern "C" fn esf_beacon(type_id: i32) -> EsfResult {
-    guard(|| to_json(&esf_dogma_engine::beacon(&InfoSde::new(sde()?), type_id)))
+    guard(|| to_json(&esf_dogma_engine::beacon(sde()?, type_id)))
 }

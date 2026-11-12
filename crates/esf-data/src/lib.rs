@@ -2,7 +2,7 @@
 //!
 //! The data comes as flatbuffers built by
 //! [sde-patched](https://github.com/EVEShipFit/sde-patched). Load `sde.dat` into
-//! [`Sde`], and hand it to the engine through [`InfoSde`].
+//! [`Sde`], and hand it to the engine.
 
 #![warn(missing_docs)]
 
@@ -12,9 +12,9 @@ mod info;
 mod sde;
 
 pub use error::Error;
-pub use fold::{fold_case, fold_char, sort_by_text};
+pub use fold::{fold_case, fold_char};
 pub use info::{Info, InfoEsf, InfoExport, InfoName};
-pub use sde::{InfoNameSde, InfoSde, MIN_SDE_VERSION, Names, Sde, eve};
+pub use sde::{InfoNameSde, MIN_SDE_VERSION, Names, Sde, eve};
 
 /// The traits hand out flatbuffers types; implementing them needs this exact
 /// version.
