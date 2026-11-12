@@ -1,0 +1,27 @@
+[package]
+name = "esf-mcp"
+description = "MCP server that calculates EVE Online ship fits"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+license.workspace = true
+readme = "README.md"
+keywords.workspace = true
+
+[dependencies]
+base64.workspace = true
+clap.workspace = true
+dirs.workspace = true
+esf-data.workspace = true
+esf-dogma-engine.workspace = true
+esf-format.workspace = true
+flate2.workspace = true
+rmcp.workspace = true
+schemars.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+tar.workspace = true
+tokio.workspace = true
+ureq.workspace = true
