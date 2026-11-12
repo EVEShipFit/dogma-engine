@@ -36,18 +36,32 @@ struct Dist {
     integrity: String,
 }
 
-/// The game data from the cache, downloading the newest SDE when due.
-pub fn load(cache_dir: &Path) -> Result<Game, String> {
+/// The game data of the newest cached SDE, downloading it when due, and its directory.
+pub fn load(cache_dir: &Path) -> Result<(PathBuf, Game), String> {
     let dir = cached(cache_dir)?;
-    let loaded = read(&dir.join("sde.dat"))
+    open(cache_dir, &dir).map(|game| (dir, game))
+}
+
+/// Like [`load`], but only when the newest SDE is no longer the one in `current`.
+pub fn update(cache_dir: &Path, current: &Path) -> Result<Option<(PathBuf, Game)>, String> {
+    let dir = cached(cache_dir)?;
+    if dir == current {
+        return Ok(None);
+    }
+    open(cache_dir, &dir).map(|game| Some((dir, game)))
+}
+
+/// The game data in `dir`; on success the other cached versions go, on failure `dir` does.
+fn open(cache_dir: &Path, dir: &Path) -> Result<Game, String> {
+    let opened = read(&dir.join("sde.dat"))
         .and_then(|sde| Game::new(sde, Some(read(&dir.join("names.dat"))?)));
-    match &loaded {
-        Ok(_) => prune(cache_dir, &dir),
+    match &opened {
+        Ok(_) => prune(cache_dir, dir),
         Err(_) => {
-            let _ = fs::remove_dir_all(&dir);
+            let _ = fs::remove_dir_all(dir);
         }
     }
-    loaded
+    opened
 }
 
 /// The bytes of a file.

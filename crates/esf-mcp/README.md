@@ -50,6 +50,6 @@ Claude Desktop, Cursor and others take the same command in their JSON config:
 `esf_mcp::Server` is the same server, for any rmcp transport:
 
 ```rust
-let game = esf_mcp::data::load(&cache_dir)?;
+let (_, game) = esf_mcp::data::load(&cache_dir)?;
 let server = esf_mcp::Server::new(game);
 ```
