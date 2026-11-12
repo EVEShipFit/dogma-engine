@@ -33,7 +33,7 @@ fn load(args: &Args) -> Result<Game, String> {
         .clone()
         .or_else(|| dirs::cache_dir().map(|dir| dir.join("esf-mcp")))
         .ok_or("no cache directory; pass --cache-dir or --sde")?;
-    data::load(&cache_dir)
+    data::load(&cache_dir).map(|(_, game)| game)
 }
 
 #[tokio::main]
