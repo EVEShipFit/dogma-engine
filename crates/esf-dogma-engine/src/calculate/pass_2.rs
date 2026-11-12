@@ -455,8 +455,7 @@ impl Pass for PassTwo {
         objects
             .char
             .collect_effects(info, Object::Char, false, &mut effects);
-        for index in 0..objects.projected.len() {
-            let projected = &objects.projected[index];
+        for (index, projected) in objects.projected.iter().enumerate() {
             collect_projected_effects(
                 info,
                 &projected.item,
