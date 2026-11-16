@@ -25,6 +25,7 @@ fn rack_of(kind: Kind) -> Option<Location> {
         Kind::Low => Some(Location::Low),
         Kind::Rig => Some(Location::Rig),
         Kind::Svc => Some(Location::Svc),
+        Kind::Fighter => Some(Location::Tube),
         _ => None,
     }
 }
@@ -44,6 +45,7 @@ fn rack_slot(rack: Location, index: u8) -> Slot {
         Location::Low => Slot::Low(index),
         Location::Rig => Slot::Rig(index),
         Location::Sub => Slot::Subsystem(index),
+        Location::Tube => Slot::FighterTube(index),
         _ => Slot::Service(index),
     }
 }
@@ -56,15 +58,39 @@ fn slot_rack(slot: Slot) -> Option<(Location, u8)> {
         Slot::Rig(index) => Some((Location::Rig, index)),
         Slot::Subsystem(index) => Some((Location::Sub, index)),
         Slot::Service(index) => Some((Location::Svc, index)),
+        Slot::FighterTube(index) => Some((Location::Tube, index)),
         _ => None,
     }
 }
 
-fn next_index(counters: &mut [u32; 6], rack: Location, count: u32) -> Result<u8, Error> {
-    let counter = &mut counters[rack as usize - 1];
-    let index = u8::try_from(*counter).map_err(|_| Error::Fit(format!("too many {rack} slots")))?;
+fn too_many(rack: Location) -> Error {
+    Error::Fit(format!("too many {rack} slots"))
+}
+
+fn next_index(counters: &mut [u32; 7], rack: Location, count: u32) -> Result<u8, Error> {
+    let at = match rack {
+        Location::Tube => 6,
+        _ => rack as usize - 1,
+    };
+    let counter = &mut counters[at];
+    let index = u8::try_from(*counter).map_err(|_| too_many(rack))?;
     *counter += count;
     Ok(index)
+}
+
+fn first_index(
+    counters: &mut [u32; 7],
+    rack: Location,
+    entry: &Entry,
+    count: u32,
+) -> Result<u8, Error> {
+    match entry.slot {
+        Some(slot) => slot
+            .checked_sub(1)
+            .and_then(|index| u8::try_from(index).ok())
+            .ok_or_else(|| too_many(rack)),
+        None => next_index(counters, rack, count),
+    }
 }
 
 /// The fit a document is about: the first one no other fit carries.
@@ -93,8 +119,7 @@ pub fn to_fit(info: &impl InfoEsf, fit: &EsfFit) -> Result<Fit, Error> {
     };
 
     let mut items = Vec::new();
-    let mut counters = [0; 6];
-    let mut tubes = 0;
+    let mut counters = [0; 7];
 
     for entry in &fit.entries {
         let count = entry.count.unwrap_or(1);
@@ -153,14 +178,24 @@ pub fn to_fit(info: &impl InfoEsf, fit: &EsfFit) -> Result<Fit, Error> {
                 .map(|index| index as i64)
         };
 
+        let rack = rack_of(kind).filter(|rack| entry.location.is_none_or(|at| at == *rack));
         match (kind, entry.location) {
             _ if entry.fit_name.is_some() => {}
-            (_, None) if rack_of(kind).is_some() => {
-                let rack = rack_of(kind).unwrap();
-                let first = next_index(&mut counters, rack, count)?;
+            (Kind::Fighter, _) if rack.is_some() => {
+                item.slot =
+                    Slot::FighterTube(first_index(&mut counters, Location::Tube, entry, 1)?);
+                item.state = state;
+                item.quantity = entry
+                    .count
+                    .or_else(|| lookup.squadron_size(type_id))
+                    .unwrap_or(1);
+            }
+            _ if rack.is_some() => {
+                let rack = rack.unwrap();
+                let first = first_index(&mut counters, rack, entry, count)?;
                 for index in 0..count {
-                    let index = u8::try_from(u32::from(first) + index)
-                        .map_err(|_| Error::Fit(format!("too many {rack} slots")))?;
+                    let index =
+                        u8::try_from(u32::from(first) + index).map_err(|_| too_many(rack))?;
                     items.push(FitItem {
                         slot: rack_slot(rack, index),
                         quantity: 1,
@@ -175,15 +210,6 @@ pub fn to_fit(info: &impl InfoEsf, fit: &EsfFit) -> Result<Fit, Error> {
                 item.state = state;
             }
             (Kind::Drone, Some(Location::Bay)) => item.slot = Slot::DroneBay,
-            (Kind::Fighter, None) => {
-                item.slot = Slot::FighterTube(tubes);
-                item.state = state;
-                item.quantity = entry
-                    .count
-                    .or_else(|| lookup.squadron_size(type_id))
-                    .unwrap_or(1);
-                tubes = tubes.saturating_add(1);
-            }
             (Kind::Fighter, Some(Location::Bay)) => item.slot = Slot::FighterBay,
             (Kind::Implant, None) => {
                 if let Some(index) =
@@ -294,9 +320,10 @@ pub fn from_fit(info: &impl InfoEsf, fit: &Fit) -> Result<EsfFit, Error> {
                     ..Entry::default()
                 });
             }
+            let entry = entry(info, item)?;
             entries.push(Entry {
-                count: None,
-                ..entry(info, item)?
+                count: entry.count.filter(|_| rack == Location::Tube),
+                ..entry
             });
             position = index.saturating_add(1);
         }

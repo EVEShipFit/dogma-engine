@@ -4,7 +4,7 @@
 
 use esf_dogma_engine::{Slot, State};
 use esf_format::esf::{
-    EsfFit, decode_base64url, encode_base64url, from_fit, load_esf, main_fit, save_esf,
+    EsfFit, Location, decode_base64url, encode_base64url, from_fit, load_esf, main_fit, save_esf,
     save_esf_binary, to_fit,
 };
 
@@ -173,4 +173,47 @@ fn cannot_calculate_a_fit_without_a_ship() {
 fn the_main_fit_is_the_one_not_carried() {
     let fits = load("%esf/1\nHeron \"Scout\"\n\n%esf/1\nRaven\nHeron \"Scout\" @frigate\n");
     assert_eq!(main_fit(&fits).unwrap().hull, fits[1].hull);
+}
+
+const TUBES: &str = "\
+%esf/1
+Thanatos \"Tubes\"
+
+Fighter Support Unit II
+
+2x Dromi II
+- @tube
+Templar II !off
+";
+
+#[test]
+fn keeps_fighters_in_their_tube() {
+    let fit = to_fit(info(), &load(TUBES)[0]).unwrap();
+
+    let slots: Vec<(Slot, u32, State)> = fit
+        .items
+        .iter()
+        .map(|item| (item.slot, item.quantity, item.state))
+        .collect();
+    assert_eq!(
+        slots,
+        [
+            (Slot::High(0), 1, State::Online),
+            (Slot::FighterTube(0), 2, State::Active),
+            (Slot::FighterTube(2), 6, State::Offline),
+        ]
+    );
+
+    let esf = from_fit(info(), &fit).unwrap();
+    assert_eq!(save_esf(info(), &[esf]).unwrap(), TUBES);
+}
+
+#[test]
+fn puts_a_pinned_entry_in_its_slot() {
+    let mut fits = load("%esf/1\nThanatos\n\nDromi II\n");
+    fits[0].entries[0].location = Some(Location::Tube);
+    fits[0].entries[0].slot = Some(4);
+
+    let fit = to_fit(info(), &fits[0]).unwrap();
+    assert_eq!(fit.items[0].slot, Slot::FighterTube(3));
 }
