@@ -21,7 +21,7 @@ clap = { version = "4.5", features = ["derive"] }
 console_error_panic_hook = "0.1"
 dirs = "7.0"
 elsa = "1.11"
-esf = "1.2"
+esf = "1.3"
 flatbuffers = "25.2.10"
 flate2 = "1.1"
 insta = { version = "1.48.0", features = ["glob"] }
