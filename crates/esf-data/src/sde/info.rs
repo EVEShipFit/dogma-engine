@@ -34,6 +34,10 @@ impl Info for Sde {
         Sde::get_type(self, type_id)
     }
 
+    fn types(&self) -> impl Iterator<Item = eve::Type<'_>> {
+        Sde::types(self)
+    }
+
     fn get_dbuff_collection(&self, buff_id: i32) -> Option<eve::DbuffCollection<'_>> {
         Sde::get_dbuff_collection(self, buff_id)
     }

@@ -200,5 +200,6 @@ pub(crate) fn fit(name: Option<String>, ship_type_id: i32, items: Vec<FitItem>) 
         character: Character::default(),
         environment: Environment::default(),
         incoming: Projection::default(),
+        boosters: Vec::new(),
     }
 }

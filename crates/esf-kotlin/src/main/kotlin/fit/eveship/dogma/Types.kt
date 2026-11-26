@@ -173,7 +173,12 @@ data class Fit(
     val character: Character = Character(),
     val environment: Environment = Environment(),
     val incoming: Projection = Projection(),
+    val boosters: List<Booster> = emptyList(),
 )
+
+/** A fleet member whose command bursts reach the fit. Without skills, its character has every skill at level 5. */
+@Serializable
+data class Booster(val fit: Fit, val off: Boolean = false)
 
 /** What `calculate` reports on top of the values. */
 @Serializable

@@ -435,5 +435,6 @@ pub fn fit(u: &mut Unstructured) -> Result<Fit> {
         character,
         environment,
         incoming,
+        boosters: Vec::new(),
     })
 }

@@ -241,16 +241,7 @@ text_function!(esf_load_dna, |dna| {
 });
 
 fn load_esf_fit(data: &[u8]) -> Result<Fit, Error> {
-    let sde = sde()?;
-
-    let fits = esf::load_esf(sde, data).map_err(argument)?;
-    let fit = esf::main_fit(&fits).ok_or_else(|| argument("no fit stands on its own"))?;
-    esf::to_fit(sde, fit).map_err(argument)
-}
-
-fn to_esf_fit(sde: &Sde, fit: &str) -> Result<esf::EsfFit, Error> {
-    let fit: Fit = from_json(fit)?;
-    esf::from_fit(sde, &fit).map_err(argument)
+    esf::load_fit(sde()?, data).map_err(argument)
 }
 
 text_function!(esf_load_esf, |esf_text| {
@@ -264,17 +255,15 @@ text_function!(esf_load_esf_link, |link| {
 });
 
 text_function!(esf_save_esf, |fit| {
-    let sde = sde()?;
-    let esf_fit = to_esf_fit(sde, fit)?;
+    let fit: Fit = from_json(fit)?;
     Ok(EsfResult::text(
-        esf::save_esf(sde, &[esf_fit]).map_err(argument)?,
+        esf::save_fit(sde()?, &fit).map_err(argument)?,
     ))
 });
 
 text_function!(esf_save_esf_link, |fit| {
-    let sde = sde()?;
-    let esf_fit = to_esf_fit(sde, fit)?;
-    let binary = esf::save_esf_binary(sde, &[esf_fit]).map_err(argument)?;
+    let fit: Fit = from_json(fit)?;
+    let binary = esf::save_fit_binary(sde()?, &fit).map_err(argument)?;
     Ok(EsfResult::text(esf::encode_base64url(&binary)))
 });
 

@@ -156,7 +156,11 @@ public sealed record Fit
     public Character Character { get; init; } = new();
     public FitEnvironment Environment { get; init; } = new();
     public Projection Incoming { get; init; } = new();
+    public IReadOnlyList<Booster> Boosters { get; init; } = [];
 }
+
+/// <summary>A fleet member whose command bursts reach the fit. Without skills, its character has every skill at level 5.</summary>
+public sealed record Booster(Fit Fit, bool Off = false);
 
 /// <summary>What <c>Calculate</c> reports on top of the values.</summary>
 public sealed record Options(bool Sources = false, bool Validate = false);
