@@ -632,9 +632,7 @@ pub fn main() {
     let mut fit = match input.trim_ascii_start().starts_with(b"[") {
         true => eft::load_eft(&info_name, &String::from_utf8_lossy(&input))
             .unwrap_or_else(|error| fail(error.to_string())),
-        false => esf::load_esf(&sde, &input)
-            .and_then(|fits| esf::to_fit(&sde, &fits[0]))
-            .unwrap_or_else(|error| fail(error.to_string())),
+        false => esf::load_fit(&sde, &input).unwrap_or_else(|error| fail(error.to_string())),
     };
 
     /* Without this the states from the EFT are used. */

@@ -106,16 +106,14 @@ impl Game {
                     true => text.to_string(),
                     false => format!("%esf/1\n{text}"),
                 };
-                let fits = esf::load_esf(&self.sde, text.as_bytes()).map_err(|error| {
+                esf::load_fit(&self.sde, text.as_bytes()).map_err(|error| {
                     let error = error.to_string();
                     let error = match header {
                         true => error,
                         false => without_header(&error),
                     };
                     format!("esf/1: {error}{}", self.unknown_type_hint(&error))
-                })?;
-                let main = esf::main_fit(&fits).ok_or("esf/1: the document holds no fit")?;
-                esf::to_fit(&self.sde, main).map_err(|error| format!("esf/1: {error}"))?
+                })?
             }
         };
         Ok((fit, format))
@@ -218,8 +216,7 @@ impl Game {
 
     /// The fit as canonical esf/1 text.
     pub(crate) fn to_esf(&self, fit: &Fit) -> Result<String, String> {
-        let esf_fit = esf::from_fit(&self.sde, fit).map_err(|error| error.to_string())?;
-        esf::save_esf(&self.sde, &[esf_fit]).map_err(|error| error.to_string())
+        esf::save_fit(&self.sde, fit).map_err(|error| error.to_string())
     }
 
     pub(crate) fn item_label(&self, fit: &Fit, index: usize) -> String {
