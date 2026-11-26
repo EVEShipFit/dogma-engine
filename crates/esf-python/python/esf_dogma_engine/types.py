@@ -9,6 +9,7 @@ from typing import Literal, TypedDict
 __all__ = [
     "AttributeValue",
     "Booster",
+    "LandedBuff",
     "Calculation",
     "Character",
     "Charge",
@@ -171,6 +172,15 @@ class ProjectedBuff(TypedDict):
 
     id: int
     value: float
+
+
+class LandedBuff(ProjectedBuff, total=False):
+    """A buff that landed on the fit. `booster` is the index in
+    `Fit.boosters` of the booster that sent it, the lowest of those that sent
+    this value; absent when it came from `incoming` or the fit's own
+    bursts."""
+
+    booster: int
 
 
 class _ProjectedEffectRequired(TypedDict):
@@ -350,7 +360,7 @@ class Calculation(_CalculationRequired, total=False):
     """The result of `calculate`."""
 
     mode: ItemResult
-    buffs: list[ProjectedBuff]
+    buffs: list[LandedBuff]
     outgoing: Projection
     violations: list["Violation"]
 

@@ -22,7 +22,7 @@ use item::{Item, Object};
 
 pub use item::EffectOperator;
 pub use outgoing::beacon;
-pub use output::{AttributeValue, Calculation, ItemResult, Source, SourceRef};
+pub use output::{AttributeValue, Calculation, ItemResult, LandedBuff, Source, SourceRef};
 
 /// What [`calculate()`] reports on top of the values.
 #[cfg_attr(feature = "typescript", derive(Tsify))]
@@ -144,7 +144,7 @@ pub(crate) fn is_skill(info: &impl Info, type_id: i32) -> bool {
 /// The command bursts of every booster that is not off are applied to the
 /// fit, on top of what is already in [`Fit::incoming`].
 pub fn calculate(info: &impl Info, fit: &Fit, options: &Options) -> Calculation {
-    let boosted = with_boosts(info, fit);
+    let (boosted, sent) = with_boosts(info, fit).unzip();
     let fit = boosted.as_ref().unwrap_or(fit);
 
     let mut calculation = if is_hull(info, fit.ship.type_id) {
@@ -157,6 +157,12 @@ pub fn calculate(info: &impl Info, fit: &Fit, options: &Options) -> Calculation 
         }
     };
 
+    for buff in &mut calculation.buffs {
+        buff.booster = sent.iter().flatten().find_map(|(index, sent)| {
+            (sent.id == buff.id && sent.value == buff.value).then_some(*index)
+        });
+    }
+
     if options.validate {
         calculation.violations = Some(validate(info, fit, &calculation));
     }
@@ -164,17 +170,18 @@ pub fn calculate(info: &impl Info, fit: &Fit, options: &Options) -> Calculation 
     calculation
 }
 
-fn with_boosts(info: &impl Info, fit: &Fit) -> Option<Fit> {
+fn with_boosts(info: &impl Info, fit: &Fit) -> Option<(Fit, Vec<(usize, ProjectedBuff)>)> {
     let mut boosters = fit
         .boosters
         .iter()
-        .filter(|booster| !booster.off)
+        .enumerate()
+        .filter(|(_, booster)| !booster.off)
         .peekable();
     boosters.peek()?;
 
     let mut skills: Option<BTreeMap<i32, u8>> = None;
-    let mut buffs = Vec::new();
-    for booster in boosters {
+    let mut sent = Vec::new();
+    for (index, booster) in boosters {
         let mut booster = booster.fit.clone();
         booster.boosters.clear();
         if booster.character.skills.is_empty() {
@@ -187,17 +194,18 @@ fn with_boosts(info: &impl Info, fit: &Fit) -> Option<Fit> {
                 })
                 .clone();
         }
-        buffs.extend(
-            calculate(info, &booster, &Options::default())
-                .outgoing
-                .buffs,
-        );
+        let buffs = calculate(info, &booster, &Options::default())
+            .outgoing
+            .buffs;
+        sent.extend(buffs.into_iter().map(|buff| (index, buff)));
     }
 
     let mut fit = fit.clone();
     fit.boosters.clear();
-    fit.incoming.buffs.extend(buffs);
-    Some(fit)
+    fit.incoming
+        .buffs
+        .extend(sent.iter().map(|(_, buff)| *buff));
+    Some((fit, sent))
 }
 
 fn calculate_with_bursts(info: &impl Info, fit: &Fit, options: &Options) -> Calculation {

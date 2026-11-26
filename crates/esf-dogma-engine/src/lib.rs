@@ -29,8 +29,8 @@ mod projection;
 mod validate;
 
 pub use calculate::{
-    AttributeValue, Calculation, EffectOperator, ItemResult, Options, Source, SourceRef, beacon,
-    calculate,
+    AttributeValue, Calculation, EffectOperator, ItemResult, LandedBuff, Options, Source,
+    SourceRef, beacon, calculate,
 };
 pub use fit::{
     Booster, Character, Charge, DamageProfile, Environment, Fit, FitItem, Mutation, ReactiveArmor,

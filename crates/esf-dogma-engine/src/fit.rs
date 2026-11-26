@@ -32,6 +32,8 @@ pub struct Fit {
     #[serde(default, skip_serializing_if = "Projection::is_empty")]
     pub incoming: Projection,
     /// Fleet members whose command bursts reach this fit.
+    /// [`Calculation::buffs`](crate::Calculation::buffs) tells which booster
+    /// each buff that landed came from.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     #[cfg_attr(feature = "typescript", tsify(optional))]
     pub boosters: Vec<Booster>,

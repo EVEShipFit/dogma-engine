@@ -148,6 +148,10 @@ data class Environment(
 @Serializable
 data class ProjectedBuff(val id: Int, val value: Double)
 
+/** A buff that landed on the fit; `booster` is the index in `Fit.boosters` of the booster that sent it, null when it came from `incoming` or the fit's own bursts. */
+@Serializable
+data class LandedBuff(val id: Int, val value: Double, val booster: Int? = null)
+
 /** An effect aimed at a fit, like a stasis webifier. */
 @Serializable
 data class ProjectedEffect(
@@ -289,7 +293,7 @@ data class Calculation(
     val items: List<ItemResult>,
     val character: ItemResult,
     val mode: ItemResult? = null,
-    val buffs: List<ProjectedBuff> = emptyList(),
+    val buffs: List<LandedBuff> = emptyList(),
     val outgoing: Projection = Projection(),
     val violations: List<Violation>? = null,
 )

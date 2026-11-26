@@ -137,6 +137,9 @@ public sealed record FitEnvironment
 /// <summary>A buff, as <c>dbuffCollections</c> in the SDE numbers them.</summary>
 public sealed record ProjectedBuff(int Id, double Value);
 
+/// <summary>A buff that landed on the fit; <c>Booster</c> is the index in <c>Fit.Boosters</c> of the booster that sent it, null when it came from <c>Incoming</c> or the fit's own bursts.</summary>
+public sealed record LandedBuff(int Id, double Value, int? Booster = null);
+
 /// <summary>An effect aimed at a fit, like a stasis webifier.</summary>
 public sealed record ProjectedEffect(int TypeId, int EffectId, IReadOnlyDictionary<int, double> Attributes, int Quantity = 1);
 
@@ -261,7 +264,7 @@ public sealed record Calculation(
     ItemResult? Mode = null,
     IReadOnlyList<Violation>? Violations = null)
 {
-    public IReadOnlyList<ProjectedBuff> Buffs { get; init; } = [];
+    public IReadOnlyList<LandedBuff> Buffs { get; init; } = [];
     public Projection Outgoing { get; init; } = new();
 }
 

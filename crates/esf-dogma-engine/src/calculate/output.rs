@@ -11,7 +11,7 @@ use super::Objects;
 use super::item::{EffectOperator, Item, Object};
 use super::outgoing::outgoing;
 use crate::fit::State;
-use crate::projection::{ProjectedBuff, Projection};
+use crate::projection::Projection;
 use crate::validate::Violation;
 
 /// The result of [`calculate()`](crate::calculate).
@@ -27,12 +27,13 @@ pub struct Calculation {
     pub items: Vec<ItemResult>,
     /// The character.
     pub character: ItemResult,
-    /// The buffs that landed, ordered by id: those of `Fit::incoming`, plus
-    /// the ones the fit's own bursts hand out. What is missing lost to another
-    /// source of the same buff, or the SDE has no such buff.
+    /// The buffs that landed, ordered by id: those of `Fit::incoming` and
+    /// `Fit::boosters`, plus the ones the fit's own bursts hand out. What is
+    /// missing lost to another source of the same buff, or the SDE has no such
+    /// buff.
     #[serde(skip_serializing_if = "Vec::is_empty")]
     #[cfg_attr(feature = "typescript", tsify(optional))]
-    pub buffs: Vec<ProjectedBuff>,
+    pub buffs: Vec<LandedBuff>,
     /// All outgoing projections (effects and buffs).
     #[serde(skip_serializing_if = "Projection::is_empty")]
     #[cfg_attr(feature = "typescript", tsify(optional))]
@@ -41,6 +42,22 @@ pub struct Calculation {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[cfg_attr(feature = "typescript", tsify(optional))]
     pub violations: Option<Vec<Violation>>,
+}
+
+/// A buff that landed on the fit.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
+#[derive(Serialize, Debug, Clone, Copy, PartialEq)]
+pub struct LandedBuff {
+    /// Which buff, as `dbuffCollections` in the SDE numbers them.
+    pub id: i32,
+    /// How strong it is, in whatever the buff's operation reads.
+    pub value: f64,
+    /// The index in [`Fit::boosters`](crate::Fit::boosters) of the booster
+    /// that sent it; the lowest of those that sent this value. `None` when it
+    /// came from `Fit::incoming` or the fit's own bursts.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[cfg_attr(feature = "typescript", tsify(optional))]
+    pub booster: Option<usize>,
 }
 
 /// The calculated attributes of the ship, its mode, the character, or one item.
@@ -180,7 +197,15 @@ impl Calculation {
             mode: objects.mode.as_ref().map(ItemResult::new),
             items: objects.items.iter().map(ItemResult::new).collect(),
             character: ItemResult::new(&objects.char),
-            buffs: objects.buffs.clone(),
+            buffs: objects
+                .buffs
+                .iter()
+                .map(|buff| LandedBuff {
+                    id: buff.id,
+                    value: buff.value,
+                    booster: None,
+                })
+                .collect(),
             outgoing: outgoing(info, objects),
             violations: None,
         }
