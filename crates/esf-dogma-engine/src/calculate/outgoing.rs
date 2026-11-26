@@ -18,25 +18,33 @@ pub fn beacon(info: &impl Info, type_id: i32) -> Projection {
     item.set_attributes(info);
 
     /* A beacon aims everything it has: there is no ship under it to keep. */
-    collect(info, &item, |_| true)
+    collect(info, &item, true, |_| true)
 }
 
 /* What the fit hands to others: the effects with a target domain, and the
- * buffs its modules offer. Both only count while the item is running. */
+ * buffs its modules offer. Both only count while the item is running; a
+ * charge runs while its module does. */
 pub(super) fn outgoing(info: &impl Info, objects: &Objects) -> Projection {
     let mut projection = Projection::default();
 
-    let charges = objects
-        .items
-        .iter()
-        .filter_map(|item| item.charge.as_deref());
-    for item in [&objects.ship]
+    let charges = objects.items.iter().filter_map(|item| {
+        item.charge
+            .as_deref()
+            .map(|charge| (charge, item.state.is_active()))
+    });
+    for (item, running) in [&objects.ship]
         .into_iter()
         .chain(objects.mode.as_ref())
-        .chain(objects.items.iter())
+        .map(|item| (item, true))
+        .chain(
+            objects
+                .items
+                .iter()
+                .map(|item| (item, item.state.is_active())),
+        )
         .chain(charges)
     {
-        projection.extend(collect(info, item, aims_at_target));
+        projection.extend(collect(info, item, running, aims_at_target));
     }
 
     projection
@@ -51,13 +59,18 @@ fn aims_at_target(effect: &eve::DogmaEffect) -> bool {
     })
 }
 
-fn collect(info: &impl Info, item: &Item, aims: impl Fn(&eve::DogmaEffect) -> bool) -> Projection {
+fn collect(
+    info: &impl Info,
+    item: &Item,
+    running: bool,
+    aims: impl Fn(&eve::DogmaEffect) -> bool,
+) -> Projection {
     let mut projection = Projection::default();
 
     for (id, value) in
         ATTRIBUTE_WARFARE_BUFFS.map(|(id, value)| (item.value_of(id) as i32, item.value_of(value)))
     {
-        if id != 0 && value != 0.0 {
+        if running && id != 0 && value != 0.0 {
             projection.buffs.push(ProjectedBuff { id, value });
         }
     }
