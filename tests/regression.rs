@@ -11,6 +11,7 @@
 #[macro_use]
 mod harness;
 
+mod bursts;
 mod data;
 mod dna;
 mod eft;
