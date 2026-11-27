@@ -98,3 +98,40 @@ fn boosters_of_a_booster_are_ignored() {
     let unboosted = shield_em_resonance(&rifter(vec![]));
     assert_eq!(shield_em_resonance(&rifter(vec![nested])), unboosted);
 }
+
+fn landed_from(fit: &Fit) -> Vec<Option<usize>> {
+    esf_dogma_engine::calculate(info(), fit, &Options::default())
+        .buffs
+        .iter()
+        .map(|buff| buff.booster)
+        .collect()
+}
+
+#[test]
+fn landed_buff_names_its_booster() {
+    let fit = rifter(vec![
+        booster(CLAYMORE_T1, false),
+        booster(CLAYMORE_T2, false),
+    ]);
+    let landed = landed_from(&fit);
+    assert!(!landed.is_empty());
+    assert!(landed.iter().all(|booster| *booster == Some(1)));
+
+    let fit = rifter(vec![
+        booster(CLAYMORE_T1, false),
+        booster(CLAYMORE_T1, false),
+    ]);
+    assert!(landed_from(&fit).iter().all(|booster| *booster == Some(0)));
+
+    let fit = rifter(vec![
+        booster(CLAYMORE_T1, true),
+        booster(CLAYMORE_T1, false),
+    ]);
+    assert!(landed_from(&fit).iter().all(|booster| *booster == Some(1)));
+
+    let mut fit = rifter(vec![]);
+    fit.incoming = outgoing(CLAYMORE_T1, all(5));
+    let landed = landed_from(&fit);
+    assert!(!landed.is_empty());
+    assert!(landed.iter().all(Option::is_none));
+}
