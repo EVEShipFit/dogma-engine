@@ -7,6 +7,8 @@ mod pass_2;
 mod pass_3;
 mod pass_4;
 
+use std::collections::BTreeMap;
+
 use serde::Deserialize;
 
 #[cfg(feature = "typescript")]
@@ -138,7 +140,13 @@ pub(crate) fn is_skill(info: &impl Info, type_id: i32) -> bool {
 }
 
 /// Calculate every attribute of the ship, its items and the character.
+///
+/// The command bursts of every booster that is not off are applied to the
+/// fit, on top of what is already in [`Fit::incoming`].
 pub fn calculate(info: &impl Info, fit: &Fit, options: &Options) -> Calculation {
+    let boosted = with_boosts(info, fit);
+    let fit = boosted.as_ref().unwrap_or(fit);
+
     let mut calculation = if is_hull(info, fit.ship.type_id) {
         calculate_with_bursts(info, fit, options)
     } else {
@@ -154,6 +162,42 @@ pub fn calculate(info: &impl Info, fit: &Fit, options: &Options) -> Calculation 
     }
 
     calculation
+}
+
+fn with_boosts(info: &impl Info, fit: &Fit) -> Option<Fit> {
+    let mut boosters = fit
+        .boosters
+        .iter()
+        .filter(|booster| !booster.off)
+        .peekable();
+    boosters.peek()?;
+
+    let mut skills: Option<BTreeMap<i32, u8>> = None;
+    let mut buffs = Vec::new();
+    for booster in boosters {
+        let mut booster = booster.fit.clone();
+        booster.boosters.clear();
+        if booster.character.skills.is_empty() {
+            booster.character.skills = skills
+                .get_or_insert_with(|| {
+                    info.types()
+                        .filter(|r#type| r#type.category_id() == CATEGORY_SKILL)
+                        .map(|r#type| (r#type.id(), 5))
+                        .collect()
+                })
+                .clone();
+        }
+        buffs.extend(
+            calculate(info, &booster, &Options::default())
+                .outgoing
+                .buffs,
+        );
+    }
+
+    let mut fit = fit.clone();
+    fit.boosters.clear();
+    fit.incoming.buffs.extend(buffs);
+    Some(fit)
 }
 
 fn calculate_with_bursts(info: &impl Info, fit: &Fit, options: &Options) -> Calculation {

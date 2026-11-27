@@ -33,8 +33,8 @@ pub use calculate::{
     calculate,
 };
 pub use fit::{
-    Character, Charge, DamageProfile, Environment, Fit, FitItem, Mutation, ReactiveArmor, Security,
-    Ship, Slot, Spool, State,
+    Booster, Character, Charge, DamageProfile, Environment, Fit, FitItem, Mutation, ReactiveArmor,
+    Security, Ship, Slot, Spool, State,
 };
 pub use projection::{ProjectedBuff, ProjectedEffect, Projection};
 pub use validate::{GroupLimit, Resource, Rule, SlotKind, Target, Violation};

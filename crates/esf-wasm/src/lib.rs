@@ -168,22 +168,11 @@ fn esf_error(error: esf::Error) -> JsError {
 }
 
 fn load_esf_fit(data: &[u8]) -> Result<Ts<Fit>, JsError> {
-    let sde = sde()?;
-
-    let fits = esf::load_esf(sde, data).map_err(esf_error)?;
-    let fit = esf::main_fit(&fits).ok_or_else(|| JsError::new("no fit stands on its own"))?;
-    Ok(esf::to_fit(sde, fit).map_err(esf_error)?.into_ts()?)
+    Ok(esf::load_fit(sde()?, data).map_err(esf_error)?.into_ts()?)
 }
 
-fn save_esf_fit(fit: Ts<Fit>) -> Result<(&'static Sde, esf::EsfFit), JsError> {
-    let sde = sde()?;
-
-    let fit: Fit = fit.to_rust()?;
-    let esf_fit = esf::from_fit(sde, &fit).map_err(esf_error)?;
-    Ok((sde, esf_fit))
-}
-
-/// Load a fit from an esf/1 document, as text.
+/// Load a fit from an esf/1 document, as text, with the boosters its
+/// `%fleet/1` block names.
 #[wasm_bindgen]
 pub fn load_esf(text: &str) -> Result<Ts<Fit>, JsError> {
     load_esf_fit(text.as_bytes())
@@ -195,18 +184,17 @@ pub fn load_esf_link(link: &str) -> Result<Ts<Fit>, JsError> {
     load_esf_fit(&esf::decode_base64url(link).map_err(esf_error)?)
 }
 
-/// Write a fit as an esf/1 document, as text.
+/// Write a fit as an esf/1 document, as text. Boosters are written as fits
+/// of their own, followed by a `%fleet/1` block.
 #[wasm_bindgen]
 pub fn save_esf(fit: Ts<Fit>) -> Result<String, JsError> {
-    let (sde, esf_fit) = save_esf_fit(fit)?;
-    esf::save_esf(sde, &[esf_fit]).map_err(esf_error)
+    esf::save_fit(sde()?, &fit.to_rust()?).map_err(esf_error)
 }
 
 /// Write a fit as an esf/1 link: the binary form, in base64url.
 #[wasm_bindgen]
 pub fn save_esf_link(fit: Ts<Fit>) -> Result<String, JsError> {
-    let (sde, esf_fit) = save_esf_fit(fit)?;
-    let binary = esf::save_esf_binary(sde, &[esf_fit]).map_err(esf_error)?;
+    let binary = esf::save_fit_binary(sde()?, &fit.to_rust()?).map_err(esf_error)?;
     Ok(esf::encode_base64url(&binary))
 }
 

@@ -107,6 +107,7 @@ fn main() {
             character: Character::default(),
             environment: Environment::default(),
             incoming: beacon(info, type_id),
+            boosters: Vec::new(),
         };
         let json = serde_json::to_string(&fit).unwrap();
         write("fit_json", &format!("beacon-{type_id}"), json.as_bytes());

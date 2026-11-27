@@ -8,6 +8,7 @@ from typing import Literal, TypedDict
 
 __all__ = [
     "AttributeValue",
+    "Booster",
     "Calculation",
     "Character",
     "Charge",
@@ -203,6 +204,18 @@ class Fit(_FitRequired, total=False):
     character: Character
     environment: Environment
     incoming: Projection
+    boosters: "list[Booster]"
+
+
+class _BoosterRequired(TypedDict):
+    fit: Fit
+
+
+class Booster(_BoosterRequired, total=False):
+    """A fleet member whose command bursts reach the fit. Without skills, its
+    character has every skill at level 5."""
+
+    off: bool
 
 
 class EsiFittingItem(TypedDict):

@@ -242,6 +242,7 @@ pub fn to_fit(info: &impl InfoEsf, fit: &EsfFit) -> Result<Fit, Error> {
         character: Character::default(),
         environment: Environment::default(),
         incoming: Projection::default(),
+        boosters: Vec::new(),
     })
 }
 

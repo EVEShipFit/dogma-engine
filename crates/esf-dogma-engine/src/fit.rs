@@ -31,6 +31,23 @@ pub struct Fit {
     /// What projections to apply on this fit.
     #[serde(default, skip_serializing_if = "Projection::is_empty")]
     pub incoming: Projection,
+    /// Fleet members whose command bursts reach this fit.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[cfg_attr(feature = "typescript", tsify(optional))]
+    pub boosters: Vec<Booster>,
+}
+
+/// A fleet member whose command bursts reach the fit.
+#[cfg_attr(feature = "typescript", derive(Tsify))]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Booster {
+    /// The booster's fit. Its own boosters are ignored. Without skills, its
+    /// character has every skill at level 5.
+    pub fit: Fit,
+    /// Whether the booster is switched off, and hands out nothing.
+    #[serde(default, skip_serializing_if = "is_false")]
+    #[cfg_attr(feature = "typescript", tsify(optional))]
+    pub off: bool,
 }
 
 /// The ship of a fit.
@@ -308,6 +325,10 @@ pub enum Security {
 
 pub(crate) fn one() -> u32 {
     1
+}
+
+fn is_false(value: &bool) -> bool {
+    !value
 }
 
 /* JSON and JavaScript objects only have string keys, Python dicts have real
@@ -632,6 +653,7 @@ mod tests {
             character: Character::default(),
             environment: Environment::default(),
             incoming: Projection::default(),
+            boosters: Vec::new(),
         };
 
         let json = serde_json::to_string(&fit).unwrap();

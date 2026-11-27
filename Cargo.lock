@@ -374,9 +374,8 @@ dependencies = [
 
 [[package]]
 name = "esf"
-version = "1.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c06eefac820346d91a6b9fbf71588e99f56c60148f1e74544a4e9588a649fa5c"
+version = "0.0.0-git"
+source = "git+https://github.com/EVEShipFit/esf-format-rust?branch=load-document#362f09ce27b6ed63e456eb71c57c70023d75eb78"
 
 [[package]]
 name = "esf-cli"

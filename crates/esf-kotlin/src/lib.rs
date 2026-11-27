@@ -277,16 +277,7 @@ pub fn load_link<'local>(
 }
 
 fn load_esf_fit(data: &[u8]) -> Result<Fit, Error> {
-    let sde = sde()?;
-
-    let fits = esf::load_esf(sde, data).map_err(argument)?;
-    let fit = esf::main_fit(&fits).ok_or_else(|| argument("no fit stands on its own"))?;
-    esf::to_fit(sde, fit).map_err(argument)
-}
-
-fn to_esf_fit(sde: &Sde, env: &Env, fit: &JString) -> Result<esf::EsfFit, Error> {
-    let fit: Fit = from_json(env, fit)?;
-    esf::from_fit(sde, &fit).map_err(argument)
+    esf::load_fit(sde()?, data).map_err(argument)
 }
 
 #[jni_mangle("fit.eveship.dogma.Native")]
@@ -322,9 +313,8 @@ pub fn save_esf<'local>(
     fit: JString<'local>,
 ) -> JString<'local> {
     string(unowned_env, |env| {
-        let sde = sde()?;
-        let esf_fit = to_esf_fit(sde, env, &fit)?;
-        esf::save_esf(sde, &[esf_fit]).map_err(argument)
+        let fit: Fit = from_json(env, &fit)?;
+        esf::save_fit(sde()?, &fit).map_err(argument)
     })
 }
 
@@ -335,9 +325,8 @@ pub fn save_esf_link<'local>(
     fit: JString<'local>,
 ) -> JString<'local> {
     string(unowned_env, |env| {
-        let sde = sde()?;
-        let esf_fit = to_esf_fit(sde, env, &fit)?;
-        let binary = esf::save_esf_binary(sde, &[esf_fit]).map_err(argument)?;
+        let fit: Fit = from_json(env, &fit)?;
+        let binary = esf::save_fit_binary(sde()?, &fit).map_err(argument)?;
         Ok(esf::encode_base64url(&binary))
     })
 }

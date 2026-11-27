@@ -122,7 +122,8 @@ def load_esf(text: str) -> Fit:
     """Load a fit from an esf/1 document, as text.
 
     Of a document with several fits, this is the first one no other fit
-    carries. The fit has no skills.
+    carries. A `%fleet/1` block names the fit instead, and its boosters,
+    which end up in `boosters`. The fits have no skills.
 
     Raises:
         RuntimeError: the SDE is not loaded.
@@ -139,6 +140,10 @@ def load_esf_link(link: str) -> Fit:
 
 def save_esf(fit: Fit) -> str:
     """Write a fit as an esf/1 document, as text, in canonical form.
+
+    Boosters are written as fits of their own, followed by a `%fleet/1`
+    block. A booster without a name, or with the hull and name of another
+    fit, is named `<hull> - Booster <N>`.
 
     Raises:
         RuntimeError: the SDE is not loaded.

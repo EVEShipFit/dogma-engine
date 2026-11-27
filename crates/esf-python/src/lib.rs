@@ -196,10 +196,7 @@ fn esf_error(error: esf::Error) -> PyErr {
 }
 
 fn load_esf_fit(sde: &'static Sde, data: &[u8]) -> PyResult<Fit> {
-    let fits = esf::load_esf(sde, data).map_err(esf_error)?;
-    let fit =
-        esf::main_fit(&fits).ok_or_else(|| PyValueError::new_err("no fit stands on its own"))?;
-    esf::to_fit(sde, fit).map_err(esf_error)
+    esf::load_fit(sde, data).map_err(esf_error)
 }
 
 /// Load a fit from an esf/1 document, as text.
@@ -229,10 +226,7 @@ fn save_esf(py: Python<'_>, fit: &Bound<'_, PyAny>) -> PyResult<String> {
 
     let fit: Fit = depythonize(fit).map_err(|error| PyValueError::new_err(error.to_string()))?;
 
-    py.detach(|| {
-        let esf_fit = esf::from_fit(sde, &fit).map_err(esf_error)?;
-        esf::save_esf(sde, &[esf_fit]).map_err(esf_error)
-    })
+    py.detach(|| esf::save_fit(sde, &fit).map_err(esf_error))
 }
 
 /// Write a fit as an esf/1 link: the binary form, in base64url.
@@ -243,8 +237,7 @@ fn save_esf_link(py: Python<'_>, fit: &Bound<'_, PyAny>) -> PyResult<String> {
     let fit: Fit = depythonize(fit).map_err(|error| PyValueError::new_err(error.to_string()))?;
 
     py.detach(|| {
-        let esf_fit = esf::from_fit(sde, &fit).map_err(esf_error)?;
-        let binary = esf::save_esf_binary(sde, &[esf_fit]).map_err(esf_error)?;
+        let binary = esf::save_fit_binary(sde, &fit).map_err(esf_error)?;
         Ok(esf::encode_base64url(&binary))
     })
 }

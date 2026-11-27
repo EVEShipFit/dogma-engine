@@ -2,6 +2,7 @@
 
 mod catalog;
 mod fit;
+pub mod fleet;
 pub(crate) mod lookup;
 
 use std::fmt;
@@ -10,6 +11,7 @@ use esf_data::InfoEsf;
 
 pub use ::esf::{Entry, EsfFit, Location, State};
 pub use fit::{from_fit, main_fit, to_fit};
+pub use fleet::{load_fit, save_fit, save_fit_binary};
 
 use catalog::SdeCatalog;
 
@@ -20,6 +22,8 @@ pub enum Error {
     Esf(::esf::Error),
     /// The fit does not map onto the dogma engine.
     Fit(String),
+    /// The fleet/1 block breaks a rule of fleet/1; see [`fleet`].
+    Fleet(String),
 }
 
 impl From<::esf::Error> for Error {
@@ -32,7 +36,7 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Error::Esf(error) => error.fmt(f),
-            Error::Fit(message) => f.write_str(message),
+            Error::Fit(message) | Error::Fleet(message) => f.write_str(message),
         }
     }
 }

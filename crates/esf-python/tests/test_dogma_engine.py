@@ -318,6 +318,20 @@ def test_an_esf_link_round_trips() -> None:
     assert dogma.save_esf(dogma.load_esf_link(link)) == dogma.save_esf(fit)
 
 
+def test_an_esf_with_boosters_round_trips() -> None:
+    esf = (
+        '%esf/1\nRifter "Roamer"\n\n'
+        '%esf/1\nClaymore "Shield Boosts"\n\n'
+        "Shield Command Burst I :Shield Harmonizing Charge\n\n"
+        '%fleet/1\nRifter "Roamer"\nClaymore "Shield Boosts" !off\n'
+    )
+    fit = dogma.load_esf(esf)
+
+    assert fit["boosters"][0]["off"]
+    assert dogma.save_esf(fit) == esf
+    assert dogma.save_esf(dogma.load_esf_link(dogma.save_esf_link(fit))) == esf
+
+
 def test_a_bad_esf_raises_value_error() -> None:
     with pytest.raises(ValueError, match="line 2"):
         dogma.load_esf("%esf/1\nNot A Ship\n")

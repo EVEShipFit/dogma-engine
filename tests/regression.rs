@@ -18,6 +18,8 @@ mod eft;
 mod esf;
 mod esi;
 mod fits;
+mod fleet;
+mod fleet_boosters;
 mod killmail;
 mod link;
 mod lookup;
